@@ -9,6 +9,8 @@ cmsenv
 git cms-init
 scram b -j 32
 cd $CMSSW_BASE/src
+mkdir NNInferenceCMSSW
+cd NNInferenceCMSSW
 git clone https://github.com/lbenato/LLP_NN_Inference.git
 scram b -j 32
 ```
