@@ -1,0 +1,5 @@
+<bin name="tf_test" file="tf_test.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
