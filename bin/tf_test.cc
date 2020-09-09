@@ -23,9 +23,9 @@ int main() {
     std::string outputTreeName = inputTreeName;
 
     // model and inference settings
-    std::string graphPath = basePath + "/constantgraph.pb";
+    std::string graphPath = basePath + "/graph.pb";
     std::string inputTensorName = "dense_input";
-    std::string outputTensorName = "dense_4/Softmax";
+    std::string outputTensorName = "FCN/dense_4/Softmax";//"FCN/dense_4/Softmax";//or Softmax?
     //int nInputs = 10;
 
     // threading setup
@@ -46,6 +46,10 @@ int main() {
         std::string branchName = inputFeatures.at(i);
         inputTree->SetBranchAddress(branchName.c_str(), &inputValues[i] );
     }
+    float prob;
+    std::string probName = "Jet_sigprob";
+    inputTree->SetBranchAddress(probName.c_str(), &prob );
+
 
     //Read probability    
 
@@ -95,7 +99,7 @@ int main() {
 
         // store the result
         outputValue = outputs[0].matrix<float>()(0, 0);
-	//std::cout << "probs: " << probs << std::endl;
+	std::cout << "original prob: " << prob << std::endl;
 	std::cout << "output value: " << outputValue << std::endl;
         outputTree->Fill();
     }
