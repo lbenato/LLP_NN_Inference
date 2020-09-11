@@ -1,5 +1,7 @@
 # Application of TensorFlow interface in CMSSW to LLP NN Inference
 
+A small example is included in folder ```nn_inference```: a keras model and a small tree with 100 events are provided.
+
 ### Setup
 
 Install CMSSW release and cmsml package [https://cms-ml.github.io/documentation/inference/tensorflow2.html#saving-your-model](https://cms-ml.github.io/documentation/inference/tensorflow2.html#saving-your-model)
