@@ -7,6 +7,9 @@
  * Author: Marcel Rieger
  */
 
+// Adapted to LLP displaced jets in calorimeter by Lisa Benato
+
+
 #include <iostream>
 #include <vector>
 #include "TFile.h"
@@ -17,7 +20,7 @@ int main() {
     std::string basePath = std::string(std::getenv("CMSSW_BASE")) + "/src/NNInferenceCMSSW/LLP_NN_Inference/nn_inference";
 
     // input and output file settings
-    std::string inputPath = basePath + "/test_LLP_sign.root";
+    std::string inputPath = basePath + "/test_LLP_signal.root";
     std::string outputPath = basePath + "/output.root";
     std::string inputTreeName = "tree";
     std::string outputTreeName = inputTreeName;
@@ -82,14 +85,15 @@ int main() {
             std::cout << "evaluating entry " << i << std::endl;
         }
         inputTree->GetEntry(i);
-//here added by lisa
+
         // fill the input tensor using a data pointer that is shifted consecutively
         float* d = inputTensor.flat<float>().data();
         for (float v : inputValues) {
-            std::cout<< "inp val: " << v <<std::endl;
+	    //std::cout<< " input value: " << v <<std::endl;
             *d = v;
             d++;
         }
+
         // run the inference
         std::vector<tensorflow::Tensor> outputs;
         // TF < 2
@@ -98,37 +102,13 @@ int main() {
         tensorflow::run(session, {{inputTensorName, inputTensor}}, {outputTensorName}, &outputs, threadPool);
 
         // store the result
-        outputValue = outputs[0].matrix<float>()(0, 0);
+        outputValue = outputs[0].matrix<float>()(0, 1);
 	std::cout << "original prob: " << prob << std::endl;
 	std::cout << "output value: " << outputValue << std::endl;
+	std::cout << "\n" << std::endl;
         outputTree->Fill();
     }
     
-//end of added by lisa
-
-
-    /*
-        // fill the input tensor using a data pointer that is shifted consecutively
-        float* d = inputTensor.flat<float>().data();
-        for (float v : inputValues) {
-            *d = v;
-            d++;
-        }
-
-        // run the inference
-        std::vector<tensorflow::Tensor> outputs;
-        // TF < 2
-        tensorflow::run(session, {{inputTensorName, inputTensor}}, {outputTensorName}, &outputs);
-        // TF >= 2
-        //tensorflow::run(session, {{inputTensorName, inputTensor}}, {outputTensorName}, &outputs, threadPool);
-
-        // store the result
-        outputValue = outputs[0].matrix<float>()(0, 0);
-        outputTree->Fill();
-    }
-
-    */
-
     // finalize files
    
     outputFile->Write();
