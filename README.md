@@ -4,6 +4,8 @@
 
 Install CMSSW release and cmsml package [https://cms-ml.github.io/documentation/inference/tensorflow2.html#saving-your-model](https://cms-ml.github.io/documentation/inference/tensorflow2.html#saving-your-model)
 
+Note: SL7 is required
+
 ```bash
 cmsrel CMSSW_11_1_3
 cd CMSSW_11_1_3/src
@@ -23,7 +25,7 @@ git clone https://github.com/lbenato/LLP_NN_Inference.git
 scram b -j 32
 ```
 
-### Convert keras model in a constant graph
+### Convert keras model to a constant graph
 ```bash
 cd $CMSSW_BASE/src/NNInferenceCMSSW/LLP_NN_Inference
 python python_macro/convert_model_to_graph.py
