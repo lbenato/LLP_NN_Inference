@@ -20,13 +20,13 @@ int main() {
     std::string basePath = std::string(std::getenv("CMSSW_BASE")) + "/src/NNInferenceCMSSW/LLP_NN_Inference/nn_inference";
 
     // input and output file settings
-    std::string inputPath = "/nfs/dust/cms/user/lbenato/ML_LLP/GraphNetJetTaggerCalo/model_weights/v3_calo_AOD_2018_dnn__v4_20Upsampling_0p25Background/root_files/SUSY/AK4jets/model_FCN_2_CASTFLOAT_EventWeightNormalized_NoMedian_Adam_200epochs_patience200_batch_size_2048_dropout_0p2/n3n2-n1-hbb-hbb_mh400_pl1000.root";
+    std::string inputPath = "/nfs/dust/cms/user/lbenato/ML_LLP/GraphNetJetTaggerCalo/model_weights/v3_calo_AOD_2018_dnn__v4_2018_5Upsampling_0p25Background/root_files/SUSY/AK4jets/model_FCN_2_EventWeightNormalized_NoMedian_NoRecHitsHB_NoSi_Adam_ReLU_200epochs_patience200_batch_size_512_dropout_0p2/TChiHH_mass400_pl1000.root";
     std::string outputPath = basePath + "/output_ntuple.root";
     std::string inputTreeName = "tree";
     std::string outputTreeName = inputTreeName;
 
     // model and inference settings
-    std::string graphPath = basePath + "/graph_updated.pb";
+    std::string graphPath = basePath + "/graph_NoHCAL_NoSi.pb";
     std::string inputTensorName = "input_input";
     std::string outputTensorName = "FCN/output/Softmax";//"FCN/dense_4/Softmax";//or Softmax?
     //int nInputs = 10;
@@ -48,9 +48,12 @@ int main() {
     inputTree->SetBranchAddress("LumiNumber", &LumiNumber );
 
     //per-jet inputs
-    std::vector<std::string> inputFeatures_0 = { "Jet_0_nTrackConstituents","Jet_0_nSelectedTracks", "Jet_0_timeRecHitsEB", "Jet_0_timeRecHitsHB", "Jet_0_energyRecHitsEB", "Jet_0_energyRecHitsHB", "Jet_0_nRecHitsEB", "Jet_0_nRecHitsHB", "Jet_0_cHadEFrac", "Jet_0_nHadEFrac", "Jet_0_eleEFrac", "Jet_0_photonEFrac", "Jet_0_ptAllTracks", "Jet_0_ptAllPVTracks", "Jet_0_ptPVTracksMax", "Jet_0_nTracksAll", "Jet_0_nTracksPVMax", "Jet_0_alphaMax", "Jet_0_betaMax", "Jet_0_gammaMax", "Jet_0_gammaMaxEM", "Jet_0_gammaMaxHadronic", "Jet_0_gammaMaxET","Jet_0_minDeltaRAllTracks","Jet_0_minDeltaRPVTracks",};
-    std::vector<std::string> inputFeatures_1 = { "Jet_1_nTrackConstituents","Jet_1_nSelectedTracks", "Jet_1_timeRecHitsEB", "Jet_1_timeRecHitsHB", "Jet_1_energyRecHitsEB", "Jet_1_energyRecHitsHB", "Jet_1_nRecHitsEB", "Jet_1_nRecHitsHB", "Jet_1_cHadEFrac", "Jet_1_nHadEFrac", "Jet_1_eleEFrac", "Jet_1_photonEFrac", "Jet_1_ptAllTracks", "Jet_1_ptAllPVTracks", "Jet_1_ptPVTracksMax", "Jet_1_nTracksAll", "Jet_1_nTracksPVMax", "Jet_1_alphaMax", "Jet_1_betaMax", "Jet_1_gammaMax", "Jet_1_gammaMaxEM", "Jet_1_gammaMaxHadronic", "Jet_1_gammaMaxET","Jet_1_minDeltaRAllTracks","Jet_1_minDeltaRPVTracks",};
-    std::vector<std::string> inputFeatures_2 = { "Jet_2_nTrackConstituents","Jet_2_nSelectedTracks", "Jet_2_timeRecHitsEB", "Jet_2_timeRecHitsHB", "Jet_2_energyRecHitsEB", "Jet_2_energyRecHitsHB", "Jet_2_nRecHitsEB", "Jet_2_nRecHitsHB", "Jet_2_cHadEFrac", "Jet_2_nHadEFrac", "Jet_2_eleEFrac", "Jet_2_photonEFrac", "Jet_2_ptAllTracks", "Jet_2_ptAllPVTracks", "Jet_2_ptPVTracksMax", "Jet_2_nTracksAll", "Jet_2_nTracksPVMax", "Jet_2_alphaMax", "Jet_2_betaMax", "Jet_2_gammaMax", "Jet_2_gammaMaxEM", "Jet_2_gammaMaxHadronic", "Jet_2_gammaMaxET","Jet_2_minDeltaRAllTracks","Jet_2_minDeltaRPVTracks",};
+    //std::vector<std::string> inputFeatures_0 = { "Jet_0_nTrackConstituents","Jet_0_nSelectedTracks", "Jet_0_timeRecHitsEB", "Jet_0_timeRecHitsHB", "Jet_0_energyRecHitsEB", "Jet_0_energyRecHitsHB", "Jet_0_nRecHitsEB", "Jet_0_nRecHitsHB", "Jet_0_cHadEFrac", "Jet_0_nHadEFrac", "Jet_0_eleEFrac", "Jet_0_photonEFrac", "Jet_0_ptAllTracks", "Jet_0_ptAllPVTracks", "Jet_0_ptPVTracksMax", "Jet_0_nTracksAll", "Jet_0_nTracksPVMax", "Jet_0_alphaMax", "Jet_0_betaMax", "Jet_0_gammaMax", "Jet_0_gammaMaxEM", "Jet_0_gammaMaxHadronic", "Jet_0_gammaMaxET","Jet_0_minDeltaRAllTracks","Jet_0_minDeltaRPVTracks",};
+    //std::vector<std::string> inputFeatures_1 = { "Jet_1_nTrackConstituents","Jet_1_nSelectedTracks", "Jet_1_timeRecHitsEB", "Jet_1_timeRecHitsHB", "Jet_1_energyRecHitsEB", "Jet_1_energyRecHitsHB", "Jet_1_nRecHitsEB", "Jet_1_nRecHitsHB", "Jet_1_cHadEFrac", "Jet_1_nHadEFrac", "Jet_1_eleEFrac", "Jet_1_photonEFrac", "Jet_1_ptAllTracks", "Jet_1_ptAllPVTracks", "Jet_1_ptPVTracksMax", "Jet_1_nTracksAll", "Jet_1_nTracksPVMax", "Jet_1_alphaMax", "Jet_1_betaMax", "Jet_1_gammaMax", "Jet_1_gammaMaxEM", "Jet_1_gammaMaxHadronic", "Jet_1_gammaMaxET","Jet_1_minDeltaRAllTracks","Jet_1_minDeltaRPVTracks",};
+    //std::vector<std::string> inputFeatures_2 = { "Jet_2_nTrackConstituents","Jet_2_nSelectedTracks", "Jet_2_timeRecHitsEB", "Jet_2_timeRecHitsHB", "Jet_2_energyRecHitsEB", "Jet_2_energyRecHitsHB", "Jet_2_nRecHitsEB", "Jet_2_nRecHitsHB", "Jet_2_cHadEFrac", "Jet_2_nHadEFrac", "Jet_2_eleEFrac", "Jet_2_photonEFrac", "Jet_2_ptAllTracks", "Jet_2_ptAllPVTracks", "Jet_2_ptPVTracksMax", "Jet_2_nTracksAll", "Jet_2_nTracksPVMax", "Jet_2_alphaMax", "Jet_2_betaMax", "Jet_2_gammaMax", "Jet_2_gammaMaxEM", "Jet_2_gammaMaxHadronic", "Jet_2_gammaMaxET","Jet_2_minDeltaRAllTracks","Jet_2_minDeltaRPVTracks",};
+    std::vector<std::string> inputFeatures_0 = { "Jet_0_nTrackConstituents","Jet_0_nSelectedTracks", "Jet_0_timeRecHitsEB", "Jet_0_energyRecHitsEB", "Jet_0_nRecHitsEB", "Jet_0_cHadEFrac", "Jet_0_nHadEFrac", "Jet_0_eleEFrac", "Jet_0_photonEFrac", "Jet_0_ptAllTracks", "Jet_0_ptAllPVTracks", "Jet_0_alphaMax", "Jet_0_betaMax", "Jet_0_gammaMax", "Jet_0_gammaMaxEM", "Jet_0_gammaMaxHadronic", "Jet_0_gammaMaxET","Jet_0_minDeltaRAllTracks","Jet_0_minDeltaRPVTracks",};
+    std::vector<std::string> inputFeatures_1 = { "Jet_1_nTrackConstituents","Jet_1_nSelectedTracks", "Jet_1_timeRecHitsEB", "Jet_1_energyRecHitsEB",  "Jet_1_nRecHitsEB", "Jet_1_cHadEFrac", "Jet_1_nHadEFrac", "Jet_1_eleEFrac", "Jet_1_photonEFrac", "Jet_1_ptAllTracks", "Jet_1_ptAllPVTracks", "Jet_1_alphaMax", "Jet_1_betaMax", "Jet_1_gammaMax", "Jet_1_gammaMaxEM", "Jet_1_gammaMaxHadronic", "Jet_1_gammaMaxET","Jet_1_minDeltaRAllTracks","Jet_1_minDeltaRPVTracks",};
+    std::vector<std::string> inputFeatures_2 = { "Jet_2_nTrackConstituents","Jet_2_nSelectedTracks", "Jet_2_timeRecHitsEB", "Jet_2_energyRecHitsEB", "Jet_2_nRecHitsEB", "Jet_2_cHadEFrac", "Jet_2_nHadEFrac", "Jet_2_eleEFrac", "Jet_2_photonEFrac", "Jet_2_ptAllTracks", "Jet_2_ptAllPVTracks", "Jet_2_alphaMax", "Jet_2_betaMax", "Jet_2_gammaMax", "Jet_2_gammaMaxEM", "Jet_2_gammaMaxHadronic", "Jet_2_gammaMaxET","Jet_2_minDeltaRAllTracks","Jet_2_minDeltaRPVTracks",};
 
     // the input branches are named "f0" to "f9", so use a loop in this example
     int nInputs_0 = inputFeatures_0.size();
@@ -172,9 +175,9 @@ int main() {
 	if(pt_1<0) outputValue_1 = -1;
 	if(pt_2<0) outputValue_2 = -1;
 	std::cout << "EventNumber: " << EventNumber << "; RunNumber: " << RunNumber << "; LumiNumber: " << LumiNumber << std::endl;
-	//std::cout << "original prob[0]: " << prob_0 << std::endl;
-	//std::cout << "original prob[1]: " << prob_1 << std::endl;
-	//std::cout << "original prob[2]: " << prob_2 << std::endl;
+	std::cout << "original prob[0]: " << prob_0 << std::endl;
+	std::cout << "original prob[1]: " << prob_1 << std::endl;
+	std::cout << "original prob[2]: " << prob_2 << std::endl;
 	std::cout << "Jet[0] pt: " << pt_0 << "; output DNN value: " << outputValue_0 << std::endl;
 	std::cout << "Jet[1] pt: " << pt_1 << "; output DNN value: " << outputValue_1 << std::endl;
 	std::cout << "Jet[2] pt: " << pt_2 << "; output DNN value: " << outputValue_2 << std::endl;
