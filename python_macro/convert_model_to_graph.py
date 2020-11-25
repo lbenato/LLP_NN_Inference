@@ -20,7 +20,8 @@ import cmsml
 #example
 #model = keras.models.load_model('nn_inference/model_2.h5')
 #updated model
-model = keras.models.load_model('nn_inference/model_2_updated.h5')
+#model = keras.models.load_model('nn_inference/model_2_updated.h5')
+model = keras.models.load_model('nn_inference/tagger_AK8_v1/model.h5')
 
 
 #import tensorflow.python.keras.backend as K
@@ -47,8 +48,8 @@ print([node.op.name for node in model.inputs])
 #    print(i.name)
 
 print('\n')
-cmsml.tensorflow.save_graph("nn_inference/graph_updated.pb", model, variables_to_constants=True)
-cmsml.tensorflow.save_graph("nn_inference/graph_updated.pb.txt", model, variables_to_constants=True)
+cmsml.tensorflow.save_graph("nn_inference/tagger_AK8_v1/graph.pb", model, variables_to_constants=True)
+cmsml.tensorflow.save_graph("nn_inference/tagger_AK8_v1/graph.pb.txt", model, variables_to_constants=True)
 
 #outputs = [node.op.name for node in model.outputs]
 #min_graph = tf.graph_util.convert_variables_to_constants(sess, sess.graph.as_graph_def(), [node.op.name for node in model.outputs])

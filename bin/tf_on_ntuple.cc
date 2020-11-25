@@ -174,7 +174,7 @@ int main() {
 	if(pt_0<0) outputValue_0 = -1;
 	if(pt_1<0) outputValue_1 = -1;
 	if(pt_2<0) outputValue_2 = -1;
-	std::cout << "EventNumber: " << EventNumber << "; RunNumber: " << RunNumber << "; LumiNumber: " << LumiNumber << std::endl;
+	std::cout << "EventNumber: " << int(EventNumber) << "; RunNumber: " << RunNumber << "; LumiNumber: " << LumiNumber << std::endl;
 	std::cout << "original prob[0]: " << prob_0 << std::endl;
 	std::cout << "original prob[1]: " << prob_1 << std::endl;
 	std::cout << "original prob[2]: " << prob_2 << std::endl;

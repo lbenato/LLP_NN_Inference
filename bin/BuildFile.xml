@@ -9,3 +9,15 @@
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />
 </bin>
+
+<bin name="tf_and_skim" file="tf_and_skim.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_on_skimmed" file="tf_on_skimmed.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>

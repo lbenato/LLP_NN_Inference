@@ -1,0 +1,35 @@
+
+<lcgdict>
+  <class name="JetType"/>
+  <class name="FatJetType"/>
+  <class name="VertexType"/>
+  <class name="PFCandidateType"/>
+  <class name="TriggerObjectType"/>
+  <class name="CaloJetType"/>
+  <class name="SimplifiedJetType"/>
+  <class name="LeptonType"/>
+  <class name="GenPType"/>
+  <class name="DT4DSegmentType"/>
+  <class name="CSCSegmentType"/>
+  <class name="PhotonType"/>
+  <class name="TauType"/>
+  <class name="MEtType"/>
+  <class name="ecalRecHitType"/>
+  <class name="hcalRecHitType"/>
+  <class name="std::vector<JetType>"/>
+  <class name="std::vector<FatJetType>"/>
+  <class name="std::vector<VertexType>"/>
+  <class name="std::vector<PFCandidateType>"/>
+  <class name="std::vector<TriggerObjectType>"/>
+  <class name="std::vector<CaloJetType>"/>
+  <class name="std::vector<SimplifiedJetType>"/>
+  <class name="std::vector<LeptonType>"/>
+  <class name="std::vector<GenPType>"/>
+  <class name="std::vector<DT4DSegmentType>"/>
+  <class name="std::vector<CSCSegmentType>"/>
+  <class name="std::vector<PhotonType>"/>
+  <class name="std::vector<TauType>"/>
+  <class name="std::vector<MEtType>"/>
+  <class name="std::vector<ecalRecHitType>"/>
+  <class name="std::vector<hcalRecHitType>"/>
+</lcgdict>
