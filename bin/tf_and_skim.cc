@@ -17,6 +17,9 @@
 #include "TTree.h"
 #include "TH1.h"
 #include "TMath.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/Math/interface/deltaR.h"
+
 #include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects.h"
 //#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/MyAnalysis.h"
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
@@ -43,16 +46,20 @@ double avg ( std::vector<double> & v )
 
 int main(int argc, char **argv) {
 
-    //if(argc<3)
-    if(argc<2)
+    if(argc<3)
+    //if(argc<2)
       {
 	std::cout<<"Invalid arguments, exit!" << std::endl;
 	return 0;
       }
 
+    bool skipTrain(false);
+    if(strcmp(argv[3], "y")==1 || strcmp(argv[3], "yes")==1) skipTrain=true;
+
     std::cout << "Input file: " << argv[1] << std::endl;
     std::cout << "Output file: " << argv[2] << std::endl;
-    //std::cout << "Skip even EventNumber: " << argv[3] << std::endl;
+    std::cout << "Skip even EventNumber: " << skipTrain << std::endl;
+
     auto start = std::chrono::system_clock::now();//time!     
 
     std::string basePath = std::string(std::getenv("CMSSW_BASE")) + "/src/NNInferenceCMSSW/LLP_NN_Inference/nn_inference";
@@ -69,8 +76,8 @@ int main(int argc, char **argv) {
     bool doPFCand=false;
 
     // model and inference settings
-    std::string graphPathAK4 = basePath + "/tagger_AK4_v2/graph.pb";
-    std::string MetaDataFileAK4 = basePath + "/tagger_AK4_v2/metadata.dat";
+    std::string graphPathAK4 = basePath + "/tagger_AK4_v3/graph.pb";
+    std::string MetaDataFileAK4 = basePath + "/tagger_AK4_v3/metadata.dat";
     std::string inputTensorNameAK4 = "input_input";
     std::string outputTensorNameAK4 = "FCN/output/Softmax";//"FCN/dense_4/Softmax";//or Softmax?
     //int nInputs = 10;
@@ -92,8 +99,18 @@ int main(int argc, char **argv) {
     TFile* inputFile = new TFile(inputPath.c_str(), "READ");
     TTree* inputTree = (TTree*)inputFile->Get(inputTreeName.c_str());
     TH1F   *counter = (TH1F*)inputFile->Get("counter/c_nEvents");
+    TH1F   *n_pass = new TH1F("n_pass", "n_pass", 1, 0., 1.);
+    TH1F   *n_odd = new TH1F("n_odd", "n_odd", 1, 0., 1.);
+    TH1F   *n_even = new TH1F("n_even", "n_even", 1, 0., 1.);
+    TH1F   *b_skipTrain = new TH1F("b_skipTrain", "b_skipTrain", 1, 0, 1);
+    n_odd->Sumw2();
+    n_even->Sumw2();
+    n_pass->Sumw2();
+    b_skipTrain->Sumw2();
     float  tree_weight = inputTree->GetWeight();
     std::cout << "Tree weight: " << tree_weight << std::endl;
+
+    if(skipTrain) b_skipTrain->Fill(0);
 
     // Input variables
     Long64_t EventNumber;
@@ -131,6 +148,9 @@ int main(int argc, char **argv) {
     std::vector<ecalRecHitType>  *EcalRecHitsAK8 = 0;
     //std::vector<hcalRecHitType>  *HcalRecHitsAK8 = 0;
     MEtType                      *MEt = 0;
+    std::vector<GenPType>        *GenHiggs = 0;
+    std::vector<GenPType>        *GenLLPs = 0;
+    std::vector<GenPType>        *GenBquarks = 0;
 
     // Input branches
     TBranch        *b_Jets = 0;
@@ -138,6 +158,9 @@ int main(int argc, char **argv) {
     TBranch        *b_PFCandidatesAK4 = 0;
     TBranch        *b_PFCandidatesAK8 = 0;
     TBranch        *b_MEt = 0;
+    TBranch        *b_GenHiggs = 0;
+    TBranch        *b_GenLLPs = 0;
+    TBranch        *b_GenBquarks = 0;
     TBranch        *b_EcalRecHitsAK8 = 0;
     //TBranch        *b_HcalRecHitsAK8 = 0;
     TBranch        *b_EventNumber;
@@ -176,6 +199,9 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("EcalRecHitsAK8",    &EcalRecHitsAK8,    &b_EcalRecHitsAK8);
     //inputTree->SetBranchAddress("HcalRecHitsAK8",    &HcalRecHitsAK8,    &b_HcalRecHitsAK8);
     inputTree->SetBranchAddress("MEt",               &MEt,               &b_MEt); 
+    inputTree->SetBranchAddress("GenHiggs",          &GenHiggs,          &b_GenHiggs); 
+    inputTree->SetBranchAddress("GenLLPs",           &GenLLPs,           &b_GenLLPs); 
+    inputTree->SetBranchAddress("GenBquarks",        &GenBquarks,        &b_GenBquarks); 
     inputTree->SetBranchAddress("EventNumber",       &EventNumber,       &b_EventNumber);
     inputTree->SetBranchAddress("RunNumber",         &RunNumber,         &b_RunNumber);
     inputTree->SetBranchAddress("LumiNumber",        &LumiNumber,        &b_LumiNumber);
@@ -318,8 +344,18 @@ int main(int argc, char **argv) {
 
     std::vector<JetType>    skimmedJets;
     std::vector<FatJetType> skimmedFatJets;
+
+    float MinFatJetMetDPhi(10.);
+    float MinFatJetMetDPhiBarrel(10.);
+    float MinJetMetDPhiBarrel(10.);
+
     int nCHSJetsAcceptanceCalo;
     int nCHSFatJetsAcceptanceCalo;
+
+    //float AK4_jet_width_ECAL(0.);
+    //float AK8_jet_width_ECAL(0.);
+    //float AK4_jet_width_HCAL(0.);
+    //float AK8_jet_width_HCAL(0.);
 
     int nTagJets_cutbased(0);
     int nTagJets_0p9(0);
@@ -328,6 +364,15 @@ int main(int argc, char **argv) {
     int nTagJets_0p97(0);
     int nTagJets_0p98(0);
     int nTagJets_0p99(0);
+    int nTagJets_0p994(0);
+    int nTagJets_0p995(0);
+    int nTagJets_0p996(0);
+    int nTagJets_0p999(0);
+
+    int nTagJets_cutbased_JJ(0);
+    int nTagJets_0p99_JJ(0);
+    int nTagJets_0p994_JJ(0);
+    int nTagJets_0p996_JJ(0);
 
     int nTagFatJets_cutbased(0);
     int nTagFatJets_0p8(0);
@@ -338,13 +383,46 @@ int main(int argc, char **argv) {
     int nTagFatJets_0p97(0);
     int nTagFatJets_0p98(0);
     int nTagFatJets_0p99(0);
+    int nTagFatJets_0p995(0);
+    int nTagFatJets_0p997(0);
+    int nTagFatJets_0p999(0);
+    int nTagFatJets_0p9995(0);
+    int nTagFatJets_0p9999(0);
+    int nTagFatJets_0p99995(0);
+    int nTagFatJets_0p99999(0);
+    int nTagFatJets_0p999995(0);
+    int nTagFatJets_0p999999(0);
 
-    bool isAK8;
-    bool isAK8_JJ_170;
-    bool isAK8_JJ_200;
-    bool isAK8_JJ_250;
-    bool isAK4;
-    int  nAK8Tagged;
+    bool isTagAK8_0p9999_170;
+    bool isTagAK8_0p9999_200;
+    bool isTagAK8_0p9999_250;
+    bool isTagAK8_0p9999_300;
+    bool isTagAK8_0p9999_350;
+
+    bool isTagAK8_0p99999_170;
+    bool isTagAK8_0p99999_200;
+    bool isTagAK8_0p99999_250;
+    bool isTagAK8_0p99999_300;
+    bool isTagAK8_0p99999_350;
+
+    bool isTagAK8_0p999995_170;
+    bool isTagAK8_0p999995_200;
+    bool isTagAK8_0p999995_250;
+    bool isTagAK8_0p999995_300;
+    bool isTagAK8_0p999995_350;
+
+    bool isTagAK8_0p999999_170;
+    bool isTagAK8_0p999999_200;
+    bool isTagAK8_0p999999_250;
+    bool isTagAK8_0p999999_300;
+    bool isTagAK8_0p999999_350;
+
+    bool isTagAK4_0p99;
+    bool isTagAK4_0p994;
+    bool isTagAK4_0p996;
+    bool isTagAK4_0p99_JJ;
+    bool isTagAK4_0p994_JJ;
+    bool isTagAK4_0p996_JJ;
 
     // Output branches 
     outputTree->Branch("EventNumber",       &EventNumber,       "EventNumber/L");
@@ -359,6 +437,9 @@ int main(int argc, char **argv) {
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
     outputTree->Branch("HT",                &HT,                "HT/F");
     outputTree->Branch("MinJetMetDPhi",     &MinJetMetDPhi,     "MinJetMetDPhi/F");
+    outputTree->Branch("MinJetMetDPhiBarrel",  &MinJetMetDPhiBarrel,  "MinJetMetDPhiBarrel/F");
+    outputTree->Branch("MinFatJetMetDPhi",  &MinFatJetMetDPhi,  "MinFatJetMetDPhi/F");
+    outputTree->Branch("MinFatJetMetDPhiBarrel",  &MinFatJetMetDPhiBarrel,  "MinFatJetMetDPhiBarrel/F");
     outputTree->Branch("nCHSJets",          &nCHSJets,          "nCHSJets/I");
     outputTree->Branch("nCHSFatJets",       &nCHSFatJets,       "nCHSFatJets/I");
     outputTree->Branch("nCHSJetsAcceptanceCalo",          &nCHSJetsAcceptanceCalo,          "nCHSJetsAcceptanceCalo/I");
@@ -416,6 +497,14 @@ int main(int argc, char **argv) {
     if(doPFCand) outputTree->Branch("FatJet_9_EcalRecHitsAK8", &FatJet_9_EcalRecHitsAK8);
 
     outputTree->Branch("MEt", &MEt);
+    outputTree->Branch("GenHiggs", &GenHiggs);
+    outputTree->Branch("GenLLPs", &GenLLPs);
+    outputTree->Branch("GenBquarks", &GenBquarks);
+
+    //outputTree->Branch("AK4_jet_width_ECAL", &AK4_jet_width_ECAL,  "AK4_jet_width_ECAL/F");
+    //outputTree->Branch("AK8_jet_width_ECAL", &AK8_jet_width_ECAL,  "AK8_jet_width_ECAL/F");
+    //outputTree->Branch("AK4_jet_width_HCAL", &AK4_jet_width_HCAL,  "AK4_jet_width_HCAL/F");
+    //outputTree->Branch("AK8_jet_width_HCAL", &AK8_jet_width_HCAL,  "AK8_jet_width_HCAL/F");
 
     outputTree->Branch("nTagJets_cutbased", &nTagJets_cutbased,  "nTagJets_cutbased/I");
     outputTree->Branch("nTagJets_0p9",      &nTagJets_0p9,       "nTagJets_0p9/I");
@@ -424,6 +513,15 @@ int main(int argc, char **argv) {
     outputTree->Branch("nTagJets_0p97",     &nTagJets_0p97,      "nTagJets_0p97/I");
     outputTree->Branch("nTagJets_0p98",     &nTagJets_0p98,      "nTagJets_0p98/I");
     outputTree->Branch("nTagJets_0p99",     &nTagJets_0p99,      "nTagJets_0p99/I");
+    outputTree->Branch("nTagJets_0p994",     &nTagJets_0p994,      "nTagJets_0p994/I");
+    outputTree->Branch("nTagJets_0p995",     &nTagJets_0p995,      "nTagJets_0p995/I");
+    outputTree->Branch("nTagJets_0p996",     &nTagJets_0p996,      "nTagJets_0p996/I");
+    outputTree->Branch("nTagJets_0p999",     &nTagJets_0p999,      "nTagJets_0p999/I");
+
+    outputTree->Branch("nTagJets_cutbased_JJ", &nTagJets_cutbased_JJ,  "nTagJets_cutbased_JJ/I");
+    outputTree->Branch("nTagJets_0p99_JJ",     &nTagJets_0p99_JJ,      "nTagJets_0p99_JJ/I");
+    outputTree->Branch("nTagJets_0p994_JJ",     &nTagJets_0p994_JJ,      "nTagJets_0p994_JJ/I");
+    outputTree->Branch("nTagJets_0p996_JJ",     &nTagJets_0p996_JJ,      "nTagJets_0p996_JJ/I");
 
     outputTree->Branch("nTagFatJets_cutbased", &nTagFatJets_cutbased,  "nTagFatJets_cutbased/I");
     outputTree->Branch("nTagFatJets_0p8",      &nTagFatJets_0p8,       "nTagFatJets_0p8/I");
@@ -434,13 +532,46 @@ int main(int argc, char **argv) {
     outputTree->Branch("nTagFatJets_0p97",     &nTagFatJets_0p97,      "nTagFatJets_0p97/I");
     outputTree->Branch("nTagFatJets_0p98",     &nTagFatJets_0p98,      "nTagFatJets_0p98/I");
     outputTree->Branch("nTagFatJets_0p99",     &nTagFatJets_0p99,      "nTagFatJets_0p99/I");
+    outputTree->Branch("nTagFatJets_0p995",     &nTagFatJets_0p995,      "nTagFatJets_0p995/I");
+    outputTree->Branch("nTagFatJets_0p996",     &nTagFatJets_0p997,      "nTagFatJets_0p997/I");
+    outputTree->Branch("nTagFatJets_0p997",     &nTagFatJets_0p999,      "nTagFatJets_0p999/I");
+    outputTree->Branch("nTagFatJets_0p9995",     &nTagFatJets_0p9995,      "nTagFatJets_0p9995/I");
+    outputTree->Branch("nTagFatJets_0p9999",     &nTagFatJets_0p9999,      "nTagFatJets_0p9999/I");
+    outputTree->Branch("nTagFatJets_0p99995",     &nTagFatJets_0p99995,      "nTagFatJets_0p99995/I");
+    outputTree->Branch("nTagFatJets_0p99999",     &nTagFatJets_0p99999,      "nTagFatJets_0p99999/I");
+    outputTree->Branch("nTagFatJets_0p999995",     &nTagFatJets_0p999995,      "nTagFatJets_0p999995/I");
+    outputTree->Branch("nTagFatJets_0p999999",     &nTagFatJets_0p999999,      "nTagFatJets_0p999999/I");
 
-    outputTree->Branch("nAK8Tagged",    &nAK8Tagged,     "nAK8Tagged/I");
-    outputTree->Branch("isAK4",         &isAK4,          "isAK4/O");
-    outputTree->Branch("isAK8",         &isAK8,          "isAK8/O");
-    outputTree->Branch("isAK8_JJ_170",  &isAK8_JJ_170,   "isAK8_JJ_170/O");
-    outputTree->Branch("isAK8_JJ_200",  &isAK8_JJ_200,   "isAK8_JJ_200/O");
-    outputTree->Branch("isAK8_JJ_250",  &isAK8_JJ_250,   "isAK8_JJ_250/O");
+    outputTree->Branch("isTagAK4_0p99", &isTagAK4_0p99, "isTagAK4_0p99/O");
+    outputTree->Branch("isTagAK4_0p994", &isTagAK4_0p994, "isTagAK4_0p994/O");
+    outputTree->Branch("isTagAK4_0p996", &isTagAK4_0p996, "isTagAK4_0p996/O");
+    outputTree->Branch("isTagAK4_0p99_JJ", &isTagAK4_0p99_JJ, "isTagAK4_0p99_JJ/O");
+    outputTree->Branch("isTagAK4_0p994_JJ", &isTagAK4_0p994_JJ, "isTagAK4_0p994_JJ/O");
+    outputTree->Branch("isTagAK4_0p996_JJ", &isTagAK4_0p996_JJ, "isTagAK4_0p996_JJ/O");
+
+    outputTree->Branch("isTagAK8_0p9999_170",  &isTagAK8_0p9999_170,   "isTagAK8_0p9999_170/O");
+    outputTree->Branch("isTagAK8_0p9999_200",  &isTagAK8_0p9999_200,   "isTagAK8_0p9999_200/O");
+    outputTree->Branch("isTagAK8_0p9999_250",  &isTagAK8_0p9999_250,   "isTagAK8_0p9999_250/O");
+    outputTree->Branch("isTagAK8_0p9999_300",  &isTagAK8_0p9999_300,   "isTagAK8_0p9999_300/O");
+    outputTree->Branch("isTagAK8_0p9999_350",  &isTagAK8_0p9999_350,   "isTagAK8_0p9999_350/O");
+
+    outputTree->Branch("isTagAK8_0p99999_170",  &isTagAK8_0p99999_170,   "isTagAK8_0p99999_170/O");
+    outputTree->Branch("isTagAK8_0p99999_200",  &isTagAK8_0p99999_200,   "isTagAK8_0p99999_200/O");
+    outputTree->Branch("isTagAK8_0p99999_250",  &isTagAK8_0p99999_250,   "isTagAK8_0p99999_250/O");
+    outputTree->Branch("isTagAK8_0p99999_300",  &isTagAK8_0p99999_300,   "isTagAK8_0p99999_300/O");
+    outputTree->Branch("isTagAK8_0p99999_350",  &isTagAK8_0p99999_350,   "isTagAK8_0p99999_350/O");
+
+    outputTree->Branch("isTagAK8_0p999995_170",  &isTagAK8_0p999995_170,   "isTagAK8_0p999995_170/O");
+    outputTree->Branch("isTagAK8_0p999995_200",  &isTagAK8_0p999995_200,   "isTagAK8_0p999995_200/O");
+    outputTree->Branch("isTagAK8_0p999995_250",  &isTagAK8_0p999995_250,   "isTagAK8_0p999995_250/O");
+    outputTree->Branch("isTagAK8_0p999995_300",  &isTagAK8_0p999995_300,   "isTagAK8_0p999995_300/O");
+    outputTree->Branch("isTagAK8_0p999995_350",  &isTagAK8_0p999995_350,   "isTagAK8_0p999995_350/O");
+
+    outputTree->Branch("isTagAK8_0p999999_170",  &isTagAK8_0p999999_170,   "isTagAK8_0p999999_170/O");
+    outputTree->Branch("isTagAK8_0p999999_200",  &isTagAK8_0p999999_200,   "isTagAK8_0p999999_200/O");
+    outputTree->Branch("isTagAK8_0p999999_250",  &isTagAK8_0p999999_250,   "isTagAK8_0p999999_250/O");
+    outputTree->Branch("isTagAK8_0p999999_300",  &isTagAK8_0p999999_300,   "isTagAK8_0p999999_300/O");
+    outputTree->Branch("isTagAK8_0p999999_350",  &isTagAK8_0p999999_350,   "isTagAK8_0p999999_350/O");
 
 
     //do it as a loop
@@ -475,6 +606,15 @@ int main(int argc, char **argv) {
 	//Initialize nTagJets at every event
         nCHSJetsAcceptanceCalo = 0;
         nCHSFatJetsAcceptanceCalo = 0;
+	MinFatJetMetDPhi = 10.;
+	MinJetMetDPhiBarrel = 10.;
+	MinFatJetMetDPhiBarrel = 10.;
+
+	//AK4_jet_width_ECAL = 0.;
+	//AK8_jet_width_ECAL = 0.;
+	//AK4_jet_width_HCAL = 0.;
+	//AK8_jet_width_HCAL = 0.;
+
 	nTagJets_cutbased = 0;
 	nTagJets_0p9 = 0;
 	nTagJets_0p95 = 0;
@@ -482,6 +622,14 @@ int main(int argc, char **argv) {
 	nTagJets_0p97 = 0;
 	nTagJets_0p98 = 0;
 	nTagJets_0p99 = 0;
+	nTagJets_0p994 = 0;
+	nTagJets_0p995 = 0;
+	nTagJets_0p996 = 0;
+	nTagJets_0p999 = 0;
+	nTagJets_cutbased_JJ = 0;
+	nTagJets_0p99_JJ = 0;
+	nTagJets_0p994_JJ = 0;
+	nTagJets_0p996_JJ = 0;
 	nTagFatJets_cutbased = 0;
 	nTagFatJets_0p8 = 0;
 	nTagFatJets_0p9 = 0;
@@ -491,12 +639,95 @@ int main(int argc, char **argv) {
 	nTagFatJets_0p97 = 0;
 	nTagFatJets_0p98 = 0;
 	nTagFatJets_0p99 = 0;
-        isAK8 = false;
-        isAK8_JJ_170 = false;
-        isAK8_JJ_200 = false;
-        isAK8_JJ_250 = false;
-	isAK4 = false;
-        nAK8Tagged = 0;
+	nTagFatJets_0p995 = 0;
+	nTagFatJets_0p997 = 0;
+	nTagFatJets_0p999 = 0;
+	nTagFatJets_0p9995 = 0;
+	nTagFatJets_0p9999 = 0;
+	nTagFatJets_0p99995 = 0;
+	nTagFatJets_0p99999 = 0;
+	nTagFatJets_0p999995 = 0;
+	nTagFatJets_0p999999 = 0;
+
+        isTagAK8_0p9999_170 = false;
+        isTagAK8_0p9999_200 = false;
+        isTagAK8_0p9999_250 = false;
+        isTagAK8_0p9999_300 = false;
+        isTagAK8_0p99999_170 = false;
+        isTagAK8_0p99999_200 = false;
+        isTagAK8_0p99999_250 = false;
+        isTagAK8_0p99999_300 = false;
+        isTagAK8_0p99999_350 = false;
+
+        isTagAK8_0p999995_170 = false;
+        isTagAK8_0p999995_200 = false;
+        isTagAK8_0p999995_250 = false;
+        isTagAK8_0p999995_300 = false;
+        isTagAK8_0p999995_350 = false;
+
+        isTagAK8_0p999999_170 = false;
+        isTagAK8_0p999999_200 = false;
+        isTagAK8_0p999999_250 = false;
+        isTagAK8_0p999999_300 = false;
+        isTagAK8_0p999999_350 = false;
+
+        isTagAK8_0p9999_350 = false;
+	isTagAK4_0p99 = false;
+	isTagAK4_0p994 = false;
+	isTagAK4_0p996 = false;
+	isTagAK4_0p99_JJ = false;
+	isTagAK4_0p994_JJ = false;
+	isTagAK4_0p996_JJ = false;
+
+	//Clear all the vectors
+	//very dangerous with continue statement!
+        skimmedJets.clear();
+        skimmedFatJets.clear();
+        Jet_0_PFCandidatesAK4.clear();
+        Jet_1_PFCandidatesAK4.clear();
+        Jet_2_PFCandidatesAK4.clear();
+        Jet_3_PFCandidatesAK4.clear();
+        Jet_4_PFCandidatesAK4.clear();
+        Jet_5_PFCandidatesAK4.clear();
+        Jet_6_PFCandidatesAK4.clear();
+        Jet_7_PFCandidatesAK4.clear();
+        Jet_8_PFCandidatesAK4.clear();
+        Jet_9_PFCandidatesAK4.clear();
+
+        FatJet_0_PFCandidatesAK8.clear();
+        FatJet_1_PFCandidatesAK8.clear();
+        FatJet_2_PFCandidatesAK8.clear();
+        FatJet_3_PFCandidatesAK8.clear();
+        FatJet_4_PFCandidatesAK8.clear();
+        FatJet_5_PFCandidatesAK8.clear();
+        FatJet_6_PFCandidatesAK8.clear();
+        FatJet_7_PFCandidatesAK8.clear();
+        FatJet_8_PFCandidatesAK8.clear();
+        FatJet_9_PFCandidatesAK8.clear();
+
+
+        FatJet_0_PFCandidatesAK8.clear();
+        FatJet_1_PFCandidatesAK8.clear();
+        FatJet_2_PFCandidatesAK8.clear();
+        FatJet_3_PFCandidatesAK8.clear();
+        FatJet_4_PFCandidatesAK8.clear();
+        FatJet_5_PFCandidatesAK8.clear();
+        FatJet_6_PFCandidatesAK8.clear();
+        FatJet_7_PFCandidatesAK8.clear();
+        FatJet_8_PFCandidatesAK8.clear();
+        FatJet_9_PFCandidatesAK8.clear();
+
+        FatJet_0_EcalRecHitsAK8.clear();
+        FatJet_1_EcalRecHitsAK8.clear();
+        FatJet_2_EcalRecHitsAK8.clear();
+        FatJet_3_EcalRecHitsAK8.clear();
+        FatJet_4_EcalRecHitsAK8.clear();
+        FatJet_5_EcalRecHitsAK8.clear();
+        FatJet_6_EcalRecHitsAK8.clear();
+        FatJet_7_EcalRecHitsAK8.clear();
+        FatJet_8_EcalRecHitsAK8.clear();
+        FatJet_9_EcalRecHitsAK8.clear();
+
 
 
         if (i % 1000 == 0) {
@@ -532,7 +763,7 @@ int main(int argc, char **argv) {
         if(!Flag2_ecalBadCalibFilter) continue;
         if(!Flag2_eeBadScFilter) continue;
         if(!Flag2_BadPFMuonFilter) continue;
-        if(HT<100) continue;
+        //if(HT<100) continue;
         if(MEt->pt<200) continue;
 
 
@@ -550,8 +781,12 @@ int main(int argc, char **argv) {
 		"photonEFrac" : {"min" : -1., "max" : 0.8},
 	    */
 
-	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)
+	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)
+
+	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100.)
 	      {
+
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		//std::cout<< "Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
@@ -570,23 +805,24 @@ int main(int argc, char **argv) {
 		inputValues.at(5) = Jets->at(j).sig1EB;
 		inputValues.at(6) = Jets->at(j).sig2EB;
 		inputValues.at(7) = Jets->at(j).ptDEB;
-		inputValues.at(8) = Jets->at(j).sig1PF;
-		inputValues.at(9) = Jets->at(j).sig2PF;
-		inputValues.at(10) = Jets->at(j).ptDPF;
-		inputValues.at(11) = Jets->at(j).cHadEFrac;
-		inputValues.at(12) = Jets->at(j).nHadEFrac;
-		inputValues.at(13) = Jets->at(j).eleEFrac;
-		inputValues.at(14) = Jets->at(j).photonEFrac;
-		inputValues.at(15) = Jets->at(j).ptAllTracks;
-		inputValues.at(16) = Jets->at(j).ptAllPVTracks;
-		inputValues.at(17) = Jets->at(j).alphaMax;
-		inputValues.at(18) = Jets->at(j).betaMax;
-		inputValues.at(19) = Jets->at(j).gammaMax;
-		inputValues.at(20) = Jets->at(j).gammaMaxEM;
-		inputValues.at(21) = Jets->at(j).gammaMaxHadronic;
-		inputValues.at(22) = Jets->at(j).gammaMaxET;
-		inputValues.at(23) = Jets->at(j).minDeltaRAllTracks;
-		inputValues.at(24) = Jets->at(j).minDeltaRPVTracks;
+		//v3 does not have those:
+		//inputValues.at(8) = Jets->at(j).sig1PF;
+		//inputValues.at(9) = Jets->at(j).sig2PF;
+		//inputValues.at(10) = Jets->at(j).ptDPF;
+		inputValues.at(8) = Jets->at(j).cHadEFrac;
+		inputValues.at(9) = Jets->at(j).nHadEFrac;
+		inputValues.at(10) = Jets->at(j).eleEFrac;
+		inputValues.at(11) = Jets->at(j).photonEFrac;
+		inputValues.at(12) = Jets->at(j).ptAllTracks;
+		inputValues.at(13) = Jets->at(j).ptAllPVTracks;
+		inputValues.at(14) = Jets->at(j).alphaMax;
+		inputValues.at(15) = Jets->at(j).betaMax;
+		inputValues.at(16) = Jets->at(j).gammaMax;
+		inputValues.at(17) = Jets->at(j).gammaMaxEM;
+		inputValues.at(18) = Jets->at(j).gammaMaxHadronic;
+		inputValues.at(19) = Jets->at(j).gammaMaxET;
+		inputValues.at(20) = Jets->at(j).minDeltaRAllTracks;
+		inputValues.at(21) = Jets->at(j).minDeltaRPVTracks;
 
 		float* d = inputTensorAK4.flat<float>().data();
 		for (float v : inputValues) {
@@ -620,7 +856,15 @@ int main(int argc, char **argv) {
 		if(outputValueAK4>0.97) nTagJets_0p97++;
 		if(outputValueAK4>0.98) nTagJets_0p98++;
 		if(outputValueAK4>0.99) nTagJets_0p99++;
+		if(outputValueAK4>0.994) nTagJets_0p994++;
+		if(outputValueAK4>0.995) nTagJets_0p995++;
+		if(outputValueAK4>0.996) nTagJets_0p996++;
+		if(outputValueAK4>0.999) nTagJets_0p999++;
 
+		if(Jets->at(j).timeRecHitsEB>0.09 and Jets->at(j).gammaMaxET<0.16 and Jets->at(j).minDeltaRPVTracks>0.06 and Jets->at(j).cHadEFrac<0.06 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8) nTagJets_cutbased_JJ++;
+		if(outputValueAK4>0.99 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p99_JJ++;
+		if(outputValueAK4>0.994 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p994_JJ++;
+		if(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p996_JJ++;
 
 		//store jets passing acceptance and with inference
 		nCHSJetsAcceptanceCalo++;
@@ -634,14 +878,12 @@ int main(int argc, char **argv) {
 
         for (unsigned int j=0; j<FatJets->size(); j++)
           {
+	    if(fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi)) < MinFatJetMetDPhi) MinFatJetMetDPhi = fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi));
+
             if( FatJets->at(j).pt>170 && fabs(FatJets->at(j).eta)<1.48 and FatJets->at(j).timeRecHitsEB>-100.)
               {
-		//JiaJing classifies boosted analysis
-		//only based on having a fat jet
-		//with a certain pT
-		isAK8_JJ_170 = true;
-		if(FatJets->at(j).pt>200) isAK8_JJ_200 = true;
-		if(FatJets->at(j).pt>250) isAK8_JJ_250 = true;
+		if(fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi)) < MinFatJetMetDPhiBarrel) MinFatJetMetDPhiBarrel = fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi));
+
 
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		FatJets->at(j).eFracRecHitsEB = (FatJets->at(j).energy>0 and FatJets->at(j).energyRecHitsEB>0) ? FatJets->at(j).energyRecHitsEB/FatJets->at(j).energy : -1.;
@@ -699,6 +941,42 @@ int main(int argc, char **argv) {
 		if(outputValueAK8>0.97) nTagFatJets_0p97++;
 		if(outputValueAK8>0.98) nTagFatJets_0p98++;
 		if(outputValueAK8>0.99) nTagFatJets_0p99++;
+		if(outputValueAK8>0.995) nTagFatJets_0p995++;
+		if(outputValueAK8>0.997) nTagFatJets_0p997++;
+		if(outputValueAK8>0.999) nTagFatJets_0p999++;
+		if(outputValueAK8>0.9995) nTagFatJets_0p9995++;
+		if(outputValueAK8>0.9999) nTagFatJets_0p9999++;
+		if(outputValueAK8>0.99995) nTagFatJets_0p99995++;
+		if(outputValueAK8>0.99999) nTagFatJets_0p99999++;
+		if(outputValueAK8>0.999995) nTagFatJets_0p999995++;
+		if(outputValueAK8>0.999999) nTagFatJets_0p999999++;
+
+		//Classify boosted analysis
+		//based on having a fat jet
+		//with a certain pT
+		if(FatJets->at(j).pt>170 and outputValueAK8>0.9999) isTagAK8_0p9999_170 = true;
+		if(FatJets->at(j).pt>200 and outputValueAK8>0.9999) isTagAK8_0p9999_200 = true;
+		if(FatJets->at(j).pt>250 and outputValueAK8>0.9999) isTagAK8_0p9999_250 = true;
+		if(FatJets->at(j).pt>300 and outputValueAK8>0.9999) isTagAK8_0p9999_300 = true;
+		if(FatJets->at(j).pt>350 and outputValueAK8>0.9999) isTagAK8_0p9999_350 = true;
+
+		if(FatJets->at(j).pt>170 and outputValueAK8>0.99999) isTagAK8_0p99999_170 = true;
+		if(FatJets->at(j).pt>200 and outputValueAK8>0.99999) isTagAK8_0p99999_200 = true;
+		if(FatJets->at(j).pt>250 and outputValueAK8>0.99999) isTagAK8_0p99999_250 = true;
+		if(FatJets->at(j).pt>300 and outputValueAK8>0.99999) isTagAK8_0p99999_300 = true;
+		if(FatJets->at(j).pt>350 and outputValueAK8>0.99999) isTagAK8_0p99999_350 = true;
+
+		if(FatJets->at(j).pt>170 and outputValueAK8>0.999995) isTagAK8_0p999995_170 = true;
+		if(FatJets->at(j).pt>200 and outputValueAK8>0.999995) isTagAK8_0p999995_200 = true;
+		if(FatJets->at(j).pt>250 and outputValueAK8>0.999995) isTagAK8_0p999995_250 = true;
+		if(FatJets->at(j).pt>300 and outputValueAK8>0.999995) isTagAK8_0p999995_300 = true;
+		if(FatJets->at(j).pt>350 and outputValueAK8>0.999995) isTagAK8_0p999995_350 = true;
+
+		if(FatJets->at(j).pt>170 and outputValueAK8>0.999999) isTagAK8_0p999999_170 = true;
+		if(FatJets->at(j).pt>200 and outputValueAK8>0.999999) isTagAK8_0p999999_200 = true;
+		if(FatJets->at(j).pt>250 and outputValueAK8>0.999999) isTagAK8_0p999999_250 = true;
+		if(FatJets->at(j).pt>300 and outputValueAK8>0.999999) isTagAK8_0p999999_300 = true;
+		if(FatJets->at(j).pt>350 and outputValueAK8>0.999999) isTagAK8_0p999999_350 = true;
 
                 nCHSFatJetsAcceptanceCalo++;
                 skimmedFatJets.push_back(FatJets->at(j));
@@ -706,10 +984,31 @@ int main(int argc, char **argv) {
               }
           }
 
+	//Define categories
+        if(nTagJets_0p99>1) isTagAK4_0p99 = true;
+        if(nTagJets_0p994>1) isTagAK4_0p994 = true;
+        if(nTagJets_0p996>1) isTagAK4_0p996 = true;
+        if(nTagJets_0p99_JJ>1) isTagAK4_0p99_JJ = true;
+        if(nTagJets_0p994_JJ>1) isTagAK4_0p994_JJ = true;
+        if(nTagJets_0p996_JJ>1) isTagAK4_0p996_JJ = true;
+
+
 	//No jets in acceptance, go to next event
 	if(nCHSJetsAcceptanceCalo==0 and nCHSFatJetsAcceptanceCalo==0) continue;
+	n_pass->Fill(0.);
+	if(EventNumber % 2 == 0) n_even->Fill(0.);
+	if(EventNumber % 2 != 0) n_odd->Fill(0.);
+
 
         //Sort PF candidates by their pt 
+
+	//float max_dr_AK4 = 0;
+	//unsigned int chosen_AK4 = 1000;
+	//float chosen_x_AK4 = -9999;
+	//float chosen_y_AK4 = -9999;
+	//float max_dr_AK8 = 0;
+	//unsigned int chosen_AK8 = 1000;
+
         if(doPFCand and nCHSJetsAcceptanceCalo>0)
           {
 	    std::sort(PFCandidatesAK4->begin(), PFCandidatesAK4->end(), pt_sorter);
@@ -721,7 +1020,21 @@ int main(int argc, char **argv) {
 		    if(PFCandidatesAK4->at(p).jetIndex== int(validJetIndex.at(j)) )
 		      {
 			//pf_index++;
-			if(j==0) Jet_0_PFCandidatesAK4.push_back(PFCandidatesAK4->at(p));
+			//max_dr_AK4 = 0;
+			//chosen_AK4 = 1000;
+			//chosen_x_AK4 = -9999;
+			//chosen_y_AK4 = -9999;
+			if(j==0) 
+			  {
+			    //if( fabs(reco::deltaR(Jets->at(j).eta, Jets->at(j).phi, PFCandidatesAK4->at(p).eta, PFCandidatesAK4->at(p).phi)) > max_dr_AK4) 
+			    //{
+			    //max_dr_AK4 = fabs(reco::deltaR(Jets->at(j).eta, Jets->at(j).phi, PFCandidatesAK4->at(p).eta, PFCandidatesAK4->at(p).phi));
+			    //chosen_AK4 = p;
+			    //chosen_x_AK4 = cos(PFCandidatesAK4->at(p).phi);
+			    //chosen_y_AK4 = sin(PFCandidatesAK4->at(p).phi);
+			    //}
+			    Jet_0_PFCandidatesAK4.push_back(PFCandidatesAK4->at(p));
+			  }
 			else if(j==1) Jet_1_PFCandidatesAK4.push_back(PFCandidatesAK4->at(p));
 			else if(j==2) Jet_2_PFCandidatesAK4.push_back(PFCandidatesAK4->at(p));
 			else if(j==3) Jet_3_PFCandidatesAK4.push_back(PFCandidatesAK4->at(p));
@@ -749,7 +1062,18 @@ int main(int argc, char **argv) {
 		    if(PFCandidatesAK8->at(p).fatJetIndex== int(validFatJetIndex.at(j)) )
 		      {
 			//pf_index++;
-			if(j==0) FatJet_0_PFCandidatesAK8.push_back(PFCandidatesAK8->at(p));
+
+			//max_dr_AK8 = 0;
+			//chosen_AK8 = 1000;
+			if(j==0) 
+			  {
+			    //if( fabs(reco::deltaR(FatJets->at(j).eta, FatJets->at(j).phi, PFCandidatesAK8->at(p).eta, PFCandidatesAK8->at(p).phi)) > max_dr_AK8)
+			    //{
+			    //max_dr_AK8 = fabs(reco::deltaR(FatJets->at(j).eta, FatJets->at(j).phi, PFCandidatesAK8->at(p).eta, PFCandidatesAK8->at(p).phi));
+			    //chosen_AK8 = p;
+			    //}
+			    FatJet_0_PFCandidatesAK8.push_back(PFCandidatesAK8->at(p));
+			  }
 			else if(j==1) FatJet_1_PFCandidatesAK8.push_back(PFCandidatesAK8->at(p));
 			else if(j==2) FatJet_2_PFCandidatesAK8.push_back(PFCandidatesAK8->at(p));
 			else if(j==3) FatJet_3_PFCandidatesAK8.push_back(PFCandidatesAK8->at(p));
@@ -787,9 +1111,46 @@ int main(int argc, char **argv) {
 	      }//loop on EcalRecHitsAK8
           }//if doPFCandidates
 
-        outputTree->Fill();
+
+	//jet size
+	//if(skimmedJets.size()>0 and chosen_AK4<1000)
+	//{
+	//std::cout << "Farthest AK4 const: " << chosen_AK4 << "\t" << max_dr_AK4 << std::endl;
+	//std::cout << "x at ECAL surface: " << chosen_x_AK4*129.0 << " cm" << std::endl;
+	//std::cout << "y at ECAL surface: " << chosen_y_AK4*129.0 << " cm" << std::endl;
+	//std::cout << "jet x at ECAL surface: " << cos(skimmedJets[0].phi)*129.0 << " cm" << std::endl;
+	//std::cout << "jet y at ECAL surface: " << sin(skimmedJets[0].phi)*129.0 << " cm" << std::endl;
+
+	//std::cout << " ---- Distance ECAL: " << sqrt( pow( cos(skimmedJets[0].phi)*129.0 - chosen_x_AK4*129.0  ,2) + pow( sin(skimmedJets[0].phi)*129.0 - chosen_y_AK4*129.0  ,2)  ) << " cm" << std::endl;
+	//AK4_jet_width_ECAL = sqrt( pow( cos(skimmedJets[0].phi)*129.0 - chosen_x_AK4*129.0  ,2) + pow( sin(skimmedJets[0].phi)*129.0 - chosen_y_AK4*129.0  ,2)  );
+	//AK4_jet_width_HCAL = sqrt( pow( cos(skimmedJets[0].phi)*179.0 - chosen_x_AK4*179.0  ,2) + pow( sin(skimmedJets[0].phi)*179.0 - chosen_y_AK4*179.0  ,2)  );
+	//std::cout << " ---- Distance HCAL: " << AK4_jet_width_HCAL << " cm" << std::endl;
+	//std::cout << "at ECAL surface? " << max_dr_AK4*129.0 << " cm" << std::endl;
+	////std::cout << "y at HCAL surface: " << sin(Jet_0_PFCandidatesAK4.at(chosen_AK4).phi)*179.0 << " cm" << std::endl;
+	//}
+	//AK8_jet_width_ECAL;
+	//if(skimmedFatJets.size()>0 and chosen_AK8<1000)
+	//{
+	//std::cout << "Farthest AK8 const: " << chosen_AK8 << "\t" << max_dr_AK8 << std::endl;
+	//}
+
+	//Observed worse agreement, skip this --> redo
+	if(skipTrain==true and EventNumber % 2 == 0) continue;
+	outputTree->Fill();
+	/*
+	if(skipTrain==true)
+	  {
+	    if(EventNumber % 2 != 0) outputTree->Fill();
+	    else continue;
+	  }
+	if(skipTrain==false)
+	  {
+	    outputTree->Fill();
+	  }
+	*/
 
 	//Clear all the vectors
+	/*
         skimmedJets.clear();
         skimmedFatJets.clear();
         Jet_0_PFCandidatesAK4.clear();
@@ -836,7 +1197,7 @@ int main(int argc, char **argv) {
         FatJet_7_EcalRecHitsAK8.clear();
         FatJet_8_EcalRecHitsAK8.clear();
         FatJet_9_EcalRecHitsAK8.clear();
-
+	*/
 
     }
 
@@ -844,6 +1205,10 @@ int main(int argc, char **argv) {
     // finalize files
     outputTree->SetWeight(tree_weight);
     counter->Write();
+    n_pass->Write();
+    n_odd->Write();
+    n_even->Write();
+    b_skipTrain->Write();
     outputFile->Write();
     outputFile->Close();
     inputFile->Close();
