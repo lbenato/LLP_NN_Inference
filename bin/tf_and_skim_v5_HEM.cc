@@ -139,6 +139,8 @@ int main(int argc, char **argv) {
     if(strcmp(argv[7], "doJetHT")==0) doJetHT=true;
     bool doJetMET(false);
     if(strcmp(argv[7], "doJetMET")==0) doJetMET=true;
+    bool doDiJetMET(false);
+    if(strcmp(argv[7], "doDiJetMET")==0) doDiJetMET=true;
 
     bool isVerbose(false);
 
@@ -345,9 +347,10 @@ int main(int argc, char **argv) {
     bool   HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v(false);
     bool   HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v(false);
     float  HT;
-    float  MinJetMetDPhi;
+    float  MinJetMetDPhi_ntuple;
     Long64_t nCHSJets;
     Long64_t nCHSFatJets;
+    Long64_t nPV;
     int    nElectrons;
     int    nMuons;
     int    nPhotons;
@@ -470,6 +473,7 @@ int main(int argc, char **argv) {
     TBranch        *b_MinJetMetDPhi;
     TBranch        *b_nCHSJets;
     TBranch        *b_nCHSFatJets;
+    TBranch        *b_nPV;
     TBranch        *b_nElectrons;
     TBranch        *b_nMuons;
     TBranch        *b_nPhotons;
@@ -576,7 +580,8 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, &b_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v);
     inputTree->SetBranchAddress("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, &b_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v);
     inputTree->SetBranchAddress("HT",                &HT,                &b_HT);
-    inputTree->SetBranchAddress("MinJetMetDPhi",     &MinJetMetDPhi,     &b_MinJetMetDPhi);
+    inputTree->SetBranchAddress("MinJetMetDPhi",     &MinJetMetDPhi_ntuple,     &b_MinJetMetDPhi);
+    inputTree->SetBranchAddress("nPV",          &nPV,          &b_nPV);
     inputTree->SetBranchAddress("nCHSJets",          &nCHSJets,          &b_nCHSJets);
     inputTree->SetBranchAddress("nCHSFatJets",       &nCHSFatJets,       &b_nCHSFatJets);
     inputTree->SetBranchAddress("nElectrons",        &nElectrons,        &b_nElectrons);
@@ -681,6 +686,7 @@ int main(int argc, char **argv) {
     bool isPho(false);
     bool isJetHT(false);
     bool isJetMET(false);
+    bool isDiJetMET(false);
 
 
     //TH1F *PUWeightHist = (TH1F*)pileup_mc->Clone("PUWeight");
@@ -757,11 +763,15 @@ int main(int argc, char **argv) {
     float PUReWeightUp(1.);
     float PUReWeightDown(1.);
     float MinLeadingJetMetDPhi(-1.);
+    float MinSubLeadingJetMetDPhi(-1.);
+    float MinSubSubLeadingJetMetDPhi(-1.);
     float MinFatJetMetDPhi(10.);
     float MinFatJetMetDPhiBarrel(10.);
     float MinFatJetMetDPhiBarrelMatched(10.);
+    float MinJetMetDPhi(10.);
     float MinJetMetDPhiBarrel(10.);
 
+    float dPhi(-9.);
     float MT(-1.);
     float Z_mass(-1.);
     float Z_pt(-1.);
@@ -795,6 +805,12 @@ int main(int argc, char **argv) {
     int nCHSJetsAcceptanceCalo;
     int nCHSFatJetsAcceptanceCalo;
     int nCHSJets_in_HEM(0);
+
+    int nCHSJets_in_HEM_pt_20_all_eta(0);
+    int nCHSJets_in_HEM_pt_30_all_eta(0);
+
+    int nCHSJets_in_HEM_pt_20_eta_2p4(0);
+    int nCHSJets_in_HEM_pt_30_eta_2p4(0);
     int nCHSJets_in_HEM_eta_2p5(0);
     int nPhotons_in_HEM(0);
     int nElectrons_in_HEM(0);
@@ -899,12 +915,14 @@ int main(int argc, char **argv) {
     outputTree->Branch("isPho",             &isPho,             "isPho/O");
     outputTree->Branch("isJetHT",           &isJetHT,           "isJetHT/O");
     outputTree->Branch("isJetMET",           &isJetMET,           "isJetMET/O");
+    outputTree->Branch("isDiJetMET",           &isDiJetMET,           "isDiJetMET/O");
     outputTree->Branch("isVBF",             &isVBF,             "isVBF/O");
     outputTree->Branch("MeanNumInteractions",             &MeanNumInteractions,             "MeanNumInteractions/I");
     outputTree->Branch("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v/O");
     outputTree->Branch("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
+    outputTree->Branch("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, "Flag2_globalSuperTightHalo2016Filter/O");
 
     if(isData or isSignal)
       {
@@ -934,6 +952,7 @@ int main(int argc, char **argv) {
 
     outputTree->Branch("HT",                &HT,                "HT/F");
     outputTree->Branch("MT",                &MT,                "MT/F");
+    outputTree->Branch("dPhi",              &dPhi,              "dPhi/F");
     outputTree->Branch("Z_mass",            &Z_mass,            "Z_mass/F");
     outputTree->Branch("Z_pt",              &Z_pt,              "Z_pt/F");
     outputTree->Branch("Z_phi",             &Z_phi,             "Z_phi/F");
@@ -953,18 +972,26 @@ int main(int argc, char **argv) {
     outputTree->Branch("LepPhi", &LepPhi);
     outputTree->Branch("LepMass", &LepMass);
 
-    outputTree->Branch("MinJetMetDPhi",     &MinJetMetDPhi,     "MinJetMetDPhi/F");
+    outputTree->Branch("MinJetMetDPhi_ntuple",     &MinJetMetDPhi_ntuple,     "MinJetMetDPhi_ntuple/F");
+    outputTree->Branch("MinJetMetDPhi",  &MinJetMetDPhi,  "MinJetMetDPhi/F");
     outputTree->Branch("MinJetMetDPhiBarrel",  &MinJetMetDPhiBarrel,  "MinJetMetDPhiBarrel/F");
     outputTree->Branch("MinFatJetMetDPhi",  &MinFatJetMetDPhi,  "MinFatJetMetDPhi/F");
     outputTree->Branch("MinFatJetMetDPhiBarrel",  &MinFatJetMetDPhiBarrel,  "MinFatJetMetDPhiBarrel/F");
     outputTree->Branch("MinFatJetMetDPhiBarrelMatched",  &MinFatJetMetDPhiBarrelMatched,  "MinFatJetMetDPhiBarrelMatched/F");
     outputTree->Branch("MinLeadingJetMetDPhi", &MinLeadingJetMetDPhi, "MinLeadingJetMetDPhi/F");
+    outputTree->Branch("MinSubLeadingJetMetDPhi", &MinSubLeadingJetMetDPhi, "MinSubLeadingJetMetDPhi/F");
+    outputTree->Branch("MinSubSubLeadingJetMetDPhi", &MinSubSubLeadingJetMetDPhi, "MinSubSubLeadingJetMetDPhi/F");
+    outputTree->Branch("nPV",          &nPV,          "nPV/I");
     outputTree->Branch("nCHSJets",          &nCHSJets,          "nCHSJets/I");
     outputTree->Branch("nCHSFatJets",       &nCHSFatJets,       "nCHSFatJets/I");
     outputTree->Branch("nCHSJetsAcceptanceCalo",          &nCHSJetsAcceptanceCalo,          "nCHSJetsAcceptanceCalo/I");
     outputTree->Branch("nCHSFatJetsAcceptanceCalo",       &nCHSFatJetsAcceptanceCalo,       "nCHSFatJetsAcceptanceCalo/I");
     outputTree->Branch("nCHSJets_in_HEM" , &nCHSJets_in_HEM, "nCHSJets_in_HEM/I");
+    outputTree->Branch("nCHSJets_in_HEM_pt_20_all_eta" , &nCHSJets_in_HEM_pt_20_all_eta, "nCHSJets_in_HEM_pt_20_all_eta/I");
+    outputTree->Branch("nCHSJets_in_HEM_pt_30_all_eta" , &nCHSJets_in_HEM_pt_30_all_eta, "nCHSJets_in_HEM_pt_30_all_eta/I");
     outputTree->Branch("nCHSJets_in_HEM_eta_2p5" , &nCHSJets_in_HEM_eta_2p5, "nCHSJets_in_HEM_eta_2p5/I");
+    outputTree->Branch("nCHSJets_in_HEM_pt_20_eta_2p4" , &nCHSJets_in_HEM_pt_20_eta_2p4, "nCHSJets_in_HEM_pt_20_eta_2p4/I");
+    outputTree->Branch("nCHSJets_in_HEM_pt_30_eta_2p4" , &nCHSJets_in_HEM_pt_30_eta_2p4, "nCHSJets_in_HEM_pt_30_eta_2p4/I");
     outputTree->Branch("nPhotons_in_HEM" , &nPhotons_in_HEM, "nPhotons_in_HEM/I");
     outputTree->Branch("nElectrons_in_HEM" , &nElectrons_in_HEM, "nElectrons_in_HEM/I");
     outputTree->Branch("RunNumber_in_HEM" , &RunNumber_in_HEM, "RunNumber_in_HEM/O");
@@ -1151,13 +1178,20 @@ int main(int argc, char **argv) {
         nCHSJetsAcceptanceCalo = 0;
         nCHSFatJetsAcceptanceCalo = 0;
 	nCHSJets_in_HEM = 0;
+	nCHSJets_in_HEM_pt_20_all_eta = 0;
+	nCHSJets_in_HEM_pt_30_all_eta = 0;
+	nCHSJets_in_HEM_pt_20_eta_2p4 = 0;
+	nCHSJets_in_HEM_pt_30_eta_2p4 = 0;
 	nCHSJets_in_HEM_eta_2p5 = 0;
 	nPhotons_in_HEM = 0;
 	nElectrons_in_HEM = 0;
 	RunNumber_in_HEM = false;
 
 	MinLeadingJetMetDPhi = -1.;
+	MinSubLeadingJetMetDPhi = -1.;
+	MinSubSubLeadingJetMetDPhi = -1.;
 	MinFatJetMetDPhi = 10.;
+	MinJetMetDPhi = 10.;
 	MinJetMetDPhiBarrel = 10.;
 	MinFatJetMetDPhiBarrel = 10.;
 	MinFatJetMetDPhiBarrelMatched = 10.;
@@ -1342,6 +1376,8 @@ int main(int argc, char **argv) {
 	//Trigger selections
 
 	//MET filters always fulfilled
+	//Invert Beam Halo
+        //if(Flag2_globalSuperTightHalo2016Filter) continue;
         if(!Flag2_globalSuperTightHalo2016Filter) continue;
         if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
 	if(!Flag2_HBHENoiseFilter) continue;
@@ -1363,6 +1399,7 @@ int main(int argc, char **argv) {
 	if(doPho and not(HLT_Photon22_v or HLT_Photon30_v or HLT_Photon33_v or HLT_Photon36_v or HLT_Photon50_v or HLT_Photon75_v or HLT_Photon90_v or HLT_Photon120_v or HLT_Photon125_v or HLT_Photon150_v or HLT_Photon200_v or HLT_Photon175_v or HLT_Photon250_NoHE_v or HLT_Photon300_NoHE_v or HLT_Photon500_v or HLT_Photon600_v) ) continue;
 	if(doJetHT and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v) ) continue;
 	if(doJetMET and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v or HLT_DiPFJetAve40_v or HLT_DiPFJetAve60_v or HLT_DiPFJetAve80_v or HLT_DiPFJetAve200_v or HLT_DiPFJetAve500_v) ) continue;
+	if(doDiJetMET and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v) ) continue;
 
 	//Selection on MET
         if(doSR and MEt->pt<200) continue;
@@ -1378,6 +1415,7 @@ int main(int argc, char **argv) {
 	if(doPho and MEt->pt>=30) continue;
 	if(doJetHT and MEt->pt>=30) continue;
 	if(doJetMET and MEt->pt<100) continue;//first attempt, try met 100
+	if(doDiJetMET and MEt->pt<60) continue;//first attempt, try met 60
 
 	//Loop on veto objects
 	//JJ
@@ -1565,10 +1603,10 @@ int main(int argc, char **argv) {
 	  {
 	    lepp4 += tmp.vec;
 	  }
-	float dPhi = reco::deltaPhi(MEt->phi, lepp4.Phi());
+	dPhi = reco::deltaPhi(MEt->phi, lepp4.Phi());
 	MT = sqrt(2*(MEt->pt)*lepp4.Pt()*(1-cos(dPhi)));
-	if(doWtoEN and MT>=100) continue;
-	if(doWtoMN and MT>=100) continue;
+	//if(doWtoEN and MT>=100) continue;
+	//if(doWtoMN and MT>=100) continue;
 	nLeptons = LeptonsStruct.size();
 	if(doMR and LeptonsStruct.size()!=1) continue;
 	if(doMR and MT>=100) continue;
@@ -1639,11 +1677,33 @@ int main(int argc, char **argv) {
 	    if(Jets->at(j).eta>-3. and Jets->at(j).eta<-1.3 and Jets->at(j).phi>-1.57 and Jets->at(j).phi<-0.87)
 	      {
 		nCHSJets_in_HEM++;
+		
+		if(Jets->at(j).pt>20) nCHSJets_in_HEM_pt_20_all_eta++;
+		if(Jets->at(j).pt>30) nCHSJets_in_HEM_pt_30_all_eta++;
+
+		if(Jets->at(j).pt>20 and fabs(Jets->at(j).eta)<2.4)
+		  {
+		    nCHSJets_in_HEM_pt_20_eta_2p4++;
+		    if(Jets->at(j).pt>30)
+		      {
+			nCHSJets_in_HEM_pt_30_eta_2p4++;
+		      }
+		  }
+
 	      }
 	    if(Jets->at(j).eta>-3. and Jets->at(j).eta<-1.3 and Jets->at(j).phi>-1.57 and Jets->at(j).phi<-0.87 and fabs(Jets->at(j).eta)<2.5)
 	      {
 		nCHSJets_in_HEM_eta_2p5++;
 	      }
+
+
+	    //Correct acceptance for MinJetMetDPhi:
+	    //Jet pt>30, Jet eta<2.4
+	    if(fabs(Jets->at(j).eta)<2.4 and Jets->at(j).pt>30)
+	      {
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhi) MinJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+	      }
+	    
 
 	    /*
 	      Additional pre-selections
@@ -1684,6 +1744,8 @@ int main(int argc, char **argv) {
 		}
 		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 		
+		//Here: passed acceptance
+		nCHSJetsAcceptanceCalo++;
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
 		if(MinLeadingJetMetDPhi<0)
@@ -1691,6 +1753,19 @@ int main(int argc, char **argv) {
 		    MinLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 		    if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinLeadingJetMetDPhi " << MinLeadingJetMetDPhi << std::endl;
 		    if(isVerbose) std::cout << "MinLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
+		  }
+
+		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
+		if(nCHSJetsAcceptanceCalo==2 && MinSubLeadingJetMetDPhi<0)
+		  {
+		    MinSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		    if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinSubLeadingJetMetDPhi " << MinSubLeadingJetMetDPhi << std::endl;
+		    if(isVerbose) std::cout << "MinSubLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
+		  }
+
+		if(nCHSJetsAcceptanceCalo==3 && MinSubSubLeadingJetMetDPhi<0)
+		  {
+		    MinSubSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 		  }
 
 		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
@@ -1784,7 +1859,6 @@ int main(int argc, char **argv) {
 		//}
 
 		//store jets passing acceptance and with inference
-		nCHSJetsAcceptanceCalo++;
 		skimmedJets.push_back(Jets->at(j));
 		validJetIndex.push_back(j);
 
@@ -2072,6 +2146,9 @@ int main(int argc, char **argv) {
 	//MinLeadingJetMetDPhi minimal requirement
 	if(doJetMET and MinLeadingJetMetDPhi<0) continue;
 
+	//Exactly 2 jets
+	if(doDiJetMET and nCHSJetsAcceptanceCalo!=2) continue;
+
 	//Fill lepton vector
 	for ( auto &tmp : LeptonsStruct )
 	  {
@@ -2098,6 +2175,7 @@ int main(int argc, char **argv) {
 	if(doPho) isPho = true;
 	if(doJetHT) isJetHT = true;
 	if(doJetMET) isJetMET = true;
+	if(doDiJetMET) isDiJetMET = true;
 
 
 	//Observed worse agreement, skip this --> redo
