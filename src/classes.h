@@ -1,5 +1,6 @@
 #include <vector>
-#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects.h"
+#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v5.h"
+//#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects.h"
 //#include "NNInferenceCMSSW/LLP_NN_Inference/bin/RecoObjects.h"
 
 namespace { 

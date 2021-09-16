@@ -16,7 +16,109 @@
     <use name="PhysicsTools/TensorFlow" />
 </bin>
 
+<bin name="tf_and_skim_v5" file="tf_and_skim_v5.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_tagger_v3" file="tf_and_skim_v5_tagger_v3.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_AK4_v3__AK8_v2" file="tf_and_skim_AK4_v3__AK8_v2.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v4_debug_old" file="tf_and_skim_v4_debug_old.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_debug_old" file="tf_and_skim_v5_debug_old.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_debug_new" file="tf_and_skim_v5_debug_new.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_HEM" file="tf_and_skim_v5_HEM.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="sign_unc_tf_and_skim_v5_HEM" file="sign_unc_tf_and_skim_v5_HEM.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="sign_no_cuts_v5_HEM" file="sign_no_cuts_v5_HEM.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_gen" file="tf_and_skim_v5_gen.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_AK4_v3__AK8_v2__v5" file="tf_and_skim_AK4_v3__AK8_v2__v5.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_AK4_v3__AK8_v2__v5_miniAOD" file="tf_and_skim_AK4_v3__AK8_v2__v5_miniAOD.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tagger_eff_vs_dR" file="tagger_eff_vs_dR.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_miniAOD" file="tf_and_skim_miniAOD.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="gen_studies" file="gen_studies.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="trigger_studies" file="trigger_studies.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
 <bin name="tf_on_skimmed" file="tf_on_skimmed.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="simple_skim" file="simple_skim.cc">
     <use name="root" />
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />

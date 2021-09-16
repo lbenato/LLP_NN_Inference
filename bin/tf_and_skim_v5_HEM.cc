@@ -365,6 +365,7 @@ int main(int argc, char **argv) {
     std::vector<FatJetType>      *FatJets = 0;
     std::vector<PFCandidateType> *PFCandidatesAK4 = 0;
     std::vector<PFCandidateType> *PFCandidatesAK8 = 0;
+    std::vector<ecalRecHitType>  *EcalRecHitsAK4 = 0;
     std::vector<ecalRecHitType>  *EcalRecHitsAK8 = 0;
     //std::vector<hcalRecHitType>  *HcalRecHitsAK8 = 0;
     MEtType                      *MEt = 0;
@@ -385,6 +386,7 @@ int main(int argc, char **argv) {
     TBranch        *b_GenHiggs = 0;
     TBranch        *b_GenLLPs = 0;
     TBranch        *b_GenBquarks = 0;
+    TBranch        *b_EcalRecHitsAK4 = 0;
     TBranch        *b_EcalRecHitsAK8 = 0;
     //TBranch        *b_HcalRecHitsAK8 = 0;
     TBranch        *b_EventNumber;
@@ -489,6 +491,7 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("FatJets",           &FatJets,           &b_FatJets);
     inputTree->SetBranchAddress("PFCandidatesAK4",   &PFCandidatesAK4,   &b_PFCandidatesAK4);
     inputTree->SetBranchAddress("PFCandidatesAK8",   &PFCandidatesAK8,   &b_PFCandidatesAK8);
+    inputTree->SetBranchAddress("EcalRecHitsAK4",    &EcalRecHitsAK4,    &b_EcalRecHitsAK4);
     inputTree->SetBranchAddress("EcalRecHitsAK8",    &EcalRecHitsAK8,    &b_EcalRecHitsAK8);
     //inputTree->SetBranchAddress("HcalRecHitsAK8",    &HcalRecHitsAK8,    &b_HcalRecHitsAK8);
     inputTree->SetBranchAddress("MEt",               &MEt,               &b_MEt); 
@@ -744,6 +747,16 @@ int main(int argc, char **argv) {
     std::vector<PFCandidateType> FatJet_7_PFCandidatesAK8;
     std::vector<PFCandidateType> FatJet_8_PFCandidatesAK8;
     std::vector<PFCandidateType> FatJet_9_PFCandidatesAK8;
+    //std::vector<ecalRecHitType>  Jet_0_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_1_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_2_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_3_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_4_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_5_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_6_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_7_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_8_EcalRecHitsAK4;
+    //std::vector<ecalRecHitType>  Jet_9_EcalRecHitsAK4;
     std::vector<ecalRecHitType>  FatJet_0_EcalRecHitsAK8;
     std::vector<ecalRecHitType>  FatJet_1_EcalRecHitsAK8;
     std::vector<ecalRecHitType>  FatJet_2_EcalRecHitsAK8;
@@ -758,6 +771,7 @@ int main(int argc, char **argv) {
     std::vector<TauType>    skimmedTaus;
     std::vector<JetType>    skimmedJets;
     std::vector<FatJetType> skimmedFatJets;
+    std::vector<ecalRecHitType> skimmedEcalRecHitsAK4;
 
     float PUReWeight(1.);
     float PUReWeightUp(1.);
@@ -769,7 +783,9 @@ int main(int argc, char **argv) {
     float MinFatJetMetDPhiBarrel(10.);
     float MinFatJetMetDPhiBarrelMatched(10.);
     float MinJetMetDPhi(10.);
+    float MinJetMetDPhiStar(10.);
     float MinJetMetDPhiBarrel(10.);
+    float MinJetMetDPhiBarrelStar(10.);
 
     float dPhi(-9.);
     float MT(-1.);
@@ -975,6 +991,8 @@ int main(int argc, char **argv) {
     outputTree->Branch("MinJetMetDPhi_ntuple",     &MinJetMetDPhi_ntuple,     "MinJetMetDPhi_ntuple/F");
     outputTree->Branch("MinJetMetDPhi",  &MinJetMetDPhi,  "MinJetMetDPhi/F");
     outputTree->Branch("MinJetMetDPhiBarrel",  &MinJetMetDPhiBarrel,  "MinJetMetDPhiBarrel/F");
+    outputTree->Branch("MinJetMetDPhiStar",  &MinJetMetDPhiStar,  "MinJetMetDPhiStar/F");
+    outputTree->Branch("MinJetMetDPhiBarrelStar",  &MinJetMetDPhiBarrelStar,  "MinJetMetDPhiBarrelStar/F");
     outputTree->Branch("MinFatJetMetDPhi",  &MinFatJetMetDPhi,  "MinFatJetMetDPhi/F");
     outputTree->Branch("MinFatJetMetDPhiBarrel",  &MinFatJetMetDPhiBarrel,  "MinFatJetMetDPhiBarrel/F");
     outputTree->Branch("MinFatJetMetDPhiBarrelMatched",  &MinFatJetMetDPhiBarrelMatched,  "MinFatJetMetDPhiBarrelMatched/F");
@@ -1016,6 +1034,8 @@ int main(int argc, char **argv) {
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("Jets", &skimmedJets);
     outputTree->Branch("FatJets", &skimmedFatJets);
+    outputTree->Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
+    outputTree->Branch("skimmedEcalRecHitsAK4", &skimmedEcalRecHitsAK4);
     if(doPFCand) outputTree->Branch("Jet_0_PFCandidatesAK4", &Jet_0_PFCandidatesAK4);
     if(doPFCand) outputTree->Branch("Jet_1_PFCandidatesAK4", &Jet_1_PFCandidatesAK4);
     if(doPFCand) outputTree->Branch("Jet_2_PFCandidatesAK4", &Jet_2_PFCandidatesAK4);
@@ -1059,6 +1079,17 @@ int main(int argc, char **argv) {
     if(doPFCand) outputTree->Branch("FatJet_7_EcalRecHitsAK8", &FatJet_7_EcalRecHitsAK8);
     if(doPFCand) outputTree->Branch("FatJet_8_EcalRecHitsAK8", &FatJet_8_EcalRecHitsAK8);
     if(doPFCand) outputTree->Branch("FatJet_9_EcalRecHitsAK8", &FatJet_9_EcalRecHitsAK8);
+
+    //outputTree->Branch("Jet_0_EcalRecHitsAK4", &Jet_0_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_1_EcalRecHitsAK4", &Jet_1_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_2_EcalRecHitsAK4", &Jet_2_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_3_EcalRecHitsAK4", &Jet_3_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_4_EcalRecHitsAK4", &Jet_4_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_5_EcalRecHitsAK4", &Jet_5_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_6_EcalRecHitsAK4", &Jet_6_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_7_EcalRecHitsAK4", &Jet_7_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_8_EcalRecHitsAK4", &Jet_8_EcalRecHitsAK4);
+    //outputTree->Branch("Jet_9_EcalRecHitsAK4", &Jet_9_EcalRecHitsAK4);
 
     outputTree->Branch("MEt", &MEt);
     outputTree->Branch("GenHiggs", &GenHiggs);
@@ -1193,6 +1224,8 @@ int main(int argc, char **argv) {
 	MinFatJetMetDPhi = 10.;
 	MinJetMetDPhi = 10.;
 	MinJetMetDPhiBarrel = 10.;
+	MinJetMetDPhiStar = 10.;
+	MinJetMetDPhiBarrelStar = 10.;
 	MinFatJetMetDPhiBarrel = 10.;
 	MinFatJetMetDPhiBarrelMatched = 10.;
 	//Initialize veto objects counter
@@ -1285,6 +1318,8 @@ int main(int argc, char **argv) {
 	skimmedTaus.clear();
         skimmedJets.clear();
         skimmedFatJets.clear();
+	skimmedEcalRecHitsAK4.clear();
+
         Jet_0_PFCandidatesAK4.clear();
         Jet_1_PFCandidatesAK4.clear();
         Jet_2_PFCandidatesAK4.clear();
@@ -1329,6 +1364,17 @@ int main(int argc, char **argv) {
         FatJet_7_EcalRecHitsAK8.clear();
         FatJet_8_EcalRecHitsAK8.clear();
         FatJet_9_EcalRecHitsAK8.clear();
+
+        //Jet_0_EcalRecHitsAK4.clear();
+        //Jet_1_EcalRecHitsAK4.clear();
+        //Jet_2_EcalRecHitsAK4.clear();
+        //Jet_3_EcalRecHitsAK4.clear();
+        //Jet_4_EcalRecHitsAK4.clear();
+        //Jet_5_EcalRecHitsAK4.clear();
+        //Jet_6_EcalRecHitsAK4.clear();
+        //Jet_7_EcalRecHitsAK4.clear();
+        //Jet_8_EcalRecHitsAK4.clear();
+        //Jet_9_EcalRecHitsAK4.clear();
 
 	LepPdgId.clear();
 	LepCharge.clear();
@@ -1386,9 +1432,9 @@ int main(int argc, char **argv) {
         if(!Flag2_eeBadScFilter) continue;
         if(!Flag2_BadPFMuonFilter) continue;
 
-	if(doSR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) ) continue;
-	if(doMR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) ) continue;
-	if(doMRPho and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) ) continue;
+	if(doSR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
+	if(doMR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
+	if(doMRPho and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
 	if(doZtoMM and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
 	if(doZtoEE and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v or HLT_Ele32_eta2p1_WPLoose_Gsf_v) ) continue;
 	if(doWtoMN and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
@@ -1702,6 +1748,11 @@ int main(int argc, char **argv) {
 	    if(fabs(Jets->at(j).eta)<2.4 and Jets->at(j).pt>30)
 	      {
 		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhi) MinJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		TLorentzVector jet0;
+		jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
+		TLorentzVector met;
+		met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiStar) MinJetMetDPhiStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
 	      }
 	    
 
@@ -1769,6 +1820,13 @@ int main(int argc, char **argv) {
 		  }
 
 		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		TLorentzVector jet0;
+		jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
+		TLorentzVector met;
+		met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiBarrelStar) MinJetMetDPhiBarrelStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
+
+
 
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		//std::cout<< "Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
@@ -2011,6 +2069,25 @@ int main(int argc, char **argv) {
 	//float chosen_y_AK4 = -9999;
 	//float max_dr_AK8 = 0;
 	//unsigned int chosen_AK8 = 1000;
+
+
+	//Debug: look at ECAL rec hits that belong to jets in acceptance!
+	//Loop on EcalRecHitsAK4
+	std::sort(EcalRecHitsAK4->begin(), EcalRecHitsAK4->end(), energy_sorter);
+	for(unsigned int p=0; p<EcalRecHitsAK4->size(); p++)
+	  {
+	    for (unsigned int j=0; j<validJetIndex.size(); j++)
+	      {
+		if(int(EcalRecHitsAK4->at(p).jetIndex) == int(validJetIndex.at(j)) )//only this is complaining...
+		  {
+		    skimmedEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p));
+		  }//check pf cand and jet indices
+	      }//loop on jet indices
+	  }//loop on EcalRecHitsAK4
+
+
+
+
 
         if(doPFCand and nCHSJetsAcceptanceCalo>0)
           {

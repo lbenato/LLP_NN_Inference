@@ -5,7 +5,7 @@ import copy
 import math
 from array import array
 from ROOT import ROOT, gROOT, gStyle, gRandom, TSystemDirectory, gPad
-from ROOT import TFile, TChain, TTree, TCut, TH1, TH1F, TH2F, THStack, TGraph, TGraphAsymmErrors
+from ROOT import TFile, TChain, TTree, TCut, TH1, TH1F, TH1D, TH2F, THStack, TGraph, TGraphAsymmErrors
 from ROOT import TStyle, TCanvas, TPad
 from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis, TAxis
 
@@ -21,7 +21,7 @@ from NNInferenceCMSSW.LLP_NN_Inference.selections import *
 #    PROJECT     #
 ##################
 
-def project(samples,var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="ntuple/tree", formula="", alpha=1.):
+def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, treename="ntuple/tree", formula="", alpha=1.):
 #def project(var, cut, cut_s, weight, samplelist, pd, ntupledir, treename="trigger/tree"):
     # Create dict
     file = {}
@@ -47,11 +47,14 @@ def project(samples,var, cut, cut_s, weight, samplelist, pd, ntupledir, treename
                     #print "real weight: ", tree.GetWeight()
                     #chain[s].SetWeight(tree.GetWeight(),"global")
                     #print "forcing weight of chain: ", chain[s].GetWeight()
-            if variable[var]['nbins']>0: hist[s] = TH1F(s, ";"+variable[var]['title'], variable[var]['nbins'], variable[var]['min'], variable[var]['max']) # Init histogram
-            else: hist[s] = TH1F(s, ";"+variable[var]['title'], len(variable[var]['bins'])-1, array('f', variable[var]['bins']))
+            if variable[var]['nbins']>0: hist[s] = TH1D(s, ";"+variable[var]['title'], variable[var]['nbins'], variable[var]['min'], variable[var]['max']) # Init histogram
+            else: hist[s] = TH1D(s, ";"+variable[var]['title'], len(variable[var]['bins'])-1, array('f', variable[var]['bins']))
             hist[s].Sumw2()
             tmpcut = cut
             tmpcut_s = cut_s
+            tmpcut_d = cut_d
+            #if s=="TTbarGenMET":
+            #    weight = weight+"*1.65623"
             if not 'data' in s:
                 if s.endswith('_0b'): tmpcut += " && nBJets==0"
                 elif s.endswith('_1b'): tmpcut += " && nBJets==1"
@@ -61,6 +64,7 @@ def project(samples,var, cut, cut_s, weight, samplelist, pd, ntupledir, treename
                 elif s.endswith('_2l'): tmpcut += " && genNl>=2"
             cutstring = "("+weight+")" + ("*("+tmpcut+")" if len(tmpcut)>0 else "")
             cutstring_s = "("+weight+")" + ("*("+tmpcut_s+")" if len(tmpcut_s)>0 else "")
+            cutstring_d = "("+weight+")" + ("*("+tmpcut_d+")" if len(tmpcut_d)>0 else "")
             if "(" in formula:
                 var_updated = formula+"("+var+"))"
             else:
@@ -71,19 +75,37 @@ def project(samples,var, cut, cut_s, weight, samplelist, pd, ntupledir, treename
                 chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
             elif "ZH_M" in s:#important bugfix! Not applying jet matching to signal!
                 chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
-            else:
-                chain[s].Project(s, var, cutstring) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
+            elif "SUSY" in s:#important bugfix! Not applying jet matching to signal!
+                chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
+            elif "HEM" in s:#important bugfix! Not applying jet matching to signal!
+                chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
 
+            #elif ("MET" in s):#important bugfix! Not applying jet matching to signal!
+            #    chain[s].Project(s, var, cutstring_d) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
+            elif ("JetHTMC" in s):#important bugfix! Not applying jet matching to signal!
+                chain[s].Project(s, var, cutstring_d) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
+            #elif ("BH" in s):#important bugfix! Not applying jet matching to signal!
+            #    chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
+            else:
+                chain[s].Project(s, var, cutstring) if formula=="" else chain[s].Project(s, var_updated, cutstring)
+                if s=="HighMETBH":
+                    chain[s].Project(s, var, cutstring_d) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
+                if s=="HighMETCopy":
+                    chain[s].Project(s, var, cutstring_d) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
+                    
             #print s, " has total of ", chain[s].GetEntries(), " entries"
             #print s, " with cut: ", chain[s].GetEntries(tmpcut), " entries"
             #print s, " with weight and cut: ", chain[s].GetEntries(cutstring), " entries"
-            print s, " percentage passing :", 100*float(chain[s].GetEntries(cutstring))/float(chain[s].GetEntries()), " entries"
+            print s, " percentage passing :", 100*float(chain[s].GetEntries(cutstring))/float(chain[s].GetEntries()) if chain[s].GetEntries()>0 else 0, " entries"
 
             hist[s].SetOption("%s" % chain[s].GetTree().GetEntriesFast())
             hist[s].Scale(samples[s]['weight'] if hist[s].Integral() >= 0 else 0)
             #if s in sign:
                 #print "Is it empty?"
-                #print s, hist[s].Integral()
+                
+            #print "Integral: ", s, hist[s].Integral()
+            #print "normalize!"
+            #hist[s].Scale(1./hist[s].Integral())
 
         hist[s].SetFillColorAlpha(samples[s]['fillcolor'],alpha)
         hist[s].SetFillStyle(samples[s]['fillstyle'])
@@ -98,10 +120,10 @@ def project(samples,var, cut, cut_s, weight, samplelist, pd, ntupledir, treename
 #      DRAW      #
 ##################
 
-def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False):
+def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=False, data_tag='data_obs'):
     # If not present, create BkgSum
     if not 'BkgSum' in hist.keys():
-        hist['BkgSum'] = hist['data_obs'].Clone("BkgSum") if 'data_obs' in hist else hist[back[0]].Clone("BkgSum")
+        hist['BkgSum'] = hist[data_tag].Clone("BkgSum") if data_tag in hist else hist[back[0]].Clone("BkgSum")
         hist['BkgSum'].Reset("MICES")
         for i, s in enumerate(back): hist['BkgSum'].Add(hist[s])
     hist['BkgSum'].SetMarkerStyle(0)
@@ -113,6 +135,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
     for i, s in enumerate(sign):
         hist[s].SetLineWidth(3)
         hist[s].SetLineStyle(samples[s]['linestyle'])
+
         
     for i, s in enumerate(data+back+sign+['BkgSum']):
         addOverflow(hist[s], False) # Add overflow # False before
@@ -123,20 +146,20 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
     # Poisson error bars for data
     if poisson:
         alpha = 1 - 0.6827
-        hist['data_obs'].SetBinErrorOption(TH1.kPoisson)
-        data_graph = TGraphAsymmErrors(hist['data_obs'].GetNbinsX())
-        data_graph.SetMarkerStyle(hist['data_obs'].GetMarkerStyle())
-        data_graph.SetMarkerSize(hist['data_obs'].GetMarkerSize())
+        hist[data_tag].SetBinErrorOption(TH1.kPoisson)
+        data_graph = TGraphAsymmErrors(hist[data_tag].GetNbinsX())
+        data_graph.SetMarkerStyle(hist[data_tag].GetMarkerStyle())
+        data_graph.SetMarkerSize(hist[data_tag].GetMarkerSize())
         res_graph = data_graph.Clone()
-        for i in range(hist['data_obs'].GetNbinsX()):
-            N = hist['data_obs'].GetBinContent(i+1)
+        for i in range(hist[data_tag].GetNbinsX()):
+            N = hist[data_tag].GetBinContent(i+1)
             B = hist['BkgSum'].GetBinContent(i+1)
             L =  0 if N==0 else ROOT.Math.gamma_quantile(alpha/2,N,1.)
             U =  ROOT.Math.gamma_quantile_c(alpha/2,N+1,1)
-            data_graph.SetPoint(i, hist['data_obs'].GetXaxis().GetBinCenter(i+1), N if not N==0 else -1.e99)
-            data_graph.SetPointError(i, hist['data_obs'].GetXaxis().GetBinWidth(i+1)/2., hist['data_obs'].GetXaxis().GetBinWidth(i+1)/2., N-L, U-N)
-            res_graph.SetPoint(i, hist['data_obs'].GetXaxis().GetBinCenter(i+1), N/B if not B==0 and not N==0 else -1.e99)
-            res_graph.SetPointError(i, hist['data_obs'].GetXaxis().GetBinWidth(i+1)/2., hist['data_obs'].GetXaxis().GetBinWidth(i+1)/2., (N-L)/B if not B==0 else -1.e99, (U-N)/B if not B==0 else -1.e99)
+            data_graph.SetPoint(i, hist[data_tag].GetXaxis().GetBinCenter(i+1), N if not N==0 else -1.e99)
+            data_graph.SetPointError(i, hist[data_tag].GetXaxis().GetBinWidth(i+1)/2., hist[data_tag].GetXaxis().GetBinWidth(i+1)/2., N-L, U-N)
+            res_graph.SetPoint(i, hist[data_tag].GetXaxis().GetBinCenter(i+1), N/B if not B==0 and not N==0 else -1.e99)
+            res_graph.SetPointError(i, hist[data_tag].GetXaxis().GetBinWidth(i+1)/2., hist[data_tag].GetXaxis().GetBinWidth(i+1)/2., (N-L)/B if not B==0 else -1.e99, (U-N)/B if not B==0 else -1.e99)
     
     
     # Create stack
@@ -152,10 +175,15 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
     #leg = TLegend(0.68-0.13, 0.9-0.05*n, 0.93, 0.9)#DCMS
     leg = TLegend(0.65, 0.9-0.05*n, 0.95, 0.9)#new, more rectangular
     leg.SetTextSize(0.03)#DCMS
+    if n<4:
+        leg = TLegend(0.65, 0.6, 0.95, 0.8)#more readable for less entries
+        leg = TLegend(0.65, 0.6-0.05, 0.95, 0.8-0.05)#more readable for less entries
+        leg.SetTextSize(0.04)#DCMS
     leg.SetBorderSize(0)
     leg.SetFillStyle(0) #1001
     leg.SetFillColor(0)
-    leg.SetHeader("Signal x-sec=%.0f pb"%(1*snorm))
+    #if len(sign)>0:
+    #    leg.SetHeader("Signal x-sec=%.0f pb"%(1*snorm))
     if len(data) > 0:
         leg.AddEntry(hist[data[0]], samples[data[0]]['label'], "ple1")
     for i, s in reversed(list(enumerate(['BkgSum']+back))):
@@ -165,7 +193,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
 
     
     # --- Display ---
-    c1 = TCanvas("c1", hist.values()[-1].GetXaxis().GetTitle(), 1200, 800 if ratio else 700)
+    c1 = TCanvas("c1", hist.values()[-1].GetXaxis().GetTitle(), 1200, 800 if ratio else 800)#else  700
     
     if ratio:
         c1.Divide(1, 2)
@@ -182,28 +210,36 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
     # Draw
     bkg.Draw("HIST") # stack
     hist['BkgSum'].Draw("SAME, E2") # sum of bkg
+
     if poisson: data_graph.Draw("SAME, PE")
-    elif len(data) > 0: hist['data_obs'].Draw("SAME, PE")
+    elif len(data) > 0: hist[data_tag].Draw("SAME, PE")
     for i, s in enumerate(sign):
         if samples[s]['plot']:
             hist[s].DrawNormalized("SAME, HIST", hist[s].Integral()*snorm) # signals
 
 
     # Determine range
-    if 'data_obs' in hist:
-        bkg.SetMaximum((2.5 if log else 1.2)*max(bkg.GetMaximum(), hist['data_obs'].GetBinContent(hist['data_obs'].GetMaximumBin())+hist['data_obs'].GetBinError(hist['data_obs'].GetMaximumBin())))
-        bkg.SetMinimum(max(min(hist['BkgSum'].GetBinContent(hist['BkgSum'].GetMinimumBin()), hist['data_obs'].GetMinimum()), 5.e-1)  if log else 0.)
+    if data_tag in hist:
+        print "Skip data range y axis assignement of min max"
+        bkg.SetMaximum((2.5 if log else 1.2)*max(bkg.GetMaximum(), hist[data_tag].GetBinContent(hist[data_tag].GetMaximumBin())+hist[data_tag].GetBinError(hist[data_tag].GetMaximumBin())))
+        bkg.SetMinimum(max(min(hist['BkgSum'].GetBinContent(hist['BkgSum'].GetMinimumBin()), hist[data_tag].GetMinimum()), 5.e-1)  if log else 0.)
         bkg.SetMinimum(5.e-1)#!!
+
+        #This is a good range for normalized stuff such as beam halo
+        #
+        #bkg.SetMaximum(max(hist['BkgSum'].GetMaximum(),hist[data_tag].GetMaximum())*1.1)#!!
+        #if min(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())>0:
+        #    bkg.SetMinimum(min(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())*0.9)#!!
         bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
     else:
-        bkg.SetMaximum(bkg.GetMaximum()*(2.5 if log else 1.2))
-        bkg.SetMinimum(5.e-1 if log else 0.)
-        bkg.SetMinimum(5.e-1)#!!
+        #bkg.SetMaximum(bkg.GetMaximum()*(2.5 if log else 1.2))
+        #bkg.SetMinimum(5.e-1 if log else 0.)
+        #bkg.SetMinimum(5.e-1)#!!
         bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
     if log:
         bkg.GetYaxis().SetNoExponent(bkg.GetMaximum() < 1.e4)
         bkg.GetYaxis().SetMoreLogLabels(True)
-        bkg.SetMinimum(5.e-1)#!!
+        #bkg.SetMinimum(5.e-1)#!!
         bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
 
     #w#bkg.SetMaximum(2.e7)
@@ -234,8 +270,8 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         #err.GetXaxis().SetTitleOffset(err.GetXaxis().GetTitleOffset()*2)
         err.Draw("E2")
         errLine.Draw("SAME, HIST")
-        if 'data_obs' in hist:
-            res = hist['data_obs'].Clone("Residues")
+        if data_tag in hist:
+            res = hist[data_tag].Clone("Residues")
             for i in range(0, res.GetNbinsX()+1):
                 if hist['BkgSum'].GetBinContent(i) > 0: 
                     res.SetBinContent(i, res.GetBinContent(i)/hist['BkgSum'].GetBinContent(i))
@@ -244,8 +280,10 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
             if poisson: res_graph.Draw("SAME, PE0")
             else: res.Draw("SAME, PE0")
             if len(err.GetXaxis().GetBinLabel(1))==0: # Bin labels: not a ordinary plot
-                drawRatio(hist['data_obs'], hist['BkgSum'])
-                drawKolmogorov(hist['data_obs'], hist['BkgSum'])
+                drawRatio(hist[data_tag], hist['BkgSum'])
+                drawKolmogorov(hist[data_tag], hist['BkgSum'])
+                #drawRatio(hist["SingleMuonBH"], hist['BkgSum'])
+                #drawKolmogorov(hist["SingleMuonBH"], hist['BkgSum'])
         else: res = None
     c1.Update()
     
@@ -275,6 +313,7 @@ def drawSignal(samples, hist, sign, log=False, logx=False):
     c1.GetPad(0).SetTicks(1, 1)
     if log:
         c1.GetPad(0).SetLogy()
+        #c1.GetPad(0).SetLogx()
 
     # Draw
     for i, s in enumerate(sign): 
@@ -290,10 +329,11 @@ def drawSignal(samples, hist, sign, log=False, logx=False):
         hist[s].SetLineWidth(3)
         hist[s].SetLineStyle(samples[s]['linestyle'])
         hist[s].Draw("SAME, HIST" if i>0 else "HIST") # signals
+        #hist[s].Draw("SAME, PE" if i>0 else "PE") # signals
         max_val = max(max_val,hist[s].GetMaximum())
         addOverflow(hist[s], True) # Add overflow
         hist[s+'Err'].Draw("SAMES,E2")
-        hist[s].SetMinimum(0.9)
+        #hist[s].SetMinimum(0.01)#(0.01)
     #?#hist[sign[0]].GetXaxis().SetRangeUser(0., 1500)
     #?hist[sign[0]].GetYaxis().SetTitleOffset(hist[sign[-1]].GetYaxis().GetTitleOffset()*1.075)
     #?hist[sign[0]].SetMaximum(max(hist[sign[0]].GetMaximum(), hist[sign[-1]].GetMaximum())*1.25)
@@ -346,11 +386,12 @@ def drawKolmogorov(data, bkg, fontsize=0.085):
     latex.SetTextSize(fontsize)
     latex.DrawLatex(0.55, 0.85, "#chi^{2}/ndf = %.2f,   K-S = %.3f" % (data.Chi2Test(bkg, "CHI2/NDF"), data.KolmogorovTest(bkg)))
 
-def printTable(samples, hist, sign=[], SIGNAL=1):
-    samplelist = [x for x in hist.keys() if not 'data' in x and not 'BkgSum' in x and not x in sign and not x=="files"]
+def printTable(samples, hist, sign=[], SIGNAL=1, data_tag="data_obs"):
+    #samplelist = [x for x in hist.keys() if not data_tag in x and not 'BkgSum' in x and not x in sign and not x=="files"]
+    samplelist = [x for x in hist.keys() if not x==data_tag in x and not 'BkgSum' in x and not x in sign and not x=="files"]
     print "Sample                  Events          Entries         %"
     print "-"*80
-    for i, s in enumerate(['data_obs']+samplelist+['BkgSum']):
+    for i, s in enumerate([data_tag]+samplelist+['BkgSum']):
         if i==1 or i==len(samplelist)+1: print "-"*80
         print "%-20s" % s, "\t%-10.2f" % hist[s].Integral(), "\t%-10.0f" % (hist[s].GetEntries()-2), "\t%-10.2f" % (100.*hist[s].Integral()/hist['BkgSum'].Integral()) if hist['BkgSum'].Integral() > 0 else 0, "%"
     print "-"*80
@@ -367,11 +408,11 @@ def printTable(samples, hist, sign=[], SIGNAL=1):
 #     OTHERS     #
 ##################
 
-def getPrimaryDataset(samples, cut):
+def getPrimaryDataset(samples, cut, data_tag="data_obs"):
     pd = []
-#    if 'HLT_PFMET' in cut: pd += [x for x in samples['data_obs']['files'] if "MET" in x]
-#    if 'HLT_' in cut: pd += [x for x in samples['data_obs']['files'] if "MET" in x]
-    pd += [x for x in samples['data_obs']['files'] if ("MET" in x or "DisplacedJet" in x or "SingleMuon" in x or "JetHT" in x)]
+#    if 'HLT_PFMET' in cut: pd += [x for x in samples[data_tag]['files'] if "MET" in x]
+#    if 'HLT_' in cut: pd += [x for x in samples[data_tag]['files'] if "MET" in x]
+    pd += [x for x in samples[data_tag]['files'] if ("MET" in x or "DisplacedJet" in x or "SingleMuon" in x or "JetHT" in x or 'EGamma' in x or 'MuonEG' in x or 'SingleElectron' in x or 'SinglePhoton' in x)]
     return pd
 
 
@@ -433,47 +474,87 @@ def setBotStyle(h, r=4, fixRange=True, miny=0., maxy=2.):
 ### DRAW UTILS ###
 ##################
 
-def drawCMS(samples, LUMI, text, onTop=False, left_marg_CMS=0.15,data_obs=[]):
+def drawCMS(samples, LUMI, text, ERA="", onTop=False, left_marg_CMS=0.15,data_obs=[],text_size=0.045):
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextSize(text_size)
+    latex.SetTextColor(1)
+    latex.SetTextFont(42)
+    latex.SetTextAlign(33)
+    era_str = ""
+    if ERA!="":
+        era_str = ", "+ERA
+    if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
+        latex.DrawLatex(0.95, 0.985, ("%.1f fb^{-1}  (13 TeV%s)") % (float(LUMI)/1000.,era_str) )
+    elif type(LUMI) is str:
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
+    if not onTop:
+        latex.SetTextAlign(11)
+    latex.SetTextFont(62)
+    latex.SetTextSize(text_size if len(text)>0 else 0.06)
+    if not onTop:
+        #in a different line:
+        #latex.DrawLatex(left_marg_CMS, 0.8 if len(text)>0 else 0.84, "CMS")
+        #latex.DrawLatex(left_marg_CMS, 0.89 if len(text)>0 else 0.84, "CMS")
+        latex.DrawLatex(left_marg_CMS, 0.84 if len(text)>0 else 0.84, "CMS")#gen level is ugly otherwise
+    else:
+        latex.DrawLatex(0.2, 0.9, "CMS")#DCMS
+    latex.SetTextSize(text_size)
+    latex.SetTextFont(52)
+    if not onTop:
+        latex.DrawLatex(left_marg_CMS, 0.89, text)#0.7
+    else:
+        #latex.DrawLatex(0.40, 0.98, text)
+        latex.DrawLatex(0.33+text_size*2, 0.9, text)#DCMS
+    dat = ""
+    if len(data_obs)>0:
+        print samples[data_obs[0]]['files'][0]
+        if "SingleMuon" in (samples[data_obs[0]]['files'][0]):
+            dat = "SingleMuon dataset"
+        elif "SingleElectron" in (samples[data_obs[0]]['files'][0]):
+            dat = "SingleElectron dataset"
+        elif "EGamma" in (samples[data_obs[0]]['files'][0]):
+            dat = "EGamma dataset"
+        elif "DisplacedJet" in (samples[data_obs[0]]['files'][0]):
+            dat = "DisplacedJet dataset"
+        elif "MET" in (samples[data_obs[0]]['files'][0]):
+            dat = "MET dataset"
+        elif "HighMET" in (samples[data_obs[0]]['files'][0]):
+            dat = "HighMET dataset"
+        elif "JetHT" in (samples[data_obs[0]]['files'][0]):
+            dat = "JetHT dataset"
+        print "dat: ", dat
+        latex2 = TLatex()
+        latex2.SetNDC()
+        latex2.SetTextFont(72) #52
+        latex2.SetTextSize(text_size)
+        latex2.SetTextAlign(10)
+        #latex2.DrawLatex(0.45, 0.95, dat)
+        latex2.DrawLatex(0.65, 0.9, dat)
+
+
+
+def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.15):
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextSize(0.04)
     latex.SetTextColor(1)
     latex.SetTextFont(42)
     latex.SetTextAlign(33)
-    if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0: latex.DrawLatex(0.95, 0.985, "%.1f fb^{-1}  (13 TeV)" % (float(LUMI)/1000.))
-    elif type(LUMI) is str: latex.DrawLatex(0.95, 0.985, "%s fb^{-1}  (13 TeV)" % LUMI)
+    era_str = ""
+    if ERA!="":
+        era_str = ", "+ERA
+    if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
+        latex.DrawLatex(0.95, 0.985, ("%.1f fb^{-1}  (13 TeV%s)") % (float(LUMI)/1000.,era_str) )
+    elif type(LUMI) is str:
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
     if not onTop: latex.SetTextAlign(11)
     latex.SetTextFont(62)
     latex.SetTextSize(0.05 if len(text)>0 else 0.06)
-    if not onTop:
-        latex.DrawLatex(left_marg_CMS, 0.8 if len(text)>0 else 0.84, "CMS")
-    else:
-        latex.DrawLatex(0.20, 0.9, "CMS")#DCMS
+    latex.DrawLatex(0.20, 0.98, "CMS")
     latex.SetTextSize(0.045)
     latex.SetTextFont(52)
-    if not onTop:
-        latex.DrawLatex(left_marg_CMS, 0.89, text)#0.7
-    else:
-        #latex.DrawLatex(0.40, 0.98, text)
-        latex.DrawLatex(0.35, 0.89, text)#DCMS
-    dat = ""
-    if len(data_obs)>0:
-        print samples[data_obs[0]]['files'][0]
-        if "SingleMuon" in (samples[data_obs[0]]['files'][0]):
-            dat = "SingleLepton dataset"
-        elif "SingleElectron" in (samples[data_obs[0]]['files'][0]):
-            dat = "SingleLepton dataset"
-        elif "DisplacedJet" in (samples[data_obs[0]]['files'][0]):
-            dat = "DisplacedJet dataset"
-        elif "MET" in (samples[data_obs[0]]['files'][0]):
-            dat = "MET dataset"
-        print "dat: ", dat
-        latex2 = TLatex()
-        latex2.SetNDC()
-        latex2.SetTextFont(72) #52
-        latex2.SetTextSize(0.04)
-        latex2.SetTextAlign(10)
-        latex2.DrawLatex(0.45, 0.95, dat)
+    latex.DrawLatex(0.4, 0.98, text)
 
 def drawAnalysis(s, center=False):
     analyses = {
@@ -484,6 +565,9 @@ def drawAnalysis(s, center=False):
         "LLggH" : "ggH #rightarrow #pi #pi #rightarrow b#bar{b} b#bar{b}",
         "LLSUSY" : " #chi #chi #rightarrow  #tilde{G} h #tilde{G} h #rightarrow b#bar{b} b#bar{b}",
         "LLggHeavyHiggs" : "gg H2 #rightarrow S S #rightarrow b#bar{b} b#bar{b}",
+        "LLsplitSUSY" : "#tilde{g} #tilde{g} #rightarrow tbs tbs",
+        "LLgluinoGMSB" : "#tilde{g} #tilde{g} #rightarrow g #tilde{G} g #tilde{G}",
+        "LLJetJet" : "Z^{*} #rightarrow XX #rightarrow q#bar{q} q#bar{q}",
         }
     latex = TLatex()
     latex.SetNDC()
@@ -492,8 +576,9 @@ def drawAnalysis(s, center=False):
     #latex.SetTextAlign(33)
     latex.DrawLatex(0.15 if not center else 0.3, 0.95, s if not s in analyses else analyses[s])
 
-def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
+def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75, setNDC=True, color=1):
     region = {
+        "SR_yes_BH" : "SR + Beam Halo",
         "VBFtrigger": "VBF triggers",
         "VBF": "VBF",
         "DisplacedJets" : "Displaced Jets phase-space",
@@ -509,6 +594,31 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         "ZtoEEVBFCR": "VBF + Z #rightarrow ee CR",
         "WtoMNCR": "W #rightarrow #mu#nu CR",
         "TopEMCR": "t #rightarrow #mue+X CR",
+
+        "ZtoMM_CR": "Z #rightarrow #mu#mu CR",
+        "ZtoEE_CR": "Z #rightarrow ee CR",
+        "WtoEN_CR": "W #rightarrow e#nu CR",
+        "WtoMN_CR": "W #rightarrow #mu#nu CR",
+        "TtoEM_CR": "t #rightarrow #mue+X CR",
+
+        "ZtoMM": "Z #rightarrow #mu#mu MR",
+        "ZtoEE": "Z #rightarrow ee MR",
+        "ZtoLL": "Z #rightarrow ll MR",
+        "WtoEN": "W #rightarrow e#nu MR",
+        "WtoMN": "W #rightarrow #mu#nu MR",
+        "WtoLN": "W #rightarrow l#nu MR",
+        "EN": "1 e + e trigger + MET>200 MR",
+        "MN": "1 #mu + #mu trigger + MET>200 MR",
+        "MR": "1 l + MET trigger + MET>200 MR",
+        "TtoEM": "t #rightarrow #mue+X MR",
+        "JetMET_Lep" : "MET>100, single jet triggers, 1 lepton MR",
+        "JetMET_low_dPhi_500" : "MET>100, PFJet500 triggers, low #Delta#varphi(lead. jet,MET) MR",
+        "JetMET_low_dPhi_MR" : "MET>100, single jet triggers, low #Delta#varphi(lead. jet,MET) MR",
+        "JetMET_low_dPhi_low_MET_MR" : "100<MET<200, single jet triggers, low #Delta#varphi(lead. jet,MET) MR",
+        "JetMET_low_dPhi_MET_200" : "MET>200, single jet triggers, low #Delta#varphi(lead. jet,MET) MR",
+        "JetHT140" : "HLTJet140, MET<30 GeV",
+        "DiJetMET140" : "HLTJet140, 2 jets, #Delta#varphi(jet[1],MET)<0.4, 60<MET<100 GeV",
+
         "DisplacedZtoMMCR": "VBF + Displaced jets + Z #rightarrow #mu#mu CR",
         "DisplacedWtoMNCR": "VBF + Displaced jets + W #rightarrow #mu#nu CR",
         "DisplacedTopEMCR": "VBF + Displaced jets + 1 #mu 1 e",
@@ -519,10 +629,10 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         "hltTripleJet50" : "IsoMu24 + 1#mu + L1seed + TripleJet50",
         "VBFplusPFMETNoMuTrigger" : "VBF + PFMETNoMu120 trigger",
         "VBFplusDisplacedHadronicTrigger" : "VBF + Displaced jet trigger",
-        "ZtoMM": "ZH #rightarrow #mu#mu H",
-        "ZtoEE": "ZH #rightarrow ee H",
-        "ZHMM": "ZH #rightarrow #mu#mu H",
-        "ZHEE": "ZH #rightarrow ee H",
+        #"ZtoMM": "ZH #rightarrow #mu#mu H",
+        #"ZtoEE": "ZH #rightarrow ee H",
+        #"ZHMM": "ZH #rightarrow #mu#mu H",
+        #"ZHEE": "ZH #rightarrow ee H",
         "ZH": "ZH #rightarrow ll H",
         "METMuCR": "MEt.pt>250 & HT>200 & 1 muon CR",
         "METCR": "MEt.pt>250 & HT>200 & veto leptons",
@@ -534,6 +644,7 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         "METPreSelSUSYAODAK4HCAL" : "LL decay in HCAL barr.",
         "METPreSelSUSYAODAK8ECAL" : "LL decay in ECAL barr.",
         "METPreSelSUSYAODAK8HCAL" : "LL decay in HCAL barr.",
+        "SR_veto_bin2_and_1_jet" : "Veto bin 2, at least 1 jet in acceptance",
         }
     
     text = ""
@@ -542,8 +653,10 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
     else:
         text = ""
     latex = TLatex()
-    latex.SetNDC()
+    if setNDC:
+        latex.SetNDC()
     latex.SetTextFont(72) #52
+    latex.SetTextColor(color)
     latex.SetTextSize(0.035)
     if left: latex.DrawLatex(left_marg_CMS, top, text)
     else:
@@ -552,7 +665,6 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75):
         latex.DrawLatex(0.15, top, text)#DCMS
 
 def drawTagVar(t, left=False, left_marg_CMS=0.15):
-
 
     tagvarlist = {
         "nCaloTagJets" : "",
@@ -571,10 +683,10 @@ def drawTagVar(t, left=False, left_marg_CMS=0.15):
     latex.SetNDC()
     latex.SetTextFont(62) #52
     latex.SetTextSize(0.035)
-    if left: latex.DrawLatex(left_marg_CMS, 0.6, text)
+    if left: latex.DrawLatex(left_marg_CMS, 0.65, text)
     else:
         latex.SetTextAlign(10)
-        latex.DrawLatex(0.12, 0.7, text)
+        latex.DrawLatex(0.12, 0.75, text)
 
 
 def drawBox(x1, y1, x2, y2, t="", fillstyle=3005):

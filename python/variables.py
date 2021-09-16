@@ -12,8 +12,15 @@ var_template = {
     "EventWeight": {
       "title" : "event weight",
       "nbins" : 200,
-      "min" : -200,
-      "max" : 200,
+      "min" : -10,
+      "max" : 10,
+      "log" : False,
+    },
+    "PUReWeight": {
+      "title" : "PU weight",
+      "nbins" : 200,
+      "min" : -10,
+      "max" : 10,
       "log" : False,
     },
 
@@ -45,6 +52,14 @@ var_template = {
       "max" : 49.5+40,
       "log" : False,
     },
+    "MeanNumInteractions": {
+      "title" : "mean number of interactions",
+      "nbins" : 50+40,
+      "min" : -0.5,
+      "max" : 49.5+40,
+      "log" : False,
+    },
+
     "isVBF": {
       "title" : "isVBF",
       "nbins" : 2,
@@ -99,6 +114,13 @@ var_template = {
     },
     "nCHSJets": {
       "title" : "number of CHS jets",
+      "nbins" : 50-20,
+      "min" : -0.5,
+      "max" : 49.5-20,
+      "log" : True,
+    },
+    "nCHSJetsAcceptanceCalo": {
+      "title" : "number of CHS jets in acceptance",
       "nbins" : 50-20,
       "min" : -0.5,
       "max" : 49.5-20,
@@ -187,7 +209,7 @@ var_template = {
       "title" : "H_{T} (GeV)",
       "nbins" : 25,#45,
       "min" : 0,#100,
-      "max" : 2500,
+      "max" : 1000,#2500,
       "log" : True,
     },
     "ggHJetMetDPhi": {
@@ -197,8 +219,29 @@ var_template = {
       "max" : 3.14,
       "log" : True,
     },
+    "MinJetMetDPhi_ntuple": {
+       "title" : "min #Delta #varphi (AK4 jet, MET) at ntuple level",
+      "nbins" : 32,#10,
+      "min" : 0,
+      "max" : 3.14,
+      "log" : True,
+    },
     "MinJetMetDPhi": {
        "title" : "min #Delta #varphi (AK4 jet, MET)",
+      "nbins" : 32,#10,
+      "min" : 0,
+      "max" : 3.14,
+      "log" : True,
+    },
+    "MinLeadingJetMetDPhi": {
+      "title" : "min #Delta #varphi (AK4 leading jet, MET)",
+      "nbins" : 32,#10,
+      "min" : 0,
+      "max" : 3.14,
+      "log" : True,
+    },
+    "MinSubLeadingJetMetDPhi": {
+      "title" : "min #Delta #varphi (AK4 sub-leading jet, MET)",
       "nbins" : 32,#10,
       "min" : 0,
       "max" : 3.14,
@@ -246,8 +289,8 @@ var_template = {
     "Jets.sigprob": {
       "title" : "AK4 jets DNN score",
       "nbins" : 50,#40,
-      "min" : 0,#170,
-      "max" : 1,#2170,
+      "min" : 0.001,#170,
+      "max" : 1.,#2170,
       "log" : True,
     },
     #Jets kinematics
@@ -255,11 +298,25 @@ var_template = {
       "title" : "jet [[N]] p_{T} (GeV)",
       "nbins" : 50,#40
       "min" : 0,
-      "max" : 1000,
+      "max" : 500,
       "log" : True,
     },
     "Jets.pt": {
       "title" : "jets p_{T} (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 500,#1000,
+      "log" : True,
+    },
+    "Jets[[N]].ptJER": {
+      "title" : "jet [[N]] p_{T} JER smear (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+    "Jets.ptJER": {
+      "title" : "jets p_{T} JER smear (GeV)",
       "nbins" : 50,#40
       "min" : 0,
       "max" : 3000,
@@ -269,28 +326,35 @@ var_template = {
       "title" : "jets energy (GeV)",
       "nbins" : 50,#40
       "min" : 0,
-      "max" : 3000,
+      "max" : 500,#3000,
       "log" : True,
     },
     "Jets[[N]].eta": {
       "title" : "jet [[N]] #eta",
-      "nbins" : 50,
-      "min" : -5.2,#-3,
-      "max" : 5.2,#3,
+      "nbins" : 100,#50,
+      "min" : -1.5,#-5.2,#-3,
+      "max" : 1.5,#5.2,#3,
       "log" : True,
     },
     "Jets.eta": {
       "title" : "jets #eta",
-      "nbins" : 50,
-      "min" : -5.2,#-3,
-      "max" : 5.2,#3,
+      "nbins" : 50,#25,
+      "min" : -1.,#-1.4,#-5.2,#-3,
+      "max" : 1.,#1.4,#5.2,#3,
+      "log" : True,
+    },
+    "Jets.phi": {
+      "title" : "jets #varphi",
+      "nbins" : 64,#40,
+      "min" : -3.2,#0.,#2.4,#-3.2,#2.4,#-3.2,
+      "max" : 3.2,#3.2,
       "log" : True,
     },
     "Jets[[N]].phi": {
       "title" : "jet [[N]] #varphi",
-      "nbins" : 60,
-      "min" : -3.2,
-      "max" : 3.2,
+      "nbins" : 100,#60,
+      "min" : 0.,#-3.2,
+      "max" : 2.,#3.2,
       "log" : True,
     },
     "Jets[[N]].mass": {
@@ -310,8 +374,8 @@ var_template = {
     "Jets[[N]].alphaMax": {
       "title" : "jet [[N]] #alpha_{max}",
       "nbins" : 50,
-      "min" : -1000.,
-      "max" : 1000.,
+      "min" : 0.,
+      "max" : 1.,
       "log" : True,
     },
     "Jets.alphaMax": {
@@ -321,18 +385,130 @@ var_template = {
       "max" : 1.,
       "log" : True,
     },
-    "Jets.gammaMaxET": {
-      "title" : "jets gammaMaxET",
+    "Jets.betaMax": {
+      "title" : "jet  #beta_{max}",
       "nbins" : 50,
       "min" : 0.,
-      "max" : 2.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "Jets[[N]].betaMax": {
+      "title" : "jet[[N]]  #beta_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "Jets.gammaMax": {
+      "title" : "jet  #gamma_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.2,#3.,
+      "log" : True,
+    },
+    "Jets[[N]].gammaMax": {
+      "title" : "jet[[N]]  #gamma_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.2,#3.,
+      "log" : True,
+    },
+    "Jets.gammaMaxEM": {
+      "title" : "jet  #gamma_{max} EM",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "Jets[[N]].gammaMaxEM": {
+      "title" : "jet[[N]]  #gamma_{max} EM",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "Jets.gammaMaxHadronic": {
+      "title" : "jet  #gamma_{max} hadronic",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "Jets[[N]].gammaMaxHadronic": {
+      "title" : "jet[[N]]  #gamma_{max} hadronic",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "Jets.gammaMaxET": {
+      "title" : "jet  gammaMaxET",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.2,#2.,
+      "log" : True,
+    },       
+    "Jets[[N]].gammaMaxET": {
+      "title" : "jet[[N]]  gammaMaxET",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.2,#2.,
       "log" : True,
     },       
     "Jets.minDeltaRPVTracks": {
-      "title" : "jets minDeltaRPVTracks",
+      "title" : "jet  minDeltaRPVTracks",
       "nbins" : 50,
       "min" : 0.,
       "max" : 1.,
+      "log" : True,
+    },
+    "Jets[[N]].minDeltaRPVTracks": {
+      "title" : "jet[[N]]  minDeltaRPVTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "Jets.minDeltaRAllTracks": {
+      "title" : "jet  minDeltaRAllTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#1.,
+      "log" : True,
+    },
+    "Jets[[N]].minDeltaRAllTracks": {
+      "title" : "jet[[N]]  minDeltaRAllTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#1.,
+      "log" : True,
+    },
+    "Jets.ptAllPVTracks": {
+      "title" : "tracks p_{T} in PVs in AK4 jet ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 50.,#500.,
+      "log" : True,
+    },
+    "Jets[[N]].ptAllPVTracks": {
+      "title" : "tracks p_{T} in PVs in AK4 jet[[N]] ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 50.,#500.,
+      "log" : True,
+    },
+    "Jets.ptAllTracks": {
+      "title" : "all tracks p_{T} in AK4 jet ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 200.,#500.,
+      "log" : True,
+    },
+    "Jets[[N]].ptAllTracks": {
+      "title" : "all tracks p_{T} in AK4 jet[[N]] ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 200.,#500.,
       "log" : True,
     },
     
@@ -420,23 +596,23 @@ var_template = {
     },
     "Jets.FracCal": {
       "title" : "jets ECAL energy/HCAL energy",
-      "nbins" : 20,#50
+      "nbins" : 50,#50
       "min" : 0,
-      "max" : 100,#10
+      "max" : 2,#10
       "log" : True,
     },
     "Jets.hcalE": {
       "title" : "jets HCAL energy",
       "nbins" : 50,
       "min" : 0,
-      "max" : 2500,
+      "max" : 200,#500,#2500
       "log" : True,
     },
     "Jets.ecalE": {
       "title" : "jets ECAL energy",
       "nbins" : 50,
       "min" : 0,
-      "max" : 2500,
+      "max" : 100,#200,#2500
       "log" : True,
     },
     "Jets[[N]].hcalE": {
@@ -512,11 +688,27 @@ var_template = {
       "log" : True,
     },
     "Jets[[N]].nTrackConstituents": {
-      "title" : "jet [[N]] number of jet constituents with tracks",
+      "title" : "jet[[N]]  number of jet constituents with tracks",
       #"title" : "Leading jet: n. of constituents with tracks",
-      "nbins" : 50-20+20,
+      "nbins" : 50-20+20-20,
       "min" : -0.5,
-      "max" : 49.5-20+20,
+      "max" : 49.5-20+20-20,
+      "log" : True,
+    },
+    "Jets.nSelectedTracks": {
+      "title" : "jet  number of selected tracks",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 50-30-5,
+      "min" : -0.5,
+      "max" : 49.5-30-5,
+      "log" : True,
+    },
+    "Jets[[N]].nSelectedTracks": {
+      "title" : "jet[[N]]  number of selected tracks",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 50-30-5,
+      "min" : -0.5,
+      "max" : 49.5-30-5,
       "log" : True,
     },
     "Jets.nTrackConstituents": {
@@ -617,14 +809,14 @@ var_template = {
       "title" : "jets electron energy fraction",
       "nbins" : 50,
       "min" : 0,
-      "max" : 1,
+      "max" : 0.1,#1,
       "log" : True,
     },
     "Jets[[N]].eleEFrac": {
       "title" : "jet [[N]] electron energy fraction",
       "nbins" : 50,
       "min" : 0,
-      "max" : 1,
+      "max" : 0.1,#1,
       "log" : True,
     },
     "Jets[[N]].photonEFrac": {
@@ -1169,14 +1361,14 @@ var_template = {
         "title" : "energyRecHitsEB jets",
         "nbins" : 50,
         "min" : 0,
-        "max" : 50,
+        "max" : 250,
         "log" : True,
     },
     "Jets.eFracRecHitsEB": {
         "title" : "eFracRecHitsEB jets",
         "nbins" : 50,
         "min" : 0,
-        "max" : 5,
+        "max" : 1,
         "log" : True,
     },
 
@@ -1198,7 +1390,7 @@ var_template = {
         "title" : "eFracRecHitsEB jet [N]",
         "nbins" : 50,
         "min" : 0,
-        "max" : 5,
+        "max" : 1,
         "log" : True,
     },
 
@@ -1212,15 +1404,15 @@ var_template = {
     "Jets.timeRecHitsEB": {
         "title" : "AK4 jets: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
-        "min" : -10,
+        "min" : -2,
         "max" : 10,
         "log" : True,
     },
     "Jets[[N]].timeRecHitsEB": {
         "title" : "AK4 jet [[N]]: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
-        "min" : -10,
-        "max" : 10,
+        "min" : -1,
+        "max" : 4,
         "log" : True,
     },
     #shapes
@@ -1235,7 +1427,7 @@ var_template = {
         "title" : "sig2EB jets",
         "nbins" : 50,
         "min" : 0,
-        "max" : 0.5,
+        "max" : 0.2,#0.5,
         "log" : True,
     },
     "Jets[[N]].sig1EB": {
@@ -1260,7 +1452,7 @@ var_template = {
         "log" : True,
     },
     "Jets.ptDEB": {
-        "title" : "ptDEB jets",
+        "title" : "fragmentation function with EB hits in AK4 jets",
         "nbins" : 50,
         "min" : 0,
         "max" : 2.,
@@ -1439,6 +1631,14 @@ var_template = {
         "max" : 300,
         "log" : True,
     },
+    "Jets.radiusLLPCaloCorr": {
+        "title" : "radius of LLP matched to corresponding jets (cm)",
+        "nbins" : 50,
+        "min" : 30,
+        "max" : 300,
+        "log" : True,
+    },
+
     #HB rec hits
     "Jets.nRecHitsHB": {
         "title" : "nRecHitsHB jets",
@@ -1618,18 +1818,60 @@ var_template = {
     },
     
     # Z Control Region
-    "Z.mass": {
+    "MT": {
+      "title" : "MET + l transverse mass (GeV)",
+      "nbins" : 51,
+      "min" : 0,
+      "max" : 102,
+      "log" : False,
+    },
+    "Z_mass": {
       "title" : "Z->ll mass (GeV)",
       "nbins" : 40,
       "min" : 69.5,
       "max" : 109.5,
-      "log" : True,
+      "log" : False,
     },
-    "Z.pt": {
+    "Z_pt": {
       "title" : "Z p_{T} (GeV)",
       "nbins" : 50,
-      "min" : 50,
-      "max" : 550,
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+    "Z_eta": {
+      "title" : "Z #eta (GeV)",
+      "nbins" : 50,
+      "min" : -5.2,
+      "max" : 5.2,
+      "log" : True,
+    },
+    "Z_lep0_pt": {
+      "title" : "p_{T} l_{0} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "Z_lep1_pt": {
+      "title" : "p_{T} l_{1} (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "Z_lep0_eta": {
+      "title" : "#eta l_{0} (GeV)",
+      "nbins" : 50,
+      "min" : -5.2,
+      "max" : 5.2,
+      "log" : True,
+    },
+    "Z_lep1_eta": {
+      "title" : "#eta l_{1} (GeV)",
+      "nbins" : 50,
+      "min" : -5.2,
+      "max" : 5.2,
       "log" : True,
     },
 
@@ -1648,6 +1890,37 @@ var_template = {
       "max" : 10.5,
       "log" : True,
     },
+
+    #EcalRecHits
+    "EcalRecHitsAK4.eta": {
+        "title" : "EB rec hits #eta (associated to AK4 jets)",
+      "nbins" : 25,
+      "min" : 2.,#-5.2,#-3,
+      "max" : 2.,#5.2,#3,
+      "log" : True,
+    },
+    "EcalRecHitsAK4.phi": {
+      "title" : "EB rec hits #varphi (associated to AK4 jets)",
+      "nbins" : 40,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+    "skimmedEcalRecHitsAK4.eta": {
+        "title" : "EB rec hits #eta (associated to AK4 barrel jets)",
+      "nbins" : 25,
+      "min" : -1.5,#-1.4,#-5.2,#-3,
+      "max" : 1.5,#1.4,#5.2,#3,
+      "log" : True,
+    },
+    "skimmedEcalRecHitsAK4.phi": {
+      "title" : "EB rec hits #varphi (associated to AK4 barrel jets)",
+      "nbins" : 40,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
 
     #PFCandidates pt
     "PFCandidates.pt": {
@@ -1698,7 +1971,7 @@ var_template = {
     "FatJets[[N]].sigprob": {
       "title" : "AK8 jet [[N]] DNN score",
       "nbins" : 50,#40
-      "min" : 0.999,
+      "min" : 0.,
       "max" : 1,
       "log" : True,
     },
@@ -3034,8 +3307,15 @@ var_template = {
     "MEt.pt": {
       "title" : "E_{T}^{miss} (GeV)",
       "nbins" : 50,
-      "min" : 200,
-      "max" : 2200,
+      "min" : 200,#0,#200,
+      "max" : 1200,#2000,#0,#2200,
+      "log" : True,
+    },
+    "MEt.ptGen": {
+      "title" : "GEN E_{T}^{miss} (GeV)",
+      "nbins" : 50,
+      "min" : 0,#200,
+      "max" : 1000,#0,#2200,
       "log" : True,
     },
     "MEt.sign": {
@@ -3050,7 +3330,7 @@ var_template = {
       "nbins" : 50,
       "min" : -3.15,
       "max" : 3.15,
-      "log" : False,
+      "log" : True,
     },
     "MEt_pt": {
       "title" : "E^{T}_{miss} (GeV)",
@@ -3067,6 +3347,7 @@ var_template = {
       "log" : True,
     },
 
+
     # GenBquarks
     "GenBquarks[[N]].pt": {
       "title" : "gen b-quark p_{T} (GeV)",
@@ -3079,6 +3360,28 @@ var_template = {
       "title" : "gen b-quark 3D radius (cm)",
       #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
       "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],
+      "nbins" : 0,#100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    },
+    "GenBquarks[[N]].travelRadius": {
+      "title" : "gen b-quark transverse decay length (cm)",
+      #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
+      "nbins" : 0,#100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    },
+    "GenLLPs[[N]].travelRadius": {
+      "title" : "gen LLP transverse decay length (cm)",
+      #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
+        "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,400,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000,1000000],#HeavyHiggs
+      #"bins" : [0.1,0.5,1,2,5,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,225,250,300,325,350,375,400,450,500,600,700,800,900,1000,1250,1500,2000,3000,5000,7000,10000],#HeavyHiggs
       "nbins" : 0,#100,
       "min" : 0.000001,
       "max" : 1000,
@@ -3142,6 +3445,13 @@ var_template = {
       "nbins" : 50,
       "min" : 0,
       "max" : 500,
+      "log" : True,
+    },
+    "GenHiggs[[N]].mass": {
+      "title" : "gen Higgs mass (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 3000,
       "log" : True,
     },
     "GenHiggs[[N]].radius": {
@@ -3259,9 +3569,9 @@ var_template = {
     },
     "nTagJets_0p9": {
       "title" : "n. of jets with DNN output > 0.9",
-      "nbins" : 7+4,#3,#
+      "nbins" : 3,#7+4,#3,#
       "min" : -0.5,
-      "max" : 6.5+4,#2.5,#
+      "max" : 2.5,#6.5+4,#2.5,#
       "log" : True,
     },
     "nTagJets_0p95": {
@@ -3323,6 +3633,22 @@ var_template = {
 
     "nTagJets_0p994_JJ": {
       "title" : "n. of jets with DNN output > 0.994, jet cleaning",
+      "nbins" : 7+4,#3,#
+      "min" : -0.5,
+      "max" : 6.5+4,#2.5,#
+      "log" : True,
+    },
+
+    "nTagJets_0p996_JJ": {
+      "title" : "n. of jets with DNN output > 0.996, jet cleaning",
+      "nbins" : 3,#7+4,#3,#
+      "min" : -0.5,
+      "max" : 2.5,#6.5+4,#2.5,#
+      "log" : True,
+    },
+
+    "nTagJets_0p99_JJ": {
+      "title" : "n. of jets with DNN output > 0.99, jet cleaning",
       "nbins" : 7+4,#3,#
       "min" : -0.5,
       "max" : 6.5+4,#2.5,#
@@ -3423,7 +3749,7 @@ var_template = {
     "Jet_[N]_timeRecHitsEB": {
         "title" : "AK4 jet [[N]] ECAL barr. rec hits time (ns)",
         "nbins" : 50,
-        "min" : -10,
+        "min" : -2,
         "max" : 10,
         "log" : True,
     },
@@ -3580,6 +3906,13 @@ var_template = {
       "max" : 6.5+4,#2.5,#
       "log" : True,
     },
+    "nTagFatJets_0p999999": {
+      "title" : "n. of AK8 jets with DNN output > 0.999999",
+      "nbins" : 7+4,#3,#
+      "min" : -0.5,
+      "max" : 6.5+4,#2.5,#
+      "log" : True,
+    },
     "nTagFatJets_cutbased": {
       "title" : "n. of AK8 jets passing cut based selections",
       "nbins" : 7+4,#3,#
@@ -3635,8 +3968,290 @@ var_template = {
       "log" : True,
     },
 
+    #Gen-level
+    "GenGravitinos[[N]].pt": {
+      "title" : "gen gravitino[[N]] p_{T} (GeV)",
+      "nbins" : 50,#SUSY: 50,
+      "min" : 0,
+      "max" : 500,#SUSY: 250,
+      "log" : True,
+    },
 
+    "inv_mass_reco_higgs_0": {
+      "title" : "inv_mass_reco_higgs_0 (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "inv_mass_reco_higgs_1": {
+      "title" : "inv_mass_reco_higgs_1 (GeV)",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+    "dR_LLPs": {
+      "title" : "dR_LLPs",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+    "dR_Higgs": {
+      "title" : "dR_Higgs",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+    "dR_Gravitinos": {
+      "title" : "dR_Gravitinos",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
 
+    "dR_Gravitino_Higgs_0": {
+      "title" : "dR_Gravitino_Higgs_0",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dR_Gravitino_Higgs_1": {
+      "title" : "dR_Gravitino_Higgs_1",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dR_Gravitino_GenMet_0": {
+      "title" : "dR_Gravitino_GenMet_0",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dR_Gravitino_GenMet_1": {
+      "title" : "dR_Gravitino_GenMet_1",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dPhi_Gravitino_Met_0": {
+      "title" : "dPhi_Gravitino_Met_0",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_Gravitino_Met_1": {
+      "title" : "dPhi_Gravitino_Met_1",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_Gravitino_GenMet_0": {
+      "title" : "dPhi_Gravitino_GenMet_0",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_Gravitino_GenMet_1": {
+      "title" : "dPhi_Gravitino_GenMet_1",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dR_LLP_GenMet_0": {
+      "title" : "dR_LLP_GenMet_0",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dR_LLP_GenMet_1": {
+      "title" : "dR_LLP_GenMet_1",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dPhi_LLP_Met_0": {
+      "title" : "dPhi_LLP_Met_0",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_LLP_Met_1": {
+      "title" : "dPhi_LLP_Met_1",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_LLP_GenMet_0": {
+      "title" : "dPhi_LLP_GenMet_0",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_LLP_GenMet_1": {
+      "title" : "dPhi_LLP_GenMet_1",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dR_Higgs_GenMet_0": {
+      "title" : "dR_Higgs_GenMet_0",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dR_Higgs_GenMet_1": {
+      "title" : "dR_Higgs_GenMet_1",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dPhi_Higgs_Met_0": {
+      "title" : "dPhi_Higgs_Met_0",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_Higgs_Met_1": {
+      "title" : "dPhi_Higgs_Met_1",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_Higgs_GenMet_0": {
+      "title" : "dPhi_Higgs_GenMet_0",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_Higgs_GenMet_1": {
+      "title" : "dPhi_Higgs_GenMet_1",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "DiGravitino_pt": {
+      "title" : "DiGravitino p_{T}",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1000,
+      "log" : True,
+    },
+
+    "DiGravitino_mass": {
+      "title" : "DiGravitino_mass",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 20,
+      "log" : True,
+    },
+
+    "DiGravitino_eta": {
+      "title" : "DiGravitino_eta",
+      "nbins" : 50,
+      "min" : -5.,
+      "max" : 5.,
+      "log" : True,
+    },
+
+    "DiGravitino_phi": {
+      "title" : "DiGravitino_phi",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dR_DiGravitino_GenMet": {
+      "title" : "dR_DiGravitino_GenMet",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5,
+      "log" : True,
+    },
+
+    "dPhi_DiGravitino_Met": {
+      "title" : "dPhi_DiGravitino_Met",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "dPhi_DiGravitino_GenMet": {
+      "title" : "dPhi_DiGravitino_GenMet",
+      "nbins" : 50,
+      "min" : -3.2,
+      "max" : 3.2,
+      "log" : True,
+    },
+
+    "inv_mass_high_DNN": {
+      "title" : "inv_mass_high_DNN",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+
+    "inv_mass_tag_DNN": {
+      "title" : "inv mass tagged jets with highest DNN",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,
+      "log" : True,
+    },
+
+    "perc_met_held_by_gravitinos": {
+      "title" : "DiGravitino p_{T}/reco MET",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 5.,
+      "log" : True,
+    },
 }
 
 

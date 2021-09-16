@@ -14,6 +14,7 @@
 #include <fstream>
 #include <vector>
 #include "TFile.h"
+#include "TLorentzVector.h"
 #include "TTree.h"
 #include "TH1.h"
 #include "TMath.h"
@@ -76,8 +77,8 @@ int main(int argc, char **argv) {
     bool doPFCand=false;
 
     // model and inference settings
-    std::string graphPathAK4 = basePath + "/tagger_AK4_v3/graph.pb";
-    std::string MetaDataFileAK4 = basePath + "/tagger_AK4_v3/metadata.dat";
+    std::string graphPathAK4 = basePath + "/tagger_AK4_v2/graph.pb";
+    std::string MetaDataFileAK4 = basePath + "/tagger_AK4_v2/metadata.dat";
     std::string inputTensorNameAK4 = "input_input";
     std::string outputTensorNameAK4 = "FCN/output/Softmax";//"FCN/dense_4/Softmax";//or Softmax?
     //int nInputs = 10;
@@ -806,23 +807,39 @@ int main(int argc, char **argv) {
 		inputValues.at(6) = Jets->at(j).sig2EB;
 		inputValues.at(7) = Jets->at(j).ptDEB;
 		//v3 does not have those:
-		//inputValues.at(8) = Jets->at(j).sig1PF;
-		//inputValues.at(9) = Jets->at(j).sig2PF;
-		//inputValues.at(10) = Jets->at(j).ptDPF;
-		inputValues.at(8) = Jets->at(j).cHadEFrac;
-		inputValues.at(9) = Jets->at(j).nHadEFrac;
-		inputValues.at(10) = Jets->at(j).eleEFrac;
-		inputValues.at(11) = Jets->at(j).photonEFrac;
-		inputValues.at(12) = Jets->at(j).ptAllTracks;
-		inputValues.at(13) = Jets->at(j).ptAllPVTracks;
-		inputValues.at(14) = Jets->at(j).alphaMax;
-		inputValues.at(15) = Jets->at(j).betaMax;
-		inputValues.at(16) = Jets->at(j).gammaMax;
-		inputValues.at(17) = Jets->at(j).gammaMaxEM;
-		inputValues.at(18) = Jets->at(j).gammaMaxHadronic;
-		inputValues.at(19) = Jets->at(j).gammaMaxET;
-		inputValues.at(20) = Jets->at(j).minDeltaRAllTracks;
-		inputValues.at(21) = Jets->at(j).minDeltaRPVTracks;
+		inputValues.at(8) = Jets->at(j).sig1PF;
+		inputValues.at(9) = Jets->at(j).sig2PF;
+		inputValues.at(10) = Jets->at(j).ptDPF;
+		//valid for v2 only:
+		inputValues.at(11) = Jets->at(j).cHadEFrac;
+		inputValues.at(12) = Jets->at(j).nHadEFrac;
+		inputValues.at(13) = Jets->at(j).eleEFrac;
+		inputValues.at(14) = Jets->at(j).photonEFrac;
+		inputValues.at(15) = Jets->at(j).ptAllTracks;
+		inputValues.at(16) = Jets->at(j).ptAllPVTracks;
+		inputValues.at(17) = Jets->at(j).alphaMax;
+		inputValues.at(18) = Jets->at(j).betaMax;
+		inputValues.at(19) = Jets->at(j).gammaMax;
+		inputValues.at(20) = Jets->at(j).gammaMaxEM;
+		inputValues.at(21) = Jets->at(j).gammaMaxHadronic;
+		inputValues.at(22) = Jets->at(j).gammaMaxET;
+		inputValues.at(23) = Jets->at(j).minDeltaRAllTracks;
+		inputValues.at(24) = Jets->at(j).minDeltaRPVTracks;
+		////valid for v3 only:
+		//inputValues.at(8) = Jets->at(j).cHadEFrac;
+		//inputValues.at(9) = Jets->at(j).nHadEFrac;
+		//inputValues.at(10) = Jets->at(j).eleEFrac;
+		//inputValues.at(11) = Jets->at(j).photonEFrac;
+		//inputValues.at(12) = Jets->at(j).ptAllTracks;
+		//inputValues.at(13) = Jets->at(j).ptAllPVTracks;
+		//inputValues.at(14) = Jets->at(j).alphaMax;
+		//inputValues.at(15) = Jets->at(j).betaMax;
+		//inputValues.at(16) = Jets->at(j).gammaMax;
+		//inputValues.at(17) = Jets->at(j).gammaMaxEM;
+		//inputValues.at(18) = Jets->at(j).gammaMaxHadronic;
+		//inputValues.at(19) = Jets->at(j).gammaMaxET;
+		//inputValues.at(20) = Jets->at(j).minDeltaRAllTracks;
+		//inputValues.at(21) = Jets->at(j).minDeltaRPVTracks;
 
 		float* d = inputTensorAK4.flat<float>().data();
 		for (float v : inputValues) {

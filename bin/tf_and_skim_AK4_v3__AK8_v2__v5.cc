@@ -28,10 +28,11 @@
 #include <ctime>//compute time 
 
 //JJ:
-struct lorentz
+struct Particle
 {
   TLorentzVector vec;
-  //int pdgId;
+  int charge;
+  int pdgId;
 };
 
 bool pt_sorter(const PFCandidateType& x, const PFCandidateType& y) { return x.pt > y.pt; }
@@ -53,7 +54,7 @@ void NormalizeHist(TH1F *hist)
 void DivideHist(TH1 *ratio, TH1 *num, TH1 *den) {
   for (UInt_t b=0; int(b)<num->GetXaxis()->GetNbins()+2; ++b) {
     if ( den->GetBinContent(b) > 1.0e-4 ) {
-      //std::cout << "Bin: " << b << " " << ratio->GetXaxis()->GetBinCenter(b) << " : " << num->GetBinContent(b) << " / " << den->GetBinContent(b) << " = " << num->GetBinContent(b) / den->GetBinContent(b) << "\n";
+      //debug: //std::cout << "Bin: " << b << " " << ratio->GetXaxis()->GetBinCenter(b) << " : " << num->GetBinContent(b) << " / " << den->GetBinContent(b) << " = " << num->GetBinContent(b) / den->GetBinContent(b) << "\n";
       ratio->SetBinContent(b,num->GetBinContent(b) / den->GetBinContent(b));
       ratio->SetBinError(b, (num->GetBinContent(b) / den->GetBinContent(b))*sqrt( pow(num->GetBinError(b)/num->GetBinContent(b),2) + pow(den->GetBinError(b)/den->GetBinContent(b),2)));
     } else {
@@ -96,7 +97,7 @@ int main(int argc, char **argv) {
     const float TAU_MASS  = 1.77686;
     const float Z_MASS   = 91.2;
 
-    if(argc<7)
+    if(argc<8)
     //if(argc<2)
       {
 	std::cout<<"Invalid arguments, exit!" << std::endl;
@@ -104,15 +105,47 @@ int main(int argc, char **argv) {
       }
 
     bool skipTrain(false);
-    if(strcmp(argv[3], "y")==1 || strcmp(argv[3], "yes")==1) skipTrain=true;
+    if(strcmp(argv[3], "y")==0 || strcmp(argv[3], "yes")==0) skipTrain=true;
+    bool isSignal(false);
+    if(strcmp(argv[4], "True")==0) isSignal=true;
+    if(strcmp(argv[4], "true")==0) isSignal=true;
+    bool isData(false);
+    if(strcmp(argv[5], "True")==0) isData=true;
+    if(strcmp(argv[5], "true")==0) isData=true;
+
+    //Flags for SR/CR
+    bool doSR(false);
+    if(strcmp(argv[7], "doSR")==0) doSR=true;
+    bool doZtoMM(false);
+    if(strcmp(argv[7], "doZtoMM")==0) doZtoMM=true;
+    bool doZtoEE(false);
+    if(strcmp(argv[7], "doZtoEE")==0) doZtoEE=true;
+    bool doTtoEM(false);
+    if(strcmp(argv[7], "doTtoEM")==0) doTtoEM=true;
+    bool doWtoEN(false);
+    if(strcmp(argv[7], "doWtoEN")==0) doWtoEN=true;
+    bool doWtoMN(false);
+    if(strcmp(argv[7], "doWtoMN")==0) doWtoMN=true;
+    bool doPho(false);
+    if(strcmp(argv[7], "doPho")==0) doPho=true;
+    bool doJetHT(false);
+    if(strcmp(argv[7], "doJetHT")==0) doJetHT=true;
+
+    bool isVerbose(false);
 
     std::cout << "Input file: " << argv[1] << std::endl;
     std::cout << "Output file: " << argv[2] << std::endl;
     std::cout << "Skip even EventNumber: " << skipTrain << std::endl;
-    std::cout << "MC PU file: " << argv[4] << std::endl;
-    std::cout << "Data PU file: " << argv[5] << std::endl;
-    std::cout << "Data PU up file: " << argv[6] << std::endl;
-    std::cout << "Data PU down file: " << argv[7] << std::endl;
+    std::cout << "isSignal: " << isSignal << std::endl;
+    std::cout << "isData: " << isData << std::endl;
+    std::cout << "MC PU file: " << argv[6] << std::endl;
+    //std::cout << "Data PU file: " << argv[5] << std::endl;
+    //std::cout << "Data PU up file: " << argv[6] << std::endl;
+    //std::cout << "Data PU down file: " << argv[7] << std::endl;
+    if(doSR) std::cout << "SR selections" << std::endl;
+    if(doZtoMM) std::cout << "ZtoMM selections" << std::endl;
+    if(doZtoEE) std::cout << "ZtoEE selections" << std::endl;
+
 
     auto start = std::chrono::system_clock::now();//time!     
 
@@ -124,10 +157,10 @@ int main(int argc, char **argv) {
 
     std::string outputPath = argv[2];//!!!//"/test_on_real_ntuple.root";
 
-    std::string mcFilename = argv[4];
-    std::string dataFilename = argv[5];
-    std::string dataFilenameUp = argv[6];
-    std::string dataFilenameDown = argv[7];
+    std::string mcFilename = argv[6];
+    //std::string dataFilename = argv[5];
+    //std::string dataFilenameUp = argv[6];
+    //std::string dataFilenameDown = argv[7];
 
     //std::string inputTreeName = "skim";
     std::string inputTreeName = "ntuple/tree";
@@ -168,50 +201,56 @@ int main(int argc, char **argv) {
     n_pass->Sumw2();
     b_skipTrain->Sumw2();
     float  tree_weight = inputTree->GetWeight();
-    std::cout << "Tree weight: " << tree_weight << std::endl;
+    if(isVerbose) std::cout << "Tree weight: " << tree_weight << std::endl;
 
     if(skipTrain) b_skipTrain->Fill(0);
 
-    //PU reweighting
     TFile *mcFile = TFile::Open(mcFilename.data(),"READ"); if (!mcFile) return 0;
-    TFile *dataFile = TFile::Open(dataFilename.data(),"READ"); if (!dataFile) return 0;
-    TFile *dataFileUp = TFile::Open(dataFilenameUp.data(),"READ"); if (!dataFileUp) return 0;
-    TFile *dataFileDown = TFile::Open(dataFilenameDown.data(),"READ"); if (!dataFileDown) return 0;
+    TH1F  *pu = (TH1F*)mcFile->Get("PileupReweight");
+    TH1F  *pu_up = (TH1F*)mcFile->Get("PileupReweightSysUp");
+    TH1F  *pu_down = (TH1F*)mcFile->Get("PileupReweightSysDown");
+    if(isVerbose) std::cout<< "PU histo loaded" << std::endl;
 
-    TH1F  *pileup_mc = (TH1F*)mcFile->Get("pileup");
-    TH1F  *pileup_mc_copy = (TH1F*)pileup_mc->Clone("pileup_mc");
-    pileup_mc_copy->SetLineColor(8);
-    pileup_mc_copy->SetLineWidth(2);
-    pileup_mc_copy->SetLineStyle(2);
+    //PU reweighting
+    //TFile *mcFile = TFile::Open(mcFilename.data(),"READ"); if (!mcFile) return 0;
+    //TFile *dataFile = TFile::Open(dataFilename.data(),"READ"); if (!dataFile) return 0;
+    //TFile *dataFileUp = TFile::Open(dataFilenameUp.data(),"READ"); if (!dataFileUp) return 0;
+    //TFile *dataFileDown = TFile::Open(dataFilenameDown.data(),"READ"); if (!dataFileDown) return 0;
 
-    TH1F  *pileup_data = (TH1F*)dataFile->Get("pileup");
-    TH1F  *pileup_data_copy = (TH1F*)pileup_data->Clone("pileup_data");
-    pileup_data_copy->SetLineColor(1);
-    pileup_data_copy->SetLineWidth(2);
-    pileup_data_copy->SetLineStyle(1);
+    //TH1F  *pileup_mc = (TH1F*)mcFile->Get("pileup");
+    //TH1F  *pileup_mc_copy = (TH1F*)pileup_mc->Clone("pileup_mc");
+    //pileup_mc_copy->SetLineColor(8);
+    //pileup_mc_copy->SetLineWidth(2);
+    //pileup_mc_copy->SetLineStyle(2);
 
-    TH1F  *pileup_data_up = (TH1F*)dataFileUp->Get("pileup");
-    TH1F  *pileup_data_up_copy = (TH1F*)pileup_data_up->Clone("pileup_data_up");
-    pileup_data_up_copy->SetLineColor(2);
-    pileup_data_up_copy->SetLineWidth(2);
-    pileup_data_up_copy->SetLineStyle(2);
+    //TH1F  *pileup_data = (TH1F*)dataFile->Get("pileup");
+    //TH1F  *pileup_data_copy = (TH1F*)pileup_data->Clone("pileup_data");
+    //pileup_data_copy->SetLineColor(1);
+    //pileup_data_copy->SetLineWidth(2);
+    //pileup_data_copy->SetLineStyle(1);
 
-    TH1F  *pileup_data_down = (TH1F*)dataFileDown->Get("pileup");
-    TH1F  *pileup_data_down_copy = (TH1F*)pileup_data_down->Clone("pileup_data_down");
-    pileup_data_down_copy->SetLineColor(4);
-    pileup_data_down_copy->SetLineWidth(2);
-    pileup_data_down_copy->SetLineStyle(2);
+    //TH1F  *pileup_data_up = (TH1F*)dataFileUp->Get("pileup");
+    //TH1F  *pileup_data_up_copy = (TH1F*)pileup_data_up->Clone("pileup_data_up");
+    //pileup_data_up_copy->SetLineColor(2);
+    //pileup_data_up_copy->SetLineWidth(2);
+    //pileup_data_up_copy->SetLineStyle(2);
+
+    //TH1F  *pileup_data_down = (TH1F*)dataFileDown->Get("pileup");
+    //TH1F  *pileup_data_down_copy = (TH1F*)pileup_data_down->Clone("pileup_data_down");
+    //pileup_data_down_copy->SetLineColor(4);
+    //pileup_data_down_copy->SetLineWidth(2);
+    //pileup_data_down_copy->SetLineStyle(2);
     //Hist normalization
-    NormalizeHist(pileup_mc_copy);
-    NormalizeHist(pileup_data_copy);
-    NormalizeHist(pileup_data_up_copy);
-    NormalizeHist(pileup_data_down_copy);
+    //NormalizeHist(pileup_mc_copy);
+    //NormalizeHist(pileup_data_copy);
+    //NormalizeHist(pileup_data_up_copy);
+    //NormalizeHist(pileup_data_down_copy);
 
     //Hist normalization
-    NormalizeHist(pileup_mc);
-    NormalizeHist(pileup_data);
-    NormalizeHist(pileup_data_up);
-    NormalizeHist(pileup_data_down);
+    //NormalizeHist(pileup_mc);
+    //NormalizeHist(pileup_data);
+    //NormalizeHist(pileup_data_up);
+    //NormalizeHist(pileup_data_down);
 
     // Input variables
     Long64_t EventNumber;
@@ -222,8 +261,68 @@ int main(int argc, char **argv) {
     bool   isMC;
     bool   isVBF;
     int    MeanNumInteractions;
-    bool   HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v;
-    bool   HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v;
+    bool   HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v(false);
+    bool   HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v(false);
+    //Mu CR
+    bool   HLT_IsoMu24_v(false);
+    bool   HLT_IsoMu27_v(false);
+    bool   HLT_IsoMu24_eta2p1_v(false);//partially prescaled in 2018
+    //Ele CR
+    bool   HLT_Ele32_WPTight_Gsf_v(false);
+    bool   HLT_Ele32_eta2p1_WPLoose_Gsf_v(false);//not available in 2018
+    bool   HLT_Ele35_WPTight_Gsf_v(false);
+    //E-MU CR
+    bool   HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v(false);//not available in 2018
+    bool   HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v(false);//not available in 2018
+    bool   HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v(false);
+    bool   HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v(false);
+    bool   HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
+    bool   HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
+    bool   HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
+    bool   HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
+    bool   HLT_Mu27_Ele37_CaloIdL_MW_v(false);
+    bool   HLT_Mu37_Ele27_CaloIdL_MW_v(false);
+    //Photon CR
+    bool   HLT_Photon22_v(false);//not available in 2018
+    bool   HLT_Photon30_v(false);//not available in 2018
+    bool   HLT_Photon33_v(false);
+    bool   HLT_Photon36_v(false);//not available in 2018
+    bool   HLT_Photon50_v(false);
+    bool   HLT_Photon75_v(false);
+    bool   HLT_Photon90_v(false);
+    bool   HLT_Photon120_v(false);
+    bool   HLT_Photon125_v(false);//not available in 2018
+    bool   HLT_Photon150_v(false);
+    bool   HLT_Photon175_v(false);
+    bool   HLT_Photon200_v(false);//unprescaled
+    bool   HLT_Photon250_NoHE_v(false);//not available in 2018
+    bool   HLT_Photon300_NoHE_v(false);
+    bool   HLT_Photon500_v(false);//not available in 2018
+    bool   HLT_Photon600_v(false);//not available in 2018
+    //JetHT
+    bool   HLT_DiPFJetAve40_v(false);
+    bool   HLT_DiPFJetAve60_v(false);
+    bool   HLT_DiPFJetAve80_v(false);
+    bool   HLT_DiPFJetAve200_v(false);
+    bool   HLT_DiPFJetAve500_v(false);
+    bool   HLT_PFJet40_v(false);
+    bool   HLT_PFJet60_v(false);
+    bool   HLT_PFJet80_v(false);
+    bool   HLT_PFJet140_v(false);
+    bool   HLT_PFJet200_v(false);
+    bool   HLT_PFJet260_v(false);
+    bool   HLT_PFJet320_v(false);
+    bool   HLT_PFJet400_v(false);
+    bool   HLT_PFJet450_v(false);
+    bool   HLT_PFJet500_v(false);//unprescaled
+    bool   HLT_PFJet550_v(false);//unprescaled
+    bool   HLT_AK8PFJet40_v(false);
+    bool   HLT_AK8PFJet60_v(false);
+    bool   HLT_AK8PFJet80_v(false);
+    bool   HLT_AK8PFJet200_v(false);
+    bool   HLT_AK8PFJet500_v(false);//unprescaled
+    bool   HLT_AK8PFJet550_v(false);//unprescaled  
+
     bool   Flag2_globalSuperTightHalo2016Filter;
     bool   Flag2_goodVertices;
     bool   Flag2_EcalDeadCellTriggerPrimitiveFilter;
@@ -232,8 +331,8 @@ int main(int argc, char **argv) {
     bool   Flag2_ecalBadCalibFilter;
     bool   Flag2_eeBadScFilter;
     bool   Flag2_BadPFMuonFilter;
-    bool   HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v;
-    bool   HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v;
+    bool   HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v(false);
+    bool   HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v(false);
     float  HT;
     float  MinJetMetDPhi;
     Long64_t nCHSJets;
@@ -284,6 +383,68 @@ int main(int argc, char **argv) {
     TBranch        *b_MeanNumInteractions;
     TBranch        *b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v;
     TBranch        *b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v;
+
+    //Mu CR
+    TBranch        *b_HLT_IsoMu24_v;
+    TBranch        *b_HLT_IsoMu27_v;
+    TBranch        *b_HLT_IsoMu24_eta2p1_v;//partially prescaled in 2018
+    //Ele CR
+    TBranch        *b_HLT_Ele32_WPTight_Gsf_v;
+    TBranch        *b_HLT_Ele32_eta2p1_WPLoose_Gsf_v;//not available in 2018
+    TBranch        *b_HLT_Ele35_WPTight_Gsf_v;
+    //E-MU CR
+    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v;//not available in 2018
+    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v;//not available in 2018
+    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v;
+    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v;
+    TBranch        *b_HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v;//not available in 2018
+    TBranch        *b_HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v;//not available in 2018
+    TBranch        *b_HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v;//not available in 2018
+    TBranch        *b_HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v;//not available in 2018
+    TBranch        *b_HLT_Mu27_Ele37_CaloIdL_MW_v;
+    TBranch        *b_HLT_Mu37_Ele27_CaloIdL_MW_v;
+    //Photon CR
+    TBranch        *b_HLT_Photon22_v;//not available in 2018
+    TBranch        *b_HLT_Photon30_v;//not available in 2018
+    TBranch        *b_HLT_Photon33_v;
+    TBranch        *b_HLT_Photon36_v;//not available in 2018
+    TBranch        *b_HLT_Photon50_v;
+    TBranch        *b_HLT_Photon75_v;
+    TBranch        *b_HLT_Photon90_v;
+    TBranch        *b_HLT_Photon120_v;
+    TBranch        *b_HLT_Photon125_v;//not available in 2018
+    TBranch        *b_HLT_Photon150_v;
+    TBranch        *b_HLT_Photon175_v;
+    TBranch        *b_HLT_Photon200_v;//unprescaled
+    TBranch        *b_HLT_Photon250_NoHE_v;//not available in 2018
+    TBranch        *b_HLT_Photon300_NoHE_v;
+    TBranch        *b_HLT_Photon500_v;//not available in 2018
+    TBranch        *b_HLT_Photon600_v;//not available in 2018
+    //JetHT
+    TBranch        *b_HLT_DiPFJetAve40_v;
+    TBranch        *b_HLT_DiPFJetAve60_v;
+    TBranch        *b_HLT_DiPFJetAve80_v;
+    TBranch        *b_HLT_DiPFJetAve200_v;
+    TBranch        *b_HLT_DiPFJetAve500_v;
+    TBranch        *b_HLT_PFJet40_v;
+    TBranch        *b_HLT_PFJet60_v;
+    TBranch        *b_HLT_PFJet80_v;
+    TBranch        *b_HLT_PFJet140_v;
+    TBranch        *b_HLT_PFJet200_v;
+    TBranch        *b_HLT_PFJet260_v;
+    TBranch        *b_HLT_PFJet320_v;
+    TBranch        *b_HLT_PFJet400_v;
+    TBranch        *b_HLT_PFJet450_v;
+    TBranch        *b_HLT_PFJet500_v;//unprescaled
+    TBranch        *b_HLT_PFJet550_v;//unprescaled
+    TBranch        *b_HLT_AK8PFJet40_v;
+    TBranch        *b_HLT_AK8PFJet60_v;
+    TBranch        *b_HLT_AK8PFJet80_v;
+    TBranch        *b_HLT_AK8PFJet200_v;
+    TBranch        *b_HLT_AK8PFJet500_v;//unprescaled
+    TBranch        *b_HLT_AK8PFJet550_v;//unprescaled  
+
+
     TBranch        *b_Flag2_globalSuperTightHalo2016Filter;
     TBranch        *b_Flag2_goodVertices;
     TBranch        *b_Flag2_EcalDeadCellTriggerPrimitiveFilter;
@@ -329,6 +490,70 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("MeanNumInteractions",  &MeanNumInteractions,  &b_MeanNumInteractions);
     inputTree->SetBranchAddress("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v, &b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v);
     inputTree->SetBranchAddress("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v, &b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v);
+
+    inputTree->SetBranchAddress("HLT_IsoMu24_v", &HLT_IsoMu24_v, &b_HLT_IsoMu24_v);
+    inputTree->SetBranchAddress("HLT_IsoMu27_v", &HLT_IsoMu27_v, &b_HLT_IsoMu27_v);
+    inputTree->SetBranchAddress("HLT_IsoMu24_eta2p1_v", &HLT_IsoMu24_eta2p1_v, &b_HLT_IsoMu24_eta2p1_v);
+    inputTree->SetBranchAddress("HLT_Ele32_WPTight_Gsf_v", &HLT_Ele32_WPTight_Gsf_v, &b_HLT_Ele32_WPTight_Gsf_v);
+    inputTree->SetBranchAddress("HLT_Ele32_eta2p1_WPLoose_Gsf_v", &HLT_Ele32_eta2p1_WPLoose_Gsf_v, &b_HLT_Ele32_eta2p1_WPLoose_Gsf_v);
+    inputTree->SetBranchAddress("HLT_Ele35_WPTight_Gsf_v", &HLT_Ele35_WPTight_Gsf_v , &b_HLT_Ele35_WPTight_Gsf_v);
+    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v", &HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v, &b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v);
+    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v", &HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v, &b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v);
+    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v);
+    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v);
+    inputTree->SetBranchAddress("HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v", &HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v);
+    inputTree->SetBranchAddress("HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v", &HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v);
+    inputTree->SetBranchAddress("HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v", &HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v);
+    inputTree->SetBranchAddress("HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v", &HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v);
+    inputTree->SetBranchAddress("HLT_Mu27_Ele37_CaloIdL_MW_v", &HLT_Mu27_Ele37_CaloIdL_MW_v, &b_HLT_Mu27_Ele37_CaloIdL_MW_v);
+    inputTree->SetBranchAddress("HLT_Mu37_Ele27_CaloIdL_MW_v", &HLT_Mu37_Ele27_CaloIdL_MW_v, &b_HLT_Mu37_Ele27_CaloIdL_MW_v);
+    //prescaled triggers
+    if(isData or isSignal)
+      {
+	std::cout << " prescaled triggers? " << std::endl;
+	inputTree->SetBranchAddress("HLT_Photon22_v", &HLT_Photon22_v, &b_HLT_Photon22_v);
+	inputTree->SetBranchAddress("HLT_Photon30_v", &HLT_Photon30_v, &b_HLT_Photon30_v);
+	inputTree->SetBranchAddress("HLT_Photon33_v", &HLT_Photon33_v, &b_HLT_Photon33_v);
+	inputTree->SetBranchAddress("HLT_Photon36_v", &HLT_Photon36_v, &b_HLT_Photon36_v);
+	inputTree->SetBranchAddress("HLT_Photon50_v", &HLT_Photon50_v, &b_HLT_Photon50_v);
+	inputTree->SetBranchAddress("HLT_Photon75_v", &HLT_Photon75_v, &b_HLT_Photon75_v);
+	inputTree->SetBranchAddress("HLT_Photon90_v", &HLT_Photon90_v, &b_HLT_Photon90_v);
+	inputTree->SetBranchAddress("HLT_Photon120_v", &HLT_Photon120_v, &b_HLT_Photon120_v);
+	inputTree->SetBranchAddress("HLT_Photon125_v", &HLT_Photon125_v, &b_HLT_Photon125_v);
+	inputTree->SetBranchAddress("HLT_Photon150_v", &HLT_Photon150_v, &b_HLT_Photon150_v);
+	inputTree->SetBranchAddress("HLT_Photon175_v", &HLT_Photon175_v, &b_HLT_Photon175_v);//unprescaled??
+      }
+    inputTree->SetBranchAddress("HLT_Photon200_v", &HLT_Photon200_v, &b_HLT_Photon200_v);
+    inputTree->SetBranchAddress("HLT_Photon250_NoHE_v", &HLT_Photon250_NoHE_v, &b_HLT_Photon250_NoHE_v);
+    inputTree->SetBranchAddress("HLT_Photon300_NoHE_v", &HLT_Photon300_NoHE_v, &b_HLT_Photon300_NoHE_v);
+    inputTree->SetBranchAddress("HLT_Photon500_v", &HLT_Photon500_v, &b_HLT_Photon500_v);
+    inputTree->SetBranchAddress("HLT_Photon600_v", &HLT_Photon600_v, &b_HLT_Photon600_v);
+    if(isData or isSignal)
+      {
+	inputTree->SetBranchAddress("HLT_DiPFJetAve40_v", &HLT_DiPFJetAve40_v, &b_HLT_DiPFJetAve40_v);
+	inputTree->SetBranchAddress("HLT_DiPFJetAve60_v", &HLT_DiPFJetAve60_v, &b_HLT_DiPFJetAve60_v);
+	inputTree->SetBranchAddress("HLT_DiPFJetAve80_v", &HLT_DiPFJetAve80_v, &b_HLT_DiPFJetAve80_v);
+	inputTree->SetBranchAddress("HLT_DiPFJetAve200_v", &HLT_DiPFJetAve200_v, &b_HLT_DiPFJetAve200_v);
+	inputTree->SetBranchAddress("HLT_DiPFJetAve500_v", &HLT_DiPFJetAve500_v, &b_HLT_DiPFJetAve500_v);
+	inputTree->SetBranchAddress("HLT_PFJet40_v", &HLT_PFJet40_v, &b_HLT_PFJet40_v);
+	inputTree->SetBranchAddress("HLT_PFJet60_v", &HLT_PFJet60_v, &b_HLT_PFJet60_v);
+	inputTree->SetBranchAddress("HLT_PFJet80_v", &HLT_PFJet80_v, &b_HLT_PFJet80_v);
+	inputTree->SetBranchAddress("HLT_PFJet140_v", &HLT_PFJet140_v, &b_HLT_PFJet140_v);
+	inputTree->SetBranchAddress("HLT_PFJet200_v", &HLT_PFJet200_v, &b_HLT_PFJet200_v);
+	inputTree->SetBranchAddress("HLT_PFJet260_v", &HLT_PFJet260_v, &b_HLT_PFJet260_v);
+	inputTree->SetBranchAddress("HLT_PFJet320_v", &HLT_PFJet320_v, &b_HLT_PFJet320_v);
+	inputTree->SetBranchAddress("HLT_PFJet400_v", &HLT_PFJet400_v, &b_HLT_PFJet400_v);
+	inputTree->SetBranchAddress("HLT_PFJet450_v", &HLT_PFJet450_v, &b_HLT_PFJet450_v);
+	inputTree->SetBranchAddress("HLT_AK8PFJet40_v", &HLT_AK8PFJet40_v, &b_HLT_AK8PFJet40_v);
+	inputTree->SetBranchAddress("HLT_AK8PFJet60_v", &HLT_AK8PFJet60_v, &b_HLT_AK8PFJet60_v);
+	inputTree->SetBranchAddress("HLT_AK8PFJet80_v", &HLT_AK8PFJet80_v, &b_HLT_AK8PFJet80_v);
+	inputTree->SetBranchAddress("HLT_AK8PFJet200_v", &HLT_AK8PFJet200_v, &b_HLT_AK8PFJet200_v);
+      }
+    inputTree->SetBranchAddress("HLT_PFJet500_v", &HLT_PFJet500_v, &b_HLT_PFJet500_v);
+    inputTree->SetBranchAddress("HLT_PFJet550_v", &HLT_PFJet550_v, &b_HLT_PFJet550_v);
+    inputTree->SetBranchAddress("HLT_AK8PFJet500_v", &HLT_AK8PFJet500_v, &b_HLT_AK8PFJet500_v);
+    inputTree->SetBranchAddress("HLT_AK8PFJet550_v", &HLT_AK8PFJet550_v, &b_HLT_AK8PFJet550_v);
+
     inputTree->SetBranchAddress("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, &b_Flag2_globalSuperTightHalo2016Filter);
     inputTree->SetBranchAddress("Flag2_goodVertices", &Flag2_goodVertices, &b_Flag2_goodVertices);
     inputTree->SetBranchAddress("Flag2_EcalDeadCellTriggerPrimitiveFilter", &Flag2_EcalDeadCellTriggerPrimitiveFilter, &b_Flag2_EcalDeadCellTriggerPrimitiveFilter);
@@ -359,7 +584,7 @@ int main(int argc, char **argv) {
     finAK4.open(MetaDataFileAK4);
     std::vector<std::string> featuresAK4;
     std::string toEraseAK4 = "Jet_";
-    std::cout << "   -- > Features AK4: " << std::endl;
+    //std::cout << "   -- > Features AK4: " << std::endl;
     while (finAK4 >> featAK4)
       {
 	size_t pos = featAK4.find(toEraseAK4);
@@ -369,7 +594,7 @@ int main(int argc, char **argv) {
 	    featAK4.erase(pos, toEraseAK4.length());
 	  }
 	//std::string new_feat = featAK4.substr(position);
-	std::cout << featAK4 << std::endl;
+	//std::cout << featAK4 << std::endl;
 	featuresAK4.push_back(featAK4);
       }
     finAK4.close();
@@ -380,7 +605,7 @@ int main(int argc, char **argv) {
     finAK8.open(MetaDataFileAK8);
     std::vector<std::string> featuresAK8;
     std::string toEraseAK8 = "FatJet_";
-    std::cout << "   -- > Features AK8: " << std::endl;
+    //std::cout << "   -- > Features AK8: " << std::endl;
     while (finAK8 >> featAK8)
       {
 	size_t pos = featAK8.find(toEraseAK8);
@@ -390,7 +615,7 @@ int main(int argc, char **argv) {
 	    featAK8.erase(pos, toEraseAK8.length());
 	  }
 	//std::string new_feat = featAK8.substr(position);
-	std::cout << featAK8 << std::endl;
+	//std::cout << featAK8 << std::endl;
 	featuresAK8.push_back(featAK8);
       }
     finAK8.close();
@@ -430,15 +655,52 @@ int main(int argc, char **argv) {
     outputFile->cd();
     TTree *outputTree = new TTree(outputTreeName.c_str(), "");
 
-    TH1F *PUWeightHist = (TH1F*)pileup_mc->Clone("PUWeight");
-    DivideHist( PUWeightHist , pileup_data, pileup_mc);
-    PUWeightHist->GetYaxis()->SetTitle("PU data/PU mc");
-    TH1F *PUWeightHistUp = (TH1F*)pileup_mc->Clone("PUWeightUp");
-    DivideHist( PUWeightHistUp , pileup_data_up, pileup_mc);
-    PUWeightHistUp->GetYaxis()->SetTitle("PU data/PU mc");
-    TH1F *PUWeightHistDown = (TH1F*)pileup_mc->Clone("PUWeightDown");
-    DivideHist( PUWeightHistDown , pileup_data_down, pileup_mc);
-    PUWeightHistDown->GetYaxis()->SetTitle("PU data/PU mc");
+
+    //Flags for SR/CR
+    bool isSR(false);
+    bool isZtoMM(false);
+    bool isZtoEE(false);
+    bool isTtoEM(false);
+    bool isWtoEN(false);
+    bool isWtoMN(false);
+    bool isPho(false);
+    bool isJetHT(false);
+
+
+    //TH1F *PUWeightHist = (TH1F*)pileup_mc->Clone("PUWeight");
+    //DivideHist( PUWeightHist , pileup_data, pileup_mc);
+    //PUWeightHist->GetYaxis()->SetTitle("PU data/PU mc");
+    //TH1F *PUWeightHistUp = (TH1F*)pileup_mc->Clone("PUWeightUp");
+    //DivideHist( PUWeightHistUp , pileup_data_up, pileup_mc);
+    //PUWeightHistUp->GetYaxis()->SetTitle("PU data/PU mc");
+    //TH1F *PUWeightHistDown = (TH1F*)pileup_mc->Clone("PUWeightDown");
+    //DivideHist( PUWeightHistDown , pileup_data_down, pileup_mc);
+    //PUWeightHistDown->GetYaxis()->SetTitle("PU data/PU mc");
+
+    //JJ
+
+    /*
+    Q?
+    if( (label.find("MR") == std::string::npos) && llp_tree->met < 200. ) continue;
+    if( (label=="MR_EMU") && llp_tree->met < 30. ) continue;
+    if( (label.find("MR_Single") != std::string::npos) && llp_tree->met < 40. ) continue;
+    if( (label.find("MR_ZLL") != std::string::npos) && isData && llp_tree->met >= 30. ) continue;
+    if( (label.find("MR_JetHT") != std::string::npos) && llp_tree->met >= 30. ) continue;
+    if( (label=="MR_PHO") && llp_tree->met >= 30. ) continue;
+
+    if( (label.find("MR") != std::string::npos) && muonPt[i] < 25.) continue; 
+    if( (label=="MR_SingleMuon") && llp_tree->nMuons != 1 ) continue;
+    if( (label.find("MR") != std::string::npos) && elePt[i] < 25.) continue; 
+    if( (label=="MR_SingleElectron") && llp_tree->nElectrons != 1 ) continue;
+    if( (label=="MR_PHO") && llp_tree->nPhotons != 1 ) continue; -->  loose photons?
+
+    transverse mass done with leptons only ---> need to fix the overlap code
+
+    do the Z
+
+    for jetHT: 2 jets
+    for photon: 1 loose photon + 1 jet; delta phi jet/photon?
+    */
 
     std::vector<PFCandidateType> Jet_0_PFCandidatesAK4;
     std::vector<PFCandidateType> Jet_1_PFCandidatesAK4;
@@ -482,6 +744,18 @@ int main(int argc, char **argv) {
     float MinFatJetMetDPhiBarrel(10.);
     float MinFatJetMetDPhiBarrelMatched(10.);
     float MinJetMetDPhiBarrel(10.);
+
+    float MT(-1.);
+    float Z_mass(-1.);
+    float Z_pt(-1.);
+    float Z_phi(-1.);
+    float Z_eta(-1.);
+    float Z_lep0_pt(-1.);
+    float Z_lep0_phi(-9.);
+    float Z_lep0_eta(-9.);
+    float Z_lep1_pt(-1.);
+    float Z_lep1_phi(-9.);
+    float Z_lep1_eta(-9.);
 
     int nTaus(0);
     int nTausPreVeto(0);
@@ -581,6 +855,14 @@ int main(int argc, char **argv) {
     outputTree->Branch("PUReWeightUp",      &PUReWeightUp,      "PUReWeightUp/F");
     outputTree->Branch("PUReWeightDown",    &PUReWeightDown,    "PUReWeightDown/F");
     outputTree->Branch("isMC",              &isMC,              "isMC/O");
+    outputTree->Branch("isSR",              &isSR,              "isSR/O");
+    outputTree->Branch("isZtoMM",           &isZtoMM,           "isZtoMM/O");
+    outputTree->Branch("isZtoEE",           &isZtoEE,           "isZtoEE/O");
+    outputTree->Branch("isWtoMN",           &isWtoMN,           "isWtoMN/O");
+    outputTree->Branch("isWtoEN",           &isWtoEN,           "isWtoEN/O");
+    outputTree->Branch("isTtoEM",           &isTtoEM,           "isTtoEM/O");
+    outputTree->Branch("isPho",             &isPho,             "isPho/O");
+    outputTree->Branch("isJetHT",           &isJetHT,           "isJetHT/O");
     outputTree->Branch("isVBF",             &isVBF,             "isVBF/O");
     outputTree->Branch("MeanNumInteractions",             &MeanNumInteractions,             "MeanNumInteractions/I");
     outputTree->Branch("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v/O");
@@ -588,6 +870,18 @@ int main(int argc, char **argv) {
     outputTree->Branch("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
     outputTree->Branch("HT",                &HT,                "HT/F");
+    outputTree->Branch("MT",                &MT,                "MT/F");
+    outputTree->Branch("Z_mass",            &Z_mass,            "Z_mass/F");
+    outputTree->Branch("Z_pt",              &Z_pt,              "Z_pt/F");
+    outputTree->Branch("Z_phi",             &Z_phi,             "Z_phi/F");
+    outputTree->Branch("Z_eta",             &Z_eta,             "Z_eta/F");
+    outputTree->Branch("Z_lep0_pt",         &Z_lep0_pt,         "Z_lep0_pt/F");
+    outputTree->Branch("Z_lep0_phi",        &Z_lep0_phi,        "Z_lep0_phi/F");
+    outputTree->Branch("Z_lep0_eta",        &Z_lep0_eta,        "Z_lep0_eta/F");
+    outputTree->Branch("Z_lep1_pt",         &Z_lep1_pt,         "Z_lep1_pt/F");
+    outputTree->Branch("Z_lep1_phi",        &Z_lep1_phi,        "Z_lep1_phi/F");
+    outputTree->Branch("Z_lep1_eta",        &Z_lep1_eta,        "Z_lep1_eta/F");
+
     outputTree->Branch("MinJetMetDPhi",     &MinJetMetDPhi,     "MinJetMetDPhi/F");
     outputTree->Branch("MinJetMetDPhiBarrel",  &MinJetMetDPhiBarrel,  "MinJetMetDPhiBarrel/F");
     outputTree->Branch("MinFatJetMetDPhi",  &MinFatJetMetDPhi,  "MinFatJetMetDPhi/F");
@@ -917,9 +1211,9 @@ int main(int argc, char **argv) {
 
 
 
-        if (i % 1000 == 0) {
-            std::cout << "evaluating entry " << i << std::endl;
-        }
+        //if (i % 1000 == 0) {
+        //    std::cout << "evaluating entry " << i << std::endl;
+        //}
         inputTree->GetEntry(i);
 
 	//if(strcmp(argv[3], "y")==1 || strcmp(argv[3], "yes")==1)
@@ -939,131 +1233,139 @@ int main(int argc, char **argv) {
 
 	//Consider PU weight
 
-	PUReWeight = PUWeightHist->GetBinContent(PUWeightHist->GetXaxis()->FindBin(MeanNumInteractions));
-	PUReWeightUp = PUWeightHistUp->GetBinContent(PUWeightHistUp->GetXaxis()->FindBin(MeanNumInteractions));
-	PUReWeightDown = PUWeightHistDown->GetBinContent(PUWeightHistDown->GetXaxis()->FindBin(MeanNumInteractions));
-	//std::cout << " - - - - - - - - - - - - -" << std::endl;
-	//std::cout << "EventWeight: " << EventWeight << std::endl;
-	//std::cout << "MeanNumInteractions: " << MeanNumInteractions << std::endl;
-	//std::cout << "PUWeight: " << PUWeight << std::endl;
-	//std::cout << "PUReWeight: " << PUReWeight << std::endl;
-	//std::cout << "PUReWeightUp: " << PUReWeightUp << std::endl;
-	//std::cout << "PUReWeightDown: " << PUReWeightDown << std::endl;
-	//EventWeight = EventWeight*PUWeight;
-	//std::cout << "EventWeight with PU OLD: " << EventWeight << std::endl;
+	//PUReWeight = PUWeightHist->GetBinContent(PUWeightHist->GetXaxis()->FindBin(MeanNumInteractions));
+	//PUReWeightUp = PUWeightHistUp->GetBinContent(PUWeightHistUp->GetXaxis()->FindBin(MeanNumInteractions));
+	//PUReWeightDown = PUWeightHistDown->GetBinContent(PUWeightHistDown->GetXaxis()->FindBin(MeanNumInteractions));
 
+	if(isMC)
+	  {
+	    PUReWeight = pu->GetBinContent(pu->GetXaxis()->FindBin(MeanNumInteractions));
+	    PUReWeightUp = pu_up->GetBinContent(pu_up->GetXaxis()->FindBin(MeanNumInteractions));
+	    PUReWeightDown = pu_down->GetBinContent(pu_down->GetXaxis()->FindBin(MeanNumInteractions));
+	  }
+	//Trigger selections
+
+	//MET filters always fulfilled
+        if(!Flag2_globalSuperTightHalo2016Filter) continue;
+        if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
+	if(!Flag2_HBHENoiseFilter) continue;
+        if(!Flag2_HBHEIsoNoiseFilter) continue;
+        if(!Flag2_ecalBadCalibFilter) continue;
+        if(!Flag2_eeBadScFilter) continue;
+        if(!Flag2_BadPFMuonFilter) continue;
+
+	if(doSR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) ) continue;
+	if(doZtoMM and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
+	if(doZtoEE and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v) ) continue;
+	if(doWtoEN and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
+	if(doWtoMN and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v) ) continue;
+	if(doTtoEM and not(HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v or HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v or HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v or HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v or HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v or HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v or HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v or HLT_Mu27_Ele37_CaloIdL_MW_v or HLT_Mu37_Ele27_CaloIdL_MW_v) ) continue;
+	if(doPho and not(HLT_Photon22_v or HLT_Photon30_v or HLT_Photon33_v or HLT_Photon36_v or HLT_Photon50_v or HLT_Photon75_v or HLT_Photon90_v or HLT_Photon120_v or HLT_Photon125_v or HLT_Photon150_v or HLT_Photon200_v or HLT_Photon175_v or HLT_Photon250_NoHE_v or HLT_Photon300_NoHE_v or HLT_Photon500_v or HLT_Photon600_v) ) continue;
+	if(doJetHT and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v) ) continue;
+
+	//Selection on MET
+        if(doSR and MEt->pt<200) continue;
+	if(doZtoMM and MEt->pt>=30) continue;
+	if(doZtoEE and MEt->pt>=30) continue;
+	if(doWtoMN and MEt->pt<40) continue;
+	if(doWtoEN and MEt->pt<40) continue;
+	if(doTtoEM and MEt->pt<30) continue;
+	if(doPho and MEt->pt>=30) continue;
+	if(doJetHT and MEt->pt>=30) continue;
 
 	//Loop on veto objects
 	//JJ
-	std::vector<lorentz> LeptonsOverlap;
-	std::vector<lorentz> PhotonsOverlap;
-	std::vector<lorentz> TausOverlap;
+	std::vector<Particle> LeptonsStruct;
+	std::vector<Particle> MuonsStruct;
+	std::vector<Particle> ElectronsStruct;
+	std::vector<Particle> PhotonsStruct;
+	std::vector<Particle> TausStruct;
 	//Muons
-	float mu_iso = 0.3;
+	float mu_iso = 0.4;
 	//if(Muons->size()>1) std::cout << "Muons size: " << Muons->size() << std::endl;
-	for (unsigned int m1=0; m1<Muons->size(); m1++)
+	for (unsigned int m=0; m<Muons->size(); m++)
 	  {
 
+	    //WtoMN and ZToMM CR
+	    if( (doZtoMM or doWtoMN) and (Muons->at(m).pt<25 or !Muons->at(m).isTight or Muons->at(m).pfIso04>=0.15) ) continue;
+	    if( (doTtoEM) and (Muons->at(m).pt<30) ) continue;
+	    
 	    //JJ:
 	    //remove overlaps
 	    ////////////////////////
 	    bool overlap = false;
-	    for(auto& lep : LeptonsOverlap)
+	    for(auto& lep : LeptonsStruct)
 	      {
-		if (reco::deltaR(Muons->at(m1).eta,Muons->at(m1).phi,lep.vec.Eta(),lep.vec.Phi()) < mu_iso) overlap = true;
+		if (reco::deltaR(Muons->at(m).eta,Muons->at(m).phi,lep.vec.Eta(),lep.vec.Phi()) < mu_iso) overlap = true;
 	      }
 	    if(overlap) continue;
 	    
-	    lorentz tmpMuon;
-	    tmpMuon.vec.SetPtEtaPhiM(Muons->at(m1).pt,Muons->at(m1).eta, Muons->at(m1).phi, MU_MASS);
-	    //tmpMuon.pdgId = 13 * -1 * Muons->at(m1).charge;
+	    Particle tmpMuon;
+	    tmpMuon.vec.SetPtEtaPhiM(Muons->at(m).pt,Muons->at(m).eta, Muons->at(m).phi, MU_MASS);
+	    tmpMuon.pdgId = Muons->at(m).pdgId;
+	    tmpMuon.charge = Muons->at(m).charge;
 
-	    LeptonsOverlap.push_back(tmpMuon);
+	    LeptonsStruct.push_back(tmpMuon);
+	    MuonsStruct.push_back(tmpMuon);
 	    nMuonsPassing++;
-	    ////////////////////////
-
-	      //for (unsigned int m2=1; m2<Muons->size(); m2++)
-	      //{
-
-		//if(m1!=m2 and reco::deltaR(Muons->at(m1).eta, Muons->at(m1).phi, Muons->at(m2).eta, Muons->at(m2).phi)<mu_iso)
-		//{
-		////std::cout << "Muons are overlapped: " << m1 << m2 << std::endl;
-		////std::cout << "Their dR: " << reco::deltaR(Muons->at(m1).eta, Muons->at(m1).phi, Muons->at(m2).eta, Muons->at(m2).phi) << std::endl;
-		//Muons->erase(Muons->begin()+m2);
-		//}
-	      //}
 	  }
 	//if(Muons->size()>0) std::cout << "Muons size final: " << Muons->size() << std::endl;
 	//nMuons = Muons->size();
+	
+	//WtoMN
+	if(doWtoMN and MuonsStruct.size()!=1) continue;
+	//ZtoMM
+	if(doZtoMM and MuonsStruct.size()!=2) continue;
+
+
 
 	//Electrons
-	float ele_iso = 0.3;
-	if(Electrons->size()>0) std::cout << "Electrons size: " << Electrons->size() << std::endl;
-	for (unsigned int e1=0; e1<Electrons->size(); e1++)
+	float ele_iso = 0.4;
+	//if(Electrons->size()>0) std::cout << "Electrons size: " << Electrons->size() << std::endl;
+	for (unsigned int e=0; e<Electrons->size(); e++)
 	  {
 
-	    //JJ preliminary
-	    if(Electrons->at(e1).pt <= 10 ) continue;
-	    if(fabs(Electrons->at(e1).eta) > 2.5) continue;
-	    if(!Electrons->at(e1).isVeto) continue;
-
+	    //WtoEN and ZToEE CR
+	    if( (doZtoEE or doWtoEN) and (Electrons->at(e).pt<35 or !Electrons->at(e).isTight) ) continue;
+	    if( (doTtoEM) and (Electrons->at(e).pt<30) ) continue;
 
 	    //remove overlaps
 	    bool overlap = false;
-	    for(auto& lep : LeptonsOverlap)
+	    for(auto& lep : LeptonsStruct)
 	      {
-		if (reco::deltaR(Electrons->at(e1).eta, Electrons->at(e1).phi,lep.vec.Eta(),lep.vec.Phi()) < ele_iso) overlap = true;
+		if (reco::deltaR(Electrons->at(e).eta, Electrons->at(e).phi,lep.vec.Eta(),lep.vec.Phi()) < ele_iso) overlap = true;
 	      }
 	    if(overlap) continue;
 
-	    lorentz tmpElectron;
-	    tmpElectron.vec.SetPtEtaPhiM(Electrons->at(e1).pt, Electrons->at(e1).eta, Electrons->at(e1).phi, ELE_MASS);
-	    LeptonsOverlap.push_back(tmpElectron);
+	    Particle tmpElectron;
+	    tmpElectron.vec.SetPtEtaPhiM(Electrons->at(e).pt, Electrons->at(e).eta, Electrons->at(e).phi, ELE_MASS);
+	    tmpElectron.pdgId = Electrons->at(e).pdgId;
+	    tmpElectron.charge = Electrons->at(e).charge;
+	    LeptonsStruct.push_back(tmpElectron);
+	    ElectronsStruct.push_back(tmpElectron);
 	    nElectronsPassing++;
-
-	    //Remove overlapping electrons
-	    //for (unsigned int e2=1; e2<Electrons->size(); e2++)
-	    //{
-	    //if(e1!=e2 and reco::deltaR(Electrons->at(e1).eta, Electrons->at(e1).phi, Electrons->at(e2).eta, Electrons->at(e2).phi)<ele_iso)
-	    //{
-	    //std::cout << "Electrons are overlapped: " << e1 << e2 << std::endl;
-	    //std::cout << "Their dR: " << reco::deltaR(Electrons->at(e1).eta, Electrons->at(e1).phi, Electrons->at(e2).eta, Electrons->at(e2).phi) << std::endl;
-	    //Electrons->erase(Electrons->begin()+e2);
-	    //}
-	    //}
 
 	  }
 
-	//std::vector<int> ElectronsToErase;
-	//for (unsigned int e1=0; e1<Electrons->size(); e1++)
-	//  {
-	//    //Remove overlapping muons
-	//    for (unsigned int m=0; m<Muons->size(); m++)
-	//      {
-	//	if(reco::deltaR(Electrons->at(e1).eta, Electrons->at(e1).phi, Muons->at(m).eta, Muons->at(m).phi)<ele_iso)
-	//	  {
-	//	    std::cout << "Electrons and muons are overlapped: " << e1 << m << std::endl;
-	//	    ElectronsToErase.push_back(e1);
-	//	  }
-	//      }
-	//  }
+	//WtoEN
+	if(doWtoEN and ElectronsStruct.size()!=1) continue;
+	//ZtoEE
+	if(doZtoEE and ElectronsStruct.size()!=2) continue;
 
-	//for (auto e = ElectronsToErase.rbegin(); e != ElectronsToErase.rend(); ++e)
-	////for (unsigned int e=ElectronsToErase.size(); e>0; --e)
-	//{
-	//std::cout << "Electron to erase at position: " << *e  << std::endl;
-	//Electrons->erase(Electrons->begin() + (*e) );
-	//}
 
-	//if(ElectronsToErase.size()>0) std::cout << "Electrons size final: " << Electrons->size() << std::endl;
+	//TtoEN
+	if(doTtoEM and not(ElectronsStruct.size()==1 and MuonsStruct.size()==1) ) continue;
+
 	//nElectronsPassing = Electrons->size();
-	if(nElectronsPassing!=nElectrons) std::cout << "DIFFERENT! : " << nElectrons  << nElectronsPassing <<  std::endl;
+	//if(nElectronsPassing!=nElectrons) std::cout << "DIFFERENT! : " << nElectrons  << nElectronsPassing <<  std::endl;
 
 	//Taus
 	nTausPreVeto = int(Taus->size());
-	float tau_iso = 0.3;
+	float tau_iso = 0.5;
 	for (unsigned int t=0; t<Taus->size(); t++)
 	  {
+	    //JJ uses "decayModeFindingNewDMs" and  byLoose, which is incorrect
+	    //correct would be: "decayModeFinding"
 	    if(Taus->at(t).decayModeFinding == true and Taus->at(t).byLooseCombinedIsolationDeltaBetaCorr3Hits == true)
 	      {
 		skimmedTaus.push_back(Taus->at(t));
@@ -1072,22 +1374,24 @@ int main(int argc, char **argv) {
 
 		//remove overlaps
 		bool overlap = false;
-		for(auto& lep : LeptonsOverlap)
+		for(auto& lep : LeptonsStruct)
 		  {
 		    if (reco::deltaR(Taus->at(t).eta,Taus->at(t).phi,lep.vec.Eta(),lep.vec.Phi()) < tau_iso) overlap = true;
 		  }
 		if(overlap) continue;
 
 		bool overlap_tau = false;
-		for(auto& tau : TausOverlap)
+		for(auto& tau : TausStruct)
 		  {
 		    if (reco::deltaR(Taus->at(t).eta,Taus->at(t).phi,tau.vec.Eta(),tau.vec.Phi()) < tau_iso) overlap_tau = true;
 		  }
 		if(overlap_tau) continue;
 
-		lorentz tmpTau;
+		Particle tmpTau;
 		tmpTau.vec.SetPtEtaPhiM(Taus->at(t).pt,Taus->at(t).eta,Taus->at(t).phi, TAU_MASS);
-		TausOverlap.push_back(tmpTau);
+		tmpTau.pdgId = Taus->at(t).pdgId;
+		tmpTau.charge = Taus->at(t).charge;
+		TausStruct.push_back(tmpTau);
 		nTausPassing++;
 		
 	      }
@@ -1098,54 +1402,105 @@ int main(int argc, char **argv) {
 
 
 	//Photons
-	float pho_iso = 0.3;
+	float pho_iso = 0.4;
 	for (unsigned int p=0; p<Photons->size(); p++)
           {
 	    //remove overlaps
 	    bool overlap = false;
-	    for(auto& lep : LeptonsOverlap)
+	    for(auto& lep : LeptonsStruct)
 	      {
 		if (reco::deltaR(Photons->at(p).eta,Photons->at(p).phi,lep.vec.Eta(),lep.vec.Phi()) < pho_iso) overlap = true;
 	      }
 	    if(overlap) continue;
 
 	    bool overlap_tau = false;
-	    for(auto& tau : TausOverlap)
+	    for(auto& tau : TausStruct)
 	      {
 		if (reco::deltaR(Photons->at(p).eta,Photons->at(p).phi,tau.vec.Eta(),tau.vec.Phi()) < pho_iso) overlap_tau = true;
 	      }
 	    if(overlap_tau) continue;
 
 	    bool overlap_pho = false;
-	    for(auto& pho : PhotonsOverlap)
+	    for(auto& pho : PhotonsStruct)
 	      {
 		if (reco::deltaR(Photons->at(p).eta,Photons->at(p).phi,pho.vec.Eta(),pho.vec.Phi()) < pho_iso) overlap_pho = true;
 	      }
 	    if(overlap_pho) continue;
 
-	    lorentz tmpPhoton;
+	    Particle tmpPhoton;
 	    tmpPhoton.vec.SetPtEtaPhiM(Photons->at(p).pt,Photons->at(p).eta,Photons->at(p).phi,0.);
-	    PhotonsOverlap.push_back(tmpPhoton);
+	    tmpPhoton.pdgId = Photons->at(p).pdgId;
+	    tmpPhoton.charge = Photons->at(p).charge;
+	    PhotonsStruct.push_back(tmpPhoton);
 	    nPhotonsPassing++;
 	  }
 
-	
-        if(!HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) continue;
+	//Pho CR
+	if( doPho and PhotonsStruct.size() != 1 ) continue;
+
+	//Transverse mass met + Leptons (e and mu)
+	TLorentzVector lepp4;
+	for ( auto &tmp : LeptonsStruct )
+	  {
+	    lepp4 += tmp.vec;
+	  }
+	float dPhi = reco::deltaPhi(MEt->phi, lepp4.Phi());
+	MT = sqrt(2*(MEt->pt)*lepp4.Pt()*(1-cos(dPhi)));
+
+	//Z reconstruction
+	TLorentzVector Z;
+	if(doZtoMM)
+	  {
+	    if(MuonsStruct.at(0).charge==MuonsStruct.at(1).charge) continue;//we want opposite sign
+	    Z = MuonsStruct.at(0).vec + MuonsStruct.at(1).vec;
+	    if( fabs(Z.M() - Z_MASS)>30. ) continue;
+	    Z_mass = Z.M();
+	    Z_pt = Z.Pt();
+	    Z_phi = Z.Phi();
+	    Z_eta = Z.Eta();
+	    Z_lep0_pt = MuonsStruct.at(0).vec.Pt();
+	    Z_lep0_phi = MuonsStruct.at(0).vec.Phi();
+	    Z_lep0_eta = MuonsStruct.at(0).vec.Eta();
+	    Z_lep1_pt = MuonsStruct.at(1).vec.Pt();
+	    Z_lep1_phi = MuonsStruct.at(1).vec.Phi();
+	    Z_lep1_eta = MuonsStruct.at(1).vec.Eta();
+	  }
+
+	if(doZtoEE)
+	  {
+	    if(ElectronsStruct.at(0).charge==ElectronsStruct.at(1).charge) continue;//we want opposite sign
+	    Z = ElectronsStruct.at(0).vec + ElectronsStruct.at(1).vec;
+	    if( fabs(Z.M() - Z_MASS)>30. ) continue;
+	    Z_mass = Z.M();
+	    Z_pt = Z.Pt();
+	    Z_phi = Z.Phi();
+	    Z_eta = Z.Eta();
+	    Z_lep0_pt = ElectronsStruct.at(0).vec.Pt();
+	    Z_lep0_phi = ElectronsStruct.at(0).vec.Phi();
+	    Z_lep0_eta = ElectronsStruct.at(0).vec.Eta();
+	    Z_lep1_pt = ElectronsStruct.at(1).vec.Pt();
+	    Z_lep1_phi = ElectronsStruct.at(1).vec.Phi();
+	    Z_lep1_eta = ElectronsStruct.at(1).vec.Eta();
+	  }
+
+
+
+
         //if(nCHSJets<1 and nCHSFatJets<1) continue;
         //if(nTaus>0) continue;
         //if(nPhotons>0) continue;
         //if(nMuons>0) continue;
         //if(nElectrons>0) continue;
-        if(!Flag2_globalSuperTightHalo2016Filter) continue;
-        if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
-        if(!Flag2_HBHENoiseFilter) continue;
-        if(!Flag2_HBHEIsoNoiseFilter) continue;
-        if(!Flag2_ecalBadCalibFilter) continue;
-        if(!Flag2_eeBadScFilter) continue;
-        if(!Flag2_BadPFMuonFilter) continue;
         ////if(HT<100) continue;
-        if(MEt->pt<200) continue;
-	
+
+
+	//if(EventNumber!=24897) continue;
+	//if(EventNumber!=465 and EventNumber!=761) continue;
+	//if(EventNumber!=5132 and EventNumber!=5337 and EventNumber!=5393) continue;
+	//if(EventNumber!=9203 and EventNumber!=9782 and EventNumber!=11772 and EventNumber!=12416) continue;
+	//if(EventNumber!=21293 and EventNumber!=21762 and EventNumber!=22932 and EventNumber!=23902 and EventNumber!=24800 and EventNumber!=25930 and EventNumber!=26204 and EventNumber!=27095 and EventNumber!=28026 and EventNumber!=29814 and EventNumber!=32131 and EventNumber!=33183 and EventNumber!=34625 and EventNumber!=40663 and EventNumber!=40817 and EventNumber!=42155 and EventNumber!=43313 and EventNumber!=43647 and EventNumber!=45957 and EventNumber!=45964 and EventNumber!=48371 and EventNumber!=48374 and EventNumber!=48945 and EventNumber!=51183 and EventNumber!=54334 and EventNumber!=56625 and EventNumber!=57244 and EventNumber!=60170 and EventNumber!=62348 and EventNumber!=63254 and EventNumber!=63849 and EventNumber!=67102 and EventNumber!=70399 and EventNumber!=71178 and EventNumber!=71479 and EventNumber!=72548 and EventNumber!=73261 and EventNumber!=74695 and EventNumber!=75125 and EventNumber!=77007 and EventNumber!=80297 and EventNumber!=80482 and EventNumber!=81979 and EventNumber!=82465 and EventNumber!=82921 and EventNumber!=88730 and EventNumber!=88901 and EventNumber!=93174 and EventNumber!=95557 and EventNumber!=97508 and EventNumber!=99740) continue;
+        if(isVerbose) std::cout << "======================================== " << std::endl;
+        if(isVerbose) std::cout << "EventNumber " << EventNumber << "\tLumiNumber " << LumiNumber << std::endl;
 
 	//Apply acceptance cuts to jets and fat jets 
 	std::vector<int> validJetIndex;
@@ -1165,6 +1520,32 @@ int main(int argc, char **argv) {
 
 	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100.)
 	      {
+
+		//Ignore jets overlapped to leptons, photons and taus
+		float jet_iso = 0.4;
+		//Leptons
+		float dR_lep = -1;
+		for(auto& lep : LeptonsStruct){
+		  float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
+		  if(dR_lep < 0 || thisDR < dR_lep) dR_lep = thisDR;
+		}
+		if(dR_lep > 0 && dR_lep < jet_iso) continue;
+
+		//Taus
+		float dR_tau = -1;
+		for(auto& tau : TausStruct){
+		  float thisDR_tau = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,tau.vec.Eta(),tau.vec.Phi());
+		  if(dR_tau < 0 || thisDR_tau < dR_tau) dR_tau = thisDR_tau;
+		}
+		if(dR_tau > 0 && dR_tau < jet_iso) continue;
+
+		//Photons
+		float dR_pho = -1;
+		for(auto& pho : PhotonsStruct){
+		  float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
+		  if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
+		}
+		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 
 		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 
@@ -1249,6 +1630,13 @@ int main(int argc, char **argv) {
 		if(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p996_JJ++;
 		if(outputValueAK4>0.997 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p997_JJ++;
 
+		if(isVerbose) std::cout<< "Jet[" << j << "]\tpt " << Jets->at(j).pt << "\teta " << Jets->at(j).eta << "\tDNN score " << Jets->at(j).sigprob << "\tmuEFrac " << Jets->at(j).muEFrac << "\teleEFrac " << Jets->at(j).eleEFrac << "\tphotonEFrac " << Jets->at(j).photonEFrac << "\ttimeRecHitsEB " << Jets->at(j).timeRecHitsEB  <<    "\tpassing tag " << bool(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) << "\tptPVTracksMax " << Jets->at(j).ptPVTracksMax << "\tptAllTracks " << Jets->at(j).ptAllTracks   << "\tisGenMatchedCaloCorr " << Jets->at(j).isGenMatchedCaloCorr << "\tisGenMatchedCaloCorrLLPAccept " << Jets->at(j).isGenMatchedCaloCorrLLPAccept << std::endl;
+
+		//for(unsigned int f=0;f<featuresAK4.size();f++)
+		//{
+		//std::cout << featuresAK4.at(f) << "\t" << inputValues.at(f) << std::endl;
+		//}
+
 		//store jets passing acceptance and with inference
 		nCHSJetsAcceptanceCalo++;
 		skimmedJets.push_back(Jets->at(j));
@@ -1258,6 +1646,8 @@ int main(int argc, char **argv) {
 
 	  }//jet loop
 
+	if(isVerbose) std::cout << "n. tagged jets " << nTagJets_0p996_JJ << std::endl;
+        if(isVerbose) std::cout << "======================================== " << std::endl;
 
 
         for (unsigned int j=0; j<FatJets->size(); j++)
@@ -1531,9 +1921,30 @@ int main(int argc, char **argv) {
 	//std::cout << "Farthest AK8 const: " << chosen_AK8 << "\t" << max_dr_AK8 << std::endl;
 	//}
 
+	//Veto objects
+	if(doSR and nMuonsPassing!=0) continue;
+	if(doSR and nElectronsPassing!=0) continue;
+	if(doSR and nTausPassing!=0) continue;
+	if(doSR and nPhotonsPassing!=0) continue;
+
+	//Prepare boolean flags
+	//At this point, doSR and doZtoMM should be all fulfilled, cross check
+	if(doSR) isSR = true;
+	if(doZtoMM) isZtoMM = true;
+	if(doZtoEE) isZtoEE = true;
+	if(doTtoEM) isTtoEM = true;
+	if(doWtoEN) isWtoEN = true;
+	if(doWtoMN) isWtoMN = true;
+	if(doPho) isPho = true;
+	if(doJetHT) isJetHT = true;
+
+
 	//Observed worse agreement, skip this --> redo
 	if(skipTrain==true and EventNumber % 2 == 0) continue;
 	outputTree->Fill();
+
+        //std::cout << "======================================== " << std::endl;
+
 	/*
 	if(skipTrain==true)
 	  {
@@ -1607,11 +2018,11 @@ int main(int argc, char **argv) {
     n_even->Write();
     b_skipTrain->Write();
 
-    PUWeightHist->Write();
-    pileup_mc_copy->Write();
-    pileup_data_copy->Write();
-    pileup_data_up_copy->Write();
-    pileup_data_down_copy->Write();
+    //PUWeightHist->Write();
+    //pileup_mc_copy->Write();
+    //pileup_data_copy->Write();
+    //pileup_data_up_copy->Write();
+    //pileup_data_down_copy->Write();
 
     outputFile->Write();
     outputFile->Close();
@@ -1621,13 +2032,13 @@ int main(int argc, char **argv) {
     std::chrono::duration<double> elapsed_seconds = end-start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
-    std::cout << "**************************************************" << std::endl;
-    std::cout << "finished  computations at " << std::ctime(&end_time)
-	      << "elapsed time: " << elapsed_seconds.count() << "s\n";
-    std::cout << "**************************************************" << std::endl;
+    //std::cout << "**************************************************" << std::endl;
+    //std::cout << "finished  computations at " << std::ctime(&end_time)
+    //      << "elapsed time: " << elapsed_seconds.count() << "s\n";
+    //std::cout << "**************************************************" << std::endl;
 
-    std::cout << "Output written: " << outputPath << std::endl;
-    std::cout << "\n" << std::endl;
+    //std::cout << "Output written: " << outputPath << std::endl;
+    //std::cout << "\n" << std::endl;
 
     return 0;
 }
