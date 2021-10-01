@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
     const float TAU_MASS  = 1.77686;
     const float Z_MASS   = 91.2;
 
-    if(argc<8)
+    if(argc<10)
     //if(argc<2)
       {
 	std::cout<<"Invalid arguments, exit!" << std::endl;
@@ -114,33 +114,33 @@ int main(int argc, char **argv) {
 
     //Flags for SR/CR
     bool doSR(false);
-    if(strcmp(argv[7], "doSR")==0) doSR=true;
+    if(strcmp(argv[9], "doSR")==0) doSR=true;
     bool doMR(false);
-    if(strcmp(argv[7], "doMR")==0) doMR=true;
+    if(strcmp(argv[9], "doMR")==0) doMR=true;
     bool doMRPho(false);
-    if(strcmp(argv[7], "doMRPho")==0) doMRPho=true;
+    if(strcmp(argv[9], "doMRPho")==0) doMRPho=true;
     bool doZtoMM(false);
-    if(strcmp(argv[7], "doZtoMM")==0) doZtoMM=true;
+    if(strcmp(argv[9], "doZtoMM")==0) doZtoMM=true;
     bool doZtoEE(false);
-    if(strcmp(argv[7], "doZtoEE")==0) doZtoEE=true;
+    if(strcmp(argv[9], "doZtoEE")==0) doZtoEE=true;
     bool doTtoEM(false);
-    if(strcmp(argv[7], "doTtoEM")==0) doTtoEM=true;
+    if(strcmp(argv[9], "doTtoEM")==0) doTtoEM=true;
     bool doWtoEN(false);
-    if(strcmp(argv[7], "doWtoEN")==0) doWtoEN=true;
+    if(strcmp(argv[9], "doWtoEN")==0) doWtoEN=true;
     bool doWtoMN(false);
-    if(strcmp(argv[7], "doWtoMN")==0) doWtoMN=true;
+    if(strcmp(argv[9], "doWtoMN")==0) doWtoMN=true;
     bool doEN(false);
-    if(strcmp(argv[7], "doEN")==0) doEN=true;
+    if(strcmp(argv[9], "doEN")==0) doEN=true;
     bool doMN(false);
-    if(strcmp(argv[7], "doMN")==0) doMN=true;
+    if(strcmp(argv[9], "doMN")==0) doMN=true;
     bool doPho(false);
-    if(strcmp(argv[7], "doPho")==0) doPho=true;
+    if(strcmp(argv[9], "doPho")==0) doPho=true;
     bool doJetHT(false);
-    if(strcmp(argv[7], "doJetHT")==0) doJetHT=true;
+    if(strcmp(argv[9], "doJetHT")==0) doJetHT=true;
     bool doJetMET(false);
-    if(strcmp(argv[7], "doJetMET")==0) doJetMET=true;
+    if(strcmp(argv[9], "doJetMET")==0) doJetMET=true;
     bool doDiJetMET(false);
-    if(strcmp(argv[7], "doDiJetMET")==0) doDiJetMET=true;
+    if(strcmp(argv[9], "doDiJetMET")==0) doDiJetMET=true;
 
     bool isVerbose(false);
 
@@ -150,6 +150,8 @@ int main(int argc, char **argv) {
     std::cout << "isSignal: " << isSignal << std::endl;
     std::cout << "isData: " << isData << std::endl;
     std::cout << "MC PU file: " << argv[6] << std::endl;
+    std::cout << "MC trigger file: " << argv[7] << std::endl;
+    std::cout << "MC trigger string: " << argv[8] << std::endl;
     //std::cout << "Data PU file: " << argv[5] << std::endl;
     //std::cout << "Data PU up file: " << argv[6] << std::endl;
     //std::cout << "Data PU down file: " << argv[7] << std::endl;
@@ -170,7 +172,9 @@ int main(int argc, char **argv) {
 
     std::string outputPath = argv[2];//!!!//"/test_on_real_ntuple.root";
 
-    std::string mcFilename = argv[6];
+    std::string mcPUFilename = argv[6];
+    std::string mcTriggerFilename = argv[7];
+    std::string mcTriggerString = argv[8];
     //std::string dataFilename = argv[5];
     //std::string dataFilenameUp = argv[6];
     //std::string dataFilenameDown = argv[7];
@@ -218,19 +222,23 @@ int main(int argc, char **argv) {
 
     if(skipTrain) b_skipTrain->Fill(0);
 
-    TFile *mcFile = TFile::Open(mcFilename.data(),"READ"); if (!mcFile) return 0;
-    TH1F  *pu = (TH1F*)mcFile->Get("PileupReweight");
-    TH1F  *pu_up = (TH1F*)mcFile->Get("PileupReweightSysUp");
-    TH1F  *pu_down = (TH1F*)mcFile->Get("PileupReweightSysDown");
+    TFile *mcPUFile = TFile::Open(mcPUFilename.data(),"READ"); if (!mcPUFile) return 0;
+    TH1F  *pu = (TH1F*)mcPUFile->Get("PileupReweight");
+    TH1F  *pu_up = (TH1F*)mcPUFile->Get("PileupReweightSysUp");
+    TH1F  *pu_down = (TH1F*)mcPUFile->Get("PileupReweightSysDown");
     if(isVerbose) std::cout<< "PU histo loaded" << std::endl;
 
+    TFile *mcTriggerFile = TFile::Open(mcTriggerFilename.data(),"READ"); if (!mcTriggerFile) return 0;
+    TH1F  *tr = (TH1F*)mcTriggerFile->Get(mcTriggerString.c_str());
+    if(isVerbose) std::cout<< "Trigger histo loaded" << std::endl;
+
     //PU reweighting
-    //TFile *mcFile = TFile::Open(mcFilename.data(),"READ"); if (!mcFile) return 0;
+    //TFile *mcPUFile = TFile::Open(mcPUFilename.data(),"READ"); if (!mcPUFile) return 0;
     //TFile *dataFile = TFile::Open(dataFilename.data(),"READ"); if (!dataFile) return 0;
     //TFile *dataFileUp = TFile::Open(dataFilenameUp.data(),"READ"); if (!dataFileUp) return 0;
     //TFile *dataFileDown = TFile::Open(dataFilenameDown.data(),"READ"); if (!dataFileDown) return 0;
 
-    //TH1F  *pileup_mc = (TH1F*)mcFile->Get("pileup");
+    //TH1F  *pileup_mc = (TH1F*)mcPUFile->Get("pileup");
     //TH1F  *pileup_mc_copy = (TH1F*)pileup_mc->Clone("pileup_mc");
     //pileup_mc_copy->SetLineColor(8);
     //pileup_mc_copy->SetLineWidth(2);
@@ -776,6 +784,7 @@ int main(int argc, char **argv) {
     float PUReWeight(1.);
     float PUReWeightUp(1.);
     float PUReWeightDown(1.);
+    float TriggerWeight(1.);
     float MinLeadingJetMetDPhi(-1.);
     float MinSubLeadingJetMetDPhi(-1.);
     float MinSubSubLeadingJetMetDPhi(-1.);
@@ -917,6 +926,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("PUReWeight",        &PUReWeight,        "PUReWeight/F");
     outputTree->Branch("PUReWeightUp",      &PUReWeightUp,      "PUReWeightUp/F");
     outputTree->Branch("PUReWeightDown",    &PUReWeightDown,    "PUReWeightDown/F");
+    outputTree->Branch("TriggerWeight",     &TriggerWeight,     "TriggerWeight/F");
     outputTree->Branch("isMC",              &isMC,              "isMC/O");
     outputTree->Branch("isSR",              &isSR,              "isSR/O");
     outputTree->Branch("isMR",              &isMR,              "isMR/O");
@@ -1202,6 +1212,7 @@ int main(int argc, char **argv) {
     //for(int i = 0; i < 10; i++) {
     for(int i = 0; i < inputTree->GetEntriesFast(); i++) {
 
+        TriggerWeight = 1.;
         PUReWeight = 1.;
         PUReWeightUp = 1.;
         PUReWeightDown = 1.;
@@ -1415,6 +1426,7 @@ int main(int argc, char **argv) {
 
 	if(isMC)
 	  {
+	    if(doSR) TriggerWeight = tr->GetBinContent(tr->GetXaxis()->FindBin(MEt->pt));//only for SR MC!!
 	    PUReWeight = pu->GetBinContent(pu->GetXaxis()->FindBin(MeanNumInteractions));
 	    PUReWeightUp = pu_up->GetBinContent(pu_up->GetXaxis()->FindBin(MeanNumInteractions));
 	    PUReWeightDown = pu_down->GetBinContent(pu_down->GetXaxis()->FindBin(MeanNumInteractions));
@@ -2345,7 +2357,10 @@ int main(int argc, char **argv) {
 
     outputFile->Write();
     outputFile->Close();
+    mcPUFile->Close();
+    mcTriggerFile->Close();
     inputFile->Close();
+    
 
     auto end = std::chrono::system_clock::now();//time!
     std::chrono::duration<double> elapsed_seconds = end-start;

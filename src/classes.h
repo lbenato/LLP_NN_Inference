@@ -1,7 +1,6 @@
 #include <vector>
-#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v5.h"
-//#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects.h"
-//#include "NNInferenceCMSSW/LLP_NN_Inference/bin/RecoObjects.h"
+#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6.h"
+//#include "Analyzer/LLP2018/plugins/RecoObjects.h"
 
 namespace { 
   struct dictionary {
@@ -23,6 +22,9 @@ namespace {
     MEtType dummy13;
     ecalRecHitType dummy14;
     hcalRecHitType dummy15;
+    //RecoLeptonType dummy16;
+    TrackType dummy17;
+    LorentzType dummy18;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;
@@ -41,6 +43,9 @@ namespace {
     std::vector<MEtType> dummyVector13;
     std::vector<ecalRecHitType> dummyVector14;
     std::vector<hcalRecHitType> dummyVector15;
+    //std::vector<RecoLeptonType> dummyVector16;
+    std::vector<TrackType> dummyVector17;
+    std::vector<LorentzType> dummyVector18;
 
   };
 }

@@ -45,7 +45,9 @@ def print_tab(ERAS,inp_dict):
     pred_2_alt = 0
     e_1_comp_sq = 0
     e_1_stat_sq = 0
+    e_1_comp = 0
     e_2_meth = 0
+    e_2_comp = 0
     e_2_comp_sq = 0
     e_2_stat_sq = 0
     pred_reg_2_per_era = {}
@@ -89,6 +91,8 @@ def print_tab(ERAS,inp_dict):
             tags = ["ZtoEE","ZtoMM"]
         elif inp_dict["REGION"]=="WtoLN":
             tags = ["WtoEN","WtoMN"]
+        elif inp_dict["REGION"]=="WtoLN_MET":
+            tags = ["WtoEN_MET","WtoMN_MET"]
         else:
             tags = [inp_dict["REGION"]]
 
@@ -99,9 +103,9 @@ def print_tab(ERAS,inp_dict):
                 s = "MuonEG"
             if tag=="SR":
                 s = "HighMET"
-            if tag=="ZtoEE" or tag=="WtoEN":
+            if tag=="ZtoEE" or tag=="WtoEN" or tag=="WtoEN_MET":
                 s = "EGamma" if era=="2018" else "SingleElectron"
-            if tag=="ZtoMM" or tag=="WtoMN":
+            if tag=="ZtoMM" or tag=="WtoMN" or tag=="WtoMN_MET":
                 s = "SingleMuon"
 
             PLOTDIR = BASEDIR + year + "_" + tag + "/"
@@ -149,6 +153,10 @@ def print_tab(ERAS,inp_dict):
         e_1_comp_sq += dev_1**2
         e_2_comp_sq += dev_2**2
 
+        #Add also linearly
+        e_1_comp += dev_1
+        e_2_comp += dev_2
+
     #Method unc: linear
     #We have now added the predictions across datasets, here we need a simple difference
     #After the era loop
@@ -160,17 +168,19 @@ def print_tab(ERAS,inp_dict):
     print "\n"
     print "bin 0: ", y_0, "+-", round(math.sqrt(e_0_sq),0)
     print "bin 1: ", y_1, "+-", round(math.sqrt(e_1_sq),0)
-    if inp_dict["REGION"]!="SR":
-        print "bin 2: ", y_2, "+-", round(math.sqrt(e_2_sq),0)
-    else:
-        print "bin 2: ", "x +- x"
-    print "pred 1: ", round(pred_1,2), "+-", round(math.sqrt(e_1_stat_sq),2) , "(stat.) +- " , round(math.sqrt(e_1_comp_sq),2) , "(syst.) = ", round(pred_1,2), "+-", round(math.sqrt(e_1_comp_sq + e_1_stat_sq),2), "(", round(100*math.sqrt(e_1_comp_sq + e_1_stat_sq)/pred_1,1), "%)"
-    print "pred 2: ", round(pred_2,2), "+-", round(math.sqrt(e_2_stat_sq),2) , "(stat.) +- " , round(math.sqrt(e_2_comp_sq),2) , "(syst. comp.) +- " , round(e_2_meth,2) , "(syst. method) = ", round(pred_2,2), " +- ", round(math.sqrt(e_2_comp_sq + e_2_meth**2 + e_2_stat_sq),2), "(", round(100*math.sqrt(e_2_comp_sq + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"%)"
+    print "bin 2: ", y_2, "+-", round(math.sqrt(e_2_sq),0)
+    #if inp_dict["REGION"]!="SR":
+    #    print "bin 2: ", y_2, "+-", round(math.sqrt(e_2_sq),0)
+    #else:
+    #    print "bin 2: ", "x +- x"
+    print "pred 1: ", round(pred_1,2), "+-", round(math.sqrt(e_1_stat_sq),2) , "(stat.) +- " , round(e_1_comp,2) , "(syst.) = ", round(pred_1,2), "+-", round(math.sqrt(e_1_comp_sq + e_1_stat_sq),2), "(", round(100*math.sqrt(e_1_comp_sq + e_1_stat_sq)/pred_1,1), "%)"
+    print "pred 2: ", round(pred_2,2), "+-", round(math.sqrt(e_2_stat_sq),2) , "(stat.) +- " , round(e_2_comp,2) , "(syst. comp.) +- " , round(e_2_meth,2) , "(syst. method) = ", round(pred_2,2), " +- ", round(math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq),2), "(", round(100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"%)"
 
     print "\n"
     print "Year & bin 0 yield & bin 1 yield & bin 1 prediction & stat. unc. & syst. unc. "+"\\"+"\\"
     print "\hline"
-    print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", round(y_0,0), " $\pm$ " , round(math.sqrt(e_0_sq),0) , " & " , round(y_1,0), " $\pm$ " , round(math.sqrt(e_1_sq),0) ,  " & " , round(pred_1,2), " $\pm$ " , round(math.sqrt(e_1_stat_sq + e_1_comp_sq),2), "(", round(100*math.sqrt(e_1_comp_sq + e_1_stat_sq)/pred_1,1), "\%)", " & ", round(math.sqrt(e_1_stat_sq),2), " & " , round(math.sqrt(e_1_comp_sq),2), "\\"+"\\"
+    #print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", int(y_0), " $\pm$ " , round(math.sqrt(e_0_sq),0) , " & " , int(y_1), " $\pm$ " , round(math.sqrt(e_1_sq),0) ,  " & " , round(pred_1,2), " $\pm$ " , round(math.sqrt(e_1_stat_sq + e_1_comp**2),2), "(", round(100*math.sqrt(e_1_comp**2 + e_1_stat_sq)/pred_1,1), "\%)", " & ", round(math.sqrt(e_1_stat_sq),2), " & " , round(e_1_comp,2), "\\"+"\\"
+    print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", int(y_0), " & " , int(y_1), " & %.2f" % round(pred_1,2), " $\pm$ %.2f" % round(math.sqrt(e_1_stat_sq + e_1_comp**2),2), ("(%.1f" % round(100*math.sqrt(e_1_comp**2 + e_1_stat_sq)/pred_1,1)) +"\%)", " & %.2f" % round(math.sqrt(e_1_stat_sq),2), ("(%.1f" % round(100*math.sqrt(e_1_stat_sq)/pred_1,1))+"\%)", " & %.2f" % round(e_1_comp,2), ("(%.1f" %round(100*(e_1_comp)/pred_1,1))+"\%)","\\"+"\\"
 
 
     print "Year & bin 2 yield & bin 2 prediction & stat. unc. & syst. unc. & syst. unc "+"\\"+"\\"
@@ -178,11 +188,15 @@ def print_tab(ERAS,inp_dict):
     print "\hline"
     #print ERAS[0] if len(ERAS)==1 else "Tot.", " & ", str(y_2) + " $\pm$ " + str(round(math.sqrt(e_2_sq),0)) if inp_dict["REGION"]!="SR" else " - $\pm$ - " , " & ", round(pred_2,2), " $\pm$ ", round(math.sqrt(e_2_stat_sq),2) , "(stat.) $\pm$ " , round(math.sqrt(e_2_comp_sq),2) , "(syst. comp.) $\pm$ " , round(e_2_meth,2) , "(syst. method) = ", round(pred_2,2), " $\pm$ ", round(math.sqrt(e_2_comp_sq + e_2_meth**2 + e_2_stat_sq),2)  , "(", round(100*math.sqrt(e_2_comp_sq + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"\%)", "\\"+"\\"
 
-    print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", str(y_2) + " $\pm$ " + str(round(math.sqrt(e_2_sq),0)) if inp_dict["REGION"]!="SR" else " - $\pm$ - " , " & ", round(pred_2,round_fact), " $\pm$ ", round(math.sqrt(e_2_comp_sq + e_2_meth**2 + e_2_stat_sq),round_fact)  , "(", round(100*math.sqrt(e_2_comp_sq + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"\%)", " & ", round(math.sqrt(e_2_stat_sq),round_fact) , " & ", round(e_2_meth,round_fact) , " & ", round(math.sqrt(e_2_comp_sq),round_fact), "\\"+"\\"
+    ##print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", str(int(y_2)) + " $\pm$ " + str(round(math.sqrt(e_2_sq),0)), " & ", round(pred_2,round_fact), " $\pm$ ", round(math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq),round_fact)  , "(", round(100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"\%)", " & ", round(math.sqrt(e_2_stat_sq),round_fact) , " & ", round(e_2_meth,round_fact) , " & ", round(e_2_comp,round_fact), "\\"+"\\"
+
+    print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", str(int(y_2)) if inp_dict["REGION"]!="SR" else "-", " & ", "{1:.{0}f}".format(round_fact, round(pred_2,round_fact)), " $\pm$ ", "{1:.{0}f}".format(round_fact,round(math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq),round_fact)), "(%.1f"%round(100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2,1)+"\%)", " & ", "{1:.{0}f}".format(round_fact, round(math.sqrt(e_2_stat_sq),round_fact)), "(%.1f" % round(100*math.sqrt(e_2_stat_sq)/pred_2,1)+"\%)", " & ", "{1:.{0}f}".format(round_fact, round(e_2_meth,round_fact)), "(%.1f"% round(100*e_2_meth/pred_2,1)+"\%)", " & ", "{1:.{0}f}".format(round_fact,round(e_2_comp,round_fact)), "(%.1f"% round(100*e_2_comp/pred_2,1)+"\%)","\\"+"\\"
+    #" & ", round(math.sqrt(e_2_stat_sq),round_fact) , " & ", round(e_2_meth,round_fact) , " & ", round(e_2_comp,round_fact), "\\"+"\\"
+    ###print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", str(int(y_2)), (" & %.2"+str(round_fact) % round(pred_2,round_fact)), " $\pm$ ", round(math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq),round_fact)  , "(", round(100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"\%)", " & ", round(math.sqrt(e_2_stat_sq),round_fact) , " & ", round(e_2_meth,round_fact) , " & ", round(e_2_comp,round_fact), "\\"+"\\"
 
 
 inp_dict = {
-    "REGION" : "WtoLN",
+    "REGION" : "SR",
     "main"   : "WtoLN",
     "extr_reg" : ["ZtoLL","WtoLN","TtoEM","JetHT"],
     "kill_qcd" : True,
@@ -190,16 +204,17 @@ inp_dict = {
     "phi" : False,
     "eta_cut" : True,
     "phi_cut" : True,
-    "clos" : True,
+    "clos" : False,
     "label_2" : "",
     }
 
-print_tab(["2016_B-F"],inp_dict)
-print_tab(["2016_G-H"],inp_dict)
-print_tab(["2017"],inp_dict)
-print_tab(["2018"],inp_dict)
-print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
+#print_tab(["2016_B-F"],inp_dict)
+#print_tab(["2016_G-H"],inp_dict)
+#print_tab(["2017"],inp_dict)
+#print_tab(["2018"],inp_dict)
+#print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
 print_tab(["2016_G-H","2017","2018"],inp_dict)
+
 #"ERAS" : ["2016_B-F","2016_G-H","2017","2018"],
 exit()
 
