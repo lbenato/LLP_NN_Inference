@@ -110,6 +110,9 @@ PLOTDIR   = "plots/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_SR_BeamHalo_compa
 ##PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR_HEM_effect/"
 NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_SR/"
 PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR/"
+
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_ZtoMM/"
+#PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_ZtoMM/"
 ##PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR_InvertBeamHalo/"
 
 #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_faulty_eta/v5_calo_AOD_"+ERA+"_WtoMN_noMT_InvertBeamHalo/"
@@ -148,13 +151,13 @@ data_tag = "HighMET"#+"BH"
 data = [data_tag]
 #back = ["VV","WJetsToQQ","WJetsToLNu","DYJetsToQQ","DYJetsToLL","ZJetsToNuNu","ST","TTbar","QCD"]#
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbar"]
-#back = ["VV","TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]#,"DYJetsToLL"]
+back = ["VV","TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]#,"DYJetsToLL"]
 #back = [data_tag]#
 #back = ["JetHTMC"]
 #back = ["QCD"]
 #back=["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
 #back = ["WJetsToLNu"]
-back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbarGenMET","QCD"]#good order for JetHT
+#back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbarGenMET","QCD"]#good order for JetHT
 #back = ["All"]
 #back = [data_tag+"BH"]
 #back = [data_tag]
@@ -216,7 +219,7 @@ sign_calo = ['ggH_MH2000_MS250_ctau1000','ggH_MH2000_MS50_ctau1000','ggH_MH2000_
 sign = []
 sign = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000','SUSY_mh200_pl1000','SUSY_mh150_pl1000']#sign_calo
 #sign = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000']
-
+#sign = []
 #sign = ['SUSY_mh400_pl1000','SUSY_mh400_prompt','SUSY_mh300_pl1000','SUSY_mh300_prompt','SUSY_mh200_pl1000','SUSY_mh200_prompt']
 
 #sign = ["SingleMuonBH"]
@@ -265,9 +268,9 @@ def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
     #print "Artificially enhancing by factor 2 for comparison!!!!!!"
     #weight = "EventWeight*2"
     #weight = "2"
-    weight = "1"
+    #weight = "1"
     #weight = "EventWeight*PUReWeight"
-    #weight = "EventWeight*PUWeight"
+    weight = "EventWeight*PUWeight"
     print weight
 
     print "Considered ntuples: ", NTUPLEDIR

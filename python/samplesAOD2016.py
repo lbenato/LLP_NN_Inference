@@ -363,8 +363,8 @@ samples = {
             'HighMETRun2016D-07Aug17_v1',
             'HighMETRun2016E-07Aug17_v1',
             'HighMETRun2016F-07Aug17_v1',
-            #'HighMETRun2016G-07Aug17_v1',
-            #'HighMETRun2016H-07Aug17_v1'
+            'HighMETRun2016G-07Aug17_v1',
+            'HighMETRun2016H-07Aug17_v1'
         ],
         'fillcolor' : 0,
         'fillstyle' : 1,

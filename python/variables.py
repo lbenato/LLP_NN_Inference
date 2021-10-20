@@ -288,8 +288,8 @@ var_template = {
     },
     "Jets.sigprob": {
       "title" : "AK4 jets DNN score",
-      "nbins" : 50,#40,
-      "min" : 0.001,#170,
+      "nbins" : 20,#50,#40,
+      "min" : 0.99,#0.001,#170,
       "max" : 1.,#2170,
       "log" : True,
     },

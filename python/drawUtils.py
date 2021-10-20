@@ -209,6 +209,14 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         
     # Draw
     bkg.Draw("HIST") # stack
+    #a = bkg.GetXaxis()
+    #a.ChangeLabel(1,-1,-1,-1,-1,-1," ");
+    #a.ChangeLabel(3,-1,-1,-1,-1,-1," ");
+    #a.ChangeLabel(5,-1,-1,-1,-1,-1," ");
+    #a.ChangeLabel(2,-1,-1,-1,-1,-1,"0 tag");
+    #a.ChangeLabel(4,-1,-1,-1,-1,-1,"1 tag");
+    #a.ChangeLabel(6,-1,-1,-1,-1,-1,"#geq 2 tags");
+    #a.ChangeLabel(-1,-1,-1,-1,-1,-1," ");
     hist['BkgSum'].Draw("SAME, E2") # sum of bkg
 
     if poisson: data_graph.Draw("SAME, PE")
