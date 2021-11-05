@@ -129,3 +129,9 @@
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />
 </bin>
+
+<bin name="tf_and_skim_v5_updated" file="tf_and_skim_v5_updated.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>

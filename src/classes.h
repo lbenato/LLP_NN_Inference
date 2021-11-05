@@ -1,5 +1,6 @@
 #include <vector>
 #include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6.h"
+#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/CaloObjects_v6.h"
 //#include "Analyzer/LLP2018/plugins/RecoObjects.h"
 
 namespace { 
@@ -25,6 +26,9 @@ namespace {
     //RecoLeptonType dummy16;
     TrackType dummy17;
     LorentzType dummy18;
+
+    JetCaloType calo0;
+    std::vector<JetCaloType> caloVector0;
 
     //Vector of structures
     std::vector<JetType> dummyVector0;

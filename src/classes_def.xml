@@ -18,6 +18,8 @@
   <class name="hcalRecHitType"/>
   <class name="TrackType"/>
   <class name="LorentzType"/>
+  <class name="JetCaloType"/>
+  <class name="std::vector<JetCaloType>"/>
   <class name="std::vector<JetType>"/>
   <class name="std::vector<FatJetType>"/>
   <class name="std::vector<VertexType>"/>
