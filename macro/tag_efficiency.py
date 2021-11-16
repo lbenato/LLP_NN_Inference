@@ -65,15 +65,15 @@ gStyle.SetOptStat(0)
 #gStyle.SetPadRightMargin(-0.2)
 #gStyle.SetPadLeftMargin(-0.2)
 
-ERA                = "2017"
-REGION             = "WtoMN"#"WtoMN"#"WtoEN"#"WtoMN"#"ZtoEE"#"JetHT"
-CUT                = "isWtoMN"#"isWtoMN"#"isWtoEN"#"isWtoMN"#"isZtoEE"#"isJetHT"#"isJetMET_low_dPhi_MET_200_Lep"#"isJetHT_unprescaled"#"isWtoEN"# && MT<100"#"isZtoMM"
+ERA                = "2016"
+REGION             = "ZtoEE"#"WtoMN"#"WtoEN"#"WtoMN"#"ZtoEE"#"JetHT"
+CUT                = "isZtoEE"#"isWtoMN"#"isWtoEN"#"isWtoMN"#"isZtoEE"#"isJetHT"#"isJetMET_low_dPhi_MET_200_Lep"#"isJetHT_unprescaled"#"isWtoEN"# && MT<100"#"isZtoMM"
 KILL_QCD           = True#True#False#True
 DO_ETA             = False
 DO_PHI             = False#False#
 if DO_PHI:
     DO_ETA = False
-CUT_ETA            = False#True#True#False#True#True#False
+CUT_ETA            = True#True#True#False#True#True#False
 CUT_PHI            = True
 
 print "\n"
@@ -105,21 +105,29 @@ print "\n"
 #PLOTDIR            = "plots/Efficiency/v5_calo_AOD_2018_ZtoMM_CR/"
 NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
 if REGION=="WtoEN":
+    print "This for data:"
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN_noMT/"
+    print "This for MC"
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN/"
 if REGION=="WtoMN":
+    print "This for data:"
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN_noMT/"
+    print "This for MC"
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN/"
 if REGION=="WtoEN_MET":
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN_noMT/"
 if REGION=="WtoMN_MET":
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN_noMT/"
 if REGION=="SR":
+    #print "Old dir good for MC bkg"
     #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
 
-    print "SR: updated to CSC analysis triggers"
+    #print "SR: updated to CSC analysis triggers"
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+    #print " IMPORTANT NOT GOOD FOR SIGNAL!!! "
 
-    print " IMPORTANT NOT GOOD FOR SIGNAL!!! "
-
+    #print "DEBUUUUG"
+    #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_2018_SR_xcheck_tf_and_skim_condor_v5_updated/"
 
     #print "BUT for MC we use the JER updated!"
     #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_"+REGION+"_JER_for_AN/"#"_2017_signal/"#
@@ -130,8 +138,14 @@ if REGION=="SR":
 #print " OLD ! ! "
 #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_faulty_eta/v5_calo_AOD_"+ERA+"_"+REGION+"/"
 
-PRE_PLOTDIR = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
+PRE_PLOTDIR        = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
+PRE_PLOTDIR        = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"
+
 PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"__debug/"#"_2017_signal/"#
+PLOTDIR            = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+
+
 #OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"/"
 OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"_AN/"#"/"
 
@@ -151,16 +165,16 @@ REBIN              = options.rebin
 SAVE               = True
 #LUMI               = (2.090881769 + 3.121721023 + 2.909790309 + 0.385165352)*1000#8507.558453#59.74*1000#Run2018
 
-#back = ["DYJetsToLL"]
+back = ["DYJetsToLL"]
 #back = ["TTbarGenMET"]
 #back = ["WJetsToLNu"]
 #back = ["VV"]
-#back = ["TTbarGenMET"]
 #back = ["QCD"]
 #back = ["ZJetsToNuNu"]
 #back = ["TTbar"]
-back = ["ZJetsToNuNu","QCD","WJetsToLNu","TTbarGenMET","VV"]
-back = ["All"]
+#back = ["ZJetsToNuNu","QCD","WJetsToLNu","TTbarGenMET","VV"]
+
+#back = ["All"]
 #back = ["VV"]
 #back = ["QCD","WJetsToLNu","TTbarGenMET"]
 data = ["SingleMuon"]
@@ -169,7 +183,7 @@ data = ["SingleMuon"]
 #data = ["MuonEG"]
 #data = ["MET"]
 #data = ["HighMET"]
-#data = ["JetHT"]
+data = ["JetHT"]
 sign = [
     #"SUSY_all",
     #"SUSY_mh400_pl1000",
@@ -220,6 +234,7 @@ colors = colors_jj + [881, 798, 602, 921]
 lines = [2,1,3,4,1,2,2,2,2]
 markers = [20,20,20,20,20,24,24,24,24]
 markers = [20,21,24,25,20,24,24,24,24]
+markers_MC = [20,20,20,20,20,24,24,24,24]
 siz = 1.3
 marker_sizes = [siz,siz,siz,siz,siz,siz,siz,siz,siz]
 #markers = [20,21]#[24,25,21,20]
@@ -241,7 +256,8 @@ dnn_bins = array('d', [0.,.00001,.0001,0.001,.01,.05,.1,.25,.5,.75,1.,])
 #less_bins_plot = array('d', [1,10,20,30,40,50,60,70,80,90,100,1000])
 #New version from Jiajing
 less_bins = array('d', [1,10,20,30,40,50,60,70,80,90,100,200,300,400,500,10000])
-less_bins_pt = array('d', [1,10,20,30,40,50,60,70,80,90,100,200,300,400,500,10000])
+less_bins_pt = array('d', [1,10,20,30,40,50,60,70,80,90,100,200,300,400,500])#,10000])
+less_bins_pt = array('d', [1,10,20,30,40,50,60,75,100,200,500])#,10000])#this is good
 less_bins_plot = array('d', [1,10,20,30,40,50,60,70,80,90,100,200,300,400,500,10000])
 
 print "Warning, overflow causing nans, remove last bin"
@@ -1152,8 +1168,8 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
                 array_size_tot+=len(arrays[ key_list[0] ])
                 tree_w_array = tree_weight_dict[s][ss]*np.ones( len(arrays[ key_list[0] ])  )
                 if CUT == "isJetHT":
-                    #cut_mask = np.logical_and(arrays["HLT_PFJet500_v"]==True , arrays["pt"]<25)
-                    cut_mask = np.logical_and(arrays["HLT_PFJet140_v"]==True , arrays["pt"]<25)
+                    cut_mask = np.logical_and(arrays["HLT_PFJet500_v"]==True , arrays["pt"]<25)
+                    #cut_mask = np.logical_and(arrays["HLT_PFJet140_v"]==True , arrays["pt"]<25)
                 elif CUT == "isDiJetMET":
                     #change!
                     #DiJetMET140
@@ -1520,6 +1536,11 @@ def old_draw_tag_eff(sample_list,add_label="",check_closure=False,eta=False,phi=
 '''
 
 def draw_tag_eff(sample_dict,reg_label,add_label="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False):
+    isMC = False
+    if sample_dict == back:
+        isMC = True
+    if sample_dict == sign:
+        isMC = True
     infiles = {}
     graph =  {}
     eff   =  {}
@@ -1586,16 +1607,16 @@ def draw_tag_eff(sample_dict,reg_label,add_label="",check_closure=False,eta=Fals
         hist_num[k] = infiles.Get("num_"+sample_dict[k])
         print hist_num[k].Print()
         print "now add if needed: ", n
-        #if n==0:
-        #    hnum = hist_num[k]
-        #    hden = hist_den[k]
-        #else:
-        #    print "do i crash here?"
-        #    exit()
-        #    print "hnum pre add ", hnum.Print()
-        #    hnum.Add(hist_num[k],1.)
-        #    print "hnum post add ", hnum.Print()
-        #    hden.Add(hist_den[k],1.)
+        ##if n==0:
+        ##    hnum = hist_num[k]
+        ##    hden = hist_den[k]
+        ##else:
+        ##    print "do i crash here?"
+        ##    exit()
+        ##    print "hnum pre add ", hnum.Print()
+        ##    hnum.Add(hist_num[k],1.)
+        ##    print "hnum post add ", hnum.Print()
+        ##    hden.Add(hist_den[k],1.)
         hnum.Add(hist_num[k],1.)
         hden.Add(hist_den[k],1.)
         
@@ -1637,6 +1658,7 @@ def draw_tag_eff(sample_dict,reg_label,add_label="",check_closure=False,eta=Fals
     can.SetGrid()
     graph.Draw("AP")
 
+
     outfile = TFile(NEWDIR+"TagTEfficiency_"+reg_label+add_label+".root","RECREATE")
     print "Info in <TFile::Write>: TEfficiency root file "+NEWDIR+"TagTEfficiency_"+reg_label+add_label+".root has been created"
     outfile.cd()
@@ -1660,6 +1682,152 @@ def draw_tag_eff(sample_dict,reg_label,add_label="",check_closure=False,eta=Fals
         can.Write()
         print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
         outfile_2.Close()
+
+
+def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False):
+    isMC = False
+    if sample_dict == back:
+        isMC = True
+    if sample_dict == sign:
+        isMC = True
+    infiles = {}
+    graph =  {}
+    eff   =  {}
+    hist_num = {}
+    hist_den = {}
+    can = TCanvas("can","can", 1000, 800)
+    #can.SetRightMargin(0.1)
+    can.SetLeftMargin(0.15)
+    can.cd()
+    leg = TLegend(0.6, 0.7, 0.9, 0.9)
+    leg.SetTextSize(0.035)
+    leg.SetBorderSize(0)
+    leg.SetFillStyle(0)
+    leg.SetFillColor(0)
+
+    if check_closure:
+        dnn_threshold = 0.9#5
+        print  "Performing closure test with DNN threshold: ", dnn_threshold
+    else:
+        dnn_threshold = 0.996#0.98#6#0.996
+        print  "DNN threshold: ", dnn_threshold
+
+    if eta_cut==True:
+        add_label+="_eta_1p0"
+    if phi_cut==True:
+        add_label+="_phi_cut"
+    if eta:
+        add_label+="_vs_eta"
+    if phi:
+        add_label+="_vs_phi"
+    if check_closure:
+        add_label+="_closure"+str(dnn_threshold).replace(".","p")
+    #else:
+    #    add_label+="_wp"+str(dnn_threshold).replace(".","p")
+
+
+    print sample_dict
+    print reg_label
+    NEWDIR = PRE_PLOTDIR+reg_label+"/"
+    if not os.path.isdir(NEWDIR): os.mkdir(NEWDIR)
+
+    for n,k in enumerate(sample_dict.keys()):
+        if eta==True:
+            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_eta)-1, more_bins_eta)
+            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_eta)-1, more_bins_eta)
+            less_bins = less_bins_eta
+        else:
+            if phi==True:
+                hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_phi)-1, more_bins_phi)
+                hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_phi)-1, more_bins_phi)
+                less_bins = less_bins_phi
+            else:
+                hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins)-1, more_bins)
+                hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
+                less_bins = less_bins_pt
+
+        print PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root"
+        infiles = TFile(PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root", "READ")
+        hist_den[k] = TH1F()
+        hist_num[k] = TH1F()
+        hist_den[k] = infiles.Get("den_"+sample_dict[k])
+        hist_num[k] = infiles.Get("num_"+sample_dict[k])
+        print hist_num[k].Print()
+        print "now add if needed: ", n
+        ##if n==0:
+        ##    hnum = hist_num[k]
+        ##    hden = hist_den[k]
+        ##else:
+        ##    print "do i crash here?"
+        ##    exit()
+        ##    print "hnum pre add ", hnum.Print()
+        ##    hnum.Add(hist_num[k],1.)
+        ##    print "hnum post add ", hnum.Print()
+        ##    hden.Add(hist_den[k],1.)
+        hnum.Add(hist_num[k],1.)
+        hden.Add(hist_den[k],1.)
+        
+        graph = TGraphAsymmErrors()
+        den = hden.Rebin(len(less_bins)-1,reg_label+"_den2",less_bins)
+        num = hnum.Rebin(len(less_bins)-1,reg_label+"_num2",less_bins)
+        graph.BayesDivide(num,den)
+        eff = TEfficiency(num,den)
+        #graph.BayesDivide(hnum,hden)
+        #eff = TEfficiency(hnum,hden)
+        eff.SetStatisticOption(TEfficiency.kBBayesian)
+        eff.SetConfidenceLevel(0.68)
+        graph.SetMarkerSize(1.3)
+        graph.SetMarkerStyle(20)#(sign_sampl[s]['marker'])
+        graph.SetMarkerColor(1)#(samples[s]['linecolor'])#(2)
+        graph.SetFillColor(1)#(samples[s]['linecolor'])#(2) 
+        graph.SetLineColor(1)#(samples[s]['linecolor'])#(2)
+        graph.SetLineStyle(1)#(2)
+        graph.SetLineWidth(2)
+        graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else maxeff)
+        #graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else 0.7)#Lisa for signal
+        graph.GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
+        graph.GetYaxis().SetTitleOffset(1.4)#("Efficiency (L1+HLT)")
+        graph.GetYaxis().SetTitleSize(0.05)#DCMS
+        if eta:
+            #graph.GetXaxis().SetRangeUser(bins[0],bins[-1])
+            graph.GetXaxis().SetTitle("Jet #eta")
+        else:
+            if phi:
+                graph.GetXaxis().SetTitle("Jet #varphi")
+            else:
+                graph.GetXaxis().SetRangeUser(bins[2],bins[-1])
+                graph.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+                can.SetLogx()#?
+        graph.GetXaxis().SetTitleSize(0.04)
+        graph.GetXaxis().SetTitleOffset(1.1)
+        leg.AddEntry(graph, reg_label, "PL")
+        can.SetGrid()
+        graph.Draw("AP")
+
+
+        outfile = TFile(NEWDIR+"TagTEfficiency_"+sample_dict[k]+"_"+reg_label+add_label+".root","RECREATE")
+        print "Info in <TFile::Write>: TEfficiency root file "+NEWDIR+"TagTEfficiency_"+sample_dict[k]+"_"+reg_label+add_label+".root has been created"
+        outfile.cd()
+        graph.Write("eff_"+reg_label)
+        eff.Write("TEff_"+reg_label)
+        outfile.Close()
+
+        leg.Draw()
+        drawRegion(reg_label,left=True, left_marg_CMS=0.2, top=0.8)
+        drawCMS_simple(LUMI, "Preliminary", onTop=True)
+        can.Print(NEWDIR+"TagEff_"+sample_dict[k]+"_"+reg_label+add_label+".png")
+        can.Print(NEWDIR+"TagEff_"+sample_dict[k]+"_"+reg_label+add_label+".pdf")
+
+        outfile_name_check = NEWDIR+"TagEff_"+sample_dict[k]+"_"+reg_label+add_label+".root"
+        if not os.path.isfile(outfile_name_check):
+            outfile_2 = TFile(outfile_name_check,"RECREATE")
+            outfile_2.cd()
+            eff.Write("eff_"+reg_label)
+            hden.Write("den_"+reg_label)
+            hnum.Write("num_"+reg_label)
+            can.Write()
+            print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
+            outfile_2.Close()
 
 
 def draw_tag_eff_cutbased(sample_list,add_label=""):
@@ -1737,7 +1905,7 @@ def draw_tag_eff_cutbased(sample_list,add_label=""):
     can.Print(PLOTDIR+"TagEff_cutbased"+add_label+".pdf")
 
 
-def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label="",lab_2="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False):
+def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label="",lab_2="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False,do_ratio=False,isMC=False):
 
     label_dict = {}
     label_dict["ZtoLL"] = "Z #rightarrow ll"
@@ -1746,8 +1914,8 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
     label_dict["JetHT"] = "QCD"
     label_dict["TtoEM"] = "ttbar e + #mu"
 
-    BASEDIR = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_"
-    OUTDIR  = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_combination/"
+    BASEDIR = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_"
+    OUTDIR  = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_combination/"
     infiles = {}
     graph =  {}
     eff   =  {}
@@ -1762,7 +1930,7 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
     if eta:
         leg = TLegend(0.7, 0.7-0.07, 1.0-0.05, 1.0-0.07)
     else:
-        leg = TLegend(0.6, 0.7, 1.0, 1.0)
+        leg = TLegend(0.7, 0.7-0.07, 1.0-0.05, 1.0-0.07)#(0.6, 0.7, 1.0, 1.0)
     leg.SetTextSize(0.035)#very horizontal
     leg.SetTextSize(0.025)#squared
     leg.SetTextSize(0.03)#squared
@@ -1782,79 +1950,89 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
         less_bins_plot = less_bins_pt
     
     for i, r in enumerate(regions):
-        if r=="ZtoMM" or r=="WtoMN" or r=="WtoMN_MET" or r=="MN" or r=="WtoMN_noMT":
-            s = "SingleMuon"
-        elif r=="ZtoEE" or r=="WtoEN" or r=="WtoEN_MET" or r=="EN" or r=="WtoEN_noMT":
-            if era=="2018":
-                s = "EGamma"
-            else:
-                s = "SingleElectron"
-        elif r=="TtoEM":
-            s = "MuonEG"
-        elif r=="JetHT":
-            s = "JetHT"
-        elif r=="JetMET":
-            s = "JetHT"
-        elif r=="DiJetMET":
-            s = "JetHT"
-        elif r=="JetMET_unprescaled":
-            s = "JetHT"
-        elif r=="JetHT_unprescaled":
-            s = "JetHT"
-        elif r=="SR":
-            s = "MET"
-            #s = "HighMET"
-        elif r=="MR":
-            s = "HighMET"
-        elif r=="MRPho":
-            s = "HighMET"
-        elif r=="SR_HEM":
-            s = "HighMET"
-        elif r=="JetMET_all_triggers":
-            s="JetHT"
-        elif r=="JetMET_unprescaled_trigger":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_all_triggers":
-            s="JetHT"
-        elif r=="JetMET_low_dPhi_1p5_all_triggers":
-            s="JetHT"
-        elif r=="JetMET_MET_200_all_triggers":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_all_triggers":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet40":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet60":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet80":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet140":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet200":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet500":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_HLT_PFJet500":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_MET_200_Lep":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5":
-            s="JetHT"
-        elif r=="JetMET_dPhi_1p5_Lep":
-            s="JetHT"
-        elif r=="JetMET_low_dPhi_1p5":
-            s="JetHT"
-        elif r=="JetMET_low_dPhi_1p5_Lep":
-            s="JetHT"
-        elif r=="JetMET_low_dPhi_1p5_MET_200_Lep":
-            s="JetHT"
-        elif r=="JetMET_low_dPhi_1p5_MET_200":
-            s="JetHT"
-        elif "ZtoLL" in r or "WtoLN" in r:
-            s=r
+        if isMC:
+            if r=="ZtoMM" or r=="ZtoEE" or r=="ZtoLL":
+                s = "DYJetsToLL"
+            elif r=="WtoMN" or r=="WtoEN" or r=="WtoLN":
+                s = "WJetsToLNu"
+            elif r=="TtoEM":
+                s = "TTbarGenMET"
+            elif r=="JetHT":
+                s = "QCD"
         else:
-            print "Invalid region, aborting..."
-            exit()
+            if r=="ZtoMM" or r=="WtoMN" or r=="WtoMN_MET" or r=="MN" or r=="WtoMN_noMT":
+                s = "SingleMuon"
+            elif r=="ZtoEE" or r=="WtoEN" or r=="WtoEN_MET" or r=="EN" or r=="WtoEN_noMT":
+                if era=="2018":
+                    s = "EGamma"
+                else:
+                    s = "SingleElectron"
+            elif r=="TtoEM":
+                s = "MuonEG"
+            elif r=="JetHT":
+                s = "JetHT"
+            elif "ZtoLL" in r or "WtoLN" in r:
+                s=r
+            #elif r=="JetMET":
+            #    s = "JetHT"
+            #elif r=="DiJetMET":
+            #    s = "JetHT"
+            #elif r=="JetMET_unprescaled":
+            #    s = "JetHT"
+            #elif r=="JetHT_unprescaled":
+            #    s = "JetHT"
+            #elif r=="SR":
+            #    s = "MET"
+            #    #s = "HighMET"
+            #elif r=="MR":
+            #    s = "HighMET"
+            #elif r=="MRPho":
+            #    s = "HighMET"
+            #elif r=="SR_HEM":
+            #    s = "HighMET"
+            #elif r=="JetMET_all_triggers":
+            #    s="JetHT"
+            #elif r=="JetMET_unprescaled_trigger":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_all_triggers":
+            #    s="JetHT"
+            #elif r=="JetMET_low_dPhi_1p5_all_triggers":
+            #    s="JetHT"
+            #elif r=="JetMET_MET_200_all_triggers":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_all_triggers":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet40":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet60":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet80":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet140":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet200":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_HLT_PFJet500":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_HLT_PFJet500":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_MET_200_Lep":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5":
+            #    s="JetHT"
+            #elif r=="JetMET_dPhi_1p5_Lep":
+            #    s="JetHT"
+            #elif r=="JetMET_low_dPhi_1p5":
+            #    s="JetHT"
+            #elif r=="JetMET_low_dPhi_1p5_Lep":
+            #    s="JetHT"
+            #elif r=="JetMET_low_dPhi_1p5_MET_200_Lep":
+            #    s="JetHT"
+            #elif r=="JetMET_low_dPhi_1p5_MET_200":
+            #    s="JetHT"
+            else:
+                print "Invalid region, aborting..."
+                exit()
         if len(datasets)>0:
             if datasets[i]!="":
                 s = datasets[i]
@@ -1930,6 +2108,8 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
     #    print r
     #    #print eff[r].Print()
    
+    if not do_ratio:
+        exit()
     keys = graph.keys()
     ratio = {}
     basis = ""
@@ -2011,6 +2191,305 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
     drawCMS_simple(LUMI, "Preliminary", ERA=era_lab, onTop=True)
     canr.Print(OUTDIR+"RatioTagEffCombiData_"+era+add_label+lab_2+".png")
     canr.Print(OUTDIR+"RatioTagEffCombiData_"+era+add_label+lab_2+".pdf")
+
+
+def draw_data_combination_with_MC(era,regions,regions_labels=[],datasets=[],add_label="",lab_2="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False,do_ratio=False,isMC=False):
+
+    label_dict = {}
+    label_dict["ZtoLL"] = "Z #rightarrow ll"
+    label_dict["WtoLN"] = "W #rightarrow l#nu"
+    label_dict["WtoLN_MET"] = "W #rightarrow l#nu + MET"
+    label_dict["JetHT"] = "QCD"
+    label_dict["TtoEM"] = "ttbar e + #mu"
+
+    BASEDIR = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_"
+    OUTDIR  = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_combination/"
+    infiles = {}
+    graph =  {}
+    eff   =  {}
+    hist_num = {}
+    hist_den = {}
+    #can = TCanvas("can","can", 1800, 800)#very horizontal
+    can = TCanvas("can","can", 800, 800)#squared
+    #can.SetRightMargin(0.1)
+    can.SetLeftMargin(0.15)
+    can.cd()
+    if eta:
+        leg = TLegend(0.7, 0.7-0.07, 1.0-0.05, 1.0-0.07)
+    else:
+        leg = TLegend(0.7, 0.7-0.07, 1.0-0.05, 1.0-0.07)#(0.6, 0.7, 1.0, 1.0)
+    leg.SetTextSize(0.035)#very horizontal
+    leg.SetTextSize(0.025)#squared
+    leg.SetTextSize(0.03)#squared
+    #leg.SetBorderSize(0)
+    #leg.SetFillStyle(0)
+    #leg.SetFillColor(0)
+
+    if eta_cut==True:
+        add_label+="_eta_1p0"
+    if phi_cut==True:
+        add_label+="_phi_cut"
+    if eta:
+        add_label+="_vs_eta"
+        less_bins_plot = less_bins_eta
+    else:
+        can.SetLogx()#?
+        less_bins_plot = less_bins_pt
+    
+    for i, r in enumerate(regions):
+        print i, r
+        if isMC:
+            if r=="ZtoMM" or r=="ZtoEE" or r=="ZtoLL":
+                s = "DYJetsToLL"
+            elif r=="WtoMN" or r=="WtoEN" or r=="WtoLN":
+                s = "WJetsToLNu"
+            elif r=="TtoEM":
+                s = "TTbarGenMET"
+            elif r=="JetHT":
+                s = "QCD"
+        INPDIR  = BASEDIR + r + "/"#"_CR/"
+        reg_label = "_"+r+regions_labels[0]
+        print "Opening this file: ", INPDIR+"TagEff_"+s+reg_label+add_label+".root"
+        infile = TFile(INPDIR+"TagEff_"+s+reg_label+add_label+".root", "READ")
+        hist_den[r+reg_label+s] = TH1F()
+        hist_num[r+reg_label+s] = TH1F()
+        graph[r+reg_label+s] = TGraphAsymmErrors()
+        hist_den[r+reg_label+s] = infile.Get("den_"+r)
+        hist_num[r+reg_label+s] = infile.Get("num_"+r)
+        #rebin
+        #less_bins = bins#!
+        den = hist_den[r+reg_label+s].Rebin(len(less_bins_plot)-1,r+reg_label+s+"_den2",less_bins_plot)
+        num = hist_num[r+reg_label+s].Rebin(len(less_bins_plot)-1,r+reg_label+s+"_num2",less_bins_plot)
+        graph[r+reg_label+s].BayesDivide(num,den)
+        eff[r+reg_label+s] = TEfficiency(num,den)
+        eff[r+reg_label+s].SetStatisticOption(TEfficiency.kBBayesian)
+        eff[r+reg_label+s].SetConfidenceLevel(0.68)
+        graph[r+reg_label+s].SetMarkerSize(marker_sizes[i])#(1.3)
+        graph[r+reg_label+s].SetMarkerStyle(markers[i])#(21)#(sign_sampl[s]['marker'])
+        graph[r+reg_label+s].SetMarkerColor(colors[i])#(samples[s]['fillcolor'])#(2)
+        graph[r+reg_label+s].SetFillColor(colors[i])#(samples[s]['fillcolor'])#(2) 
+        graph[r+reg_label+s].SetLineColor(colors[i])#(samples[s]['linecolor'])#(2)
+        graph[r+reg_label+s].SetLineStyle(lines[i])#(2)#(2)
+        graph[r+reg_label+s].SetLineWidth(2)
+        graph[r+reg_label+s].GetYaxis().SetRangeUser(-0.0001,0.002 if check_closure else maxeff)
+        graph[r+reg_label+s].GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
+        graph[r+reg_label+s].GetYaxis().SetTitleOffset(1.5)#("Efficiency (L1+HLT)")
+        graph[r+reg_label+s].GetYaxis().SetTitleSize(0.05)#DCMS
+        if eta:
+            graph[r+reg_label+s].GetXaxis().SetTitle("Jet #eta")
+        else:
+            graph[r+reg_label+s].GetXaxis().SetRangeUser(bins[4],bins[-1])
+            graph[r+reg_label+s].GetXaxis().SetTitle("Jet p_{T} (GeV)")
+        graph[r+reg_label+s].GetXaxis().SetTitleSize(0.04)
+        graph[r+reg_label+s].GetXaxis().SetTitleOffset(1.1)
+        #leg.AddEntry(graph[r+reg_label+s], samples[s]['label']+"; "+r+reg_label, "PL")
+        #leg.AddEntry(graph[r+reg_label+s], samples[s]['label']+"; "+r, "PL")
+        leg.AddEntry(graph[r+reg_label+s], label_dict[r], "PL")
+        can.SetGrid()
+        if i==0:
+            graph[r+reg_label+s].Draw("AP")
+            #graph[s].Draw("P")#?
+        else:
+            graph[r+reg_label+s].Draw("P,sames")
+        infile.Close()
+
+    leg.Draw()
+    #drawRegion(REGION,left=True, left_marg_CMS=0.2, top=0.8)
+    era_lab = ERA
+    if "B-F" in reg_label:
+        era_lab+= " B-F"
+    elif "G-H" in reg_label:
+        era_lab+= " G-H"
+    drawCMS_simple(LUMI, "Simulation", ERA=era_lab, onTop=True)
+    can.Print(OUTDIR+"TagEffCombiMC_"+era+add_label+lab_2+".png")
+    can.Print(OUTDIR+"TagEffCombiMC_"+era+add_label+lab_2+".pdf")
+    #can.Print(OUTDIR+"buh.pdf")
+
+    #for r in regions:
+    #    print r
+    #    #print eff[r].Print()
+   
+    if not do_ratio:
+        exit()
+    keys = graph.keys()
+    ratio = {}
+    basis = ""
+    for k in keys:
+        if "WtoLN" in k:
+            basis = k
+            np = graph[basis].GetN()
+            print np
+
+    print basis
+    colorsr = [1,4,418]
+    markersr = [20,25,24,20,24,24,24,24]
+    new_den = {}
+    new_num = {}
+    n=0
+    for k in keys:
+        if "WtoLN" not in k:
+            print k
+            ratio[k] = TGraphAsymmErrors()
+            #print graph[k].Print()
+            for i in range(0,np):
+                #print i
+                #print graph[k].GetPointX(i)
+                #print graph[k].GetPointY(i)
+                ratio[k].SetPoint(i,graph[k].GetPointX(i),graph[k].GetPointY(i)/graph[basis].GetPointY(i))
+                ex = abs(abs(graph[k].GetPointX(i)) - abs(less_bins_plot[i+2]))
+                #print less_bins_plot[i+2], graph[k].GetPointX(i)
+                #print ex
+                ratio[k].SetPointError(i,ex,ex,0,0)
+            #print ratio[k].Print()
+            if "ZtoLL" in k:
+                ratio[k].SetLineColor(1)
+                ratio[k].SetMarkerColor(1)
+                ratio[k].SetMarkerStyle(20)
+            elif "JetHT" in k:
+                ratio[k].SetLineColor(418)
+                ratio[k].SetLineStyle(2)
+                ratio[k].SetMarkerColor(418)
+                ratio[k].SetMarkerStyle(25)
+            elif "TtoEM" in k:
+                ratio[k].SetLineColor(4)
+                ratio[k].SetLineStyle(2)
+                ratio[k].SetMarkerColor(4)
+                ratio[k].SetMarkerStyle(24)
+            ratio[k].SetMarkerSize(marker_sizes[n])
+            ratio[k].SetLineWidth(2)
+            n+=1
+
+    canr = TCanvas("canr","canr", 800, 800)#squared
+    #canr.SetRightMargin(0.1)
+    canr.SetLeftMargin(0.15)
+    canr.cd()
+    canr.SetGrid()
+    if eta:
+        legr = TLegend(0.7, 0.7, 1.0-0.05, 1.0-0.07)
+    else:
+        legr = TLegend(0.6, 0.7, 1.0, 1.0)
+    legr.SetTextSize(0.03)#squared
+
+    n=0
+    for k in keys:
+        if "WtoLN" not in k:
+            print ratio[k]
+            legr.AddEntry(ratio[k],label_dict[ k.split("_")[0] ],"PL")
+            if n==0:
+                ratio[k].Draw("AP")
+                ratio[k].SetMinimum(0.)
+                ratio[k].SetMaximum(2.)
+            else:
+                ratio[k].Draw("P,sames")
+            n+=1
+
+    legr.Draw()
+    lineX = TLine(-1,1,1,1)
+    lineX.SetLineStyle(2)
+    lineX.SetLineWidth(3)
+    lineX.SetLineColor(1)
+    lineX.Draw("same")
+    drawCMS_simple(LUMI, "Preliminary", ERA=era_lab, onTop=True)
+    canr.Print(OUTDIR+"RatioTagEffCombiData_"+era+add_label+lab_2+".png")
+    canr.Print(OUTDIR+"RatioTagEffCombiData_"+era+add_label+lab_2+".pdf")
+
+def draw_MC_combination(era,sample_list,r,region_label,datasets=[],add_label="",lab_2="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False,do_ratio=False):
+
+    label_dict = {}
+    label_dict["SR"] = "SR"
+    label_dict["ZtoLL"] = "Z #rightarrow ll"
+    label_dict["WtoLN"] = "W #rightarrow l#nu"
+    label_dict["WtoLN_MET"] = "W #rightarrow l#nu + MET"
+    label_dict["JetHT"] = "QCD"
+    label_dict["TtoEM"] = "ttbar e + #mu"
+
+    BASEDIR = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_"
+    OUTDIR  = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_combination/"
+    infiles = {}
+    graph =  {}
+    eff   =  {}
+    hist_num = {}
+    hist_den = {}
+    can = TCanvas("can","can", 800, 800)#squared
+    #can.SetRightMargin(0.1)
+    can.SetLeftMargin(0.15)
+    can.cd()
+    can.SetGrid()
+    leg = TLegend(0.6, 0.7-0.07, 1.0-0.05, 1.0-0.07)
+    leg.SetTextSize(0.035)#very horizontal
+    leg.SetTextSize(0.025)#squared
+    leg.SetTextSize(0.03)#squared
+    #leg.SetBorderSize(0)
+    #leg.SetFillStyle(0)
+    #leg.SetFillColor(0)
+
+    if eta_cut==True:
+        add_label+="_eta_1p0"
+    if phi_cut==True:
+        add_label+="_phi_cut"
+    if eta:
+        add_label+="_vs_eta"
+        less_bins_plot = less_bins_eta
+    else:
+        can.SetLogx()#?
+        less_bins_plot = less_bins_pt
+    
+    INPDIR  = BASEDIR + r + "/"#"_CR/"
+
+    print region_label
+    for i, s in enumerate(sample_list):
+        print i, s
+        print "Opening this file: ", INPDIR+"TagEff_"+s+"_"+r+region_label+add_label+".root"
+        infile = TFile(INPDIR+"TagEff_"+s+"_"+r+region_label+add_label+".root", "READ")
+        hist_den[s+r] = TH1F()
+        hist_num[s+r] = TH1F()
+        graph[s+r] = TGraphAsymmErrors()
+        hist_den[s+r] = infile.Get("den_"+r)
+        hist_num[s+r] = infile.Get("num_"+r)
+        den = hist_den[s+r].Rebin(len(less_bins_plot)-1,s+r+"_den2",less_bins_plot)
+        num = hist_num[s+r].Rebin(len(less_bins_plot)-1,s+r+"_num2",less_bins_plot)
+        graph[s+r].BayesDivide(num,den)
+        eff[s+r] = TEfficiency(num,den)
+        eff[s+r].SetStatisticOption(TEfficiency.kBBayesian)
+        eff[s+r].SetConfidenceLevel(0.68)
+        graph[s+r].SetMarkerSize(marker_sizes[i])#(1.3)
+        graph[s+r].SetMarkerStyle(markers_MC[i])#(21)#(sign_sampl[s]['marker'])
+        graph[s+r].SetMarkerColor(samples[s]['fillcolor'])#(colors[i])#
+        graph[s+r].SetFillColor(samples[s]['fillcolor'])# (colors[i])#
+        graph[s+r].SetLineColor(samples[s]['linecolor'])#(colors[i])#
+        graph[s+r].SetLineStyle(lines[i])#(2)#(2)
+        graph[s+r].SetLineWidth(2)
+        graph[s+r].GetYaxis().SetRangeUser(-0.0001,0.002 if check_closure else maxeff)
+        graph[s+r].GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
+        graph[s+r].GetYaxis().SetTitleOffset(1.5)#("Efficiency (L1+HLT)")
+        graph[s+r].GetYaxis().SetTitleSize(0.05)#DCMS
+        if eta:
+            graph[s+r].GetXaxis().SetTitle("Jet #eta")
+        else:
+            graph[s+r].GetXaxis().SetRangeUser(bins[4],bins[-1])
+            graph[s+r].GetXaxis().SetTitle("Jet p_{T} (GeV)")
+        graph[s+r].GetXaxis().SetTitleSize(0.04)
+        graph[s+r].GetXaxis().SetTitleOffset(1.1)
+        #leg.AddEntry(graph[s+r], samples[s]['label']+"; "+r, "PL")
+        #leg.AddEntry(graph[s+r], samples[s]['label']+"; "+r, "PL")
+        leg.AddEntry(graph[s+r], label_dict[r]+";"+s, "PL")
+        if i==0:
+            graph[s+r].Draw("AP")
+            #graph[s].Draw("P")#?
+        else:
+            graph[s+r].Draw("P,sames")
+        infile.Close()
+    leg.Draw()
+    #drawRegion(REGION,left=True, left_marg_CMS=0.2, top=0.8)
+    era_lab = ERA
+    if "B-F" in region_label:
+        era_lab+= " B-F"
+    elif "G-H" in region_label:
+        era_lab+= " G-H"
+    drawCMS_simple(LUMI, "Preliminary", ERA=era_lab, onTop=True)
+    can.Print(OUTDIR+"TagEffCombiMC_"+era+add_label+lab_2+".png")
+    can.Print(OUTDIR+"TagEffCombiMC_"+era+add_label+lab_2+".pdf")
+    #can.Print(OUTDIR+"buh.pdf")
 
 def draw_comparison(era,regions,extra="",col=0,maxeff=maxeff):
     BASEDIR = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_"
@@ -6528,7 +7007,7 @@ exit()
 
 
 
-samples_to_run = data#sign#data#back#data#back#data#back#data#sign#back#data#back#data#back+data#data#data+back#+data
+samples_to_run = back#data#back#data#back#data#sign#data#back#data#back#data#back#data#sign#back#data#back#data#back+data#data#data+back#+data
 #jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
 #jet_tag = "_jet_1"
 jet_tag = ""#+
@@ -6541,8 +7020,9 @@ clos = False
 #jet_tag = "_A-B"
 #kill QCD
 
-#jet_tag += "_G-H"#"_B-F"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#
+#jet_tag += "_B-F"#"_G-H"#"_B-F"#"_G-H"#"_B-F"#"_G-H"#"_B-F"#"_G-H"#"_B-F"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#
 
+#jet_tag += "_PFJet500"
 if KILL_QCD:
     jet_tag += "_MinDPhi_0p5"
     #jet_tag += "_MinDPhiBarrel_0p5"
@@ -6597,39 +7077,55 @@ print "Luminosity: ", data[0], LUMI
 
 sample_dict = {}
 reg_comb = ""
-if "Wto" in REGION:
-    sample_dict["WtoMN"] = "SingleMuon"
-    #sample_dict["WtoMN_MET"] = "SingleMuon"
-    if ERA=="2018":
-        sample_dict["WtoEN"] = "EGamma"
-        #sample_dict["WtoEN_MET"] = "EGamma"
+isMC = False
+if samples_to_run==back:
+    isMC = True
+    if "Wto" in REGION:
+        sample_dict["WtoMN"] = "WJetsToLNu"
+        sample_dict["WtoEN"] = "WJetsToLNu"
+        reg_comb = "WtoLN"
+    elif "Zto" in REGION:
+        sample_dict["ZtoMM"] = "DYJetsToLL"
+        sample_dict["ZtoEE"] = "DYJetsToLL"
+        reg_comb = "ZtoLL"
     else:
-        if "_B-F" not in jet_tag:
-            sample_dict["WtoEN"] = "SingleElectron"
-            #sample_dict["WtoEN_MET"] = "SingleElectron"
-    reg_comb = "WtoLN"
-    if "MET" in REGION:
-        reg_comb = "WtoLN_MET"
-elif "Zto" in REGION:
-    sample_dict["ZtoMM"] = "SingleMuon"
-    if ERA=="2018":
-        sample_dict["ZtoEE"] = "EGamma"
-    else:
-        if "_B-F" not in jet_tag:
-            sample_dict["ZtoEE"] = "SingleElectron"
-    reg_comb = "ZtoLL"
+        sample_dict[REGION] = samples_to_run[0]
+        print "This won't work for lists, hence MC... keep in mind"
+        reg_comb = REGION
 else:
-    sample_dict[REGION] = samples_to_run[0]
-    print "This won't work for lists, hence MC... keep in mind"
-    reg_comb = REGION
+    if "Wto" in REGION:
+        sample_dict["WtoMN"] = "SingleMuon"
+        #sample_dict["WtoMN_MET"] = "SingleMuon"
+        if ERA=="2018":
+            sample_dict["WtoEN"] = "EGamma"
+            #sample_dict["WtoEN_MET"] = "EGamma"
+        else:
+            if "_B-F" not in jet_tag:
+                sample_dict["WtoEN"] = "SingleElectron"
+                #sample_dict["WtoEN_MET"] = "SingleElectron"
+        reg_comb = "WtoLN"
+        if "MET" in REGION:
+            reg_comb = "WtoLN_MET"
+    elif "Zto" in REGION:
+        sample_dict["ZtoMM"] = "SingleMuon"
+        if ERA=="2018":
+            sample_dict["ZtoEE"] = "EGamma"
+        else:
+            if "_B-F" not in jet_tag:
+                sample_dict["ZtoEE"] = "SingleElectron"
+        reg_comb = "ZtoLL"
+    else:
+        sample_dict[REGION] = samples_to_run[0]
+        print "This won't work for lists, hence MC... keep in mind"
+        reg_comb = REGION
 
-LUMI = 137.4*1000
-print "Using full run 2 lumi!! ", LUMI
+#LUMI = 137.4*1000
+#print "Using full run 2 lumi!! ", LUMI
 
 #calculate_tag_eff(get_tree_weights(samples_to_run,LUMI),samples_to_run,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,j_idx=-1,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
 ##draw_tag_eff(samples_to_run,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
-draw_tag_eff(sample_dict,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
-exit()
+#draw_tag_eff_updated(sample_dict,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
+#exit()
 
 #ROC:
 #plot_roc_curve(get_tree_weights(sign,LUMI),get_tree_weights(back,LUMI),sign,back,add_label="",check_closure=False,eta=False,j_idx=-1,eta_cut=0,eta_invert=False)
@@ -6647,9 +7143,27 @@ exit()
 
 
 #jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
-
 '''
-draw_data_combination(
+draw_MC_combination(
+    ERA,
+    back,
+    "SR",
+    region_label = jet_tag,
+    add_label="",
+    lab_2=jet_tag,
+    check_closure=clos,
+    eta_cut = CUT_ETA,
+    eta=DO_ETA,
+    phi_cut = CUT_PHI,
+    phi=DO_PHI
+)
+
+exit()
+'''
+
+
+#draw_data_combination(
+draw_data_combination_with_MC(
     ERA,
     #["WtoMN","WtoEN","ZtoMM","ZtoEE","JetHT","DiJetMET","TtoEM"],
     #["JetHT","JetHT"],
@@ -6692,11 +7206,12 @@ draw_data_combination(
     eta_cut = CUT_ETA,
     eta=DO_ETA,
     phi_cut = CUT_PHI,
-    phi=DO_PHI
+    phi=DO_PHI,
+    isMC = True
 )
 
 exit()
-'''
+
 
 
 #vs eta
