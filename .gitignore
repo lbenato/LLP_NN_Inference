@@ -55,3 +55,9 @@
 
 # Errors
 .__afs*
+
+# Background predictions
+python/BkgPredResults*.py
+
+# Condor folders
+condor_*
