@@ -36,7 +36,7 @@ gStyle.SetOptStat(0)
 
 #### NTUPLE, PLOT DIRECTORIES ####
 
-ERA = "2017"
+ERA = "2018"
 
 #NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_tf_and_skim_unmerged_all_events/"
 #NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_tf_and_skim_unmerged/"
@@ -104,15 +104,17 @@ PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_Gen/"
 #PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR_BeamHalo_compare/"
 
 #Here!
+'''
 ##NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_SR_InvertBeamHalo/"
 NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_SR_BeamHalo/"
 PLOTDIR   = "plots/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_SR_BeamHalo_compare/"
 ##PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR_HEM_effect/"
 NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_SR/"
 PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR/"
+'''
 
-#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_ZtoMM/"
-#PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_ZtoMM/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_ZtoMM/"
+PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_ZtoMM/"
 ##PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR_InvertBeamHalo/"
 
 #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_faulty_eta/v5_calo_AOD_"+ERA+"_WtoMN_noMT_InvertBeamHalo/"
@@ -131,6 +133,9 @@ PLOTDIR   = "plots/v5_calo_AOD_"+ERA+"_SR/"
 #NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_synch/"
 #PLOTDIR     = "plots/v4_calo_AOD_2018_synch/"
 
+#Here: compare
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_compare_2017_2018_WtoMN/"
+#PLOTDIR   = "plots/v5_calo_AOD_compare_2017_2018_WtoMN/"
 #from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018_skim import sample, samples
 
 
@@ -141,21 +146,24 @@ POISSON     = False
 #### SAMPLES ####
 
 #data = ["data_obs"]
-#data = ["SingleMuon"]
-#data_tag =  "SingleMuon"#+"BH"#"MET"#"data_obs"
+data = ["SingleMuon"]
+data_tag =  "SingleMuon"#+"BH"#"MET"#"data_obs"
 #data_tag = "SingleElectron"
 #data_tag = "EGamma"
 #data_tag = "MuonEG"
-data_tag = "HighMET"#+"BH"
+#data_tag = "SingleMuon2018"#+"BH"
 #data_tag = "JetHT"
-data = [data_tag]
+#data = [data_tag]
 #back = ["VV","WJetsToQQ","WJetsToLNu","DYJetsToQQ","DYJetsToLL","ZJetsToNuNu","ST","TTbar","QCD"]#
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbar"]
 back = ["VV","TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]#,"DYJetsToLL"]
+
+#back = ["SingleMuon2017"]
+
 #back = [data_tag]#
 #back = ["JetHTMC"]
 #back = ["QCD"]
-#back=["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
+back=["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
 #back = ["WJetsToLNu"]
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbarGenMET","QCD"]#good order for JetHT
 #back = ["All"]
@@ -167,14 +175,17 @@ back = ["VV","TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]#,"DYJetsToLL"]
 #back = ["TTbarGenMET"]
 
 if ERA=="2018":
-    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import sample, samples
+    #from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import sample, samples
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesCompare import sample, samples
     from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2018 import lumi
     #LUMI  = lumi[ data[0] ]["tot"]#["tot"]
-    if "BH" in data[0]:
-        name = data[0].replace("BH","")
-        LUMI  = lumi[ name ]["tot"]
-    else:
-        LUMI  = lumi[ data[0] ]["tot"]
+    #if "BH" in data[0]:
+    #    name = data[0].replace("BH","")
+    #    LUMI  = lumi[ name ]["tot"]
+    #else:
+    #    LUMI  = lumi[ data[0] ]["tot"]
+    print "Artificial"
+    LUMI = -1
 elif ERA=="2017":
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import sample, samples
     from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2017 import lumi
@@ -217,9 +228,8 @@ sign_calo = ['ggH_MH2000_MS250_ctau1000','ggH_MH2000_MS50_ctau1000','ggH_MH2000_
 #sign = ["EGamma_HEM"]#["SUSY_mh200_pl1000"]
 #back = ["EGamma_HEM"]#["EGamma_HEM"]
 sign = []
-sign = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000','SUSY_mh200_pl1000','SUSY_mh150_pl1000']#sign_calo
-#sign = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000']
-#sign = []
+#sign = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000','SUSY_mh200_pl1000','SUSY_mh150_pl1000']#sign_calo
+
 #sign = ['SUSY_mh400_pl1000','SUSY_mh400_prompt','SUSY_mh300_pl1000','SUSY_mh300_prompt','SUSY_mh200_pl1000','SUSY_mh200_prompt']
 
 #sign = ["SingleMuonBH"]

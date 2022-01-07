@@ -18,11 +18,19 @@ from NNInferenceCMSSW.LLP_NN_Inference.variables import *
 gROOT.SetBatch(True)
 gStyle.SetOptStat(0)
 ERA = "2017"
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_Gen/"
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_Gen/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_Gen/"
 
 #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v0_SUSY_calo_MINIAOD_2018/"
-from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import sample, samples
-OUTPUTDIR = "plots/v5_calo_AOD_"+ERA+"_Gen/"
+if ERA=="2016":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2016 import sample, samples
+if ERA=="2017":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import sample, samples
+if ERA=="2018":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import sample, samples
+
+#OUTPUTDIR = "plots/v5_calo_AOD_"+ERA+"_Gen/"
+OUTPUTDIR = "plots/v6_calo_AOD_"+ERA+"_Gen/"
 
 
 def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,bins=np.array([]),filename="",string="",part_var="GenBquarks",particle="#pi",norm=False):
@@ -125,11 +133,12 @@ def plot_2D(sign,var,nbins=50,minimum=0,maximum=2000,bins=np.array([]),filename=
     gStyle.SetPaintTextFormat(".f")
 
     if part_var=="GenBquarks":
-        cutstring = "(EventWeight * PUReWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && Flag2_globalSuperTightHalo2016Filter && Flag2_goodVertices && Flag2_EcalDeadCellTriggerPrimitiveFilter && Flag2_HBHENoiseFilter && Flag2_HBHEIsoNoiseFilter && Flag2_ecalBadCalibFilter && Flag2_eeBadScFilter && Flag2_BadPFMuonFilter) && nMuonsPassing==0 && nElectronsPassing==0 && nPhotonsPassing==0 && nTausPassing==0 && MEt.pt>200 )"
-        cutstring = "(EventWeight * PUReWeight) * (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nPhotonsPassing==0 && nTausPassing==0)"
+        cutstring = "isMC"
+        cutstring = "(EventWeight * PUReWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && nMuonsPassing==0 && nElectronsPassing==0 && nPhotonsPassing==0 && nTausPassing==0 && MEt.pt>200 )"
+        #cutstring = "(EventWeight * PUReWeight) * (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nPhotonsPassing==0 && nTausPassing==0)"
         #cutstring = "(EventWeight * PUReWeight)"
-    else:
-        cutstring = "(EventWeight * PUReWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && Flag2_globalSuperTightHalo2016Filter && Flag2_goodVertices && Flag2_EcalDeadCellTriggerPrimitiveFilter && Flag2_HBHENoiseFilter && Flag2_HBHEIsoNoiseFilter && Flag2_ecalBadCalibFilter && Flag2_eeBadScFilter && Flag2_BadPFMuonFilter) && nMuonsPassing==0 && nElectronsPassing==0 && nPhotonsPassing==0 && nTausPassing==0 && MEt.pt>200 )"
+    #else:
+    #    cutstring = "(EventWeight * PUReWeight) * ( (HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && Flag2_globalSuperTightHalo2016Filter && Flag2_goodVertices && Flag2_EcalDeadCellTriggerPrimitiveFilter && Flag2_HBHENoiseFilter && Flag2_HBHEIsoNoiseFilter && Flag2_ecalBadCalibFilter && Flag2_eeBadScFilter && Flag2_BadPFMuonFilter) && nMuonsPassing==0 && nElectronsPassing==0 && nPhotonsPassing==0 && nTausPassing==0 && MEt.pt>200 )"
 
     for i, s in enumerate(sign):
         chain[s] = TChain("tree")
@@ -195,130 +204,11 @@ taglio = "_preselections"
 #taglio = "_displaced_dijet_trigger"
 #taglio = "_single_lepton_trigger"
 #taglio = "_VBF_displaced_jet_trigger"
-signal_15 = {
-#    'ZH_M15_ctau100' :
-#        {
-#        'max' : 50,
-#        },
-    'VBFH_M15_ctau100' :
-        {
-        'max' : 50,
-        },
-#    'ggH_M15_ctau100' :
-#        {
-#        'max' : 50,
-#        },
-#    'ZH_M15_ctau1000' :
-#        {
-#        'max' : 500,
-#        },
-    'VBFH_M15_ctau1000' :
-        {
-        'max' : 500,
-        },
-#    'ggH_M15_ctau1000' :
-#        {
-#        'max' : 500,
-#        },
-#    'ZH_M15_ctau10000' :
-#        {
-#        'max' : 4000,
-#        },
-    'VBFH_M15_ctau10000' :
-        {
-        'max' : 4000,
-        },
-#    'ggH_M15_ctau10000' :
-#        {
-#        'max' : 4000,
-#        },
-}
-
-signal = {
-#    'ZH_M40_ctau100' :
-#        {
-#        'max' : 50,
-#        },
-    'VBFH_M30_ctau100' :
-        {
-        'max' : 50,
-        },
-#    'ggH_M30_ctau100' :
-#        {
-#        'max' : 50,
-#        },
-#    'ZH_M40_ctau1000' :
-#        {
-#        'max' : 500,
-#        },
-    'VBFH_M30_ctau1000' :
-        {
-        'max' : 500,
-        },
-#    'ggH_M30_ctau1000' :
-#        {
-#        'max' : 500,
-#        },
-#    'ZH_M40_ctau10000' :
-#        {
-#        'max' : 4000,
-#        },
-    'VBFH_M30_ctau10000' :
-        {
-        'max' : 4000,
-        },
-#    'ggH_M30_ctau10000' :
-#        {
-#        'max' : 4000,
-#        },
-}
-
-signal_50 = {
-    'ZH_M55_ctau100' :
-        {
-        'max' : 30,
-        },
-    'VBFH_M50_ctau100' :
-        {
-        'max' : 30,
-        },
-    'ggH_M50_ctau100' :
-        {
-        'max' : 30,
-        },
-    'ZH_M55_ctau1000' :
-        {
-        'max' : 400,
-        },
-    'VBFH_M50_ctau1000' :
-        {
-        'max' : 400,
-        },
-    'ggH_M50_ctau1000' :
-        {
-        'max' : 400,
-        },
-    'ZH_M55_ctau10000' :
-        {
-        'max' : 2000,
-        },
-    'VBFH_M50_ctau10000' :
-        {
-        'max' : 2000,
-        },
-    'ggH_M50_ctau10000' :
-        {
-        'max' : 2000,
-        },
-}
-
-#for a in signal.keys():
-#    print a
-#    plot_2D([a],"radius2D",nbins=20,minimum=0,maximum=signal[a]['max'],bins=np.array([]),filename="",string=taglio)
-
-
 #SUSY
 signal = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000','SUSY_mh200_pl1000']#["mchi200_pl1000","mchi300_pl1000","mchi400_pl1000"]
+
+signal = ['SUSY_mh127_ctau500','SUSY_mh300_ctau500','SUSY_mh600_ctau500','SUSY_mh1000_ctau500','SUSY_mh1800_ctau500']
+signal += ['SUSY_mh127_ctau3000','SUSY_mh300_ctau3000','SUSY_mh600_ctau3000','SUSY_mh1000_ctau3000','SUSY_mh1800_ctau3000']
 
 plot_2D(signal,"travelRadiusLLP",nbins=50,minimum=9.9,maximum=50000,bins=np.array([9.9,25,50,100,250,500,1000,5000,10000,50000]),filename="",string=taglio,part_var="GenBquarks")
 

@@ -65,11 +65,11 @@ gStyle.SetOptStat(0)
 #gStyle.SetPadRightMargin(-0.2)
 #gStyle.SetPadLeftMargin(-0.2)
 
-ERA                = "2016"
-REGION             = "ZtoEE"#"WtoMN"#"WtoEN"#"WtoMN"#"ZtoEE"#"JetHT"
-CUT                = "isZtoEE"#"isWtoMN"#"isWtoEN"#"isWtoMN"#"isZtoEE"#"isJetHT"#"isJetMET_low_dPhi_MET_200_Lep"#"isJetHT_unprescaled"#"isWtoEN"# && MT<100"#"isZtoMM"
-KILL_QCD           = True#True#False#True
-DO_ETA             = False
+ERA                = "2018"
+REGION             = "SR"#"ZtoEEBoost"#"WtoMN"#"WtoEN"
+CUT                = "isSR"#"isZtoEE"#"isWtoMN"#"isWtoEN"#"isJetMET_low_dPhi_MET_200_Lep"#"isJetHT_unprescaled"
+KILL_QCD           = True#False
+DO_ETA             = True
 DO_PHI             = False#False#
 if DO_PHI:
     DO_ETA = False
@@ -104,27 +104,38 @@ print "\n"
 #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_2018_ZtoMM_CR/"
 #PLOTDIR            = "plots/Efficiency/v5_calo_AOD_2018_ZtoMM_CR/"
 NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+if REGION=="ZtoMMBoost":
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_ZtoMM/"
+if REGION=="ZtoEEBoost":
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_ZtoEE/"
 if REGION=="WtoEN":
     print "This for data:"
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN_noMT/"
-    print "This for MC"
-    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN/"
+    #print "This for MC"
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN/"
 if REGION=="WtoMN":
     print "This for data:"
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN_noMT/"
-    print "This for MC"
-    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN/"
+    #print "This for MC"
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN/"
 if REGION=="WtoEN_MET":
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN_noMT/"
 if REGION=="WtoMN_MET":
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN_noMT/"
 if REGION=="SR":
     #print "Old dir good for MC bkg"
+    #Used to calculate SFs
     #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+    #As a check on bkg pred, let's use the newest one
+    #print "MC v6_calo_AOD_2016_SR_v5_ntuples"
+    #NTUPLEDIR           = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_v5_ntuples/"
 
     #print "SR: updated to CSC analysis triggers"
-    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
     #print " IMPORTANT NOT GOOD FOR SIGNAL!!! "
+
+    print "SR in v6"
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR/"
 
     #print "DEBUUUUG"
     #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_2018_SR_xcheck_tf_and_skim_condor_v5_updated/"
@@ -139,11 +150,11 @@ if REGION=="SR":
 #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_faulty_eta/v5_calo_AOD_"+ERA+"_"+REGION+"/"
 
 PRE_PLOTDIR        = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
-PRE_PLOTDIR        = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"
+#PRE_PLOTDIR        = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"
 
 PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
-PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"__debug/"#"_2017_signal/"#
-PLOTDIR            = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+#PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"__debug/"#"_2017_signal/"#
+#PLOTDIR            = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
 
 
 #OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"/"
@@ -174,16 +185,16 @@ back = ["DYJetsToLL"]
 #back = ["TTbar"]
 #back = ["ZJetsToNuNu","QCD","WJetsToLNu","TTbarGenMET","VV"]
 
-#back = ["All"]
+back = ["All"]
 #back = ["VV"]
 #back = ["QCD","WJetsToLNu","TTbarGenMET"]
-data = ["SingleMuon"]
+#data = ["SingleMuon"]
 #data = ["SingleElectron"]
 #data = ["EGamma"]
 #data = ["MuonEG"]
 #data = ["MET"]
-#data = ["HighMET"]
-data = ["JetHT"]
+data = ["HighMET"]
+#data = ["JetHT"]
 sign = [
     #"SUSY_all",
     #"SUSY_mh400_pl1000",
@@ -220,7 +231,7 @@ elif ERA=="2016":
     else:
         LUMI  = lumi[ data[0] ]["tot"]
 
-print LUMI
+print "Lumi: ", data[0] ,  LUMI
 
 COMPARE = options.compare
 DRAWSIGNAL = options.drawsignal
@@ -229,7 +240,7 @@ DRAWSIGNAL = options.drawsignal
 
 colors = [856, 1,  634, 420, 806, 882, 401, 418, 881, 798, 602, 921]
 colors_jj = [1,2,4,418,801,856]
-colors_jj = [1,2,4,418,801856]
+colors_jj = [1,2,4,418,801,856]
 colors = colors_jj + [881, 798, 602, 921]
 lines = [2,1,3,4,1,2,2,2,2]
 markers = [20,20,20,20,20,24,24,24,24]
@@ -1139,6 +1150,8 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
             list_of_variables += ["MinSubLeadingJetMetDPhi"]
         if ERA=="2018" and CUT == "isSR":
             list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
+        if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+            list_of_variables += ["Z_pt"]
         chain[s] = TChain("tree")
         for l, ss in enumerate(samples[s]['files']):
             tree_weights[l] = tree_weight_dict[s][ss]
@@ -1210,6 +1223,9 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
                     #cut_mask = np.logical_and(arrays[CUT]>0 , arrays["MinJetMetDPhiBarrel"]>0.5 )
                 else:
                     cut_mask = (arrays[CUT]>0)
+
+                if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+                    cut_mask = np.logical_and(cut_mask,arrays["Z_pt"]>100)
 
                 #HEM
                 if CUT == "isSR" and str(ERA)=="2018":
@@ -1582,22 +1598,22 @@ def draw_tag_eff(sample_dict,reg_label,add_label="",check_closure=False,eta=Fals
     NEWDIR = PRE_PLOTDIR+reg_label+"/"
     if not os.path.isdir(NEWDIR): os.mkdir(NEWDIR)
 
-    if eta==True:
-        hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_eta)-1, more_bins_eta)
-        hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_eta)-1, more_bins_eta)
-        less_bins = less_bins_eta
-    else:
-        if phi==True:
-            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_phi)-1, more_bins_phi)
-            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_phi)-1, more_bins_phi)
-            less_bins = less_bins_phi
-        else:
-            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins)-1, more_bins)
-            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
-            less_bins = less_bins_pt
-
 
     for n,k in enumerate(sample_dict.keys()):
+        if eta==True:
+            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_eta)-1, more_bins_eta)
+            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_eta)-1, more_bins_eta)
+            less_bins = less_bins_eta
+        else:
+            if phi==True:
+                hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_phi)-1, more_bins_phi)
+                hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_phi)-1, more_bins_phi)
+                less_bins = less_bins_phi
+            else:
+                hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins)-1, more_bins)
+                hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
+                less_bins = less_bins_pt
+
         print n,k
         print PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root"
         infiles = TFile(PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root", "READ")
@@ -1731,21 +1747,21 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
     NEWDIR = PRE_PLOTDIR+reg_label+"/"
     if not os.path.isdir(NEWDIR): os.mkdir(NEWDIR)
 
-    for n,k in enumerate(sample_dict.keys()):
-        if eta==True:
-            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_eta)-1, more_bins_eta)
-            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_eta)-1, more_bins_eta)
-            less_bins = less_bins_eta
+    if eta==True:
+        hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_eta)-1, more_bins_eta)
+        hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_eta)-1, more_bins_eta)
+        less_bins = less_bins_eta
+    else:
+        if phi==True:
+            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_phi)-1, more_bins_phi)
+            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_phi)-1, more_bins_phi)
+            less_bins = less_bins_phi
         else:
-            if phi==True:
-                hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_phi)-1, more_bins_phi)
-                hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_phi)-1, more_bins_phi)
-                less_bins = less_bins_phi
-            else:
-                hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins)-1, more_bins)
-                hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
-                less_bins = less_bins_pt
+            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins)-1, more_bins)
+            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
+            less_bins = less_bins_pt
 
+    for n,k in enumerate(sample_dict.keys()):
         print PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root"
         infiles = TFile(PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root", "READ")
         hist_den[k] = TH1F()
@@ -1767,67 +1783,67 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
         hnum.Add(hist_num[k],1.)
         hden.Add(hist_den[k],1.)
         
-        graph = TGraphAsymmErrors()
-        den = hden.Rebin(len(less_bins)-1,reg_label+"_den2",less_bins)
-        num = hnum.Rebin(len(less_bins)-1,reg_label+"_num2",less_bins)
-        graph.BayesDivide(num,den)
-        eff = TEfficiency(num,den)
-        #graph.BayesDivide(hnum,hden)
-        #eff = TEfficiency(hnum,hden)
-        eff.SetStatisticOption(TEfficiency.kBBayesian)
-        eff.SetConfidenceLevel(0.68)
-        graph.SetMarkerSize(1.3)
-        graph.SetMarkerStyle(20)#(sign_sampl[s]['marker'])
-        graph.SetMarkerColor(1)#(samples[s]['linecolor'])#(2)
-        graph.SetFillColor(1)#(samples[s]['linecolor'])#(2) 
-        graph.SetLineColor(1)#(samples[s]['linecolor'])#(2)
-        graph.SetLineStyle(1)#(2)
-        graph.SetLineWidth(2)
-        graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else maxeff)
-        #graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else 0.7)#Lisa for signal
-        graph.GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
-        graph.GetYaxis().SetTitleOffset(1.4)#("Efficiency (L1+HLT)")
-        graph.GetYaxis().SetTitleSize(0.05)#DCMS
-        if eta:
-            #graph.GetXaxis().SetRangeUser(bins[0],bins[-1])
-            graph.GetXaxis().SetTitle("Jet #eta")
+    graph = TGraphAsymmErrors()
+    den = hden.Rebin(len(less_bins)-1,reg_label+"_den2",less_bins)
+    num = hnum.Rebin(len(less_bins)-1,reg_label+"_num2",less_bins)
+    graph.BayesDivide(num,den)
+    eff = TEfficiency(num,den)
+    #graph.BayesDivide(hnum,hden)
+    #eff = TEfficiency(hnum,hden)
+    eff.SetStatisticOption(TEfficiency.kBBayesian)
+    eff.SetConfidenceLevel(0.68)
+    graph.SetMarkerSize(1.3)
+    graph.SetMarkerStyle(20)#(sign_sampl[s]['marker'])
+    graph.SetMarkerColor(1)#(samples[s]['linecolor'])#(2)
+    graph.SetFillColor(1)#(samples[s]['linecolor'])#(2) 
+    graph.SetLineColor(1)#(samples[s]['linecolor'])#(2)
+    graph.SetLineStyle(1)#(2)
+    graph.SetLineWidth(2)
+    graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else maxeff)
+    #graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else 0.7)#Lisa for signal
+    graph.GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
+    graph.GetYaxis().SetTitleOffset(1.4)#("Efficiency (L1+HLT)")
+    graph.GetYaxis().SetTitleSize(0.05)#DCMS
+    if eta:
+        #graph.GetXaxis().SetRangeUser(bins[0],bins[-1])
+        graph.GetXaxis().SetTitle("Jet #eta")
+    else:
+        if phi:
+            graph.GetXaxis().SetTitle("Jet #varphi")
         else:
-            if phi:
-                graph.GetXaxis().SetTitle("Jet #varphi")
-            else:
-                graph.GetXaxis().SetRangeUser(bins[2],bins[-1])
-                graph.GetXaxis().SetTitle("Jet p_{T} (GeV)")
-                can.SetLogx()#?
-        graph.GetXaxis().SetTitleSize(0.04)
-        graph.GetXaxis().SetTitleOffset(1.1)
-        leg.AddEntry(graph, reg_label, "PL")
-        can.SetGrid()
-        graph.Draw("AP")
+            graph.GetXaxis().SetRangeUser(bins[2],bins[-1])
+            graph.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+            can.SetLogx()#?
+    graph.GetXaxis().SetTitleSize(0.04)
+    graph.GetXaxis().SetTitleOffset(1.1)
+    leg.AddEntry(graph, reg_label, "PL")
+    can.SetGrid()
+    graph.Draw("AP")
 
 
-        outfile = TFile(NEWDIR+"TagTEfficiency_"+sample_dict[k]+"_"+reg_label+add_label+".root","RECREATE")
-        print "Info in <TFile::Write>: TEfficiency root file "+NEWDIR+"TagTEfficiency_"+sample_dict[k]+"_"+reg_label+add_label+".root has been created"
-        outfile.cd()
-        graph.Write("eff_"+reg_label)
-        eff.Write("TEff_"+reg_label)
-        outfile.Close()
+    outfile = TFile(NEWDIR+"TagTEfficiency_"+reg_label+add_label+".root","RECREATE")
+    print "Info in <TFile::Write>: TEfficiency root file "+NEWDIR+"TagTEfficiency_"+reg_label+add_label+".root has been created"
+    outfile.cd()
+    graph.Write("eff_"+reg_label)
+    eff.Write("TEff_"+reg_label)
+    outfile.Close()
 
-        leg.Draw()
-        drawRegion(reg_label,left=True, left_marg_CMS=0.2, top=0.8)
-        drawCMS_simple(LUMI, "Preliminary", onTop=True)
-        can.Print(NEWDIR+"TagEff_"+sample_dict[k]+"_"+reg_label+add_label+".png")
-        can.Print(NEWDIR+"TagEff_"+sample_dict[k]+"_"+reg_label+add_label+".pdf")
+    leg.Draw()
+    drawRegion(reg_label,left=True, left_marg_CMS=0.2, top=0.8)
+    drawCMS_simple(LUMI, "Preliminary", onTop=True)
+    can.Print(NEWDIR+"TagEff_"+reg_label+add_label+".png")
+    can.Print(NEWDIR+"TagEff_"+reg_label+add_label+".pdf")
 
-        outfile_name_check = NEWDIR+"TagEff_"+sample_dict[k]+"_"+reg_label+add_label+".root"
-        if not os.path.isfile(outfile_name_check):
-            outfile_2 = TFile(outfile_name_check,"RECREATE")
-            outfile_2.cd()
-            eff.Write("eff_"+reg_label)
-            hden.Write("den_"+reg_label)
-            hnum.Write("num_"+reg_label)
-            can.Write()
-            print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
-            outfile_2.Close()
+    outfile_name_check = NEWDIR+"TagEff_"+reg_label+add_label+".root"
+    if not os.path.isfile(outfile_name_check):
+        outfile_2 = TFile(outfile_name_check,"RECREATE")
+        outfile_2.cd()
+        eff.Write("eff_"+reg_label)
+        hden.Write("den_"+reg_label)
+        hnum.Write("num_"+reg_label)
+        can.Write()
+        print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
+        outfile_2.Close()
 
 
 def draw_tag_eff_cutbased(sample_list,add_label=""):
@@ -1909,13 +1925,16 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
 
     label_dict = {}
     label_dict["ZtoLL"] = "Z #rightarrow ll"
+    label_dict["ZtoLLBoost"] = "Z #rightarrow ll, p_{T}^{Z}>100 GeV"
     label_dict["WtoLN"] = "W #rightarrow l#nu"
     label_dict["WtoLN_MET"] = "W #rightarrow l#nu + MET"
     label_dict["JetHT"] = "QCD"
     label_dict["TtoEM"] = "ttbar e + #mu"
 
-    BASEDIR = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_"
-    OUTDIR  = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_combination/"
+    BASEDIR = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_"
+    OUTDIR  = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_combination/"
+    #BASEDIR = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_"
+    #OUTDIR  = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_combination/"
     infiles = {}
     graph =  {}
     eff   =  {}
@@ -2045,51 +2064,54 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
 
         print "Opening this file: ", INPDIR+"TagEff_"+s+reg_label+add_label+".root"
         infile = TFile(INPDIR+"TagEff_"+s+reg_label+add_label+".root", "READ")
-        hist_den[r+reg_label+s] = TH1F()
-        hist_num[r+reg_label+s] = TH1F()
-        graph[r+reg_label+s] = TGraphAsymmErrors()
-        hist_den[r+reg_label+s] = infile.Get("den_"+s)
-        hist_num[r+reg_label+s] = infile.Get("num_"+s)
+        hist_den[r+reg_label] = TH1F()
+        hist_num[r+reg_label] = TH1F()
+        graph[r+reg_label] = TGraphAsymmErrors()
+        hist_den[r+reg_label] = infile.Get("den_"+s)
+        hist_num[r+reg_label] = infile.Get("num_"+s)
         #rebin
         #less_bins = bins#!
-        den = hist_den[r+reg_label+s].Rebin(len(less_bins_plot)-1,r+reg_label+s+"_den2",less_bins_plot)
-        num = hist_num[r+reg_label+s].Rebin(len(less_bins_plot)-1,r+reg_label+s+"_num2",less_bins_plot)
-        graph[r+reg_label+s].BayesDivide(num,den)
-        eff[r+reg_label+s] = TEfficiency(num,den)
-        eff[r+reg_label+s].SetStatisticOption(TEfficiency.kBBayesian)
-        eff[r+reg_label+s].SetConfidenceLevel(0.68)
-        graph[r+reg_label+s].SetMarkerSize(marker_sizes[i])#(1.3)
-        graph[r+reg_label+s].SetMarkerStyle(markers[i])#(21)#(sign_sampl[s]['marker'])
+        den = hist_den[r+reg_label].Rebin(len(less_bins_plot)-1,r+reg_label+"_den2",less_bins_plot)
+        num = hist_num[r+reg_label].Rebin(len(less_bins_plot)-1,r+reg_label+"_num2",less_bins_plot)
+        graph[r+reg_label].BayesDivide(num,den)
+        eff[r+reg_label] = TEfficiency(num,den)
+        eff[r+reg_label].SetStatisticOption(TEfficiency.kBBayesian)
+        eff[r+reg_label].SetConfidenceLevel(0.68)
+        graph[r+reg_label].SetMarkerSize(marker_sizes[i])#(1.3)
+        graph[r+reg_label].SetMarkerStyle(markers[i])#(21)#(sign_sampl[s]['marker'])
         if ERA=="2016" and "B-F" in reg_label:
-            graph[r+reg_label+s].SetMarkerColor(colors_2016[i])#(samples[s]['fillcolor'])#(2)
-            graph[r+reg_label+s].SetFillColor(colors_2016[i])#(samples[s]['fillcolor'])#(2) 
-            graph[r+reg_label+s].SetLineColor(colors_2016[i])#(samples[s]['linecolor'])#(2)
+            graph[r+reg_label].SetMarkerColor(colors_2016[i])#(samples[s]['fillcolor'])#(2)
+            graph[r+reg_label].SetFillColor(colors_2016[i])#(samples[s]['fillcolor'])#(2) 
+            graph[r+reg_label].SetLineColor(colors_2016[i])#(samples[s]['linecolor'])#(2)
         else:
-            graph[r+reg_label+s].SetMarkerColor(colors[i])#(samples[s]['fillcolor'])#(2)
-            graph[r+reg_label+s].SetFillColor(colors[i])#(samples[s]['fillcolor'])#(2) 
-            graph[r+reg_label+s].SetLineColor(colors[i])#(samples[s]['linecolor'])#(2)
-        graph[r+reg_label+s].SetLineStyle(lines[i])#(2)#(2)
-        graph[r+reg_label+s].SetLineWidth(2)
-        graph[r+reg_label+s].GetYaxis().SetRangeUser(-0.0001,0.002 if check_closure else maxeff)
-        graph[r+reg_label+s].GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
-        graph[r+reg_label+s].GetYaxis().SetTitleOffset(1.5)#("Efficiency (L1+HLT)")
-        graph[r+reg_label+s].GetYaxis().SetTitleSize(0.05)#DCMS
+            print "debugggggg"
+            print i, colors[i]
+            graph[r+reg_label].SetMarkerColor(colors[i])#(samples[s]['fillcolor'])#(2)
+            graph[r+reg_label].SetFillColor(colors[i])#(samples[s]['fillcolor'])#(2) 
+            graph[r+reg_label].SetLineColor(colors[i])#(samples[s]['linecolor'])#(2)
+        graph[r+reg_label].SetLineStyle(lines[i])#(2)#(2)
+        graph[r+reg_label].SetLineWidth(2)
+        graph[r+reg_label].GetYaxis().SetRangeUser(-0.0001,0.002 if check_closure else maxeff)
+        graph[r+reg_label].GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
+        graph[r+reg_label].GetYaxis().SetTitleOffset(1.5)#("Efficiency (L1+HLT)")
+        graph[r+reg_label].GetYaxis().SetTitleSize(0.05)#DCMS
         if eta:
-            graph[r+reg_label+s].GetXaxis().SetTitle("Jet #eta")
+            graph[r+reg_label].GetXaxis().SetTitle("Jet #eta")
         else:
-            graph[r+reg_label+s].GetXaxis().SetRangeUser(bins[4],bins[-1])
-            graph[r+reg_label+s].GetXaxis().SetTitle("Jet p_{T} (GeV)")
-        graph[r+reg_label+s].GetXaxis().SetTitleSize(0.04)
-        graph[r+reg_label+s].GetXaxis().SetTitleOffset(1.1)
-        #leg.AddEntry(graph[r+reg_label+s], samples[s]['label']+"; "+r+reg_label, "PL")
-        #leg.AddEntry(graph[r+reg_label+s], samples[s]['label']+"; "+r, "PL")
-        leg.AddEntry(graph[r+reg_label+s], label_dict[r], "PL")
+            graph[r+reg_label].GetXaxis().SetRangeUser(bins[4],bins[-1])
+            graph[r+reg_label].GetXaxis().SetTitle("Jet p_{T} (GeV)")
+        graph[r+reg_label].GetXaxis().SetTitleSize(0.04)
+        graph[r+reg_label].GetXaxis().SetTitleOffset(1.1)
+        #leg.AddEntry(graph[r+reg_label], samples[s]['label']+"; "+r+reg_label, "PL")
+        #leg.AddEntry(graph[r+reg_label], samples[s]['label']+"; "+r, "PL")
+        leg.AddEntry(graph[r+reg_label], label_dict[r], "PL")
         can.SetGrid()
+        print "key of the graph: ", r+reg_label
         if i==0:
-            graph[r+reg_label+s].Draw("AP")
+            graph[r+reg_label].Draw("AP")
             #graph[s].Draw("P")#?
         else:
-            graph[r+reg_label+s].Draw("P,sames")
+            graph[r+reg_label].Draw("P,sames")
         infile.Close()
 
     leg.Draw()
@@ -2112,6 +2134,8 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
         exit()
     keys = graph.keys()
     ratio = {}
+    h_den_r = {}
+    h_num_r = {}
     basis = ""
     for k in keys:
         if "WtoLN" in k:
@@ -2125,23 +2149,53 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
     new_den = {}
     new_num = {}
     n=0
+
+    for k in [basis]:
+        print "Doing: ",k
+        r = k.replace(reg_label,"")
+        INPDIR  = BASEDIR + r + "/"
+        print INPDIR+"TagEff_"+k+add_label+".root"
+        print "Opening this file: ", INPDIR+"TagEff_"+k+add_label+".root"
+        infile = TFile(INPDIR+"TagEff_"+k+add_label+".root", "READ")
+        pre_db = infile.Get("den_"+r)
+        pre_nb = infile.Get("num_"+r)
+        db = pre_db.Rebin(len(less_bins_plot)-1,"db",less_bins_plot)
+        nb = pre_nb.Rebin(len(less_bins_plot)-1,"nb",less_bins_plot)
+        db.SetDirectory(0)
+        nb.SetDirectory(0)
+        #db.Rebin(len(less_bins_plot)-1,"db2r",less_bins_plot)
+        #nb.Rebin(len(less_bins_plot)-1,"nb2r",less_bins_plot)
+        
     for k in keys:
         if "WtoLN" not in k:
-            print k
-            ratio[k] = TGraphAsymmErrors()
-            #print graph[k].Print()
-            for i in range(0,np):
-                #print i
-                #print graph[k].GetPointX(i)
-                #print graph[k].GetPointY(i)
-                ratio[k].SetPoint(i,graph[k].GetPointX(i),graph[k].GetPointY(i)/graph[basis].GetPointY(i))
-                ex = abs(abs(graph[k].GetPointX(i)) - abs(less_bins_plot[i+2]))
-                #print less_bins_plot[i+2], graph[k].GetPointX(i)
-                #print ex
-                ratio[k].SetPointError(i,ex,ex,0,0)
-            #print ratio[k].Print()
+            ratio[k] = TH1F()#TGraphAsymmErrors()
+            h_den_r[k] = TH1F(k+"_den", "", len(less_bins_plot)-1, less_bins_plot)
+            h_num_r[k] = TH1F(k+"_num", "", len(less_bins_plot)-1, less_bins_plot)
+            h_den_r[k].Sumw2()
+            h_num_r[k].Sumw2()
+
+            print "Doing: ",k
+            r = k.replace(reg_label,"")
+            INPDIR  = BASEDIR + r + "/"
+            print INPDIR+"TagEff_"+k+add_label+".root"
+            print "Opening this file: ", INPDIR+"TagEff_"+k+add_label+".root"
+            infile = TFile(INPDIR+"TagEff_"+k+add_label+".root", "READ")
+            pre_dk = infile.Get("den_"+r)
+            pre_nk = infile.Get("num_"+r)
+            dk = pre_dk.Rebin(len(less_bins_plot)-1,"dk",less_bins_plot)
+            nk = pre_nk.Rebin(len(less_bins_plot)-1,"nk",less_bins_plot)
+            dk.SetDirectory(0)
+            nk.SetDirectory(0)
+            #we should combine these!!
+            #(nk*db)/(dk*nb)
+            ratio[k] = nk.Clone("r")
+            ratio[k].Divide(dk)
+            ratio[k].Divide(nb)
+            ratio[k].Multiply(db)
+            ratio[k].SetDirectory(0)
             if "ZtoLL" in k:
                 ratio[k].SetLineColor(1)
+                ratio[k].SetLineStyle(2)
                 ratio[k].SetMarkerColor(1)
                 ratio[k].SetMarkerStyle(20)
             elif "JetHT" in k:
@@ -2174,19 +2228,27 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
         if "WtoLN" not in k:
             print ratio[k]
             legr.AddEntry(ratio[k],label_dict[ k.split("_")[0] ],"PL")
+            if not eta:
+                ratio[k].GetXaxis().SetRangeUser(bins[4],bins[-1])
+                canr.SetLogx()
+            else:
+                ratio[k].GetXaxis().SetRangeUser(-1.1,1.1)                
+            ratio[k].SetTitle("")
             if n==0:
-                ratio[k].Draw("AP")
+                ratio[k].Draw("P")
+                #ratio[k].Draw("AP")
                 ratio[k].SetMinimum(0.)
                 ratio[k].SetMaximum(2.)
             else:
                 ratio[k].Draw("P,sames")
+            #ratio[k].GetYaxis().SetRangeUser(-0.0001,0.002 if check_closure else maxeff)
             n+=1
 
     legr.Draw()
     lineX = TLine(-1,1,1,1)
     lineX.SetLineStyle(2)
     lineX.SetLineWidth(3)
-    lineX.SetLineColor(1)
+    lineX.SetLineColor(2)
     lineX.Draw("same")
     drawCMS_simple(LUMI, "Preliminary", ERA=era_lab, onTop=True)
     canr.Print(OUTDIR+"RatioTagEffCombiData_"+era+add_label+lab_2+".png")
@@ -2657,6 +2719,9 @@ def get_tree_weights(sample_list,LUMI):
             else:
                 filename = TFile(NTUPLEDIR+ss+'.root', "READ")
                 nevents = filename.Get("c_nEvents").GetBinContent(1)
+                if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in ss:
+                    print "SUSY central, consider sample dictionary for nevents!"
+                    nevents = sample[name]['nevents']
                 b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
                 n_pass      = filename.Get("n_pass").GetBinContent(1)
                 n_odd       = filename.Get("n_odd").GetBinContent(1)
@@ -2677,6 +2742,11 @@ def get_tree_weights(sample_list,LUMI):
                 elif ('TChiHH') in ss:
                     print "Scaling SUSY to 1. for absolute x-sec sensitivity"
                     xs = 1.
+                elif('SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3') in name:
+                    print "Scaling SUSY to 1. for absolute x-sec sensitivity"
+                    #print "But consider BR!"
+                    xs = 1.
+                    #xs *= sample[name]['BR']
                 else:
                     xs = sample[ss]['xsec'] * sample[ss]['kfactor']
                 print "LUMI ", LUMI
@@ -3857,7 +3927,9 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
         start_uproot = time.time()
         array_size_tot = 0
         c = 0
-        list_of_variables = ["isMC","Jets.pt","Jets.eta","Jets.phi","Jets.sigprob","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM*","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight","HLT*PFMETNoMu*",CUT]#"nLeptons"
+        list_of_variables = ["isMC","Jets.pt","Jets.eta","Jets.phi","Jets.sigprob","Jets.timeRMSRecHitsEB","Jets.nRecHitsEB","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM*","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight","HLT*PFMETNoMu*",CUT]#"nLeptons"
+        if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR and CUT=="isSR":
+            list_of_variables += ["dt_ecal_dist"]
         if ERA=="2018" and CUT=="isSR":
             list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
             if plot_distr!="":
@@ -4025,6 +4097,10 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                         #cut_mask = arrays[CUT]>0
                 elif CUT == "isSR":
                     cut_mask = arrays[CUT]>0
+                    if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
+                        #cosmic
+                        cosmic_veto = arrays["dt_ecal_dist"]<0.5
+                        cut_mask = np.logical_and(cut_mask,np.logical_not(cosmic_veto))
                     #print "!!!! try to kill QCD!!!"
                     #cut_mask = np.logical_and(arrays[CUT]>0 , arrays["MinJetMetDPhi"]>0.5 )
                     #cut_mask = np.logical_and(arrays[CUT]>0 , arrays["MinJetMetDPhiBarrel"]>0.5 )
@@ -4043,81 +4119,133 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                     #cut_mask = np.logical_and( cut_mask, arrays["MinJetMetDPhiBarrel"]>0.5)
 
 
+                #Default cut_jets, does nothing basically                                                                    
+                cut_jets = arrays["Jets.pt"]>-999
+                cut_jets = np.logical_and(cut_mask,cut_jets)
+                cut_mask = (cut_jets.any()==True)
 
                 if phi_cut==True and eta_cut==False:
                     cut_mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
                     cut_mask_phi = np.logical_and(cut_mask,cut_mask_phi)
                     cut_mask = (cut_mask_phi.any()==True)
-                    if eta:
-                        pt = arrays["Jets.eta"][cut_mask_phi][cut_mask]
-                    else:
-                        if phi:
-                            pt = arrays["Jets.phi"][cut_mask_phi][cut_mask]
-                        else:
-                            pt = arrays["Jets.pt"][cut_mask_phi][cut_mask]
-                    sigprob = arrays["Jets.sigprob"][cut_mask_phi][cut_mask]
+                    cut_jets = np.logical_and(cut_jets,cut_mask_phi)#new
+                    #if eta:
+                    #    #pt = arrays["Jets.eta"][cut_mask_phi][cut_mask]#new
+                    #    pt = arrays["Jets.eta"][cut_jets][cut_mask]#new
+                    #else:
+                    #    if phi:
+                    #        #pt = arrays["Jets.phi"][cut_mask_phi][cut_mask]#new
+                    #        pt = arrays["Jets.phi"][cut_jets][cut_mask]#new
+                    #    else:
+                    #        #pt = arrays["Jets.pt"][cut_mask_phi][cut_mask]#new
+                    #        pt = arrays["Jets.pt"][cut_jets][cut_mask]#new
+                    ##sigprob = arrays["Jets.sigprob"][cut_mask_phi][cut_mask]#new
+                    #sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
 
                 elif eta_cut==True and phi_cut==False:
                     cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
                     cut_mask_eta = np.logical_and(cut_mask,cut_mask_eta)
                     #This is needed to guarantee the shapes are consistent
                     cut_mask = (cut_mask_eta.any()==True)
-                    if eta:
-                        pt = arrays["Jets.eta"][cut_mask_eta][cut_mask]
-                        #print "Do we have eta out of range?"
-                        #print pt
-                    else:
-                        if phi:
-                            pt = arrays["Jets.phi"][cut_mask_eta][cut_mask]
-                        else:
-                            pt = arrays["Jets.pt"][cut_mask_eta][cut_mask]
-                    sigprob = arrays["Jets.sigprob"][cut_mask_eta][cut_mask]
+                    cut_jets = np.logical_and(cut_jets,cut_mask_eta)#new
+                    #if eta:
+                    #    #pt = arrays["Jets.eta"][cut_mask_eta][cut_mask]#new
+                    #    pt = arrays["Jets.eta"][cut_mask_eta][cut_mask]#new
+                    #else:
+                    #    if phi:
+                    #        #pt = arrays["Jets.phi"][cut_mask_eta][cut_mask]#new
+                    #        pt = arrays["Jets.phi"][cut_jets][cut_mask]#new
+                    #    else:
+                    #        #pt = arrays["Jets.pt"][cut_mask_eta][cut_mask]#new
+                    #        pt = arrays["Jets.pt"][cut_jets][cut_mask]#new
+                    ##sigprob = arrays["Jets.sigprob"][cut_mask_eta][cut_mask]#new
+                    #sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
 
                 elif phi_cut and eta_cut:
                     cut_mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
-                    cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
+                    cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)                    
                     cut_mask_phi_eta = np.logical_and(cut_mask,np.logical_and(cut_mask_phi,cut_mask_eta))
                     cut_mask_phi_eta = np.logical_and(cut_mask,cut_mask_phi_eta)
                     #This is needed to guarantee the shapes are consistent
                     cut_mask = (cut_mask_phi_eta.any()==True)
-                    if eta:
-                        pt = arrays["Jets.eta"][cut_mask_phi_eta][cut_mask]
-                    else:
-                        if phi:
-                            pt = arrays["Jets.phi"][cut_mask_phi_eta][cut_mask]
-                        else:
-                            pt = arrays["Jets.pt"][cut_mask_phi_eta][cut_mask]
-                    sigprob = arrays["Jets.sigprob"][cut_mask_phi_eta][cut_mask]
+                    cut_jets = np.logical_and(cut_jets,cut_mask_phi_eta)#new
+                    #if eta:
+                    #    #pt = arrays["Jets.eta"][cut_mask_phi_eta][cut_mask]#new
+                    #    pt = arrays["Jets.eta"][cut_jets][cut_mask]#new
+                    #else:
+                    #    if phi:
+                    #        #pt = arrays["Jets.phi"][cut_mask_phi_eta][cut_mask]#new
+                    #        pt = arrays["Jets.phi"][cut_jets][cut_mask]#new
+                    #    else:
+                    #        #pt = arrays["Jets.pt"][cut_mask_phi_eta][cut_mask]#new
+                    #        pt = arrays["Jets.pt"][cut_jets][cut_mask]#new
+                    ##sigprob = arrays["Jets.sigprob"][cut_mask_phi_eta][cut_mask]#new
+                    #sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
 
                 #print "\n"
                 #print "   WARNING! Here just for usefulness, save only non-null jets"
                 #print "\n"
                 #cut_mask = np.logical_and(cut_mask, arrays["Jets.pt"][cut_mask].counts>0)
 
+                ##This is now useless, applies no cuts
+                #else:
+                #    if eta:
+                #        #pt = arrays["Jets.eta"][cut_mask]#new
+                #        pt = arrays["Jets.eta"][cut_jets][cut_mask]#new
+                #    else:
+                #        if phi:
+                #            #pt = arrays["Jets.phi"][cut_mask]#new
+                #            pt = arrays["Jets.phi"][cut_jets][cut_mask]#new
+                #        else:
+                #            #pt = arrays["Jets.pt"][cut_mask]#new
+                #            pt = arrays["Jets.pt"][cut_jets][cut_mask]#new
+                #    #sigprob = arrays["Jets.sigprob"][cut_mask]#new
+                #    sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
+
+
+                #Beam Halo veto
+                if CUT == "isSR":
+                    if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
+                        #beam halo
+                        cut_mask_bh = np.logical_not(np.logical_and(arrays["Jets.timeRMSRecHitsEB"]>=8 , arrays["Jets.nRecHitsEB"]<=10))
+                        cut_mask_bh = np.logical_and(cut_mask,cut_mask_bh)
+                        cut_mask = (cut_mask_bh.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_bh)
+
+                ##Fill pt and sigprob arrays #new
+                if eta:
+                    #pt = arrays["Jets.eta"][cut_mask_phi][cut_mask]#new
+                    pt = arrays["Jets.eta"][cut_jets][cut_mask]#new
                 else:
-                    if eta:
-                        pt = arrays["Jets.eta"][cut_mask]
+                    if phi:
+                        #pt = arrays["Jets.phi"][cut_mask_phi][cut_mask]#new
+                        pt = arrays["Jets.phi"][cut_jets][cut_mask]#new
                     else:
-                        if phi:
-                            pt = arrays["Jets.phi"][cut_mask]
-                        else:
-                            pt = arrays["Jets.pt"][cut_mask]
-                    sigprob = arrays["Jets.sigprob"][cut_mask]
+                        #pt = arrays["Jets.pt"][cut_mask_phi][cut_mask]#new
+                        pt = arrays["Jets.pt"][cut_jets][cut_mask]#new
+                #sigprob = arrays["Jets.sigprob"][cut_mask_phi][cut_mask]#new
+                sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
 
                 eventweight = arrays["EventWeight"][cut_mask]
                 runnumber = arrays["RunNumber"][cut_mask]
                 luminumber = arrays["LumiNumber"][cut_mask]
                 eventnumber = arrays["EventNumber"][cut_mask]
                 pureweight = arrays["PUReWeight"][cut_mask]
-                pt_v = arrays["Jets.pt"][cut_mask]
-                eta_v = arrays["Jets.eta"][cut_mask]
-                phi_v = arrays["Jets.phi"][cut_mask]
-                score_v = arrays["Jets.sigprob"][cut_mask]
+                #pt_v = arrays["Jets.pt"][cut_mask]#new
+                #eta_v = arrays["Jets.eta"][cut_mask]#new
+                #phi_v = arrays["Jets.phi"][cut_mask]#new
+                #score_v = arrays["Jets.sigprob"][cut_mask]#new
+                pt_v = arrays["Jets.pt"][cut_jets][cut_mask]#new
+                eta_v = arrays["Jets.eta"][cut_jets][cut_mask]#new
+                phi_v = arrays["Jets.phi"][cut_jets][cut_mask]#new
+                score_v = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
                 weight = np.multiply(eventweight,pureweight)*tree_weight_dict[s][ss]*mult_factor
                 #Default value, we'll need more masks afterwards
                 n_obj = -1
 
 
+                '''
+                ##Obsolete and not kept up to date
                 if plot_distr!="":
 
                     #print "Still have to implement the eta cut, aborting. . . "
@@ -4158,7 +4286,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                             else:
                                 base_var = arrays[plot_distr][cut_mask]
                                 base_pt_var = arrays["Jets.pt"][cut_mask]
-
+                '''
                 del arrays
                 
                 #dnn_threshold = 0.996
@@ -4187,6 +4315,8 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 bin2 = np.multiply(bin2_m,weight)
 
                 #Second: distribute per bin
+                '''
+                ##Obsolete and not kept up to date
                 if plot_distr!="":
                     if n_obj>-1:
                         #base_var includes all the objects, tagged and not, in all bins
@@ -4271,6 +4401,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                         w1 = weight[bin1_m]
                         w2 = weight[bin2_m]
 
+                '''
                 #print "bin1 shape as multiplication ", bin1.shape
                 #print bin1
                 #df_all["bin0"] = bin0
@@ -4375,7 +4506,9 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                     bin2_pred[r] = np.concatenate( (bin2_pred[r],combi.sum()) )
                     bin2_pred_from_1[r] = np.concatenate( (bin2_pred_from_1[r], somma[bin1_m]  )  )#.append(0.)
                     ###bin2_pred_from_1[r].append(somma if bin1[i]!=0 else 0.)
-
+                    
+                    '''
+                    ##Obsolete and not kept up to date
                     #Third: distributions per bin
                     if plot_distr!="":
                         if n_obj>-1:
@@ -4404,7 +4537,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                             weight_pr_1[r] = np.concatenate( (weight_pr_1[r], np.hstack(d0.astype(bool)*somma[bin0_m])) )
                             weight_pr_2_from_0[r] = np.concatenate( (weight_pr_2_from_0[r], np.hstack(d0.astype(bool)*combi.sum()[bin0_m]) ) )
                             weight_pr_2_from_1[r] = np.concatenate( (weight_pr_2_from_1[r],np.hstack(d1.astype(bool)*somma[bin1_m]) if len(d1)>0 else np.array([])  ) )
-
+                    '''
 
                 '''
                 ####
@@ -4488,6 +4621,8 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 b1 = np.concatenate((b1,bin1))
                 b2 = np.concatenate((b2,bin2))
 
+                '''
+                ##Obsolete and not kept up to date
                 if plot_distr!="":
 
                     if n_obj>-1:
@@ -4513,7 +4648,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                         weight_1_t = np.concatenate( (weight_1_t,w1_t) )
                         weight_2_t = np.concatenate( (weight_2_t,w2_t) )
                         
-                        '''                        
+                        \'''                        
                         ##Adjust t1_m and t2_m such as they become positional
                         ##We want to mask only n_obj-th object
                         #t1_m = t1_m[t1_m.counts > n_obj,n_obj]
@@ -4530,7 +4665,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                         #Also weights positionally adjusted
                         weight_1_t = np.concatenate( (weight_1_t,w1[t1_m]) )
                         weight_2_t = np.concatenate( (weight_2_t,w2[t2_m]) )
-                        '''
+                        \'''
                         weight_0 = np.concatenate( (weight_0,w0) )
                         weight_1 = np.concatenate( (weight_1,w1) )
                         #weight_2 = np.concatenate( (weight_2,w2) )
@@ -4568,6 +4703,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                     #print "shape of weight_2",weight_2.shape
                     #print weight_2
 
+                '''
                 #del tmp
                 en_it = time.time()
                 if c%100==0:
@@ -7007,7 +7143,7 @@ exit()
 
 
 
-samples_to_run = back#data#back#data#back#data#sign#data#back#data#back#data#back#data#sign#back#data#back#data#back+data#data#data+back#+data
+samples_to_run = data#back#data#back#data#sign#data#back#data#back#data#back#data#sign#back#data#back#data#back+data#data#data+back#+data
 #jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
 #jet_tag = "_jet_1"
 jet_tag = ""#+
@@ -7020,7 +7156,7 @@ clos = False
 #jet_tag = "_A-B"
 #kill QCD
 
-#jet_tag += "_B-F"#"_G-H"#"_B-F"#"_G-H"#"_B-F"#"_G-H"#"_B-F"#"_G-H"#"_B-F"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#
+#jet_tag += "_B-F"#"_G-H"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#"_B-F"#
 
 #jet_tag += "_PFJet500"
 if KILL_QCD:
@@ -7114,6 +7250,15 @@ else:
             if "_B-F" not in jet_tag:
                 sample_dict["ZtoEE"] = "SingleElectron"
         reg_comb = "ZtoLL"
+        if "Boost" in REGION:
+            sample_dict = {}
+            sample_dict["ZtoMMBoost"] = "SingleMuon"
+            if ERA=="2018":
+                sample_dict["ZtoEEBoost"] = "EGamma"
+            else:
+                if "_B-F" not in jet_tag:
+                    sample_dict["ZtoEEBoost"] = "SingleElectron"
+            reg_comb = "ZtoLLBoost"
     else:
         sample_dict[REGION] = samples_to_run[0]
         print "This won't work for lists, hence MC... keep in mind"
@@ -7123,7 +7268,7 @@ else:
 #print "Using full run 2 lumi!! ", LUMI
 
 #calculate_tag_eff(get_tree_weights(samples_to_run,LUMI),samples_to_run,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,j_idx=-1,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
-##draw_tag_eff(samples_to_run,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
+##draw_tag_eff(samples_to_run,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
 #draw_tag_eff_updated(sample_dict,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
 #exit()
 
@@ -7161,9 +7306,10 @@ draw_MC_combination(
 exit()
 '''
 
-
-#draw_data_combination(
-draw_data_combination_with_MC(
+'''
+#THIS HERE!!!
+draw_data_combination(
+#draw_data_combination_with_MC(
     ERA,
     #["WtoMN","WtoEN","ZtoMM","ZtoEE","JetHT","DiJetMET","TtoEM"],
     #["JetHT","JetHT"],
@@ -7175,7 +7321,7 @@ draw_data_combination_with_MC(
     # universal
     #
     #["ZtoMM","ZtoEE","WtoMN","WtoEN","TtoEM","JetHT",],#"DiJetMET"],#SR
-    ["ZtoLL","WtoLN","TtoEM","JetHT",],#"DiJetMET"],#SR
+    ["ZtoLL","WtoLN","TtoEM","JetHT","ZtoLLBoost"],#"DiJetMET"],#SR
     #["ZtoLL","JetHT",],#"WtoLN","TtoEM","JetHT",],#"DiJetMET"],#SR
     #2016 B-F
     #["ZtoMM","WtoMN","TtoEM","JetHT",],#"DiJetMET"],#SR
@@ -7207,25 +7353,8 @@ draw_data_combination_with_MC(
     eta=DO_ETA,
     phi_cut = CUT_PHI,
     phi=DO_PHI,
-    isMC = True
-)
-
-exit()
-
-
-
-#vs eta
-'''
-draw_data_combination(
-    ERA,
-    ["ZtoMM","ZtoEE","WtoMN","WtoEN"],
-    #["ZtoMM","WtoMN",],
-    #regions_labels=["_B-F","_B-F"],
-    #regions_labels=["_B-F","_B-F_MinDPhiBarrel_0p5","_B-F_MinDPhi_0p5"],
-    add_label="",
-    lab_2="",
-    check_closure=False,
-    eta = True
+    do_ratio = True,
+    isMC = False
 )
 
 exit()
@@ -7279,7 +7408,7 @@ exit()
 #jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
 #clos = False
 
-
+'''
 background_prediction(
     get_tree_weights(samples_to_run,LUMI),
     samples_to_run,
@@ -7287,9 +7416,9 @@ background_prediction(
     #regions_labels = ["","","","","","","","","","","","",""],#["","",""],#[""],#["","",jet_tag,"","","","","","","","","","","","","","","","",""],
     #datasets= ["","","","","","","","","","","","","","",""],#["QCD","",""],#[""],#["","","","","","","","","","","","","",],
     # 2017:
-    extr_regions = ["WtoLN"],#["WtoEN","WtoMN"],
+    #extr_regions = ["WtoLN"],#["WtoEN","WtoMN"],
     #extr_regions = ["ZtoLL","JetHT"],#"SR",
-    #extr_regions = ["WtoLN_MET","WtoLN","ZtoLL","TtoEM","JetHT"],#["ZtoMM"],
+    extr_regions = ["WtoLN","ZtoLL","TtoEM","JetHT"],#["ZtoMM"],
     #
     # universal
     #
@@ -7331,7 +7460,7 @@ background_prediction(
     phi_cut = CUT_PHI,
 )
 exit()
-
+'''
 
 mu_scale = 1.#50.#0.01#1.#2.#5.#10.#0.1#
 contam = False
