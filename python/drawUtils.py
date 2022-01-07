@@ -31,6 +31,7 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
     
     ### Create and fill MC histograms ###
     for i, s in enumerate(samplelist):
+        
         if "HIST" in cut: # Histogram written to file
             for j, ss in enumerate(samples[s]['files']):
                 file[ss] = TFile(ntupledir + ss + ".root", "READ")
@@ -69,6 +70,7 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
                 var_updated = formula+"("+var+"))"
             else:
                 var_updated = formula+"("+var+")"
+
             if "VBFH_M" in s:#important bugfix! Not applying jet matching to signal!
                 chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
             elif "ggH_M" in s:#important bugfix! Not applying jet matching to signal!
@@ -77,7 +79,11 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
                 chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
             elif "SUSY" in s:#important bugfix! Not applying jet matching to signal!
                 chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
+            elif "Event" in s:#important bugfix! Not applying jet matching to signal!
+                chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
             elif "HEM" in s:#important bugfix! Not applying jet matching to signal!
+                chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
+            elif "SMS" in s:#important bugfix! Not applying jet matching to signal!
                 chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_s)
 
             #elif ("MET" in s):#important bugfix! Not applying jet matching to signal!
@@ -88,6 +94,7 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
             #    chain[s].Project(s, var, cutstring_s) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
             else:
                 chain[s].Project(s, var, cutstring) if formula=="" else chain[s].Project(s, var_updated, cutstring)
+                print s, " percentage passing :", 100*float(chain[s].GetEntries(cutstring))/float(chain[s].GetEntries()) if chain[s].GetEntries()>0 else 0, " entries"
                 if s=="HighMETBH":
                     chain[s].Project(s, var, cutstring_d) if formula=="" else chain[s].Project(s, var_updated, cutstring_d)
                 if s=="HighMETCopy":
@@ -96,16 +103,16 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
             #print s, " has total of ", chain[s].GetEntries(), " entries"
             #print s, " with cut: ", chain[s].GetEntries(tmpcut), " entries"
             #print s, " with weight and cut: ", chain[s].GetEntries(cutstring), " entries"
-            print s, " percentage passing :", 100*float(chain[s].GetEntries(cutstring))/float(chain[s].GetEntries()) if chain[s].GetEntries()>0 else 0, " entries"
 
             hist[s].SetOption("%s" % chain[s].GetTree().GetEntriesFast())
             hist[s].Scale(samples[s]['weight'] if hist[s].Integral() >= 0 else 0)
             #if s in sign:
                 #print "Is it empty?"
                 
+            print "normalize!"
+            if hist[s].Integral()>0:
+                hist[s].Scale(1./hist[s].Integral())
             #print "Integral: ", s, hist[s].Integral()
-            #print "normalize!"
-            #hist[s].Scale(1./hist[s].Integral())
 
         hist[s].SetFillColorAlpha(samples[s]['fillcolor'],alpha)
         hist[s].SetFillStyle(samples[s]['fillstyle'])
@@ -235,10 +242,26 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
 
         #This is a good range for normalized stuff such as beam halo
         #
-        #bkg.SetMaximum(max(hist['BkgSum'].GetMaximum(),hist[data_tag].GetMaximum())*1.1)#!!
-        #if min(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())>0:
-        #    bkg.SetMinimum(min(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())*0.9)#!!
-        bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
+        #print "max bkg and data"
+        #print hist['BkgSum'].GetMaximum()
+        #print hist[data_tag].GetMaximum()
+        #print "min bkg and data"
+        #print hist['BkgSum'].GetMinimum()
+        #print hist[data_tag].GetMinimum()
+        
+        
+        bkg.SetMaximum(max(hist['BkgSum'].GetMaximum(),hist[data_tag].GetMaximum())*1.1)#5)#!!
+        if min(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())>0:
+            bkg.SetMinimum(min(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())*0.9)#!!
+        else:#new
+            if max(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum())>0:
+                bkg.SetMinimum(max(hist['BkgSum'].GetMinimum(),hist[data_tag].GetMinimum()))
+            else:
+                bkg.SetMinimum(0.001)
+        
+        ##bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
+        
+
     else:
         #bkg.SetMaximum(bkg.GetMaximum()*(2.5 if log else 1.2))
         #bkg.SetMinimum(5.e-1 if log else 0.)
@@ -542,7 +565,7 @@ def drawCMS(samples, LUMI, text, ERA="", onTop=False, left_marg_CMS=0.15,data_ob
 
 
 
-def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.15):
+def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_LUMI=0.95):
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextSize(0.04)
@@ -553,16 +576,16 @@ def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.15):
     if ERA!="":
         era_str = ", "+ERA
     if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
-        latex.DrawLatex(0.95, 0.985, ("%.1f fb^{-1}  (13 TeV%s)") % (float(LUMI)/1000.,era_str) )
+        latex.DrawLatex(left_marg_LUMI, 0.985, ("%.1f fb^{-1}  (13 TeV%s)") % (float(LUMI)/1000.,era_str) )
     elif type(LUMI) is str:
-        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
+        latex.DrawLatex(left_marg_LUMI, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
     if not onTop: latex.SetTextAlign(11)
     latex.SetTextFont(62)
     latex.SetTextSize(0.05 if len(text)>0 else 0.06)
-    latex.DrawLatex(0.20, 0.98, "CMS")
+    latex.DrawLatex(left_marg_CMS, 0.98, "CMS")
     latex.SetTextSize(0.045)
     latex.SetTextFont(52)
-    latex.DrawLatex(0.4, 0.98, text)
+    latex.DrawLatex(left_marg_CMS+0.2, 0.98, text)
 
 def drawAnalysis(s, center=False):
     analyses = {
@@ -612,6 +635,7 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75, setNDC=True, c
         "ZtoMM": "Z #rightarrow #mu#mu MR",
         "ZtoEE": "Z #rightarrow ee MR",
         "ZtoLL": "Z #rightarrow ll MR",
+        "ZtoLLPho": "Z #rightarrow ll#gamma",
         "WtoEN": "W #rightarrow e#nu MR",
         "WtoMN": "W #rightarrow #mu#nu MR",
         "WtoLN": "W #rightarrow l#nu MR",

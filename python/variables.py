@@ -121,9 +121,9 @@ var_template = {
     },
     "nCHSJetsAcceptanceCalo": {
       "title" : "number of CHS jets in acceptance",
-      "nbins" : 50-20,
+      "nbins" : 50-20-20,
       "min" : -0.5,
-      "max" : 49.5-20,
+      "max" : 49.5-20-20,
       "log" : True,
     },
     "nMatchedCHSJets": {
@@ -277,6 +277,217 @@ var_template = {
       "max" : 3.14,
       "log" : True,
     },
+    #Beam Halo
+    "min_dR_jets": {
+      "title" : "min_dR_jets",
+      "nbins" : 50,#45,
+      "min" : 0.4,#100,
+      "max" : 4.2,#2500,
+      "log" : True,
+    },
+
+    "min_dPhi_jets": {
+      "title" : "min #Delta #varphi jets",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 10.,#,3.1415,#3.2,#2500,
+      "log" : True,
+    },
+
+    "min_dEta_jets": {
+      "title" : "min #Delta #eta jets",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 1.,#,3.1415,#3.2,#2500,
+      "log" : True,
+    },
+    "min_dPhi_jets_0p7": {
+      "title" : "min #Delta #varphi jets with DNN>0.7",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 1.,#,3.1415,#3.2,#2500,
+      "log" : True,
+    },
+    "min_dPhi_jets_0p9": {
+      "title" : "min #Delta #varphi jets with DNN>0.9",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 3.1415,#3.2,#2500,
+      "log" : True,
+    },
+    "min_dPhi_jets_0p996": {
+      "title" : "min_dPhi_jets_0p996",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 1.,#,3.1415,#3.2,#2500,
+      "log" : True,
+    },
+    "min_dPhi_jets_eta_1p0_0p9": {
+      "title" : "min #Delta #varphi (jets with DNN > 0.9, |#eta|<1)",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 1.,#,3.1415,#3.2,#2500,
+      "log" : True,
+    },
+    "min_dPhi_jets_eta_1p0_0p996": {
+      "title" : "min #Delta #varphi (jets with DNN > 0.996, |#eta|<1)",
+      "nbins" : 50,#45,
+      "min" : 0,#100,
+      "max" : 1.,#,3.1415,#3.2,#2500,
+      "log" : True,
+    },
+
+
+    #Jets with additional variables
+    "JetsCaloAdd.nRecHitsEB": {
+        "title" : "AK4 jets: ECAL barr. rec hits multiplicity",
+        "nbins" : 21,
+        "min" : 0-0.5,
+        "max" : 21-0.5,
+        "log" : True,
+    },
+    "JetsCaloAdd.meanREB": {
+        "title" : "mean radius of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 128,#-150,
+        "max" : 131,#150,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadREB": {
+        "title" : "spread radius of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.5,#25,
+        "log" : True,
+    },
+    "JetsCaloAdd.meanXEB": {
+        "title" : "mean x of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -150,#120
+        "max" : 150,#130
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadXEB": {
+        "title" : "spread x of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 10,#25,
+        "log" : True,
+    },
+    "JetsCaloAdd.meanYEB": {
+        "title" : "mean y of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -150,
+        "max" : 150,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadYEB": {
+        "title" : "spread y of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 25,#25,
+        "log" : True,
+    },
+    "JetsCaloAdd.meanZEB": {
+        "title" : "mean z of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -300,
+        "max" : 300,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadZEB": {
+        "title" : "spread z of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 50.,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadXEB/JetsCaloAdd.spreadZEB": {
+        "title" : "spread x/spread z of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 1,
+        "log" : True,
+    },
+
+    "JetsCaloAdd.meanPhiEB": {
+        "title" : "mean #varphi of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -3.2,
+        "max" : 3.2,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadPhiEB": {
+        "title" : "spread #varphi of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.3,
+        "log" : True,
+    },
+    "JetsCaloAdd.meanEtaEB": {
+        "title" : "mean #eta of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -1.5,
+        "max" : 1.5,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadEtaEB": {
+        "title" : "spread #eta of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.5,
+        "log" : True,
+    },
+    "JetsCaloAdd.meanATLASEB": {
+        "title" : "mean ATLAS var. of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.5,
+        "log" : True,
+    },
+    "JetsCaloAdd.spreadATLASEB": {
+        "title" : "spread ATLAs var. of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.2,
+        "log" : True,
+    },
+    "JetsCaloAdd.eFracEB2CSC": {
+        "title" : "EB energy fraction associated to CSC (#Delta #varphi < 0.4)",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 1.,
+        "log" : True,
+    },
+    "JetsCaloAdd.eFracEB2CSC0p1": {
+        "title" : "EB energy fraction associated to CSC (#Delta #varphi < 0.1)",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 1.,
+        "log" : True,
+    },
+    "JetsCaloAdd.eFracEB2CSC0p04": {
+        "title" : "EB energy fraction associated to CSC (#Delta #varphi < 0.04)",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 1.,
+        "log" : True,
+    },
+
+    "JetsCaloAdd[[N]].eFracEB2CSC0p1": {
+        "title" : "EB energy fraction associated to CSC (#Delta #varphi < 0.1)",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 1.,
+        "log" : True,
+    },
+    "JetsCaloAdd[[N]].eFracEB2CSC0p04": {
+        "title" : "EB energy fraction associated to CSC (#Delta #varphi < 0.04)",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 1.,
+        "log" : True,
+    },
 
     #Jets variables
     "Jets[[N]].sigprob": {
@@ -288,8 +499,8 @@ var_template = {
     },
     "Jets.sigprob": {
       "title" : "AK4 jets DNN score",
-      "nbins" : 20,#50,#40,
-      "min" : 0.99,#0.001,#170,
+      "nbins" : 50,#20,#50,#40,
+      "min" : 0.,#0.001,#170,
       "max" : 1.,#2170,
       "log" : True,
     },
@@ -339,8 +550,8 @@ var_template = {
     "Jets.eta": {
       "title" : "jets #eta",
       "nbins" : 50,#25,
-      "min" : -1.,#-1.4,#-5.2,#-3,
-      "max" : 1.,#1.4,#5.2,#3,
+      "min" : -1.5,#-1.4,#-5.2,#-3,
+      "max" : 1.5,#1.4,#5.2,#3,
       "log" : True,
     },
     "Jets.phi": {
@@ -353,8 +564,8 @@ var_template = {
     "Jets[[N]].phi": {
       "title" : "jet [[N]] #varphi",
       "nbins" : 100,#60,
-      "min" : 0.,#-3.2,
-      "max" : 2.,#3.2,
+      "min" : -3.2,
+      "max" : 3.2,
       "log" : True,
     },
     "Jets[[N]].mass": {
@@ -362,6 +573,34 @@ var_template = {
       "nbins" : 50,
       "min" : 0,
       "max" : 100,
+      "log" : True,
+    },
+    "Jets.CSV": {
+      "title" : "jets CSV",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "JetsNegative.sigprob": {
+      "title" : "AK4 jets DNN score",
+      "nbins" : 50,#20,#50,#40,
+      "min" : 0.,#0.001,#170,
+      "max" : 1.,#2170,
+      "log" : True,
+    },
+    "JetsNegative.CSV": {
+      "title" : "jets CSV",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "JetsNegative[[N]].CSV": {
+      "title" : "jet [N] CSV",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
       "log" : True,
     },
     "Jets[[N]].CSV": {
@@ -396,7 +635,7 @@ var_template = {
       "title" : "jet[[N]]  #beta_{max}",
       "nbins" : 50,
       "min" : 0.,
-      "max" : 0.5,#3.,
+      "max" : 1,#0.5,#3.,
       "log" : True,
     },
     "Jets.gammaMax": {
@@ -410,7 +649,7 @@ var_template = {
       "title" : "jet[[N]]  #gamma_{max}",
       "nbins" : 50,
       "min" : 0.,
-      "max" : 0.2,#3.,
+      "max" : 1,#0.2,#3.,
       "log" : True,
     },
     "Jets.gammaMaxEM": {
@@ -424,7 +663,7 @@ var_template = {
       "title" : "jet[[N]]  #gamma_{max} EM",
       "nbins" : 50,
       "min" : 0.,
-      "max" : 0.5,#3.,
+      "max" : 1,#0.5,#3.,
       "log" : True,
     },
     "Jets.gammaMaxHadronic": {
@@ -438,7 +677,7 @@ var_template = {
       "title" : "jet[[N]]  #gamma_{max} hadronic",
       "nbins" : 50,
       "min" : 0.,
-      "max" : 0.5,#3.,
+      "max" : 1,#0.5,#3.,
       "log" : True,
     },
     "Jets.gammaMaxET": {
@@ -452,7 +691,7 @@ var_template = {
       "title" : "jet[[N]]  gammaMaxET",
       "nbins" : 50,
       "min" : 0.,
-      "max" : 0.2,#2.,
+      "max" : 1,#0.2,#2.,
       "log" : True,
     },       
     "Jets.minDeltaRPVTracks": {
@@ -615,6 +854,14 @@ var_template = {
       "max" : 100,#200,#2500
       "log" : True,
     },
+    "(-Jets.ecalE + Jets.hcalE)/(Jets.hcalE + Jets.ecalE)": {
+      "title" : "jets HCAL/ECAL imbalance",
+      "nbins" : 50,
+      "min" : -2,
+      "max" : 2,#200,#2500
+      "log" : True,
+    },
+
     "Jets[[N]].hcalE": {
       "title" : "jet [[N]] HCAL energy",
       "nbins" : 50,
@@ -809,14 +1056,14 @@ var_template = {
       "title" : "jets electron energy fraction",
       "nbins" : 50,
       "min" : 0,
-      "max" : 0.1,#1,
+      "max" : 1,#0.1
       "log" : True,
     },
     "Jets[[N]].eleEFrac": {
       "title" : "jet [[N]] electron energy fraction",
       "nbins" : 50,
       "min" : 0,
-      "max" : 0.1,#1,
+      "max" : 1,#0.1
       "log" : True,
     },
     "Jets[[N]].photonEFrac": {
@@ -1349,12 +1596,20 @@ var_template = {
         "max" : 30,
         "log" : True,
     },
+
+    "Jets.dPhi_met": {
+        "title" : "jet-met #Delta #varphi (per jet)",
+        "nbins" : 50,
+        "min" : -3.14,
+        "max" : 3.14,
+        "log" : True,
+    },
     #EB rec hits
     "Jets.nRecHitsEB": {
         "title" : "AK4 jets: ECAL barr. rec hits multiplicity",
-        "nbins" : 51,
+        "nbins" : 41,#101-50,#21,#
         "min" : 0-0.5,
-        "max" : 102-0.5,
+        "max" : 40.5,#102-0.5,#20.5,#
         "log" : True,
     },
     "Jets.energyRecHitsEB": {
@@ -1365,6 +1620,79 @@ var_template = {
         "log" : True,
     },
     "Jets.eFracRecHitsEB": {
+        "title" : "eFracRecHitsEB jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 1,
+        "log" : True,
+    },
+
+    "JetsNegative.pt": {
+      "title" : "jets p_{T} (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 500,#1000,
+      "log" : True,
+    },
+    "JetsNegative.eta": {
+      "title" : "jets #eta",
+      "nbins" : 50,#25,
+      "min" : -1.5,#-1.4,#-5.2,#-3,
+      "max" : 1.5,#1.4,#5.2,#3,
+      "log" : True,
+    },
+    "JetsNegative.phi": {
+      "title" : "jets #varphi",
+      "nbins" : 64,#40,
+      "min" : -3.2,#0.,#2.4,#-3.2,#2.4,#-3.2,
+      "max" : 3.2,#3.2,
+      "log" : True,
+    },
+
+    "JetsNegative[[N]].pt": {
+      "title" : "jet [N] p_{T} (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 500,#1000,
+      "log" : True,
+    },
+    "JetsNegative[[N]].eta": {
+      "title" : "jet [N] #eta",
+      "nbins" : 50,#25,
+      "min" : -1.5,#-1.4,#-5.2,#-3,
+      "max" : 1.5,#1.4,#5.2,#3,
+      "log" : True,
+    },
+    "JetsNegative[[N]].phi": {
+      "title" : "jet [N] #varphi",
+      "nbins" : 64,#40,
+      "min" : -3.2,#0.,#2.4,#-3.2,#2.4,#-3.2,
+      "max" : 3.2,#3.2,
+      "log" : True,
+    },
+
+    "JetsNegative.nRecHitsEB": {
+        "title" : "AK4 jets: ECAL barr. rec hits multiplicity",
+        "nbins" : 101-50,
+        "min" : 0-0.5,
+        "max" : 102-0.5,
+        "log" : True,
+    },
+    "JetsNegative[[N]].nRecHitsEB": {
+        "title" : "AK4 jet [[N]]: ECAL barr. rec hits multiplicity",
+        "nbins" : 101-50,
+        "min" : 0-0.5,
+        "max" : 102-0.5,
+        "log" : True,
+    },
+    "JetsNegative.energyRecHitsEB": {
+        "title" : "energyRecHitsEB jets",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 250,
+        "log" : True,
+    },
+    "JetsNegative.eFracRecHitsEB": {
         "title" : "eFracRecHitsEB jets",
         "nbins" : 50,
         "min" : 0,
@@ -1401,18 +1729,69 @@ var_template = {
         "max" : 0.2,
         "log" : True,
     },
+
+    "JetsNegative.timeRecHitsEB": {
+        "title" : "AK4 jets: ECAL barr. rec hits time (ns)",
+        "nbins" : 100,
+        "min" : -5,
+        "max" : 5,
+        "log" : True,
+    },
+    "JetsNegative.timeRMSRecHitsEB": {
+        "title" : "AK4 jets: ECAL barr. rec hits time RMS (ns)",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 15,
+        "log" : True,
+    },
+    "JetsNegative[[N]].timeRecHitsEB": {
+        "title" : "AK4 jet[[N]]: ECAL barr. rec hits time (ns)",
+        "nbins" : 100,#100
+        "min" : -5,#-5
+        "max" : 5,#5
+        "log" : True,
+    },
+    "JetsNegative[[N]].timeRMSRecHitsEB": {
+        "title" : "AK4 jet [[N]]: ECAL barr. rec hits time RMS (ns)",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 15,
+        "log" : True,
+    },
+
     "Jets.timeRecHitsEB": {
         "title" : "AK4 jets: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
-        "min" : -2,
+        "min" : -1,
         "max" : 10,
+        "log" : True,
+    },
+    "Jets.timeRMSRecHitsEB": {
+        "title" : "AK4 jets: ECAL barr. rec hits time RMS (ns)",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 15,
+        "log" : True,
+    },
+    "Jets[[N]].timeRMSRecHitsEB": {
+        "title" : "AK4 jet [[N]]: ECAL barr. rec hits time RMS (ns)",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 15,
+        "log" : True,
+    },
+    "Jets.timeRMSRecHitsEB/Jets.nRecHitsEB": {
+        "title" : "AK4 jets: ECAL barr. rec hits time RMS corrected. (ns)",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 4,
         "log" : True,
     },
     "Jets[[N]].timeRecHitsEB": {
         "title" : "AK4 jet [[N]]: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
         "min" : -1,
-        "max" : 4,
+        "max" : 5,
         "log" : True,
     },
     #shapes
@@ -1420,7 +1799,7 @@ var_template = {
         "title" : "sig1EB jets",
         "nbins" : 50,
         "min" : 0,
-        "max" : 3,
+        "max" : 0.5,
         "log" : True,
     },
     "Jets.sig2EB": {
@@ -1513,6 +1892,51 @@ var_template = {
         "nbins" : 50,
         "min" : 0,
         "max" : 2,
+        "log" : True,
+    },
+
+    #Beam Halo
+    "Jets.sig1EE": {
+        "title" : "average #eta position of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -1.5,
+        "max" : 1.5,
+        "log" : True,
+    },
+    "Jets.sig2EE": {
+        "title" : "average #varphi position of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : -3.5,
+        "max" : 3.5,#0.5,
+        "log" : True,
+    },
+    "Jets.sigAvEE": {
+        "title" : "mean ATLAS variable",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.5,#0.5,
+        "log" : True,
+    },
+
+    "Jets.sig1HB": {
+        "title" : "spread #eta position of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.3,
+        "log" : True,
+    },
+    "Jets.sig2HB": {
+        "title" : "spread #varphi position of EB rec hits in jets",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.3,#0.5,
+        "log" : True,
+    },
+    "Jets.sigAvHB": {
+        "title" : "spread ATLAS variable",
+        "nbins" : 50,
+        "min" : 0.,
+        "max" : 0.3,#0.5,
         "log" : True,
     },
 
@@ -1835,8 +2259,8 @@ var_template = {
     "Z_pt": {
       "title" : "Z p_{T} (GeV)",
       "nbins" : 50,
-      "min" : 0,
-      "max" : 1000,
+      "min" : 30,
+      "max" : 100,#1000,
       "log" : True,
     },
     "Z_eta": {
@@ -2992,6 +3416,90 @@ var_template = {
     },
 
     # Standalone muons
+    "nCosmicMuons": {
+      "title" : "number of cosmic muons",
+      "nbins" : 15,
+      "min" : -0.5,
+      "max" : 14.5,
+      "log" : True,
+    },
+    "n_clusters": {
+      "title" : "n. clusters DT (DBSCAN)",
+      "nbins" : 15,
+      "min" : -0.5,
+      "max" : 14.5,
+      "log" : True,
+    },
+    "n_noise": {
+      "title" : "n. noise DT (DBSCAN)",
+      "nbins" : 15,
+      "min" : -0.5,
+      "max" : 14.5,
+      "log" : True,
+    },
+    "isCosmic": {
+      "title" : "Cosmic ray grazing ECAL",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : False,
+    },
+    "isDT_fit": {
+      "title" : "DT segments in opposite emispheres",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : False,
+    },
+
+    "dt_fit_chi2": {
+      "title" : "dt_fit_chi2",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 10.,
+      "log" : True,
+    },
+
+    "dt_fit_chi2_reduced": {
+      "title" : "dt_fit_chi2_reduced",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 0.5,
+      "log" : True,
+    },
+
+    "dt_ecal_dist": {
+        "title" : "Distance(cosmic 3D line fit,ECAL rec hits #in tagged jets) (m)",
+      "nbins" : 25,#25
+      "min" : 0.,
+      "max" : 5,#2.5
+      "log" : True,
+    },
+
+    "dt_ecal_acc_dist": {
+      "title" : "dt_ecal_acc_dist (m)",
+      "nbins" : 25,
+      "min" : 0.,
+      "max" : 5,#2.5,
+      "log" : True,
+    },
+
+    "DT_fit_res": {
+      "title" : "DT_fit_res",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 10.,
+      "log" : True,
+    },
+
+    "nCosmicMuonsOneLeg": {
+      "title" : "number of cosmic muons one leg",
+      "nbins" : 15,
+      "min" : -0.5,
+      "max" : 14.5,
+      "log" : True,
+    },
+
     "nStandAloneMuons": {
       "title" : "number of standalone muons",
       "nbins" : 15,
@@ -3307,8 +3815,8 @@ var_template = {
     "MEt.pt": {
       "title" : "E_{T}^{miss} (GeV)",
       "nbins" : 50,
-      "min" : 200,#0,#200,
-      "max" : 1200,#2000,#0,#2200,
+      "min" : 0,#200,#0,#200,
+      "max" : 2000,#1200,#2000,#0,#2200,
       "log" : True,
     },
     "MEt.ptGen": {
@@ -3641,6 +4149,13 @@ var_template = {
 
     "nTagJets_0p996_JJ": {
       "title" : "n. of jets with DNN output > 0.996, jet cleaning",
+      "nbins" : 3,#7+4,#3,#
+      "min" : -0.5,
+      "max" : 2.5,#6.5+4,#2.5,#
+      "log" : True,
+    },
+    "nTagJets_0p996_JJ_eta_1p0": {
+      "title" : "n. of jets with DNN output > 0.996, jet cleaning, |#eta|<1",
       "nbins" : 3,#7+4,#3,#
       "min" : -0.5,
       "max" : 2.5,#6.5+4,#2.5,#
