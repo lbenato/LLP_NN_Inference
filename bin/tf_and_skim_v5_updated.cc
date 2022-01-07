@@ -217,12 +217,11 @@ void printResults(vector<Point>& points, int num_points)
 
 //3D line
 float get_coord_line(float z, VectorXf Sol) {
-  float coord;//(-999999.);
+  float coord(-999999.);
   if(Sol.size()==2 and Sol[0]!=0)
     {
       coord = (z - Sol[1])/Sol[0];
     }
-  else coord = -999999.;
   return coord;
 }
 
@@ -486,6 +485,8 @@ int main(int argc, char **argv) {
     if(strcmp(argv[5], "true")==0) isData=true;
 
     //Flags for SR/CR
+    bool doGen(false);
+    if(strcmp(argv[9], "doGen")==0) doGen=true;
     bool doSR(false);
     if(strcmp(argv[9], "doSR")==0) doSR=true;
     bool doMR(false);
@@ -529,6 +530,7 @@ int main(int argc, char **argv) {
     //std::cout << "Data PU file: " << argv[5] << std::endl;
     //std::cout << "Data PU up file: " << argv[6] << std::endl;
     //std::cout << "Data PU down file: " << argv[7] << std::endl;
+    if(doGen) std::cout << "Gen studies, no selections" << std::endl;
     if(doSR) std::cout << "SR selections" << std::endl;
     if(doMR) std::cout << "MR selections" << std::endl;
     if(doMRPho) std::cout << "MR + 1 photon selections" << std::endl;
@@ -1101,6 +1103,7 @@ int main(int argc, char **argv) {
 
     bool isCosmic(false);
     bool isDT_fit(false);
+    bool isCosmicVetoWithTags(false);
     //TH1F *PUWeightHist = (TH1F*)pileup_mc->Clone("PUWeight");
     //DivideHist( PUWeightHist , pileup_data, pileup_mc);
     //PUWeightHist->GetYaxis()->SetTitle("PU data/PU mc");
@@ -1154,11 +1157,14 @@ int main(int argc, char **argv) {
 
     std::vector<TauType>    skimmedTaus;
     std::vector<JetType>    skimmedJets;
+    std::vector<JetType>    skimmedNegativeJets;
     std::vector<JetCaloType> skimmedJetsCalo;
     std::vector<FatJetType> skimmedFatJets;
     std::vector<ecalRecHitType> skimmedEcalRecHitsAK4;
+    std::vector<ecalRecHitType> skimmedAcceptanceEcalRecHitsAK4;
     std::vector<float>          skimmedEBEnergyCSC;
     std::vector<ecalRecHitType> taggedEcalRecHitsAK4;
+    std::vector<ecalRecHitType> taggedAcceptanceEcalRecHitsAK4;
     
     //DBSCAN
     std::vector<Point> points;
@@ -1173,6 +1179,9 @@ int main(int argc, char **argv) {
     float dt_fit_chi2(9999.);
     float dt_fit_chi2_reduced(9999.);
     float dt_ecal_dist(9999.);
+    float dt_ecal_no_tag_dist(9999.);
+    float dt_ecal_acc_no_tag_dist(9999.);
+    float dt_ecal_acc_dist(9999.);
     float m_xz(-9999.);
     float c_xz(-9999.);
     float m_yz(-9999.);
@@ -1183,21 +1192,35 @@ int main(int argc, char **argv) {
     std::vector<float> DT_fit_res;
     //Beam Halo
     float min_dPhi_jets(9999.);
+    float min_dEta_jets(9999.);
     float min_dR_jets(9999.);
     float min_dPhi_jets_0p7(9999.);
+    float min_dEta_jets_0p7(9999.);
     float min_dR_jets_0p7(9999.);
     float min_dPhi_jets_0p9(9999.);
+    float min_dEta_jets_0p9(9999.);
     float min_dR_jets_0p9(9999.);
+    float min_dPhi_jets_0p9_no_tags(9999.);
+    float min_dEta_jets_0p9_no_tags(9999.);
+    float min_dR_jets_0p9_no_tags(9999.);
     float min_dPhi_jets_0p996(9999.);
+    float min_dEta_jets_0p996(9999.);
     float min_dR_jets_0p996(9999.);
 
     float min_dPhi_jets_eta_1p0(9999.);
+    float min_dEta_jets_eta_1p0(9999.);
     float min_dR_jets_eta_1p0(9999.);
     float min_dPhi_jets_eta_1p0_0p7(9999.);
+    float min_dEta_jets_eta_1p0_0p7(9999.);
     float min_dR_jets_eta_1p0_0p7(9999.);
     float min_dPhi_jets_eta_1p0_0p9(9999.);
+    float min_dEta_jets_eta_1p0_0p9(9999.);
     float min_dR_jets_eta_1p0_0p9(9999.);
+    float min_dPhi_jets_eta_1p0_0p9_no_tags(9999.);
+    float min_dEta_jets_eta_1p0_0p9_no_tags(9999.);
+    float min_dR_jets_eta_1p0_0p9_no_tags(9999.);
     float min_dPhi_jets_eta_1p0_0p996(9999.);
+    float min_dEta_jets_eta_1p0_0p996(9999.);
     float min_dR_jets_eta_1p0_0p996(9999.);
 
     float eta_spread_tagged_EB(-9999.);
@@ -1356,6 +1379,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("isMC",              &isMC,              "isMC/O");
     outputTree->Branch("isCosmic",          &isCosmic,          "isCosmic/O");
     outputTree->Branch("isDT_fit",          &isDT_fit,          "isDT_fit/O");
+    outputTree->Branch("isCosmicVetoWithTags", &isCosmicVetoWithTags, "isCosmicVetoWithTags/O");
     outputTree->Branch("isSR",              &isSR,              "isSR/O");
     outputTree->Branch("isMR",              &isMR,              "isMR/O");
     outputTree->Branch("isMRPho",           &isMRPho,           "isMRPho/O");
@@ -1475,28 +1499,45 @@ int main(int argc, char **argv) {
     outputTree->Branch("n_noise_valid_time", &n_noise_valid_time, "n_noise_valid_time/I");
     outputTree->Branch("dt_fit_chi2", &dt_fit_chi2, "dt_fit_chi2/F");
     outputTree->Branch("dt_fit_chi2_reduced", &dt_fit_chi2_reduced, "dt_fit_chi2_reduced/F");
+    outputTree->Branch("dt_ecal_no_tag_dist", &dt_ecal_no_tag_dist, "dt_ecal_no_tag_dist/F");
+    outputTree->Branch("dt_ecal_acc_no_tag_dist", &dt_ecal_acc_no_tag_dist, "dt_ecal_acc_no_tag_dist/F");
     outputTree->Branch("dt_ecal_dist", &dt_ecal_dist, "dt_ecal_dist/F");
+    outputTree->Branch("dt_ecal_acc_dist", &dt_ecal_acc_dist, "dt_ecal_acc_dist/F");
     outputTree->Branch("m_xz", &m_xz, "m_xz/F");
     outputTree->Branch("c_xz", &c_xz, "c_xz/F");
     outputTree->Branch("m_yz", &m_yz, "m_yz/F");
     outputTree->Branch("c_yz", &c_yz, "c_yz/F");
     outputTree->Branch("min_dR_jets", &min_dR_jets, "min_dR_jets/F");
     outputTree->Branch("min_dPhi_jets", &min_dPhi_jets, "min_dPhi_jets/F");
+    outputTree->Branch("min_dEta_jets", &min_dEta_jets, "min_dEta_jets/F");
     outputTree->Branch("min_dR_jets_0p7", &min_dR_jets_0p7, "min_dR_jets_0p7/F");
     outputTree->Branch("min_dPhi_jets_0p7", &min_dPhi_jets_0p7, "min_dPhi_jets_0p7/F");
+    outputTree->Branch("min_dEta_jets_0p7", &min_dEta_jets_0p7, "min_dEta_jets_0p7/F");
     outputTree->Branch("min_dR_jets_0p9", &min_dR_jets_0p9, "min_dR_jets_0p9/F");
     outputTree->Branch("min_dPhi_jets_0p9", &min_dPhi_jets_0p9, "min_dPhi_jets_0p9/F");
+    outputTree->Branch("min_dEta_jets_0p9", &min_dEta_jets_0p9, "min_dEta_jets_0p9/F");
+    outputTree->Branch("min_dR_jets_0p9_no_tags", &min_dR_jets_0p9_no_tags, "min_dR_jets_0p9_no_tags/F");
+    outputTree->Branch("min_dPhi_jets_0p9_no_tags", &min_dPhi_jets_0p9_no_tags, "min_dPhi_jets_0p9_no_tags/F");
+    outputTree->Branch("min_dEta_jets_0p9_no_tags", &min_dEta_jets_0p9_no_tags, "min_dEta_jets_0p9_no_tags/F");
     outputTree->Branch("min_dR_jets_0p996", &min_dR_jets_0p996, "min_dR_jets_0p996/F");
     outputTree->Branch("min_dPhi_jets_0p996", &min_dPhi_jets_0p996, "min_dPhi_jets_0p996/F");
+    outputTree->Branch("min_dEta_jets_0p996", &min_dEta_jets_0p996, "min_dEta_jets_0p996/F");
 
     outputTree->Branch("min_dR_jets_eta_1p0", &min_dR_jets_eta_1p0, "min_dR_jets_eta_1p0/F");
     outputTree->Branch("min_dPhi_jets_eta_1p0", &min_dPhi_jets_eta_1p0, "min_dPhi_jets_eta_1p0/F");
+    outputTree->Branch("min_dEta_jets_eta_1p0", &min_dEta_jets_eta_1p0, "min_dEta_jets_eta_1p0/F");
     outputTree->Branch("min_dR_jets_eta_1p0_0p7", &min_dR_jets_eta_1p0_0p7, "min_dR_jets_eta_1p0_0p7/F");
     outputTree->Branch("min_dPhi_jets_eta_1p0_0p7", &min_dPhi_jets_eta_1p0_0p7, "min_dPhi_jets_eta_1p0_0p7/F");
+    outputTree->Branch("min_dEta_jets_eta_1p0_0p7", &min_dEta_jets_eta_1p0_0p7, "min_dEta_jets_eta_1p0_0p7/F");
     outputTree->Branch("min_dR_jets_eta_1p0_0p9", &min_dR_jets_eta_1p0_0p9, "min_dR_jets_eta_1p0_0p9/F");
     outputTree->Branch("min_dPhi_jets_eta_1p0_0p9", &min_dPhi_jets_eta_1p0_0p9, "min_dPhi_jets_eta_1p0_0p9/F");
+    outputTree->Branch("min_dEta_jets_eta_1p0_0p9", &min_dEta_jets_eta_1p0_0p9, "min_dEta_jets_eta_1p0_0p9/F");
+    outputTree->Branch("min_dR_jets_eta_1p0_0p9_no_tags", &min_dR_jets_eta_1p0_0p9_no_tags, "min_dR_jets_eta_1p0_0p9_no_tags/F");
+    outputTree->Branch("min_dPhi_jets_eta_1p0_0p9_no_tags", &min_dPhi_jets_eta_1p0_0p9_no_tags, "min_dPhi_jets_eta_1p0_0p9_no_tags/F");
+    outputTree->Branch("min_dEta_jets_eta_1p0_0p9_no_tags", &min_dEta_jets_eta_1p0_0p9_no_tags, "min_dEta_jets_eta_1p0_0p9_no_tags/F");
     outputTree->Branch("min_dR_jets_eta_1p0_0p996", &min_dR_jets_eta_1p0_0p996, "min_dR_jets_eta_1p0_0p996/F");
     outputTree->Branch("min_dPhi_jets_eta_1p0_0p996", &min_dPhi_jets_eta_1p0_0p996, "min_dPhi_jets_eta_1p0_0p996/F");
+    outputTree->Branch("min_dEta_jets_eta_1p0_0p996", &min_dEta_jets_eta_1p0_0p996, "min_dEta_jets_eta_1p0_0p996/F");
 
     outputTree->Branch("eta_spread_tagged_EB", &eta_spread_tagged_EB, "eta_spread_tagged_EB/F");
     outputTree->Branch("phi_spread_tagged_EB", &phi_spread_tagged_EB, "phi_spread_tagged_EB/F");
@@ -1515,11 +1556,14 @@ int main(int argc, char **argv) {
     outputTree->Branch("Photons", &Photons);
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("Jets", &skimmedJets);
+    outputTree->Branch("JetsNegative", &skimmedNegativeJets);
     outputTree->Branch("JetsCaloAdd", &skimmedJetsCalo);
     outputTree->Branch("FatJets", &skimmedFatJets);
     outputTree->Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
     outputTree->Branch("skimmedEcalRecHitsAK4", &skimmedEcalRecHitsAK4);
+    outputTree->Branch("skimmedAcceptanceEcalRecHitsAK4", &skimmedAcceptanceEcalRecHitsAK4);
     outputTree->Branch("taggedEcalRecHitsAK4", &taggedEcalRecHitsAK4);
+    outputTree->Branch("taggedAcceptanceEcalRecHitsAK4", &taggedAcceptanceEcalRecHitsAK4);
     outputTree->Branch("DT_fit_xx", &DT_fit_xx);
     outputTree->Branch("DT_fit_yy", &DT_fit_yy);
     outputTree->Branch("DT_fit_zz", &DT_fit_zz);
@@ -1739,8 +1783,12 @@ int main(int argc, char **argv) {
 
 	dt_fit_chi2 = 9999.;
 	dt_fit_chi2_reduced = 9999.;
+	dt_ecal_no_tag_dist = 9999.;
+	dt_ecal_acc_no_tag_dist = 9999.;
 	dt_ecal_dist = 9999.;
+	dt_ecal_acc_dist = 9999.;
 	isCosmic = false;
+	isCosmicVetoWithTags = false;
 	isDT_fit = false;
 
 	m_xz = -9999.;
@@ -1750,21 +1798,35 @@ int main(int argc, char **argv) {
 
 	min_dR_jets = 9999.;
 	min_dPhi_jets = 9999.;
+	min_dEta_jets = 9999.;
 	min_dR_jets_0p7 = 9999.;
 	min_dPhi_jets_0p7 = 9999.;
+	min_dEta_jets_0p7 = 9999.;
 	min_dR_jets_0p9 = 9999.;
 	min_dPhi_jets_0p9 = 9999.;
+	min_dEta_jets_0p9 = 9999.;
+	min_dR_jets_0p9_no_tags = 9999.;
+	min_dPhi_jets_0p9_no_tags = 9999.;
+	min_dEta_jets_0p9_no_tags = 9999.;
 	min_dR_jets_0p996 = 9999.;
 	min_dPhi_jets_0p996 = 9999.;
+	min_dEta_jets_0p996 = 9999.;
 
 	min_dR_jets_eta_1p0 = 9999.;
 	min_dPhi_jets_eta_1p0 = 9999.;
+	min_dEta_jets_eta_1p0 = 9999.;
 	min_dR_jets_eta_1p0_0p7 = 9999.;
 	min_dPhi_jets_eta_1p0_0p7 = 9999.;
+	min_dEta_jets_eta_1p0_0p7 = 9999.;
 	min_dR_jets_eta_1p0_0p9 = 9999.;
 	min_dPhi_jets_eta_1p0_0p9 = 9999.;
+	min_dEta_jets_eta_1p0_0p9 = 9999.;
+	min_dR_jets_eta_1p0_0p9_no_tags = 9999.;
+	min_dPhi_jets_eta_1p0_0p9_no_tags = 9999.;
+	min_dEta_jets_eta_1p0_0p9_no_tags = 9999.;
 	min_dR_jets_eta_1p0_0p996 = 9999.;
 	min_dPhi_jets_eta_1p0_0p996 = 9999.;
+	min_dEta_jets_eta_1p0_0p996 = 9999.;
 
 	eta_spread_tagged_EB = -9999.;
 	phi_spread_tagged_EB = -9999.;
@@ -1850,11 +1912,14 @@ int main(int argc, char **argv) {
 	//very dangerous with continue statement!
 	skimmedTaus.clear();
         skimmedJets.clear();
+        skimmedNegativeJets.clear();
         skimmedJetsCalo.clear();
         skimmedFatJets.clear();
 	skimmedEBEnergyCSC.clear();
 	skimmedEcalRecHitsAK4.clear();
+	skimmedAcceptanceEcalRecHitsAK4.clear();
 	taggedEcalRecHitsAK4.clear();
+	taggedAcceptanceEcalRecHitsAK4.clear();
 	points.clear();
 	points_valid_time.clear();
 	DT_fit_xx.clear();
@@ -1938,6 +2003,8 @@ int main(int argc, char **argv) {
 	  {
 	    RunNumber_in_HEM = true;
 	  }
+
+	//if (not ( (RunNumber==276775 and LumiNumber==437 and EventNumber==686255481) or (RunNumber==276870 and LumiNumber==246 and EventNumber==33815501) or (RunNumber==297050 and LumiNumber==96 and EventNumber==122060825) or (RunNumber==299061 and LumiNumber==43 and EventNumber==17473623) or (RunNumber==300636 and LumiNumber==1570 and EventNumber==1745799131 ) or (RunNumber==301959 and LumiNumber==656 and EventNumber==739086198) or (RunNumber==303948 and LumiNumber==55 and EventNumber==12029612) or (RunNumber==304506 and LumiNumber==115 and EventNumber==197159168) or (RunNumber==305365 and LumiNumber==556 and EventNumber==908806478) or (RunNumber==305862 and LumiNumber==437 and EventNumber==706695236) or (RunNumber==315705 and LumiNumber==693 and EventNumber==434537655) or (RunNumber==322492 and LumiNumber==1266 and EventNumber==2209685676) or (RunNumber==323470 and LumiNumber==104 and EventNumber==161827808 ) or (RunNumber==324841 and LumiNumber==1341 and EventNumber==2446831291) )) continue;
 	//if(strcmp(argv[3], "y")==1 || strcmp(argv[3], "yes")==1)
 	//{
 	//if (EventNumber % 2 == 0)
@@ -1971,13 +2038,16 @@ int main(int argc, char **argv) {
 	//MET filters always fulfilled
 	//Invert Beam Halo
         //if(Flag2_globalSuperTightHalo2016Filter) continue;
-        if(!Flag2_globalSuperTightHalo2016Filter) continue;
-        if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
-	if(!Flag2_HBHENoiseFilter) continue;
-        if(!Flag2_HBHEIsoNoiseFilter) continue;
-        if(!Flag2_ecalBadCalibFilter) continue;
-        if(!Flag2_eeBadScFilter) continue;
-        if(!Flag2_BadPFMuonFilter) continue;
+	if(not doGen)
+	  {
+	    if(!Flag2_globalSuperTightHalo2016Filter) continue;
+	    if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
+	    if(!Flag2_HBHENoiseFilter) continue;
+	    if(!Flag2_HBHEIsoNoiseFilter) continue;
+	    if(!Flag2_ecalBadCalibFilter) continue;
+	    if(!Flag2_eeBadScFilter) continue;
+	    if(!Flag2_BadPFMuonFilter) continue;
+	  }
 
 	if(doSR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
 	if(doMR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
@@ -2316,41 +2386,49 @@ int main(int argc, char **argv) {
 
 	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)
 
-	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)//cleaned jets!
+	    //I want to save also jets with negative time<-1 to check beam halo
+	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)//cleaned jets!
+	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
 	      {
 
+		//should do the cleaning also for jets with negative time....otherwise biased!
+		//if(Jets->at(j).timeRecHitsEB>-1)
+		//{
+
 		//Ignore jets overlapped to leptons, photons and taus
-		
 		float jet_iso = 0.4;
 		//Leptons
 		float dR_lep = -1;
-		for(auto& lep : LeptonsStruct){
-		  float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
-		  if(dR_lep < 0 || thisDR < dR_lep) dR_lep = thisDR;
-		}
+		for(auto& lep : LeptonsStruct)
+		  {
+		    float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
+		    if(dR_lep < 0 || thisDR < dR_lep) dR_lep = thisDR;
+		  }
 		if(dR_lep > 0 && dR_lep < jet_iso) continue;
 
 		//Taus
 		float dR_tau = -1;
-		for(auto& tau : TausStruct){
-		  float thisDR_tau = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,tau.vec.Eta(),tau.vec.Phi());
-		  if(dR_tau < 0 || thisDR_tau < dR_tau) dR_tau = thisDR_tau;
-		}
+		for(auto& tau : TausStruct)
+		  {
+		    float thisDR_tau = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,tau.vec.Eta(),tau.vec.Phi());
+		    if(dR_tau < 0 || thisDR_tau < dR_tau) dR_tau = thisDR_tau;
+		  }
 		if(dR_tau > 0 && dR_tau < jet_iso) continue;
 
 		//Photons
 		float dR_pho = -1;
-		for(auto& pho : PhotonsStruct){
-		  float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
-		  if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
-		}
+		for(auto& pho : PhotonsStruct)
+		  {
+		    float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
+		    if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
+		  }
 		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 		
 		//Here: passed acceptance
-		nCHSJetsAcceptanceCalo++;
+		if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
-		if(MinLeadingJetMetDPhi<0)
+		if(MinLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
 		  {
 		    MinLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 		    if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinLeadingJetMetDPhi " << MinLeadingJetMetDPhi << std::endl;
@@ -2358,33 +2436,33 @@ int main(int argc, char **argv) {
 		  }
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
-		if(nCHSJetsAcceptanceCalo==2 && MinSubLeadingJetMetDPhi<0)
+		if(nCHSJetsAcceptanceCalo==2 && MinSubLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
 		  {
 		    MinSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 		    if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinSubLeadingJetMetDPhi " << MinSubLeadingJetMetDPhi << std::endl;
 		    if(isVerbose) std::cout << "MinSubLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
 		  }
 
-		if(nCHSJetsAcceptanceCalo==3 && MinSubSubLeadingJetMetDPhi<0)
+		if(nCHSJetsAcceptanceCalo==3 && MinSubSubLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
 		  {
 		    MinSubSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 		  }
-
-		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		    
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel and Jets->at(j).timeRecHitsEB>-1) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
 		TLorentzVector jet0;
 		jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
 		TLorentzVector met;
 		met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
-		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiBarrelStar) MinJetMetDPhiBarrelStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
-
-
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiBarrelStar and Jets->at(j).timeRecHitsEB>-1) MinJetMetDPhiBarrelStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
+		//}
 
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		//std::cout<< "Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
 		Jets->at(j).eFracRecHitsEB = (Jets->at(j).energy>0 and Jets->at(j).energyRecHitsEB>0) ? Jets->at(j).energyRecHitsEB/Jets->at(j).energy : -1.;
-
+		
 		//Fix also timeRMS dividing by sqrt nRecHitsEB
 		Jets->at(j).timeRMSRecHitsEB = (Jets->at(j).nRecHitsEB>0) ? Jets->at(j).timeRMSRecHitsEB/sqrt(Jets->at(j).nRecHitsEB) : -1.;
+
 		//std::cout<< "FIXED: Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
 
 		//std::cout<< "Jet n. " << j << " pt: " << Jets->at(j).pt << " ; sigprob: " << Jets->at(j).sigprob  << std::endl;
@@ -2461,17 +2539,23 @@ int main(int argc, char **argv) {
 		if(outputValueAK4>0.99 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p99_JJ++;
 		if(outputValueAK4>0.994 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p994_JJ++;
 		if(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p996_JJ++;
-		if(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1 and abs(Jets->at(j).eta)<1) nTagJets_0p996_JJ_eta_1p0++;
+		if(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1 and abs(Jets->at(j).eta)<1.) nTagJets_0p996_JJ_eta_1p0++;
 		if(outputValueAK4>0.997 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p997_JJ++;
 
 
 
-		//store jets passing acceptance and with inference
-		skimmedJets.push_back(Jets->at(j));
-		JetCaloType JetCalo;
-		FillJetCaloType( JetCalo, Jets->at(j), isMC );
-		skimmedJetsCalo.push_back(JetCalo);
-		validJetIndex.push_back(j);
+		if(Jets->at(j).timeRecHitsEB>-1.)
+		  {
+		    //store jets passing acceptance and with inference
+		    skimmedJets.push_back(Jets->at(j));
+		    JetCaloType JetCalo;
+		    FillJetCaloType( JetCalo, Jets->at(j), isMC );
+		    skimmedJetsCalo.push_back(JetCalo);
+		    validJetIndex.push_back(j);
+		  }
+
+		//save also jets including negative times
+		skimmedNegativeJets.push_back(Jets->at(j));
 
 	      }//acceptance
 
@@ -2656,6 +2740,7 @@ int main(int argc, char **argv) {
 			//std::cout<<"ECAL hit n. : " << p << endl;
 
 			skimmedEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p));
+			if(abs(Jets->at( int(validJetIndex.at(j)) ).eta)<1) skimmedAcceptanceEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p));
 			EBx_j.push_back(EcalRecHitsAK4->at(p).x);
 			EBy_j.push_back(EcalRecHitsAK4->at(p).y);
 			EBz_j.push_back(EcalRecHitsAK4->at(p).z);
@@ -2667,11 +2752,11 @@ int main(int argc, char **argv) {
 
 			//check_ecal_energy += EcalRecHitsAK4->at(p).energy;
 
+			/*
 			bool count_as_csc_en(false);
 			bool count_as_csc_en_0p1(false);
 			bool count_as_csc_en_0p04(false);
 			//For Beam Halo: look at CSC and DT
-			/*
 			for(unsigned int csc=0; csc<CSCSegments->size(); csc++)
 			  {
 			    if( abs(reco::deltaPhi(CSCSegments->at(csc).phi,EcalRecHitsAK4->at(p).phi))<0.4  ) 
@@ -2696,7 +2781,7 @@ int main(int argc, char **argv) {
 				
 			      }
 			  }
-			*/
+
 			if(count_as_csc_en) 
 			  {
 			    //cout << "Has at least 1 CSC associated hence count: " << endl;
@@ -2719,10 +2804,15 @@ int main(int argc, char **argv) {
 			//  cout << "Has no CSC associated hence NOT count: " << endl;
 			//  cout << "Corresp. ecal energy: " << EcalRecHitsAK4->at(p).energy <<endl;
 			//}
+			*/
 
 			if(Jets->at(int(validJetIndex.at(j))).sigprob > 0.996)
 			  {
 			    taggedEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p)); 
+			    if( abs(Jets->at(int(validJetIndex.at(j))).eta) < 1.)
+			      {
+				taggedAcceptanceEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p)); 
+			      }
 			  }//fill taggedEcalRecHitsAK4
 		      }//fill skimmedEcalRecHitsAK4
 
@@ -2775,84 +2865,169 @@ int main(int argc, char **argv) {
 	    skimmedJetsCalo.at(j).spreadWeightedZEB = biased_weighted_stdev(EBz_j,EBenergy_j);
 	    skimmedJetsCalo.at(j).spreadWeightedREB = biased_weighted_stdev(EBr_j,EBenergy_j);
 
+	  }//loop on jet indices
+
+
+
+	///////
+	for (unsigned int j=0; j<skimmedJets.size(); j++)
+	  {
 	    //second loop on jets to calculate delta phi/R
-	    for (unsigned int k=1; k<validJetIndex.size() && k>j; k++)
+	    for (unsigned int k=j+1; k<skimmedJets.size() && k!=j; k++)
 	      {
-		min_dPhi_jets = fabs(std::min(min_dPhi_jets,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		//std::cout << "Doing general pair: (" << j <<" , "<<k<<")"<<std::endl;
+
+		min_dPhi_jets = std::min(fabs(min_dPhi_jets),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		min_dEta_jets = std::min(fabs(min_dEta_jets),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 		min_dR_jets = std::min(min_dR_jets,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
 
-		if( abs(skimmedJets.at(j).eta)<1.0 )
+		if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
 		  {
-		    min_dPhi_jets_eta_1p0 = fabs(std::min(min_dPhi_jets_eta_1p0,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dPhi_jets_eta_1p0 = std::min(fabs(min_dPhi_jets_eta_1p0),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dEta_jets_eta_1p0 = std::min(fabs(min_dEta_jets_eta_1p0),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 		    min_dR_jets_eta_1p0 = std::min(min_dR_jets_eta_1p0,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
 		  }
 
 		//0p7
 		if(skimmedJets.at(j).sigprob>0.7 and skimmedJets.at(k).sigprob>0.7)
 		  {
-		    min_dPhi_jets_0p7 = fabs(std::min(min_dPhi_jets_0p7,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dPhi_jets_0p7 = std::min(fabs(min_dPhi_jets_0p7),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dEta_jets_0p7 = std::min(fabs(min_dEta_jets_0p7),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 		    min_dR_jets_0p7 = std::min(min_dR_jets_0p7,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
 
-		    if( abs(skimmedJets.at(j).eta)<1.0 )
+		    if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
 		      {
-			min_dPhi_jets_eta_1p0_0p7 = fabs(std::min(min_dPhi_jets_eta_1p0_0p7,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dPhi_jets_eta_1p0_0p7 = std::min(fabs(min_dPhi_jets_eta_1p0_0p7),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dEta_jets_eta_1p0_0p7 = std::min(fabs(min_dEta_jets_eta_1p0_0p7),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 			min_dR_jets_eta_1p0_0p7 = std::min(min_dR_jets_eta_1p0_0p7,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
 		      }
 		  }
+
 		//0p9
 		if(skimmedJets.at(j).sigprob>0.9 and skimmedJets.at(k).sigprob>0.9)
 		  {
-		    min_dPhi_jets_0p9 = fabs(std::min(min_dPhi_jets_0p9,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dPhi_jets_0p9 = std::min(fabs(min_dPhi_jets_0p9),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dEta_jets_0p9 = std::min(fabs(min_dEta_jets_0p9),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 		    min_dR_jets_0p9 = std::min(min_dR_jets_0p9,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-
-		    if( abs(skimmedJets.at(j).eta)<1.0 )
+		    //And both not tagged
+		    if(skimmedJets.at(j).sigprob<=0.996 and skimmedJets.at(k).sigprob<=0.996)
 		      {
-			min_dPhi_jets_eta_1p0_0p9 = fabs(std::min(min_dPhi_jets_eta_1p0_0p9,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dPhi_jets_0p9_no_tags = std::min(fabs(min_dPhi_jets_0p9_no_tags),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dEta_jets_0p9_no_tags = std::min(fabs(min_dEta_jets_0p9_no_tags),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
+			min_dR_jets_0p9_no_tags = std::min(min_dR_jets_0p9_no_tags,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
+
+		      }
+
+		    if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
+		      {
+			min_dPhi_jets_eta_1p0_0p9 = std::min(fabs(min_dPhi_jets_eta_1p0_0p9),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dEta_jets_eta_1p0_0p9 = std::min(fabs(min_dEta_jets_eta_1p0_0p9),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 			min_dR_jets_eta_1p0_0p9 = std::min(min_dR_jets_eta_1p0_0p9,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
+
+			//And both not tagged
+			if(skimmedJets.at(j).sigprob<=0.996 and skimmedJets.at(k).sigprob<=0.996)
+			  {
+			    min_dPhi_jets_eta_1p0_0p9_no_tags = std::min(fabs(min_dPhi_jets_eta_1p0_0p9_no_tags),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			    min_dEta_jets_eta_1p0_0p9_no_tags = std::min(fabs(min_dEta_jets_eta_1p0_0p9_no_tags),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
+			    min_dR_jets_eta_1p0_0p9_no_tags = std::min(min_dR_jets_eta_1p0_0p9_no_tags,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
+
+			  }
 		      }
 		  }
 		//0p996
 		if(skimmedJets.at(j).sigprob>0.996 and skimmedJets.at(k).sigprob>0.996)
 		  {
-		    min_dPhi_jets_0p996 = fabs(std::min(min_dPhi_jets_0p996,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    //std::cout << "Doing min_dPhi_jets_0p996 with jet pair: (" << j <<" , "<<k<<")"<<std::endl;
+		    //std::cout << "prev min_dPhi_jets_0p996 " << min_dPhi_jets_0p996 << std::endl;
+		    //std::cout << "their distance: "<< fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi))  << std::endl;
+		    min_dPhi_jets_0p996 = std::min(fabs(min_dPhi_jets_0p996),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+		    min_dEta_jets_0p996 = std::min(fabs(min_dEta_jets_0p996),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 		    min_dR_jets_0p996 = std::min(min_dR_jets_0p996,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
+		    //std::cout << "post min_dPhi_jets_0p996 " << min_dPhi_jets_0p996 << std::endl;
 
-		    if( abs(skimmedJets.at(j).eta)<1.0 )
+		    if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
 		      {
-			min_dPhi_jets_eta_1p0_0p996 = fabs(std::min(min_dPhi_jets_eta_1p0_0p996,reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dPhi_jets_eta_1p0_0p996 = std::min(fabs(min_dPhi_jets_eta_1p0_0p996),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
+			min_dEta_jets_eta_1p0_0p996 = std::min(fabs(min_dEta_jets_eta_1p0_0p996),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
 			min_dR_jets_eta_1p0_0p996 = std::min(min_dR_jets_eta_1p0_0p996,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
 		      }
 		  }
 
 	      }
 
-	  }//loop on jet indices
+	  }
+	//////
 
+	/*
 
 	//Calculate center of gravity ECAL rec hits of tagged jets;
 	//Used for cosmic veto
-	/*
-	std::vector<float> vec_ECAL_x;
-	std::vector<float> vec_ECAL_y;
-	std::vector<float> vec_ECAL_z;
+	//Tagged jets |eta|<1.4
+	std::vector<float> vec_ECAL_tag_x;
+	std::vector<float> vec_ECAL_tag_y;
+	std::vector<float> vec_ECAL_tag_z;
 	float mean_ECAL_tag_x(-9999999.);
 	float mean_ECAL_tag_y(-9999999.);
 	float mean_ECAL_tag_z(-9999999.);
+	std::transform(taggedEcalRecHitsAK4.begin(), taggedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_tag_x),[](ecalRecHitType const& er) { return er.x/100.; });
+	if(taggedEcalRecHitsAK4.size()>0) mean_ECAL_tag_x=avg(vec_ECAL_tag_x);
+	std::transform(taggedEcalRecHitsAK4.begin(), taggedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_tag_y),[](ecalRecHitType const& er) { return er.y/100.; });
+	if(taggedEcalRecHitsAK4.size()>0) mean_ECAL_tag_y=avg(vec_ECAL_tag_y);
+	std::transform(taggedEcalRecHitsAK4.begin(), taggedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_tag_z),[](ecalRecHitType const& er) { return er.z/100.; });
+	if(taggedEcalRecHitsAK4.size()>0) mean_ECAL_tag_z=avg(vec_ECAL_tag_z);
 
-	std::transform(taggedEcalRecHitsAK4.begin(), taggedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_x),[](ecalRecHitType const& er) { return er.x/100.; });
-	mean_ECAL_tag_x=avg(vec_ECAL_x);
-	std::transform(taggedEcalRecHitsAK4.begin(), taggedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_y),[](ecalRecHitType const& er) { return er.y/100.; });
-	mean_ECAL_tag_y=avg(vec_ECAL_y);
-	std::transform(taggedEcalRecHitsAK4.begin(), taggedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_z),[](ecalRecHitType const& er) { return er.z/100.; });
-	mean_ECAL_tag_z=avg(vec_ECAL_z);
+	//Tagged jets |eta|<1.
+	std::vector<float> vec_acc_ECAL_tag_x;
+	std::vector<float> vec_acc_ECAL_tag_y;
+	std::vector<float> vec_acc_ECAL_tag_z;
+	float mean_acc_ECAL_tag_x(-9999999.);
+	float mean_acc_ECAL_tag_y(-9999999.);
+	float mean_acc_ECAL_tag_z(-9999999.);
+	std::transform(taggedAcceptanceEcalRecHitsAK4.begin(), taggedAcceptanceEcalRecHitsAK4.end(), std::back_inserter(vec_acc_ECAL_tag_x),[](ecalRecHitType const& er) { return er.x/100.; });
+	if(taggedAcceptanceEcalRecHitsAK4.size()>0) mean_acc_ECAL_tag_x=avg(vec_acc_ECAL_tag_x);
+	std::transform(taggedAcceptanceEcalRecHitsAK4.begin(), taggedAcceptanceEcalRecHitsAK4.end(), std::back_inserter(vec_acc_ECAL_tag_y),[](ecalRecHitType const& er) { return er.y/100.; });
+	if(taggedAcceptanceEcalRecHitsAK4.size()>0) mean_acc_ECAL_tag_y=avg(vec_acc_ECAL_tag_y);
+	std::transform(taggedAcceptanceEcalRecHitsAK4.begin(), taggedAcceptanceEcalRecHitsAK4.end(), std::back_inserter(vec_acc_ECAL_tag_z),[](ecalRecHitType const& er) { return er.z/100.; });
+	if(taggedAcceptanceEcalRecHitsAK4.size()>0) mean_acc_ECAL_tag_z=avg(vec_acc_ECAL_tag_z);
+
+	//All jets |eta|<1.4
+	std::vector<float> vec_ECAL_x;
+	std::vector<float> vec_ECAL_y;
+	std::vector<float> vec_ECAL_z;
+	float mean_ECAL_x(-9999999.);
+	float mean_ECAL_y(-9999999.);
+	float mean_ECAL_z(-9999999.);
+	std::transform(skimmedEcalRecHitsAK4.begin(), skimmedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_x),[](ecalRecHitType const& er) { return er.x/100.; });
+	if(skimmedEcalRecHitsAK4.size()>0) mean_ECAL_x=avg(vec_ECAL_x);
+	std::transform(skimmedEcalRecHitsAK4.begin(), skimmedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_y),[](ecalRecHitType const& er) { return er.y/100.; });
+	if(skimmedEcalRecHitsAK4.size()>0) mean_ECAL_y=avg(vec_ECAL_y);
+	std::transform(skimmedEcalRecHitsAK4.begin(), skimmedEcalRecHitsAK4.end(), std::back_inserter(vec_ECAL_z),[](ecalRecHitType const& er) { return er.z/100.; });
+	if(skimmedEcalRecHitsAK4.size()>0) mean_ECAL_z=avg(vec_ECAL_z);
+
+	//All jets |eta|<1.
+	std::vector<float> vec_acc_ECAL_x;
+	std::vector<float> vec_acc_ECAL_y;
+	std::vector<float> vec_acc_ECAL_z;
+	float mean_acc_ECAL_x(-9999999.);
+	float mean_acc_ECAL_y(-9999999.);
+	float mean_acc_ECAL_z(-9999999.);
+	std::transform(skimmedAcceptanceEcalRecHitsAK4.begin(), skimmedAcceptanceEcalRecHitsAK4.end(), std::back_inserter(vec_acc_ECAL_x),[](ecalRecHitType const& er) { return er.x/100.; });
+	if(skimmedAcceptanceEcalRecHitsAK4.size()>0) mean_acc_ECAL_x=avg(vec_acc_ECAL_x);
+	std::transform(skimmedAcceptanceEcalRecHitsAK4.begin(), skimmedAcceptanceEcalRecHitsAK4.end(), std::back_inserter(vec_acc_ECAL_y),[](ecalRecHitType const& er) { return er.y/100.; });
+	if(skimmedAcceptanceEcalRecHitsAK4.size()>0) mean_acc_ECAL_y=avg(vec_acc_ECAL_y);
+	std::transform(skimmedAcceptanceEcalRecHitsAK4.begin(), skimmedAcceptanceEcalRecHitsAK4.end(), std::back_inserter(vec_acc_ECAL_z),[](ecalRecHitType const& er) { return er.z/100.; });
+	if(skimmedAcceptanceEcalRecHitsAK4.size()>0) mean_acc_ECAL_z=avg(vec_acc_ECAL_z);
+
+
 
 
 	//Cosmic veto:
 	//DBSCAN on DTSegments
+	
 	for(unsigned int d=0; d<DTSegments->size(); d++)
 	  {
 	    Point p;
-	    //Currently removing points with invalid time;
+	    //Currently not removing points with invalid time;
 	    //TODO: check if the result changes
 	    p.x = DTSegments->at(d).x/100.;
 	    p.y = DTSegments->at(d).y/100.;
@@ -2867,21 +3042,6 @@ int main(int argc, char **argv) {
 	    p.clusterID = UNCLASSIFIED;
 	    points.push_back(p);
 
-	    if(DTSegments->at(d).time > -9999.)
-	    {
-		p.x = DTSegments->at(d).x/100.;
-		p.y = DTSegments->at(d).y/100.;
-		p.z = DTSegments->at(d).z/100.;
-		p.eta = DTSegments->at(d).eta;
-		p.phi = DTSegments->at(d).phi;
-		p.time = DTSegments->at(d).time;
-		p.wheel = DTSegments->at(d).wheel;
-		p.sector = DTSegments->at(d).sector;
-		p.station = DTSegments->at(d).station;
-		p.nRecHits = DTSegments->at(d).nRecHits;
-		p.clusterID = UNCLASSIFIED;
-		points_valid_time.push_back(p);
-	    }
 	  }
 
 	DBSCAN ds(MINIMUM_POINTS, EPSILON, points);
@@ -2956,13 +3116,15 @@ int main(int argc, char **argv) {
 	    int n_s_ch_k2 = -1;
 	    float dz_DT = 1000.;
 	    float dz_ECAL = 1000.;
+	    //float dz_acc_ECAL = 1000.;
 
 	    for(int k1 = 0; k1<n_clusters; k1++)
 	      {
 
 		for(int k2 = 1; k2<n_clusters && k2>k1; k2++)
+		//for(int k2 = k1+1; k2<n_clusters && k2!=k1; k2++)//new loop giving problems! misses some events!!
+		//for example it misses 297411:830:1385167469 Run2017B that is a clear cosmic!
 		  {
-
 		    float mean_k1_x=avg(vec_xx.at(k1));
 		    float mean_k1_y=avg(vec_yy.at(k1));
 		    float mean_k1_z=avg(vec_zz.at(k1));
@@ -2996,10 +3158,42 @@ int main(int argc, char **argv) {
 			float tmp_z = abs(mean_k1_z - mean_k2_z);
 			dz_DT = std::min(dz_DT,tmp_z);
 			//TODO: can probably compute the mean instead of doing the average
-			float tmp_ECAL = abs((mean_k1_z+mean_k2_z)/2. - mean_ECAL_tag_z);
-			//cout << "Pair distance from ECAL in z :" << tmp_ECAL << endl;
+			//this choice depends on what ecal rec hits we consider...
+			//THIS: choice based on 1p0 jets (less restrictive veto)
+
+			//Here: choice of calo hits associated to the cosmic
+			//If no tagged jet, look at non-tagged rec hits
+			////Here: all eta
+			////float tmp_ECAL = abs((mean_k1_z+mean_k2_z)/2. - mean_ECAL_tag_z);
+			//Here: eta<1
+			float tmp_ECAL = 99999999.;
+			//Make the decision based on all rec hits up to 1.4
+			//More conservative but probably better
+			//earlier: based on taggedAcceptanceEcalRecHitsAK4, too "loose"
+			if(taggedEcalRecHitsAK4.size()>0)
+			  {
+			    //tmp_ECAL = abs((mean_k1_z+mean_k2_z)/2. - mean_acc_ECAL_tag_z);
+			    tmp_ECAL = abs((mean_k1_z+mean_k2_z)/2. - mean_ECAL_tag_z);
+			    isCosmicVetoWithTags = true;
+			  }
+			else
+			  {
+			    if(skimmedEcalRecHitsAK4.size()>0)
+			      {
+				tmp_ECAL = abs((mean_k1_z+mean_k2_z)/2. - mean_ECAL_z);
+				//dz_ECAL = std::min(dz_ECAL,tmp_ECAL);
+			      }
+			    else
+			      {
+				tmp_ECAL = 99999999.;//very large number so that this is always false
+				//dz_ECAL = std::min(dz_ECAL,tmp_ECAL);
+			      }
+			  }
 			dz_ECAL = std::min(dz_ECAL,tmp_ECAL);
-			if(dz_DT==tmp_z and dz_ECAL==tmp_ECAL)
+			////Here: all eta
+			////if(dz_DT==tmp_z and dz_ECAL==tmp_ECAL and taggedEcalRecHitsAK4.size()>0)
+			//Here: eta<1
+			if(dz_DT==tmp_z and dz_ECAL==tmp_ECAL)// and taggedAcceptanceEcalRecHitsAK4.size()>0)
 			  {
                             ch_k1 = k1;
                             ch_k2 = k2;
@@ -3095,7 +3289,11 @@ int main(int argc, char **argv) {
 		    if(printFit) cout << "dt_fit_chi2: " << dt_fit_chi2 <<endl;
 		    isDT_fit = true;
 		    dt_fit_chi2_reduced = dt_fit_chi2/DT_fit_xx.size();
-		    dt_ecal_dist = sqrt(distance2(mean_ECAL_tag_x,mean_ECAL_tag_y,mean_ECAL_tag_z,SolXZ,SolYZ));
+		    //If fit performed and rec hits not empty, calculate distance
+		    if(taggedEcalRecHitsAK4.size()>0) dt_ecal_dist = sqrt(distance2(mean_ECAL_tag_x,mean_ECAL_tag_y,mean_ECAL_tag_z,SolXZ,SolYZ));
+		    if(taggedAcceptanceEcalRecHitsAK4.size()>0) dt_ecal_acc_dist = sqrt(distance2(mean_acc_ECAL_tag_x,mean_acc_ECAL_tag_y,mean_acc_ECAL_tag_z,SolXZ,SolYZ));
+		    if(skimmedEcalRecHitsAK4.size()>0) dt_ecal_no_tag_dist = sqrt(distance2(mean_ECAL_x,mean_ECAL_y,mean_ECAL_z,SolXZ,SolYZ));
+		    if(skimmedAcceptanceEcalRecHitsAK4.size()>0) dt_ecal_acc_no_tag_dist = sqrt(distance2(mean_acc_ECAL_x,mean_acc_ECAL_y,mean_acc_ECAL_z,SolXZ,SolYZ));
 		  }
 
 		if(printFit) cout << "   Final result   " << endl;
@@ -3221,6 +3419,9 @@ int main(int argc, char **argv) {
 	  }
 
 	//Prepare boolean flags
+
+	//Here select bin 1/2 LISA
+	//if(doSR and nTagJets_0p996_JJ<1) continue;
 	//At this point, doSR and doZtoMM should be all fulfilled, cross check
 	if(doSR) isSR = true;
 	if(doMR) isMR = true;
@@ -3246,6 +3447,13 @@ int main(int argc, char **argv) {
 	outputTree->Fill();
 
         //std::cout << "======================================== " << std::endl;
+	//for(unsigned int j=0;j<skimmedJets.size();j++)
+	//{
+	//std::cout << "Jet ["<<j<<"] eta: " << skimmedJets.at(j).eta << " ; phi: " << skimmedJets.at(j).phi<< " ; DNN: " << skimmedJets.at(j).sigprob << std::endl;
+	//}
+	//std::cout << "min_jets_dPhi: " << min_dPhi_jets << std::endl;
+	//std::cout << "min_jets_dPhi_0p996: " << min_dPhi_jets_0p996 << std::endl;
+	//std::cout << "min_jets_dEta_0p996: " << min_dEta_jets_0p996 << std::endl;
 
 	//
 	//if(skipTrain==true)

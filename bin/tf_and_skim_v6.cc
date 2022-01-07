@@ -764,6 +764,7 @@ int main(int argc, char **argv) {
     std::vector<GenPType>        *GenHiggs = 0;
     std::vector<GenPType>        *GenLLPs = 0;
     std::vector<GenPType>        *GenBquarks = 0;
+    std::vector<GenPType>        *GenGravitinos = 0;
     std::vector<DT4DSegmentType> *DTSegments = 0;
     std::vector<CSCSegmentType>  *CSCSegments = 0;
 
@@ -780,6 +781,7 @@ int main(int argc, char **argv) {
     TBranch        *b_GenHiggs = 0;
     TBranch        *b_GenLLPs = 0;
     TBranch        *b_GenBquarks = 0;
+    TBranch        *b_GenGravitinos = 0;
     TBranch        *b_EcalRecHitsAK4 = 0;
     TBranch        *b_EcalRecHitsAK8 = 0;
     TBranch        *b_DTSegments = 0;
@@ -899,6 +901,7 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("GenHiggs",          &GenHiggs,          &b_GenHiggs); 
     inputTree->SetBranchAddress("GenLLPs",           &GenLLPs,           &b_GenLLPs); 
     inputTree->SetBranchAddress("GenBquarks",        &GenBquarks,        &b_GenBquarks); 
+    inputTree->SetBranchAddress("GenGravitinos",     &GenGravitinos,     &b_GenGravitinos);
     inputTree->SetBranchAddress("DTSegments",        &DTSegments,        &b_DTSegments); 
     inputTree->SetBranchAddress("CSCSegments",       &CSCSegments,       &b_CSCSegments); 
     inputTree->SetBranchAddress("EventNumber",       &EventNumber,       &b_EventNumber);
@@ -1257,6 +1260,44 @@ int main(int argc, char **argv) {
     float Z_lep1_phi(-9.);
     float Z_lep1_eta(-9.);
 
+    //Gen level studies
+    float dR_LLPs(-9.);
+    float dR_Higgs(-9.);
+    float dR_Gravitinos(-9.);
+    float dR_Gravitino_Higgs_0(-9.);
+    float dR_Gravitino_Higgs_1(-9.);
+    float dR_Gravitino_GenMet_0(-9.);
+    float dR_Gravitino_GenMet_1(-9.);
+    float dPhi_Gravitino_GenMet_0(-9.);
+    float dPhi_Gravitino_GenMet_1(-9.);
+    float dPhi_Gravitino_Met_0(-9.);
+    float dPhi_Gravitino_Met_1(-9.);
+    float dR_LLP_GenMet_0(-9.);
+    float dR_LLP_GenMet_1(-9.);
+    float dPhi_LLP_Met_0(-9.);
+    float dPhi_LLP_Met_1(-9.);
+    float dPhi_LLP_GenMet_0(-9.);
+    float dPhi_LLP_GenMet_1(-9.);
+    float dR_Higgs_GenMet_0(-9.);
+    float dR_Higgs_GenMet_1(-9.);
+    float dPhi_Higgs_Met_0(-9.);
+    float dPhi_Higgs_Met_1(-9.);
+    float dPhi_Higgs_GenMet_0(-9.);
+    float dPhi_Higgs_GenMet_1(-9.);
+    float DiGravitino_pt(-1.);
+    float DiGravitino_mass(-1.);
+    float DiGravitino_eta(-1.);
+    float DiGravitino_phi(-1.);
+    float dR_DiGravitino_GenMet(-9.);
+    float dPhi_DiGravitino_Met(-9.);
+    float dPhi_DiGravitino_GenMet(-9.);
+    float dPhi_DiGravitino_Higgs_0(-9.);
+    float dPhi_DiGravitino_Higgs_1(-9.);
+    float dPhi_Gravitino_0_Higgs_0(-9.);
+    float dPhi_Gravitino_1_Higgs_1(-9.);
+    float perc_met_held_by_gravitinos(-1.);
+
+
     int nLeptons(0);
     std::vector<int> LepPdgId;
     std::vector<int> LepCharge;
@@ -1441,6 +1482,43 @@ int main(int argc, char **argv) {
     outputTree->Branch("Z_lep1_pt",         &Z_lep1_pt,         "Z_lep1_pt/F");
     outputTree->Branch("Z_lep1_phi",        &Z_lep1_phi,        "Z_lep1_phi/F");
     outputTree->Branch("Z_lep1_eta",        &Z_lep1_eta,        "Z_lep1_eta/F");
+
+    outputTree->Branch("dR_LLPs", &dR_LLPs, "dR_LLPs/F");
+    outputTree->Branch("dR_Higgs", &dR_Higgs, "dR_Higgs/F");
+    outputTree->Branch("dR_Gravitinos", &dR_Gravitinos, "dR_Gravitinos/F");
+    outputTree->Branch("dR_Gravitino_Higgs_0", &dR_Gravitino_Higgs_0, "dR_Gravitino_Higgs_0/F");
+    outputTree->Branch("dR_Gravitino_Higgs_1", &dR_Gravitino_Higgs_1, "dR_Gravitino_Higgs_1/F");
+    outputTree->Branch("dR_Gravitino_GenMet_0", &dR_Gravitino_GenMet_0, "dR_Gravitino_GenMet_0/F");
+    outputTree->Branch("dR_Gravitino_GenMet_1", &dR_Gravitino_GenMet_1, "dR_Gravitino_GenMet_1/F");
+    outputTree->Branch("dPhi_Gravitino_Met_0", &dPhi_Gravitino_Met_0, "dPhi_Gravitino_Met_0/F");
+    outputTree->Branch("dPhi_Gravitino_Met_1", &dPhi_Gravitino_Met_1, "dPhi_Gravitino_Met_1/F");
+    outputTree->Branch("dPhi_Gravitino_GenMet_0", &dPhi_Gravitino_GenMet_0, "dPhi_Gravitino_GenMet_0/F");
+    outputTree->Branch("dPhi_Gravitino_GenMet_1", &dPhi_Gravitino_GenMet_1, "dPhi_Gravitino_GenMet_1/F");
+    outputTree->Branch("dR_LLP_GenMet_0", &dR_LLP_GenMet_0, "dR_LLP_GenMet_0/F");
+    outputTree->Branch("dR_LLP_GenMet_1", &dR_LLP_GenMet_1, "dR_LLP_GenMet_1/F");
+    outputTree->Branch("dPhi_LLP_Met_0", &dPhi_LLP_Met_0, "dPhi_LLP_Met_0/F");
+    outputTree->Branch("dPhi_LLP_Met_1", &dPhi_LLP_Met_1, "dPhi_LLP_Met_1/F");
+    outputTree->Branch("dPhi_LLP_GenMet_0", &dPhi_LLP_GenMet_0, "dPhi_LLP_GenMet_0/F");
+    outputTree->Branch("dPhi_LLP_GenMet_1", &dPhi_LLP_GenMet_1, "dPhi_LLP_GenMet_1/F");
+    outputTree->Branch("dR_Higgs_GenMet_0", &dR_Higgs_GenMet_0, "dR_Higgs_GenMet_0/F");
+    outputTree->Branch("dR_Higgs_GenMet_1", &dR_Higgs_GenMet_1, "dR_Higgs_GenMet_1/F");
+    outputTree->Branch("dPhi_Higgs_Met_0", &dPhi_Higgs_Met_0, "dPhi_Higgs_Met_0/F");
+    outputTree->Branch("dPhi_Higgs_Met_1", &dPhi_Higgs_Met_1, "dPhi_Higgs_Met_1/F");
+    outputTree->Branch("dPhi_Higgs_GenMet_0", &dPhi_Higgs_GenMet_0, "dPhi_Higgs_GenMet_0/F");
+    outputTree->Branch("dPhi_Higgs_GenMet_1", &dPhi_Higgs_GenMet_1, "dPhi_Higgs_GenMet_1/F");
+    outputTree->Branch("DiGravitino_pt", &DiGravitino_pt, "DiGravitino_pt/F");
+    outputTree->Branch("DiGravitino_mass", &DiGravitino_mass, "DiGravitino_mass/F");
+    outputTree->Branch("DiGravitino_eta", &DiGravitino_eta, "DiGravitino_eta/F");
+    outputTree->Branch("DiGravitino_phi", &DiGravitino_phi, "DiGravitino_phi/F");
+    outputTree->Branch("dR_DiGravitino_GenMet", &dR_DiGravitino_GenMet, "dR_DiGravitino_GenMet/F");
+    outputTree->Branch("dPhi_DiGravitino_GenMet", &dPhi_DiGravitino_GenMet, "dPhi_DiGravitino_GenMet/F");
+    outputTree->Branch("dPhi_DiGravitino_Met", &dPhi_DiGravitino_Met, "dPhi_DiGravitino_Met/F");
+    outputTree->Branch("dPhi_DiGravitino_Higgs_0", &dPhi_DiGravitino_Higgs_0, "dPhi_DiGravitino_Higgs_0/F");
+    outputTree->Branch("dPhi_DiGravitino_Higgs_1", &dPhi_DiGravitino_Higgs_1, "dPhi_DiGravitino_Higgs_1/F");
+    outputTree->Branch("dPhi_Gravitino_0_Higgs_0", &dPhi_Gravitino_0_Higgs_0, "dPhi_Gravitino_0_Higgs_0/F");
+    outputTree->Branch("dPhi_Gravitino_1_Higgs_1", &dPhi_Gravitino_1_Higgs_1, "dPhi_Gravitino_1_Higgs_1/F");
+    outputTree->Branch("perc_met_held_by_gravitinos", &perc_met_held_by_gravitinos, "perc_met_held_by_gravitinos/F");
+
 
     outputTree->Branch("nLeptons", &nLeptons, "nLeptons/I");
     outputTree->Branch("LepPdgId", &LepPdgId);
@@ -1627,6 +1705,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("GenHiggs", &GenHiggs);
     outputTree->Branch("GenLLPs", &GenLLPs);
     outputTree->Branch("GenBquarks", &GenBquarks);
+    outputTree->Branch("GenGravitinos", &GenGravitinos);
     outputTree->Branch("DTSegments", &DTSegments);
     outputTree->Branch("CSCSegments", &CSCSegments);
     //outputTree->Branch("AK4_jet_width_ECAL", &AK4_jet_width_ECAL,  "AK4_jet_width_ECAL/F");
@@ -1775,6 +1854,42 @@ int main(int argc, char **argv) {
 	nMuonsPassing = 0;
 	nElectronsPassing = 0;
 
+        dR_LLPs = -9.;
+        dR_Higgs = -9.;
+        dR_Gravitinos = -9.;
+        dR_Gravitino_Higgs_0 = -9.;
+        dR_Gravitino_Higgs_1 = -9.;
+	dR_Gravitino_GenMet_0 = -9.;
+        dR_Gravitino_GenMet_1 = -9.;
+        dPhi_Gravitino_Met_0 = -9.;
+        dPhi_Gravitino_Met_1 = -9.;
+        dPhi_Gravitino_GenMet_0 = -9.;
+	dPhi_Gravitino_GenMet_1 = -9.;
+        dR_LLP_GenMet_0 = -9.;
+        dR_LLP_GenMet_1 = -9.;
+        dPhi_LLP_Met_0 = -9.;
+        dPhi_LLP_Met_1 = -9.;
+        dPhi_LLP_GenMet_0 = -9.;
+        dPhi_LLP_GenMet_1 = -9.;
+        dR_Higgs_GenMet_0 = -9.;
+        dR_Higgs_GenMet_1 = -9.;
+        dPhi_Higgs_Met_0 = -9.;
+        dPhi_Higgs_Met_1 = -9.;
+        dPhi_Higgs_GenMet_0 = -9.;
+	dPhi_Higgs_GenMet_1 = -9.;
+        DiGravitino_pt = -1.;
+        DiGravitino_mass = -1.;
+        DiGravitino_eta = -1.;
+        DiGravitino_phi = -1.;
+        dR_DiGravitino_GenMet = -9.;
+        dPhi_DiGravitino_Met = -9.;
+        dPhi_DiGravitino_GenMet = -9.;
+	dPhi_DiGravitino_Higgs_0 = -9.;
+	dPhi_DiGravitino_Higgs_1 = -9.;
+	dPhi_Gravitino_0_Higgs_0 = -9.;
+	dPhi_Gravitino_1_Higgs_1 = -9.;
+        perc_met_held_by_gravitinos = -1.;
+ 
 
 	n_clusters = -1;
 	n_noise = -1;
@@ -2033,6 +2148,52 @@ int main(int argc, char **argv) {
 	    PUReWeightUp = pu_up->GetBinContent(pu_up->GetXaxis()->FindBin(MeanNumInteractions));
 	    PUReWeightDown = pu_down->GetBinContent(pu_down->GetXaxis()->FindBin(MeanNumInteractions));
 	  }
+
+	if(isMC and doGen)
+	  {
+            dR_LLPs = reco::deltaR(GenLLPs->at(0).eta,GenLLPs->at(0).phi,GenLLPs->at(1).eta,GenLLPs->at(1).phi);
+            dR_Higgs = GenHiggs->size()==2 ? reco::deltaR(GenHiggs->at(0).eta,GenHiggs->at(0).phi,GenHiggs->at(1).eta,GenHiggs->at(1).phi) : -9.;
+            dR_Gravitinos = reco::deltaR(GenGravitinos->at(0).eta,GenGravitinos->at(0).phi,GenGravitinos->at(1).eta,GenGravitinos->at(1).phi);
+            dR_Gravitino_Higgs_0 = (GenGravitinos->at(0).travelRadiusLLP == GenHiggs->at(0).travelRadiusLLP) ? reco::deltaR(GenGravitinos->at(0).eta,GenGravitinos->at(0).phi,GenHiggs->at(0).eta,GenHiggs->at(0).phi) : -9.;
+            dR_Gravitino_Higgs_1 = GenHiggs->size()==2 ? ((GenGravitinos->at(1).travelRadiusLLP == GenHiggs->at(1).travelRadiusLLP) ? reco::deltaR(GenGravitinos->at(1).eta,GenGravitinos->at(1).phi,GenHiggs->at(1).eta,GenHiggs->at(1).phi) : -9.) : -9.;
+            dR_Gravitino_GenMet_0 = reco::deltaR(GenGravitinos->at(0).eta,GenGravitinos->at(0).phi,MEt->etaGen,MEt->phiGen);
+            dR_Gravitino_GenMet_1 = reco::deltaR(GenGravitinos->at(1).eta,GenGravitinos->at(1).phi,MEt->etaGen,MEt->phiGen);
+            dPhi_Gravitino_Met_0 = reco::deltaPhi(GenGravitinos->at(0).phi,MEt->phi);
+            dPhi_Gravitino_Met_1 = reco::deltaPhi(GenGravitinos->at(1).phi,MEt->phi);
+            dPhi_Gravitino_GenMet_0 = reco::deltaPhi(GenGravitinos->at(0).phi,MEt->phiGen);
+            dPhi_Gravitino_GenMet_1 = reco::deltaPhi(GenGravitinos->at(1).phi,MEt->phiGen);
+            dR_LLP_GenMet_0 = reco::deltaR(GenLLPs->at(0).eta,GenLLPs->at(0).phi,MEt->etaGen,MEt->phiGen);
+            dR_LLP_GenMet_1 = reco::deltaR(GenLLPs->at(1).eta,GenLLPs->at(1).phi,MEt->etaGen,MEt->phiGen);
+            dPhi_LLP_Met_0 = reco::deltaPhi(GenLLPs->at(0).phi,MEt->phi);
+            dPhi_LLP_Met_1 = reco::deltaPhi(GenLLPs->at(1).phi,MEt->phi);
+            dPhi_LLP_GenMet_0 = reco::deltaPhi(GenLLPs->at(0).phi,MEt->phiGen);
+            dPhi_LLP_GenMet_1 = reco::deltaPhi(GenLLPs->at(1).phi,MEt->phiGen);
+            dR_Higgs_GenMet_0 = reco::deltaR(GenHiggs->at(0).eta,GenHiggs->at(0).phi,MEt->etaGen,MEt->phiGen);
+            dR_Higgs_GenMet_1 = GenHiggs->size()==2 ? reco::deltaR(GenHiggs->at(1).eta,GenHiggs->at(1).phi,MEt->etaGen,MEt->phiGen) : -9.;
+            dPhi_Higgs_Met_0 = reco::deltaPhi(GenHiggs->at(0).phi,MEt->phi);
+            dPhi_Higgs_Met_1 = GenHiggs->size()==2 ? reco::deltaPhi(GenHiggs->at(1).phi,MEt->phi) : -9.;
+            dPhi_Higgs_GenMet_0 = reco::deltaPhi(GenHiggs->at(0).phi,MEt->phiGen);
+            dPhi_Higgs_GenMet_1 = GenHiggs->size()==2 ? reco::deltaPhi(GenHiggs->at(1).phi,MEt->phiGen) : -9.;
+            TLorentzVector DiGravitino;
+            TLorentzVector Grav0;
+            TLorentzVector Grav1;
+            Grav0.SetPtEtaPhiM(GenGravitinos->at(0).pt,GenGravitinos->at(0).eta,GenGravitinos->at(0).phi,GenGravitinos->at(0).mass);
+            Grav0.SetPtEtaPhiM(GenGravitinos->at(1).pt,GenGravitinos->at(1).eta,GenGravitinos->at(1).phi,GenGravitinos->at(1).mass);
+            DiGravitino = Grav0 + Grav1;
+            DiGravitino_pt = DiGravitino.Pt();
+            DiGravitino_mass = DiGravitino.M();
+            DiGravitino_eta = DiGravitino.Eta();
+            DiGravitino_phi = DiGravitino.Phi();
+            dR_DiGravitino_GenMet = reco::deltaR(DiGravitino.Eta(),DiGravitino.Phi(),MEt->etaGen,MEt->phiGen);
+            dPhi_DiGravitino_Met = reco::deltaPhi(DiGravitino.Phi(),MEt->phi);
+            dPhi_DiGravitino_GenMet = reco::deltaPhi(DiGravitino.Phi(),MEt->phiGen);
+	    dPhi_DiGravitino_Higgs_0 = reco::deltaPhi(DiGravitino.Phi(),GenHiggs->at(0).phi);
+	    dPhi_DiGravitino_Higgs_1 = reco::deltaPhi(DiGravitino.Phi(),GenHiggs->at(1).phi);
+	    dPhi_Gravitino_0_Higgs_0 = reco::deltaPhi(GenHiggs->at(0).phi,GenGravitinos->at(0).phi);
+	    dPhi_Gravitino_1_Higgs_1 = reco::deltaPhi(GenHiggs->at(1).phi,GenGravitinos->at(1).phi);
+            perc_met_held_by_gravitinos = MEt->pt>0 ? DiGravitino_pt/MEt->pt : -1.;
+          }
+
 	//Trigger selections
 
 	//MET filters always fulfilled
@@ -2391,66 +2552,70 @@ int main(int argc, char **argv) {
 	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
 	      {
 
-		if(Jets->at(j).timeRecHitsEB>-1)
+		//This should be done also for jets with negative time... otherwise that collection is biased...
+		//if(Jets->at(j).timeRecHitsEB>-1)
+		//{
+
+		//Ignore jets overlapped to leptons, photons and taus
+		float jet_iso = 0.4;
+		//Leptons
+		float dR_lep = -1;
+		for(auto& lep : LeptonsStruct)
 		  {
-		    //Ignore jets overlapped to leptons, photons and taus
-		    float jet_iso = 0.4;
-		    //Leptons
-		    float dR_lep = -1;
-		    for(auto& lep : LeptonsStruct){
-		      float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
-		      if(dR_lep < 0 || thisDR < dR_lep) dR_lep = thisDR;
-		    }
-		    if(dR_lep > 0 && dR_lep < jet_iso) continue;
+		    float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
+		    if(dR_lep < 0 || thisDR < dR_lep) dR_lep = thisDR;
+		  }
+		if(dR_lep > 0 && dR_lep < jet_iso) continue;
 
-		    //Taus
-		    float dR_tau = -1;
-		    for(auto& tau : TausStruct){
-		      float thisDR_tau = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,tau.vec.Eta(),tau.vec.Phi());
-		      if(dR_tau < 0 || thisDR_tau < dR_tau) dR_tau = thisDR_tau;
-		    }
-		    if(dR_tau > 0 && dR_tau < jet_iso) continue;
+		//Taus
+		float dR_tau = -1;
+		for(auto& tau : TausStruct)
+		  {
+		    float thisDR_tau = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,tau.vec.Eta(),tau.vec.Phi());
+		    if(dR_tau < 0 || thisDR_tau < dR_tau) dR_tau = thisDR_tau;
+		  }
+		if(dR_tau > 0 && dR_tau < jet_iso) continue;
 
-		    //Photons
-		    float dR_pho = -1;
-		    for(auto& pho : PhotonsStruct){
-		      float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
-		      if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
-		    }
-		    if(dR_pho > 0 && dR_pho < jet_iso) continue;
+		//Photons
+		float dR_pho = -1;
+		for(auto& pho : PhotonsStruct)
+		  {
+		    float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
+		    if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
+		  }
+		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 		
-		    //Here: passed acceptance
-		    nCHSJetsAcceptanceCalo++;
+		//Here: passed acceptance
+		if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
-		    //JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
-		    if(MinLeadingJetMetDPhi<0)
-		      {
-			MinLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
-			if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinLeadingJetMetDPhi " << MinLeadingJetMetDPhi << std::endl;
-			if(isVerbose) std::cout << "MinLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
-		      }
-
-		    //JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
-		    if(nCHSJetsAcceptanceCalo==2 && MinSubLeadingJetMetDPhi<0)
-		      {
-			MinSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
-			if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinSubLeadingJetMetDPhi " << MinSubLeadingJetMetDPhi << std::endl;
-			if(isVerbose) std::cout << "MinSubLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
-		      }
-
-		    if(nCHSJetsAcceptanceCalo==3 && MinSubSubLeadingJetMetDPhi<0)
-		      {
-			MinSubSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
-		      }
-		    
-		    if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
-		    TLorentzVector jet0;
-		    jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
-		    TLorentzVector met;
-		    met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
-		    if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiBarrelStar) MinJetMetDPhiBarrelStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
+		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
+		if(MinLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
+		  {
+		    MinLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		    if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinLeadingJetMetDPhi " << MinLeadingJetMetDPhi << std::endl;
+		    if(isVerbose) std::cout << "MinLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
 		  }
 
+		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
+		if(nCHSJetsAcceptanceCalo==2 && MinSubLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
+		  {
+		    MinSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		    if(isVerbose) std::cout << "MET: " << MEt->pt << " ; MinSubLeadingJetMetDPhi " << MinSubLeadingJetMetDPhi << std::endl;
+		    if(isVerbose) std::cout << "MinSubLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
+		  }
+
+		if(nCHSJetsAcceptanceCalo==3 && MinSubSubLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
+		  {
+		    MinSubSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		  }
+		    
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel and Jets->at(j).timeRecHitsEB>-1) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
+		TLorentzVector jet0;
+		jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
+		TLorentzVector met;
+		met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
+		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiBarrelStar and Jets->at(j).timeRecHitsEB>-1) MinJetMetDPhiBarrelStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
+		//}
 
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		//std::cout<< "Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
@@ -3131,8 +3296,8 @@ int main(int argc, char **argv) {
 	    for(int k1 = 0; k1<n_clusters; k1++)
 	      {
 
-		for(int k2 = 1; k2<n_clusters && k2>k1; k2++)
-		//for(int k2 = k1+1; k2<n_clusters && k2!=k1; k2++)//new loop giving problems! misses some events!!
+		//for(int k2 = 1; k2<n_clusters && k2>k1; k2++)
+		for(int k2 = k1+1; k2<n_clusters && k2!=k1; k2++)//new loop giving problems! misses some events!!
 		//for example it misses 297411:830:1385167469 Run2017B that is a clear cosmic!
 		  {
 		    float mean_k1_x=avg(vec_xx.at(k1));
@@ -3429,6 +3594,10 @@ int main(int argc, char **argv) {
 	  }
 
 	//Prepare boolean flags
+
+	//Here select bin 1/2 LISA
+	//if(doSR and nTagJets_0p996_JJ<1) continue;
+
 	//At this point, doSR and doZtoMM should be all fulfilled, cross check
 	if(doSR) isSR = true;
 	if(doMR) isMR = true;

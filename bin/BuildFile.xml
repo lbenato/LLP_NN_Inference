@@ -130,7 +130,25 @@
     <use name="PhysicsTools/TensorFlow" />
 </bin>
 
+<bin name="tf_and_skim_v6_no_photonEFrac_cut" file="tf_and_skim_v6_no_photonEFrac_cut.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_syst_unc" file="tf_and_skim_v6_syst_unc.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
 <bin name="tf_and_skim_v5_updated" file="tf_and_skim_v5_updated.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_Z_gamma" file="tf_and_skim_v5_Z_gamma.cc">
     <use name="root" />
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />
