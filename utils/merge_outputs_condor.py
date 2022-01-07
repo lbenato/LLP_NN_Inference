@@ -232,6 +232,31 @@ elif options.lists == "v5_calo_AOD_2017_compare_CSC":
     LUMI = 137*1000#Princeton
     #LUMI = 59.74*1000
     #LUMI = 59690#2018 lumi with normtag, from pdvm2018 twiki, PromptReco
+
+
+elif options.lists == "v6_HighMET_2018":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import *
+    from NNInferenceCMSSW.LLP_NN_Inference.crab_requests_lists_calo_AOD_2018 import *
+    print "!! Using v5 lumi!!!"
+    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2018 import lumi
+    LUMI = lumi["HighMET"]["tot"]#["tot"]
+    print "total LUMI: ", LUMI
+elif options.lists == "v6_HighMET_2017":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import *
+    from NNInferenceCMSSW.LLP_NN_Inference.crab_requests_lists_calo_AOD_2017 import *
+    print "!! Using v5 lumi!!!"
+    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2017 import lumi
+    LUMI = lumi["HighMET"]["tot"]#["tot"]
+    print "total LUMI: ", LUMI
+elif options.lists == "v6_HighMET_2016":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2016 import *
+    from NNInferenceCMSSW.LLP_NN_Inference.crab_requests_lists_calo_AOD_2016 import *
+    print "!! Using v5 lumi!!!"
+    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2016 import lumi
+    LUMI = lumi["HighMET"]["tot"]#["tot"]
+    print "total LUMI: ", LUMI
+
+
 else:
     print("No sample list indicated, aborting!")
     exit()
@@ -245,7 +270,7 @@ print(LUMI, " fb -1")
 print("*****************************************************************************")
 
 
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","SingleMuon","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","WJetsToLNuIncl","JetJet","splitSUSY","gluinoGMSB","EGamma","TTbarGenMET","MuonEG","MET","HighMET","JetHT","SingleElectron","SinglePhoton"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","SingleMuon","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","WJetsToLNuIncl","JetJet","splitSUSY","gluinoGMSB","EGamma","TTbarGenMET","MuonEG","MET","HighMET","JetHT","SingleElectron","SinglePhoton","SUSY_HH","SUSY_HZ","SUSY_ZZ"]
 print("Possible subgroups of samples:")
 for a in list_of_samples:
     print(a)
@@ -279,6 +304,24 @@ for b, k in enumerate(requests.keys()):
         elif "TChi" in k:
             print(k)
             selected_requests[k] = requests[k]
+        elif "SMS" in k:
+            print(k)
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="SUSY_HH":
+        if "HH" in k:
+            if "TChi" in k:
+                print(k)
+                selected_requests[k] = requests[k]
+    elif options.groupofsamples=="SUSY_HZ":
+        if "HZ" in k:
+            if "TChi" in k:
+                print(k)
+                selected_requests[k] = requests[k]
+    elif options.groupofsamples=="SUSY_ZZ":
+        if "ZZ" in k:
+            if "TChi" in k:
+                print(k)
+                selected_requests[k] = requests[k]
     elif options.groupofsamples=="ggHeavyHiggs":
         if "GluGluH2_H2ToSSTobb" in k:
             print k
@@ -334,7 +377,9 @@ def hadd_outputs(fold,name):
 
 ######################This blocks naf machines
     #print name
-    os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*.root")#timestamp for calo_signal!
+    #os.system('hadd -fk207 '+DEST+name+'.root ' + fold + "/*/*.root")#timestamp for calo_signal!
+    #no compression, goes faster
+    os.system('hadd -f '+DEST+name+'.root ' + fold + "/*/*.root")#timestamp for calo_signal!
 pass
 
 def weight(name):
@@ -344,6 +389,10 @@ def weight(name):
     ###
     else:
         nevents     = filename.Get("c_nEvents").GetBinContent(1)
+        if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in name:
+            print "SUSY central, consider sample dictionary for nevents!"
+            nevents = sample[name]['nevents']
+            #will be: sample[name]['nevents']
         b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
         n_pass      = filename.Get("n_pass").GetBinContent(1)
         n_odd       = filename.Get("n_odd").GetBinContent(1)            
@@ -357,11 +406,16 @@ def weight(name):
         elif('ZH_HToSSTobbbb') in name:
             #We take into account ZH Higgs production x-sec times branching fraction into leptons
             xs = 0.8839*(3.3658/100.)
-        #elif('n3n2-n1-hbb-hbb') in name:
-        #    print "Scaling SUSY to 1. for absolute x-sec sensitivity"
-        #    #Don't know this x-sec actually...
-        #    print "This is susy name: ", name
-        #    xs = 1.
+        elif('n3n2-n1-hbb-hbb') in name:
+            print "Scaling SUSY to 1. for absolute x-sec sensitivity"
+            #Don't know this x-sec actually...
+            print "This is susy name: ", name
+            xs = 1.
+        elif('SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3') in name:
+            print "Scaling SUSY to 1. for absolute x-sec sensitivity"
+            #print "But consider BR!"
+            xs = 1.
+            #xs *= sample[name]['BR']
         elif('GluGluH2_H2ToSSTobbbb') in name:
             #We do not take into account ggH Higgs production x-sec! Absolute x-sec needed!
             xs = 1.#48.58
