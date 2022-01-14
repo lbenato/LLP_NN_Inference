@@ -153,12 +153,23 @@ PRE_PLOTDIR        = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
 #PRE_PLOTDIR        = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"
 
 PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+if REGION=="SR":
+    YIELDDIR_BASE      = "plots/Yields_AN/v6_calo_AOD_"+ERA+"_"
+    YIELDDIR           = "plots/Yields_AN/v6_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+    UNCDIR             = "plots/v6_calo_AOD_"+ERA+"_SR_signal_uncertainties/"
+else:
+    YIELDDIR_BASE      = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
+    YIELDDIR           = PLOTDIR
+    UNCDIR             = ""
+
 #PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"__debug/"#"_2017_signal/"#
 #PLOTDIR            = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
 
 
 #OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"/"
-OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"_AN/"#"/"
+#OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"_AN/"#"/"
+OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v6_calo_AOD_"+ERA+"_"+REGION+"/"#"/"
+OUTCOMBI           = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v6_calo_AOD_"+REGION+"/"
 
 #print "OUTPUTDIR for combination attempt"
 #OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_"+ERA+"_"+REGION+"_AN_combi/"#"/"
@@ -166,8 +177,19 @@ OUTPUTDIR          = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/sr
 
 CHAN               = "SUSY"
 particle           = "#chi"
-ctaupoint          = 1000
-ctaus              = np.array([1, 3, 5, 7, 10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1100, 1200, 1300, 1400, 1500, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
+ctaupoint          = 500
+#ctaus              = np.array([1, 3, 5, 7, 10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1100, 1200, 1300, 1400, 1500, 2000, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
+ctaus              = np.array([1, 3, 5, 7, 10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200, 2500, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
+ctaus              = np.array([10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200, 2500, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
+#ctaus = np.array([100,500,1000,5000])
+
+#ctaus_500          = np.array([1, 3, 5, 7, 10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500])
+#ctaus_3000         = np.array([2000, 2500, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
+##ctaus_500 = ctaus
+#ctaus_500          = np.array([400, 600, 700, 1000])
+#ctaus_3000         = np.array([400, 600, 700, 1000,])
+#ctaus              = np.array([700])
+
 signalMultFactor   = 0.001#!!!
 PRELIMINARY        = True
 TAGVAR             = "nTagJets_0p996_JJ"
@@ -196,11 +218,37 @@ back = ["All"]
 data = ["HighMET"]
 #data = ["JetHT"]
 sign = [
+    'SUSY_mh127_ctau500',
+    'SUSY_mh150_ctau500',
+    'SUSY_mh175_ctau500',
+    'SUSY_mh200_ctau500',
+    'SUSY_mh250_ctau500',
+    'SUSY_mh300_ctau500',
+    'SUSY_mh400_ctau500',
+    'SUSY_mh600_ctau500',
+    'SUSY_mh800_ctau500',
+    'SUSY_mh1000_ctau500',
+    'SUSY_mh1250_ctau500',
+    'SUSY_mh1500_ctau500',
+    'SUSY_mh1800_ctau500',
+    #'SUSY_mh127_ctau3000',
+    #'SUSY_mh150_ctau3000',
+    #'SUSY_mh175_ctau3000',
+    #'SUSY_mh200_ctau3000',
+    #'SUSY_mh250_ctau3000',
+    #'SUSY_mh300_ctau3000',
+    #'SUSY_mh400_ctau3000',
+    #'SUSY_mh600_ctau3000',
+    #'SUSY_mh800_ctau3000',
+    #'SUSY_mh1000_ctau3000',
+    #'SUSY_mh1250_ctau3000',
+    #'SUSY_mh1500_ctau3000',
+    #'SUSY_mh1800_ctau3000',
     #"SUSY_all",
     #"SUSY_mh400_pl1000",
     #"SUSY_mh200_pl1000",
     #"SUSY_mh400_pl1000_XL",
-    "SUSY_mh400_pl1000","SUSY_mh300_pl1000","SUSY_mh250_pl1000","SUSY_mh200_pl1000","SUSY_mh175_pl1000","SUSY_mh150_pl1000","SUSY_mh127_pl1000",
+    #"SUSY_mh400_pl1000","SUSY_mh300_pl1000","SUSY_mh250_pl1000","SUSY_mh200_pl1000","SUSY_mh175_pl1000","SUSY_mh150_pl1000","SUSY_mh127_pl1000",
 
     #'splitSUSY_M-2400_CTau-300mm','splitSUSY_M-2400_CTau-1000mm','splitSUSY_M-2400_CTau-10000mm','splitSUSY_M-2400_CTau-30000mm',
     #'gluinoGMSB_M2400_ctau1','gluinoGMSB_M2400_ctau3','gluinoGMSB_M2400_ctau10','gluinoGMSB_M2400_ctau30','gluinoGMSB_M2400_ctau100','gluinoGMSB_M2400_ctau300','gluinoGMSB_M2400_ctau1000','gluinoGMSB_M2400_ctau3000','gluinoGMSB_M2400_ctau10000','gluinoGMSB_M2400_ctau30000','gluinoGMSB_M2400_ctau50000',
@@ -209,6 +257,12 @@ sign = [
     #'XXTo4J_M1000_CTau100mm','XXTo4J_M1000_CTau300mm','XXTo4J_M1000_CTau1000mm','XXTo4J_M1000_CTau3000mm','XXTo4J_M1000_CTau50000mm',
 ]
 
+#sign = [
+#    'SUSY_mh300_ctau500',
+#    'SUSY_mh300_ctau3000',
+#    'SUSY_mh1000_ctau500',
+#    'SUSY_mh1000_ctau3000',
+#]
 
 if ERA=="2018":
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import sample, samples
@@ -221,7 +275,7 @@ elif ERA=="2017":
 elif ERA=="2016":
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2016 import sample, samples
     from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2016 import lumi
-    print "Fake jet tag"
+    #print "Fake jet tag"
     jet_tag=""
     if "_G-H" in jet_tag:
         print "Only GH!"
@@ -231,7 +285,6 @@ elif ERA=="2016":
     else:
         LUMI  = lumi[ data[0] ]["tot"]
 
-print "Lumi: ", data[0] ,  LUMI
 
 COMPARE = options.compare
 DRAWSIGNAL = options.drawsignal
@@ -271,7 +324,7 @@ less_bins_pt = array('d', [1,10,20,30,40,50,60,70,80,90,100,200,300,400,500])#,1
 less_bins_pt = array('d', [1,10,20,30,40,50,60,75,100,200,500])#,10000])#this is good
 less_bins_plot = array('d', [1,10,20,30,40,50,60,70,80,90,100,200,300,400,500,10000])
 
-print "Warning, overflow causing nans, remove last bin"
+#print "Warning, overflow causing nans, remove last bin"
 np_bins = np.array(less_bins)
 np_bins = np_bins[np_bins>=30]#only interested in non-zero bins
 np_bins = np_bins[np_bins<10000]#only interested in non-nan bins
@@ -2709,7 +2762,6 @@ def draw_comparison(era,regions,extra="",col=0,maxeff=maxeff):
 
 
 def get_tree_weights(sample_list,LUMI):
-
     tree_w_dict = defaultdict(dict)
     for i, s in enumerate(sample_list):
         for l, ss in enumerate(samples[s]['files']):
@@ -2721,7 +2773,7 @@ def get_tree_weights(sample_list,LUMI):
                 nevents = filename.Get("c_nEvents").GetBinContent(1)
                 if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in ss:
                     print "SUSY central, consider sample dictionary for nevents!"
-                    nevents = sample[name]['nevents']
+                    nevents = sample[ss]['nevents']
                 b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
                 n_pass      = filename.Get("n_pass").GetBinContent(1)
                 n_odd       = filename.Get("n_odd").GetBinContent(1)
@@ -2742,7 +2794,7 @@ def get_tree_weights(sample_list,LUMI):
                 elif ('TChiHH') in ss:
                     print "Scaling SUSY to 1. for absolute x-sec sensitivity"
                     xs = 1.
-                elif('SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3') in name:
+                elif('SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3') in ss:
                     print "Scaling SUSY to 1. for absolute x-sec sensitivity"
                     #print "But consider BR!"
                     xs = 1.
@@ -2765,6 +2817,75 @@ def get_tree_weights(sample_list,LUMI):
             print("%s has tree weight %f")%(ss,t_w)
             tree_w_dict[s][ss] = t_w
 
+    return tree_w_dict
+
+
+def get_tree_weights_BR_scan(sample_list,br_h,dataset_label="",main_pred_sample="HighMET"):
+
+    #Fix this_lumi
+    if ERA=="2016":
+        if dataset_label == "_G-H":
+            this_lumi  = lumi[ main_pred_sample ]["G"]+lumi[ main_pred_sample ]["H"]#["tot"]
+        elif dataset_label == "_B-F":
+            this_lumi  = lumi[ main_pred_sample ]["B"]+lumi[ main_pred_sample ]["C"]+lumi[ main_pred_sample ]["D"]+lumi[ main_pred_sample ]["E"]+lumi[ main_pred_sample ]["F"]#["tot"]
+    else:
+        this_lumi  = lumi[ main_pred_sample ]["tot"]
+
+    def eq(H,Z):
+        return H**2 + 2*H*Z + Z**2
+
+    def retZ(H):
+        #x**2 + 2*H*x + (H**2 - 1.) = 0
+        return -H + 1
+
+    h = br_h/100. if br_h>1 else br_h
+    z = retZ(float(h))
+    w_hh = h*h
+    w_hz = 2*h*z
+    w_zz = z*z
+    print "\n"
+    print "------------------------"
+    print "BR: H(", h*100,"%), Z(", z*100,"%)"
+    print ("Decay composition: HH %.2f, HZ %.2f, ZZ %.2f" % (w_hh*100, w_hz*100, w_zz*100))
+    print "------------------------"
+
+    tree_w_dict = defaultdict(dict)
+    for i, pr in enumerate(sample_list):
+        new_list = [pr+"_HH",pr+"_HZ",pr+"_ZZ"]
+        for s in new_list:
+            #print s
+            for l, ss in enumerate(samples[s]['files']):
+                filename = TFile(NTUPLEDIR+ss+'.root', "READ")
+                #Tree weight
+                if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in ss:
+                    #print "SUSY central, consider sample dictionary for nevents!"
+                    nevents = sample[ss]['nevents']
+                b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
+                n_pass      = filename.Get("n_pass").GetBinContent(1)
+                n_odd       = filename.Get("n_odd").GetBinContent(1)
+                filename.Close()
+                if('SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3') in ss:
+                    #print "Scaling SUSY to 1. for absolute x-sec sensitivity"
+                    #print "But consider BR!"
+                    xs = 1.
+                    xs *= sample[ss]['BR']
+                print "LUMI ", this_lumi
+                print "xs ", xs
+                print "nevents ", nevents
+                t_w = this_lumi * xs / nevents
+                if(b_skipTrain>0):
+                    if(n_odd>0):
+                        t_w *= float(n_pass/n_odd)
+                if "_HH" in s:
+                    t_w *= w_hh
+                if "_HZ" in s:
+                    t_w *= w_hz
+                if "_ZZ" in s:
+                    t_w *= w_zz
+                print("%s has tree weight %f")%(ss,t_w)
+                tree_w_dict[pr][ss] = t_w
+
+    print "\n"
     return tree_w_dict
     
 '''
@@ -3929,7 +4050,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
         c = 0
         list_of_variables = ["isMC","Jets.pt","Jets.eta","Jets.phi","Jets.sigprob","Jets.timeRMSRecHitsEB","Jets.nRecHitsEB","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM*","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight","HLT*PFMETNoMu*",CUT]#"nLeptons"
         if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR and CUT=="isSR":
-            list_of_variables += ["dt_ecal_dist"]
+            list_of_variables += ["dt_ecal_dist","min_dPhi*"]
         if ERA=="2018" and CUT=="isSR":
             list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
             if plot_distr!="":
@@ -4207,10 +4328,17 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 if CUT == "isSR":
                     if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
                         #beam halo
-                        cut_mask_bh = np.logical_not(np.logical_and(arrays["Jets.timeRMSRecHitsEB"]>=8 , arrays["Jets.nRecHitsEB"]<=10))
-                        cut_mask_bh = np.logical_and(cut_mask,cut_mask_bh)
-                        cut_mask = (cut_mask_bh.any()==True)
-                        cut_jets = np.logical_and(cut_jets,cut_mask_bh)
+                        #poorly motivated
+                        #cut_mask_bh = np.logical_not(np.logical_and(arrays["Jets.timeRMSRecHitsEB"]>=8 , arrays["Jets.nRecHitsEB"]<=10))
+                        #cut_mask_bh = np.logical_and(cut_mask,cut_mask_bh)
+                        #cut_mask = (cut_mask_bh.any()==True)
+                        #cut_jets = np.logical_and(cut_jets,cut_mask_bh)
+                        cut_mask_dphi = arrays["min_dPhi_jets_eta_1p0_0p996"]<0.05
+                        cut_mask_low_multi_tag = np.logical_and(arrays["Jets.sigprob"]>0.996 , arrays["Jets.nRecHitsEB"]<=10)
+                        cut_mask_low_multi_tag = np.logical_and(cut_mask_dphi,cut_mask_low_multi_tag)
+                        cut_mask_bh = np.logical_not(cut_mask_low_multi_tag.any()==True)
+                        cut_mask = np.logical_and(cut_mask,cut_mask_bh)
+                        cut_jets = np.logical_and(cut_jets,cut_mask)
 
                 ##Fill pt and sigprob arrays #new
                 if eta:
@@ -5142,11 +5270,18 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
             #    w.close()
             #    print "Info: dictionary written in file "+"python/BkgPredResults_"+ERA+"_"+REGION+'_extr_region_' +r+add_label+".py"
 
+        '''
         with open(PLOTDIR+"BkgPredResults_"+ERA+"_"+REGION+ "_"+s+ add_label+label_2+".yaml","w") as f:
             yaml.dump(results, f)
             f.close()
             print "Info: dictionary written in file "+PLOTDIR+"BkgPredResults_"+ERA+"_"+REGION+"_"+s+add_label+label_2+".yaml"
+        '''
+        with open(YIELDDIR+"BkgPredResults_"+ERA+"_"+REGION+ "_"+s+ add_label+label_2+".yaml","w") as f:
+            yaml.dump(results, f)
+            f.close()
+            print "Info: dictionary written in file "+YIELDDIR+"BkgPredResults_"+ERA+"_"+REGION+"_"+s+add_label+label_2+".yaml"
 
+        '''
         with open(PLOTDIR+"BkgPredResults_"+ERA+"_"+REGION+"_"+s+ add_label+label_2+".json", "w") as w:
             w.write("results = " + json.dumps(results))
             w.close()
@@ -5157,6 +5292,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
             w.write("results = " + json.dumps(results))
             w.close()
             print "Info: dictionary written in file "+"python/BkgPredResults_"+ERA+"_"+REGION+"_"+s+add_label+label_2+".py"
+        '''
 
     ##To open a json:
     #a_file = open(PLOTDIR+'BkgPredResults.json', "r")
@@ -5183,7 +5319,8 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
     #exit()
 
 
-def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_region,unc_dict,comb_fold_label="",regions_labels=[],datasets=[],add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False):
+'''
+def old_write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_region,unc_dict,comb_fold_label="",regions_labels=[],datasets=[],add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False):
 
 
     PREDDIR = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+main_pred_reg+"/"
@@ -5219,7 +5356,7 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
     if not os.path.isdir(OUTPUTDIR): os.mkdir(OUTPUTDIR)
     DATACARDDIR = OUTPUTDIR+CHAN+"/"
     if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
-
+ 
     ###DATACARDDIR += TAGVAR+comb_fold_label
     DATACARDDIR += TAGVAR
     if eta_cut:
@@ -5615,6 +5752,878 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
     #print "Aborting, simply calculating integrals . . . ."
 
 '''
+
+def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_region,unc_list,dataset_label="",comb_fold_label="",add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False,BLIND=True,BR_SCAN_H=100):
+
+    print "\n"
+    #Fix 2016 lumi
+    if ERA=="2016":
+        if dataset_label == "_G-H":
+            this_lumi  = lumi[ main_pred_sample ]["G"]+lumi[ main_pred_sample ]["H"]#["tot"]
+        elif dataset_label == "_B-F":
+            this_lumi  = lumi[ main_pred_sample ]["B"]+lumi[ main_pred_sample ]["C"]+lumi[ main_pred_sample ]["D"]+lumi[ main_pred_sample ]["E"]+lumi[ main_pred_sample ]["F"]#["tot"]
+    else:
+        this_lumi  = lumi[ main_pred_sample ]["tot"]
+
+    if check_closure:
+        dnn_threshold = 0.9#
+        print  "Performing closure test with DNN threshold: ", dnn_threshold
+    else:
+        dnn_threshold = 0.996
+        print  "DNN threshold: ", dnn_threshold
+
+    #Bkg yield
+    PREDDIR = YIELDDIR_BASE+main_pred_reg+"/"
+    pred_file_name = PREDDIR+"BkgPredResults_"+ERA+"_"+main_pred_reg+"_"+main_pred_sample
+
+    if eta_cut:
+        pred_file_name+="_eta_1p0"
+    if phi_cut==True:
+        pred_file_name+="_phi_cut"
+
+    if eta:
+        pred_file_name+= "_vs_eta"
+    if phi:
+        pred_file_name+= "_vs_phi"
+
+    if check_closure:
+        pred_file_name+="_closure"+str(dnn_threshold).replace(".","p")
+
+    pred_file_name+=dataset_label
+    pred_file_name+=comb_fold_label
+
+    print "ERA and LUMI:"
+    print ERA, dataset_label, this_lumi
+    with open(pred_file_name+".yaml","r") as f:
+        print "  --  --  --  --  --"
+        print "Info: opening dictionary in file "+pred_file_name+".yaml"
+        print "Extrapolation region: ", extr_region+comb_fold_label
+        results = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        print "  --  --  --  --  --"
+
+    y_bkg  = results[extr_region+dataset_label+comb_fold_label][main_pred_sample]['pred_2_from_1']
+    y_data = y_bkg#int(y_bkg)#-1
+    if not BLIND:
+        y_data = results[extr_region+comb_fold_label][main_pred_sample]['y_2']
+
+    #Syst uncertainties
+    bkg_unc_dict = defaultdict(dict)
+    sgn_unc_dict = defaultdict(dict)
+    for l in unc_list:
+        with open(UNCDIR+"signal_"+l+"_datacard_unc"+dataset_label+".yaml","r") as f:
+            uncertainties = yaml.load(f, Loader=yaml.Loader)
+            f.close()
+        #print l
+        if l=="bkg":
+            bkg_unc_dict = uncertainties
+        else:
+            for s in sign:
+                s = s.replace("_HH","")
+                ##sgn_unc_dict[s] = dict(list(sgn_unc_dict[s].items()) + list(uncertainties[s].items()))#
+                sgn_unc_dict[s].update(uncertainties[s])
+
+    print "Bkg uncertainties:"
+    print bkg_unc_dict
+    print "Sgn uncertainties:"
+    print sgn_unc_dict
+
+    print "\n"
+    print " ********************************************************** "
+    print "\n"
+
+    print "Inferring limits on absolute x-sec in fb"
+    if not os.path.isdir(OUTPUTDIR): os.mkdir(OUTPUTDIR)
+    DATACARDDIR = OUTPUTDIR+CHAN+"/"
+    if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+
+    ###DATACARDDIR += TAGVAR+comb_fold_label
+    '''
+    DATACARDDIR += TAGVAR
+    if eta_cut:
+        DATACARDDIR += "_eta_1p0"
+    if phi_cut:
+        DATACARDDIR += "_phi_cut"
+
+    if eta:
+        DATACARDDIR += "_vs_eta"+comb_fold_label
+    else:
+        if phi:
+            DATACARDDIR += "_vs_phi"+comb_fold_label
+        else:
+            DATACARDDIR += comb_fold_label
+    '''
+
+    br_scan_fold = ""
+    if BR_SCAN_H==100:
+        br_scan_fold = "BR_h100_z0"
+    if BR_SCAN_H==75:
+        br_scan_fold = "BR_h75_z25"
+    if BR_SCAN_H==50:
+        br_scan_fold = "BR_h50_z50"
+    if BR_SCAN_H==25:
+        br_scan_fold = "BR_h25_z75"
+    if BR_SCAN_H==0:
+        br_scan_fold = "BR_h0_z100"
+
+    DATACARDDIR += br_scan_fold+"/"
+    if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+    DATACARDS = DATACARDDIR+"datacards/"
+    if not os.path.isdir(DATACARDS): os.mkdir(DATACARDS)
+    RESULTS = DATACARDDIR+"combine_results/"
+    if not os.path.isdir(RESULTS): os.mkdir(RESULTS)
+
+    if signalMultFactor == 0.001:
+        print '  x-sec calculated in fb '
+    #elif signalMultFactor == 0.0001:
+    #    print '  x-sec calculated in fb --> for impacts '
+    elif (signalMultFactor >= 1 and signalMultFactor < 1000):
+        print '  x-sec calculated in pb '
+    else:
+        print 'Wrong signal mult. factor, aborting...'
+        exit()
+        print '-'*11*2
+
+
+    chainSignal = {}
+    list_of_variables = [TAGVAR,"isMC","Jets.pt","Jets.phi","Jets.eta","Jets.sigprob","Jets.timeRMSRecHitsEB","Jets.nRecHitsEB","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM","EventNumber","RunNumber","LumiNumber","EventWeight","TriggerWeight","PUWeight","PUReWeight","GenLLPs.travelRadius","GenLLPs.travelX","GenLLPs.travelY","GenLLPs.travelZ","GenLLPs.travelTime","GenLLPs.beta","GenLLPs.*",CUT]#"nLeptons"
+
+    if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR and CUT=="isSR":
+        list_of_variables += ["dt_ecal_dist","min_dPhi_jets*"]
+
+    if ERA=="2018":
+        list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
+
+    #These will be dictionaries
+    #Here: all the arrays, because we'll merge three root files for each sign
+    bin2 = defaultdict(dict)#np.array([])
+    ctau_weights = defaultdict(dict)#still to think if this is correct...
+    y_2_ctau = defaultdict(dict)
+    e_2_ctau = defaultdict(dict)
+    n_mass = {}
+    
+    masses = []
+
+    #Initialize
+    sgn_av_unc = defaultdict(dict)
+    loop_ct = ctaus
+    for pr in sign:
+        masses.append(samples[pr]['mass'])
+        loop_ct = np.append(loop_ct,np.array([samples[pr]['ctau']]))
+    for m in masses:
+        n_mass[m] = masses.count(m)
+    masses = np.unique(np.array(masses))
+    loop_ct = np.unique(loop_ct)
+
+    
+    for i,pr in enumerate(sign):
+        for u in sgn_unc_dict[pr].keys():
+            sgn_av_unc[ samples[pr]['mass'] ][u] =   0
+        for ct in loop_ct:
+            #ctau_weights[samples[pr]['mass']][ct] = np.array([])
+            ctau_weights[pr][ct] = np.array([])
+            y_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
+            e_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
+
+    for i,pr in enumerate(sign):
+        #Consider the three decay modes
+        #print "\n"
+        #print "\n"
+        #print "            WARNING !!!!!!!!!!! "
+        #print "    Ignoring HZ, ZZ  "
+        #print "\n"
+        #print "\n"
+        new_list = [pr+"_HH",pr+"_HZ",pr+"_ZZ"]
+        #Here: all the arrays, because we'll merge three root files for each sign
+        bin2[pr] = np.array([])
+        y_2 = {}
+        e_2 = {}
+
+        #if samples[pr]['ctau']==500:
+        #    for ct in ctaus_500:
+        #        ctau_weights[pr][ct] = np.array([])
+        #elif samples[pr]['ctau']==3000:
+        #    for ct in ctaus_3000:
+        #        ctau_weights[pr][ct] = np.array([])
+        '''
+        bin2 = np.array([])
+        ctau_weights = defaultdict(dict)#still to think if this is correct...
+        y_2_ctau = defaultdict(dict)
+        e_2_ctau = defaultdict(dict)
+        if samples[pr]['ctau']==500:
+            for ct in ctaus_500:
+                ctau_weights[ct] = np.array([])
+        elif samples[pr]['ctau']==3000:
+            for ct in ctaus_3000:
+                ctau_weights[ct] = np.array([])
+        '''
+        files_list = []
+        print "\n"
+        for s in new_list:
+            print "Iterating over ", s, " . . . "
+            for l, ss in enumerate(samples[s]['files']):
+                #print "weight for ", ss, tree_weight_dict[pr][ss] 
+                filename = NTUPLEDIR + ss + '.root'
+                gen = uproot.iterate(filename,"tree",list_of_variables)
+                for arrays in gen:
+                    st_it = time.time()
+                    key_list = arrays.keys()
+                    tree_w_array = tree_weight_dict[pr][ss]*np.ones( len(arrays[ key_list[0] ])  )
+
+                    if CUT == "isSR":
+                        cut_mask = arrays[CUT]>0
+                        if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
+                            #cosmic
+                            cosmic_veto = arrays["dt_ecal_dist"]<0.5
+                            cut_mask = np.logical_and(cut_mask,np.logical_not(cosmic_veto))
+                    else:
+                        cut_mask = (arrays[CUT]>0)
+
+                    if KILL_QCD:
+                        cut_mask = np.logical_and( cut_mask, arrays["MinJetMetDPhi"]>0.5)
+
+                    #Default cut_jets, does nothing basically                                                                    
+                    cut_jets = arrays["Jets.pt"]>-999
+                    cut_jets = np.logical_and(cut_mask,cut_jets)
+                    cut_mask = (cut_jets.any()==True)
+                    
+                    if phi_cut==True and eta_cut==False:
+                        cut_mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                        cut_mask_phi = np.logical_and(cut_mask,cut_mask_phi)
+                        cut_mask = (cut_mask_phi.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_phi)#new
+
+                    elif eta_cut==True and phi_cut==False:
+                        cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
+                        cut_mask_eta = np.logical_and(cut_mask,cut_mask_eta)
+                        #This is needed to guarantee the shapes are consistent
+                        cut_mask = (cut_mask_eta.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_eta)#new
+
+                    elif phi_cut and eta_cut:
+                        cut_mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                        cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)                    
+                        cut_mask_phi_eta = np.logical_and(cut_mask,np.logical_and(cut_mask_phi,cut_mask_eta))
+                        cut_mask_phi_eta = np.logical_and(cut_mask,cut_mask_phi_eta)
+                        #This is needed to guarantee the shapes are consistent
+                        cut_mask = (cut_mask_phi_eta.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_phi_eta)#new
+
+                    #Beam Halo veto
+                    if CUT == "isSR":
+                        if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
+                            #beam halo
+                            #cut_mask_bh = np.logical_not(np.logical_and(arrays["Jets.timeRMSRecHitsEB"]>=8 , arrays["Jets.nRecHitsEB"]<=10))
+                            #cut_mask_bh = np.logical_and(cut_mask,cut_mask_bh)
+                            #cut_mask = (cut_mask_bh.any()==True)
+                            #cut_jets = np.logical_and(cut_jets,cut_mask_bh)
+                            cut_mask_dphi = arrays["min_dPhi_jets_eta_1p0_0p996"]<0.05
+                            cut_mask_low_multi_tag = np.logical_and(arrays["Jets.sigprob"]>0.996 , arrays["Jets.nRecHitsEB"]<=10)
+                            cut_mask_low_multi_tag = np.logical_and(cut_mask_dphi,cut_mask_low_multi_tag)
+                            cut_mask_bh = np.logical_not(cut_mask_low_multi_tag.any()==True)
+                            cut_mask = np.logical_and(cut_mask,cut_mask_bh)
+                            cut_jets = np.logical_and(cut_jets,cut_mask)
+
+                    sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
+
+                    #SR cut
+                    tag_mask = (sigprob > dnn_threshold)#Awkward array mask, same shape as original AwkArr
+                    bin2_m = (sigprob[tag_mask].counts >1)
+                    eventweight = arrays["EventWeight"][cut_mask][bin2_m]
+                    pureweight = arrays["PUReWeight"][cut_mask][bin2_m]
+                    trgweight = arrays["TriggerWeight"][cut_mask][bin2_m]
+                    #trgweight must go only in MC in SR!!
+                    weight = np.multiply(eventweight,np.multiply(pureweight,trgweight))*tree_weight_dict[pr][ss]*signalMultFactor
+                    #Here: gen level stuff
+                    genRadius = arrays["GenLLPs.travelRadius"][cut_mask][bin2_m]
+                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m]
+                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m]
+                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m]
+                    genTime = arrays["GenLLPs.travelTime"][cut_mask][bin2_m]
+                    genBeta = arrays["GenLLPs.beta"][cut_mask][bin2_m]
+                    genGamma = np.divide(1.,np.sqrt(1-np.multiply(genBeta,genBeta)))
+                    genTravelDist = np.sqrt( np.multiply(genX,genX) + np.multiply(genY,genY) + np.multiply(genZ,genZ) )
+                    ##genPosteriorTime = np.divide(genRadius,np.multiply(genBeta , genGamma))
+                    #bugfix
+                    genPosteriorTime = np.divide(genTravelDist,np.multiply(genBeta , genGamma))
+                    #genAccept = arrays["GenLLPs.isLLPInCaloAcceptance"][cut_mask][bin2_m]
+                    ##print genBeta
+                    ##print genGamma
+                    ##print "pre time ", genTime
+                    #print "post time ", genPosteriorTime
+                    #print "radius ", genRadius
+                    #print genAccept
+                    #print genPosteriorTime.sum()
+                    #print tau_weight_calc(genPosteriorTime.sum(), 10./10., float(ctaupoint)/10.)#cm
+                    del arrays
+
+
+                    '''
+                    if samples[pr]['ctau']==500:
+                        for ct in ctaus_500:
+                            #should add numbers for each of the root files
+                            #ctau_weights[ct] = np.concatenate( (ctau_weights[ct],tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)) )
+                            ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct],tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)) )
+                    if samples[pr]['ctau']==3000:
+                        for ct in ctaus_3000:
+                            #should add numbers for each of the root files
+                            #ctau_weights[ct] = np.concatenate( (ctau_weights[ct],tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)) )
+                            ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct],tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)) )
+                    '''
+                    if scale_mu!=1.:
+                        print "Scaling mu up by factor", scale_mu
+                        weight *= scale_mu
+                    ####bin2 = np.concatenate( (bin2,weight) )
+                    #print "concatenating: ", pr, s, ss
+                    bin2[pr] = np.concatenate( (bin2[pr],weight) )
+                    #print "partial bin 2 yield ", np.sum(bin2[pr])
+                    for ct in ctaus:
+                        if ct!=samples[pr]['ctau']:
+                            #print " ------ "
+                            #print "   ctau ", ct
+                            #print "   something is wrong here...."
+                            ###ctau_weights[ samples[pr]['mass'] ][ct] = np.concatenate( (ctau_weights[ samples[pr]['mass'] ][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight)  ) )
+                            ###y_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
+                            ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight)  ) )
+                            #print "   concatenating: ", pr, s, ss
+                            ###print "   yield ", np.sum( ctau_weights[ samples[pr]['mass'] ][ct]  )
+                        else:
+                            #print "   xxxxx "
+                            #print "   ctau ", ct
+                            #print "   something is wrong here...."
+                            #print "   sum at this round",np.sum(weight)
+                            ###ctau_weights[ samples[pr]['mass'] ][ct] = np.concatenate( (ctau_weights[ samples[pr]['mass'] ][ct], weight) )
+                            ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], weight) 
+)
+                            ###y_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
+                        #print "   sum up to now",np.sum(ctau_weights[pr][ct])
+
+                del gen
+                #print ctau_weights
+
+    #We can redo the loop
+    for pr in sign:
+        for u in sgn_unc_dict[pr].keys():
+            #print "Unc: ", pr, u, sgn_unc_dict[pr][u]
+            sgn_av_unc[samples[pr]['mass']][u] += sgn_unc_dict[pr][u]/n_mass[ samples[pr]['mass'] ]#averaging the uncertainties
+            ####card += ('%s '+(22-len(u))*' '+'lnN     %-33f%-33s\n') % (u, 1.+sgn_unc_dict[pr][u]/100.,'-')
+        #print "sign ", pr
+        for ct in ctaus:
+            #print "ct ", ct
+            #print "will add: ", np.sum(ctau_weights[pr][ct])
+            y_2_ctau[samples[pr]['mass']][ct] = np.concatenate((y_2_ctau[samples[pr]['mass']][ct],ctau_weights[pr][ct]))
+
+    for m in masses:
+        for ct in ctaus:
+            #uncertainties depend on the lifetime
+            #let's define the average
+            
+            y_av = y_2_ctau[m][ct]/n_mass[m]
+            y_2 = np.sum(y_av)
+            e_2 = np.sqrt( sum(x*x for x in y_av) ).sum()#*tree_weight --> already in w
+            #print m, ct, y_2, e_2
+            #print "unc average"
+            #for u in sgn_av_unc[m].keys():
+            #    #print m, u, sgn_av_unc[m][u]
+
+            #if (e_2/y_2 > 0.6 or y_2 == 0):
+            #    print "Large uncertainty or zero yield for ctau = ", ct
+            #    print y_2 , " +- ", e_2
+            #    continue
+            s_rename = "SUSY_mh"+str(m)+"_ctau"+str(ct)
+
+            #*******************************************************#
+            #                                                       #
+            #                      Datacard                         #
+            #                                                       #
+            #*******************************************************#
+        
+            card  = 'imax 1\n'#n of bins
+            card += 'jmax *\n'#n of backgrounds
+            card += 'kmax *\n'#n of nuisance parmeters
+            card += 'shapes * * FAKE \n'#Fake shapes!
+            card += '-----------------------------------------------------------------------------------\n'
+            card += 'bin                            %s\n' % CHAN
+            card += 'observation                    %f\n' % y_data
+            card += '-----------------------------------------------------------------------------------\n'
+            card += 'bin                            %-33s%-33s\n' % (CHAN, CHAN)
+            card += 'process                        %-33s%-33s\n' % (s_rename, 'Bkg')
+            card += 'process                        %-33s%-33s\n' % ('0', '1')
+            card += 'rate                           %-33f%-33f\n' % (y_2, y_bkg)
+            card += '-----------------------------------------------------------------------------------\n'
+            #Syst uncertainties
+            #bkg
+            for u in bkg_unc_dict.keys():
+                card += ('%s '+(22-len(u))*' '+'lnN     %-33s%-33f\n') % (u,'-', 1.+bkg_unc_dict[u]/100.)
+            #sgn
+            card += '%-18s     lnN     %-33f%-33s\n' % ('sig_stat_'+ERA,1.+e_2/y_2 if y_2>0 else 1.,'-')
+            for u in sgn_av_unc[m].keys():
+                card += ('%s '+(22-len(u))*' '+'lnN     %-33f%-33s\n') % (u, 1.+sgn_av_unc[m][u]/100.,'-')
+            print card
+            outname = DATACARDS+ s_rename + dataset_label+'.txt'
+            cardfile = open(outname, 'w')
+            cardfile.write(card)
+            cardfile.close()
+            print "Info: " , outname, " written"
+        
+            original_location = os.popen("pwd").read()
+            os.chdir("/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit")
+            #os.system("pwd")
+            print "\n"
+
+            #combine commands
+            #Limits
+            if run_combine:
+                #os.system("source /cvmfs/cms.cern.ch/cmsset_default.sh")
+                #os.system("eval `scramv1 runtime -sh`")
+                #os.system("pwd")
+                #os.system("echo $CMSSW_BASE \n")
+                tmp  = "#!/bin/sh\n"
+                tmp += "source /etc/profile.d/modules.sh\n"
+                tmp += "module use -a /afs/desy.de/group/cms/modulefiles/\n"
+                tmp += "module load cmssw\n"
+                #tmp += "pwd\n"
+                tmp += "cmsenv\n"
+                workspace = s_rename+dataset_label+".root"
+                #writes directly without displaying errors
+                #tmp += "combine -M AsymptoticLimits --datacard " + outname + "  --run blind -m " + str(samples[s]['mass']) + " | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s + ".txt\n"
+                #tmp += "text2workspace.py " + outname + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                #tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s + ".txt\n"
+
+                #print screen
+                #Asymptotic
+                tmp += "combine -M AsymptoticLimits --datacard " + outname + "  --run blind -m " + str(samples[pr]['mass']) + " -n " + s_rename+dataset_label +" \n"
+                #Toys
+                #Observed
+                #tmp += "combine -M HybridNew --LHCmode LHC-limits --datacard " + outname + "  -m " + str(samples[pr]['mass']) + " -n " + s_rename+dataset_label +" \n"
+                #Result stored in the limit branch
+                #Expected median: --expectedFromGrid=0.025,0.16,0.5,0.84,0.975
+                #For blind limits: add -t -1 (Asimov instead of data)
+                #Result stored in the quantileExpected branch
+                tmp += "text2workspace.py " + outname + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 -n Sign"+s_rename+dataset_label+" \n"
+                if ct==500:
+                    print "Run fit diagnostics..."
+                    print "Pulls"
+                    print "combine -M FitDiagnostics " + outname + " --name " + s_rename+dataset_label + " --plots --forceRecreateNLL -m "+ str(samples[pr]['mass'])+" -n "+s_rename + dataset_label
+                    #tmp += "combine -M FitDiagnostics " + outname + " --name " + s+contam_lab + " --plots --forceRecreateNLL -m "+ str(samples[s]['mass'])+"\n"
+                    print "python /afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics"+s_rename+dataset_label +".root --all --abs --pullDef relDiffAsymErrs -g pulls"+s_rename+dataset_label+".root"
+                    #tmp += "python /afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics"+s+contam_lab +".root --all --abs --pullDef relDiffAsymErrs -g pulls"+s+contam_lab +".root \n"
+                    print "Impacts"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" --doInitialFit --robustFit 1 --rMin -5 --rMax 5 \n"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" --robustFit 1 --doFits --rMin -5 --rMax 5 \n"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" -o impacts"+ s+contam_lab +".json \n"
+                    #tmp += "plotImpacts.py -i impacts"+ s+contam_lab +".json -o impacts"+ s+contam_lab + " \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" --doInitialFit --robustFit 1 --rMin -5 --rMax 5 \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" --robustFit 1 --doFits --rMin -5 --rMax 5 \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" -o impacts"+ s_rename +".json \n"
+                    print "plotImpacts.py -i impacts"+ s_rename +dataset_label+".json -o impacts"+ s_rename+dataset_label + " \n"
+                    #exit()
+                job = open("job.sh", 'w')
+                job.write(tmp)
+                job.close()
+                os.system("sh job.sh > log.txt \n")
+                os.system("\n")
+                os.system("cat log.txt \n")
+                os.system("cat log.txt | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s_rename +dataset_label+".txt  \n")
+                os.system("cat log.txt | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s_rename +dataset_label+".txt\n")
+                #os.system("cat "+ RESULTS + "/" + s + ".txt  \n")
+                print "\n"
+                print "Limits written in ", RESULTS + "/" + s_rename + dataset_label+".txt"
+                print "Significance written in ", RESULTS + "/Significance_" + s_rename + dataset_label + ".txt"
+                print "*********************************************"
+
+            os.chdir(original_location[:-1])
+            os.system("eval `scramv1 runtime -sh`")
+            os.system("pwd")
+
+
+def old_stuff_write():    
+    for i,pr in enumerate(sign):
+        print pr
+        print "bin2[pr]: ", np.sum(bin2[pr])
+        print "ctau nominal: ", np.sum(ctau_weights[pr][ samples[pr]['ctau']  ])
+        continue
+
+        y_2[pr] = np.sum(bin2[pr])#*tree_weight --> already in w
+        e_2[pr] = np.sqrt( sum(x*x for x in bin2[pr]) ).sum()#*tree_weight --> already in w
+        '''
+        for ct in ctaus:
+            #Always average
+            y_2_ctau[ samples[pr]['mass'] ][ct] = np.sum(ctau_weights[ samples[pr]['mass'] ][ct])/n_mass[samples[pr]['mass']]
+            e_2_ctau[ samples[pr]['mass'] ][ct] = np.sqrt( sum(x*x for x in ctau_weights[ samples[pr]['mass'] ][ct])/len(ctau_weights.keys() )).sum()
+        '''
+        #Here: sum the two predictions
+        for ct in ctaus:
+            if ct!=samples[pr]['ctau']:
+                #Sum over the samples with the same mass
+                #print "n. samples with mass ", n_mass[samples[pr]['mass']]
+                #Divide by the number of masses
+                y_2_ctau[ samples[pr]['mass'] ][ct] = np.sum(ctau_weights[ samples[pr]['mass'] ][ct])/n_mass[samples[pr]['mass']]
+                e_2_ctau[ samples[pr]['mass'] ][ct] = np.sqrt( sum(x*x for x in ctau_weights[ samples[pr]['mass'] ][ct])/len(ctau_weights.keys() )).sum()
+
+        y_2_ctau[ samples[pr]['mass'] ][ samples[pr]['ctau'] ] = y_2[pr]
+        e_2_ctau[ samples[pr]['mass'] ][ samples[pr]['ctau'] ] = e_2[pr]
+
+        #Old method: stitch them
+        #if samples[pr]['ctau']==500:
+        #    for ct in ctaus_500:
+        #        y_2_ctau[pr][ct] = np.sum( np.multiply(bin2[pr],ctau_weights[pr][ct]) )
+        #        e_2_ctau[pr][ct] = np.sqrt( sum(x*x for x in np.multiply(bin2[pr],ctau_weights[pr][ct])) )
+        #if samples[pr]['ctau']==3000:
+        #    for ct in ctaus_3000:
+        #        y_2_ctau[pr][ct] = np.sum( np.multiply(bin2[pr],ctau_weights[pr][ct]) )
+        #        e_2_ctau[pr][ct] = np.sqrt( sum(x*x for x in np.multiply(bin2[pr],ctau_weights[pr][ct])) )
+        #
+
+        #'''
+        #y_2 = np.sum(bin2)#*tree_weight --> already in w
+        #e_2 = np.sqrt( sum(x*x for x in bin2) ).sum()#*tree_weight --> already in w
+        #if samples[pr]['ctau']==500:
+        #    for ct in ctaus_500:
+        #        y_2_ctau[ct] = np.sum( np.multiply(bin2,ctau_weights[ct]) )
+        #        e_2_ctau[ct] = np.sqrt( sum(x*x for x in np.multiply(bin2,ctau_weights[ct])) )
+        #if samples[pr]['ctau']==3000:
+        #    for ct in ctaus_3000:
+        #        y_2_ctau[ct] = np.sum( np.multiply(bin2,ctau_weights[ct]) )
+        #        e_2_ctau[ct] = np.sqrt( sum(x*x for x in np.multiply(bin2,ctau_weights[ct])) )
+        #'''
+
+        #### Should store the yields and ctaus for each sample and then re-loop to do the average
+        #print s, y_2[pr], " +- ", e_2[pr]
+        #for simplicity to avoid overwriting
+        #res_reg = extr_region+comb_fold_label
+
+        #print s, y_2, " +- ", e_2
+        
+        ##print "Now I must only organize datacards accordingly (good naming and good output folder)"
+        ##print "need for sure to have a datacard dictionary to avoid re-writing the same stuff"
+        ##print "LATER!"
+
+    print "\n"
+    for k in y_2_ctau.keys():
+        for ct in loop_ct:
+            print k, ct, y_2_ctau[k][ct]
+    print "\n"
+
+
+    #We can redo the loop AGAIN! REMOVE! ONLY FOR TESTING
+    for i,pr in enumerate(sign):
+        m = samples[pr]['mass']
+        for ct in loop_ct:
+            #skip extrapolations with uncertainties that are too large
+            #combine numerical precision: set 0.000001 instead of zero
+            if (e_2_ctau[m][ct]/y_2_ctau[m][ct] > 0.6 or y_2_ctau[m][ct] < 0.000001):
+                print "Large uncertainty or zero yield for ctau = ", ct
+                print y_2_ctau[m][ct] , " +- ", e_2_ctau[m][ct]
+                continue
+            s_rename = pr.replace('ctau'+str(samples[pr]['ctau']),'ctau'+str(ct))
+            #print "Doing datacard: ", s_rename
+            #print "HERE TO DO:"
+            #print "1. build a decent uncertainty structure"
+            #print "2. take into account BR scan"
+
+            #*******************************************************#
+            #                                                       #
+            #                      Datacard                         #
+            #                                                       #
+            #*******************************************************#
+        
+            card  = 'imax 1\n'#n of bins
+            card += 'jmax *\n'#n of backgrounds
+            card += 'kmax *\n'#n of nuisance parmeters
+            card += 'shapes * * FAKE \n'#Fake shapes!
+            card += '-----------------------------------------------------------------------------------\n'
+            card += 'bin                            %s\n' % CHAN
+            card += 'observation                    %f\n' % y_data
+            card += '-----------------------------------------------------------------------------------\n'
+            card += 'bin                            %-33s%-33s\n' % (CHAN, CHAN)
+            card += 'process                        %-33s%-33s\n' % (s_rename, 'Bkg')
+            card += 'process                        %-33s%-33s\n' % ('0', '1')
+            '''
+            #This must be reviewed
+            if contamination:
+                print "Due to contamination: scaling with mu taken from no contamination case: ", mu_no_cont_limit
+                print "Original values: y_2_ctau[ct] ", y_2_ctau[ct], " ; contam: ", bin2_contamination_yield_from_1*scale_mu
+                print "Scaled values: y_2_ctau[ct] ", y_2_ctau[ct]*mu_no_cont_limit, " ; contam: ", bin2_contamination_yield_from_1*scale_mu*mu_no_cont_limit
+                y_2_contam = (results[res_reg][key_dict]['pred_2_from_1'] + bin2_contamination_yield_from_1*scale_mu*mu_no_cont_limit)
+                card += 'rate                     %-33f%-33f\n' % (y_2_ctau[ct]*mu_no_cont_limit, y_2_contam)
+            else:
+                card += 'rate                     %-33f%-33f\n' % (y_2_ctau[ct], unc_dict["bkg_yield"])
+            '''
+            card += 'rate                           %-33f%-33f\n' % (y_2_ctau[m][ct], y_bkg)
+            card += '-----------------------------------------------------------------------------------\n'
+            #Syst uncertainties
+            #bkg
+            for u in bkg_unc_dict.keys():
+                card += ('%s '+(22-len(u))*' '+'lnN     %-33s%-33f\n') % (u,'-', 1.+bkg_unc_dict[u]/100.)
+            #sgn
+            card += '%-18s     lnN     %-33f%-33s\n' % ('sig_stat_'+ERA,1.+e_2_ctau[m][ct]/y_2_ctau[m][ct] if y_2_ctau[m][ct]>0 else 1.,'-')
+            for u in sgn_unc_dict[pr].keys():
+                card += ('%s '+(22-len(u))*' '+'lnN     %-33f%-33s\n') % (u, 1.+sgn_unc_dict[pr][u]/100.,'-')
+            '''
+            #This must be reviewed
+            if contamination:
+                print "Adding signal contamination in bin 2 bkg, but keeping same level of uncertainty"
+                #card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm','-', 1.+pred_unc)
+                card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_stat','-', unc_dict["bkg_yield_stat"])
+                card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_syst','-', unc_dict["bkg_yield_syst"])
+            else:
+                #card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm','-', 1.+pred_unc)
+                card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_stat','-', unc_dict["bkg_yield_stat"])
+                card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_syst','-', unc_dict["bkg_yield_syst"])
+            '''
+            print card
+
+            '''
+            contam_lab = "_"+str(ct)+"mm"
+            if scale_mu!=1.:
+                contam_lab+='_scale_mu_'+str(scale_mu).replace(".","p")
+            if contamination:
+                contam_lab+='_contamination'
+            '''
+
+            outname = DATACARDS+ s_rename + dataset_label+'.txt'
+            cardfile = open(outname, 'w')
+            cardfile.write(card)
+            cardfile.close()
+            print "Info: " , outname, " written"
+        
+            original_location = os.popen("pwd").read()
+            os.chdir("/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit")
+            #os.system("pwd")
+            print "\n"
+
+            #combine commands
+            #Limits
+            if run_combine:
+                #os.system("source /cvmfs/cms.cern.ch/cmsset_default.sh")
+                #os.system("eval `scramv1 runtime -sh`")
+                #os.system("pwd")
+                #os.system("echo $CMSSW_BASE \n")
+                tmp  = "#!/bin/sh\n"
+                tmp += "source /etc/profile.d/modules.sh\n"
+                tmp += "module use -a /afs/desy.de/group/cms/modulefiles/\n"
+                tmp += "module load cmssw\n"
+                #tmp += "pwd\n"
+                tmp += "cmsenv\n"
+                workspace = s_rename+dataset_label+".root"
+                #writes directly without displaying errors
+                #tmp += "combine -M AsymptoticLimits --datacard " + outname + "  --run blind -m " + str(samples[s]['mass']) + " | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s + ".txt\n"
+                #tmp += "text2workspace.py " + outname + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                #tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s + ".txt\n"
+
+                #print screen
+                #Asymptotic
+                tmp += "combine -M AsymptoticLimits --datacard " + outname + "  --run blind -m " + str(samples[pr]['mass']) + " -n " + s_rename+dataset_label +" \n"
+                #Toys
+                #Observed
+                #tmp += "combine -M HybridNew --LHCmode LHC-limits --datacard " + outname + "  -m " + str(samples[pr]['mass']) + " -n " + s_rename+dataset_label +" \n"
+                #Result stored in the limit branch
+                #Expected median: --expectedFromGrid=0.025,0.16,0.5,0.84,0.975
+                #For blind limits: add -t -1 (Asimov instead of data)
+                #Result stored in the quantileExpected branch
+                tmp += "text2workspace.py " + outname + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 -n Sign"+s_rename+dataset_label+" \n"
+                if ct==500:
+                    print "Run fit diagnostics..."
+                    print "Pulls"
+                    print "combine -M FitDiagnostics " + outname + " --name " + s_rename+dataset_label + " --plots --forceRecreateNLL -m "+ str(samples[pr]['mass'])+" -n "+s_rename + dataset_label
+                    #tmp += "combine -M FitDiagnostics " + outname + " --name " + s+contam_lab + " --plots --forceRecreateNLL -m "+ str(samples[s]['mass'])+"\n"
+                    print "python /afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics"+s_rename+dataset_label +".root --all --abs --pullDef relDiffAsymErrs -g pulls"+s_rename+dataset_label+".root"
+                    #tmp += "python /afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics"+s+contam_lab +".root --all --abs --pullDef relDiffAsymErrs -g pulls"+s+contam_lab +".root \n"
+                    print "Impacts"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" --doInitialFit --robustFit 1 --rMin -5 --rMax 5 \n"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" --robustFit 1 --doFits --rMin -5 --rMax 5 \n"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" -o impacts"+ s+contam_lab +".json \n"
+                    #tmp += "plotImpacts.py -i impacts"+ s+contam_lab +".json -o impacts"+ s+contam_lab + " \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" --doInitialFit --robustFit 1 --rMin -5 --rMax 5 \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" --robustFit 1 --doFits --rMin -5 --rMax 5 \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" -o impacts"+ s_rename +".json \n"
+                    print "plotImpacts.py -i impacts"+ s_rename +dataset_label+".json -o impacts"+ s_rename+dataset_label + " \n"
+                    #exit()
+                job = open("job.sh", 'w')
+                job.write(tmp)
+                job.close()
+                os.system("sh job.sh > log.txt \n")
+                os.system("\n")
+                os.system("cat log.txt \n")
+                os.system("cat log.txt | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s_rename +dataset_label+".txt  \n")
+                os.system("cat log.txt | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s_rename +dataset_label+".txt\n")
+                #os.system("cat "+ RESULTS + "/" + s + ".txt  \n")
+                print "\n"
+                print "Limits written in ", RESULTS + "/" + s_rename + dataset_label+".txt"
+                print "Significance written in ", RESULTS + "/Significance_" + s_rename + dataset_label + ".txt"
+                print "*********************************************"
+
+            os.chdir(original_location[:-1])
+            os.system("eval `scramv1 runtime -sh`")
+            os.system("pwd")
+        
+
+    #print "Aborting, simply calculating integrals . . . ."
+
+    '''
+    #We can redo the loop AGAIN! REMOVE! ONLY FOR TESTING
+    for i,pr in enumerate(sign):
+        y_2_ctau[samples[pr]['ctau']] = y_2
+        e_2_ctau[samples[pr]['ctau']] = e_2
+
+        loop_ct = np.array([ samples[pr]['ctau'] ])
+        if samples[pr]['ctau'] == 500:
+            loop_ct = np.append(loop_ct,ctaus_500)
+        if samples[pr]['ctau'] == 3000:
+            loop_ct = np.append(loop_ct,ctaus_3000)
+
+        ##for ct in np.append(np.array([ctaupoint]),ctaus):
+        #for ct in np.array([ctaupoint]):
+        #for ct in [samples[pr]['ctau']]:
+        for ct in loop_ct:
+
+            #skip extrapolations with uncertainties that are too large
+            if (e_2_ctau[ct]/y_2_ctau[ct] > 0.6 or y_2_ctau[ct] == 0):
+                print "Large uncertainty or zero yield for ctau = ", ct
+                print y_2_ctau[ct] , " +- ", e_2_ctau[ct]
+                continue
+            s_rename = pr.replace('ctau'+str(samples[pr]['ctau']),'ctau'+str(ct))
+            #print "Doing datacard: ", s_rename
+            #print "HERE TO DO:"
+            #print "1. build a decent uncertainty structure"
+            #print "2. take into account BR scan"
+
+            #*******************************************************#
+            #                                                       #
+            #                      Datacard                         #
+            #                                                       #
+            #*******************************************************#
+        
+            card  = 'imax 1\n'#n of bins
+            card += 'jmax *\n'#n of backgrounds
+            card += 'kmax *\n'#n of nuisance parmeters
+            card += 'shapes * * FAKE \n'#Fake shapes!
+            card += '-----------------------------------------------------------------------------------\n'
+            card += 'bin                            %s\n' % CHAN
+            card += 'observation                    %f\n' % y_data
+            card += '-----------------------------------------------------------------------------------\n'
+            card += 'bin                            %-33s%-33s\n' % (CHAN, CHAN)
+            card += 'process                        %-33s%-33s\n' % (s_rename, 'Bkg')
+            card += 'process                        %-33s%-33s\n' % ('0', '1')
+            
+            ##This must be reviewed
+            #if contamination:
+            #    print "Due to contamination: scaling with mu taken from no contamination case: ", mu_no_cont_limit
+            #    print "Original values: y_2_ctau[ct] ", y_2_ctau[ct], " ; contam: ", bin2_contamination_yield_from_1*scale_mu
+            #    print "Scaled values: y_2_ctau[ct] ", y_2_ctau[ct]*mu_no_cont_limit, " ; contam: ", bin2_contamination_yield_from_1*scale_mu*mu_no_cont_limit
+            #    y_2_contam = (results[res_reg][key_dict]['pred_2_from_1'] + bin2_contamination_yield_from_1*scale_mu*mu_no_cont_limit)
+            #    card += 'rate                     %-33f%-33f\n' % (y_2_ctau[ct]*mu_no_cont_limit, y_2_contam)
+            #else:
+            #    card += 'rate                     %-33f%-33f\n' % (y_2_ctau[ct], unc_dict["bkg_yield"])
+            #
+            card += 'rate                           %-33f%-33f\n' % (y_2_ctau[ct], y_bkg)
+            card += '-----------------------------------------------------------------------------------\n'
+            #Syst uncertainties
+            #bkg
+            for u in bkg_unc_dict.keys():
+                card += ('%s '+(22-len(u))*' '+'lnN     %-33s%-33f\n') % (u,'-', 1.+bkg_unc_dict[u]/100.)
+            #sgn
+            card += '%-18s     lnN     %-33f%-33s\n' % ('sig_stat_'+ERA,1.+e_2_ctau[ct]/y_2_ctau[ct] if y_2_ctau[ct]>0 else 1.,'-')
+            for u in sgn_unc_dict[pr].keys():
+                card += ('%s '+(22-len(u))*' '+'lnN     %-33f%-33s\n') % (u, 1.+sgn_unc_dict[pr][u]/100.,'-')
+            #
+            ##This must be reviewed
+            #if contamination:
+            #    print "Adding signal contamination in bin 2 bkg, but keeping same level of uncertainty"
+            #    #card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm','-', 1.+pred_unc)
+            #    card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_stat','-', unc_dict["bkg_yield_stat"])
+            #    card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_syst','-', unc_dict["bkg_yield_syst"])
+            #else:
+            #    #card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm','-', 1.+pred_unc)
+            #    card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_stat','-', unc_dict["bkg_yield_stat"])
+            #    card += '%-12s     lnN     %-33s%-33f\n' % ('bkg_norm_syst','-', unc_dict["bkg_yield_syst"])
+            #
+            print card
+
+            #
+            #contam_lab = "_"+str(ct)+"mm"
+            #if scale_mu!=1.:
+            #    contam_lab+='_scale_mu_'+str(scale_mu).replace(".","p")
+            #if contamination:
+            #    contam_lab+='_contamination'
+            #
+            outname = DATACARDS+ s_rename + dataset_label+'.txt'
+            cardfile = open(outname, 'w')
+            cardfile.write(card)
+            cardfile.close()
+            print "Info: " , outname, " written"
+        
+            original_location = os.popen("pwd").read()
+            os.chdir("/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit")
+            #os.system("pwd")
+            print "\n"
+
+            #combine commands
+            #Limits
+            if run_combine:
+                #os.system("source /cvmfs/cms.cern.ch/cmsset_default.sh")
+                #os.system("eval `scramv1 runtime -sh`")
+                #os.system("pwd")
+                #os.system("echo $CMSSW_BASE \n")
+                tmp  = "#!/bin/sh\n"
+                tmp += "source /etc/profile.d/modules.sh\n"
+                tmp += "module use -a /afs/desy.de/group/cms/modulefiles/\n"
+                tmp += "module load cmssw\n"
+                #tmp += "pwd\n"
+                tmp += "cmsenv\n"
+                workspace = s_rename+dataset_label+".root"
+                #writes directly without displaying errors
+                #tmp += "combine -M AsymptoticLimits --datacard " + outname + "  --run blind -m " + str(samples[s]['mass']) + " | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s + ".txt\n"
+                #tmp += "text2workspace.py " + outname + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                #tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s + ".txt\n"
+
+                #print screen
+                tmp += "combine -M AsymptoticLimits --datacard " + outname + "  --run blind -m " + str(samples[pr]['mass']) + " -n " + s_rename+dataset_label +" \n"
+                tmp += "text2workspace.py " + outname + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 -n Sign"+s_rename+dataset_label+" \n"
+                if ct==500:
+                    print "Run fit diagnostics..."
+                    print "Pulls"
+                    print "combine -M FitDiagnostics " + outname + " --name " + s_rename+dataset_label + " --plots --forceRecreateNLL -m "+ str(samples[pr]['mass'])+" -n "+s_rename + dataset_label
+                    #tmp += "combine -M FitDiagnostics " + outname + " --name " + s+contam_lab + " --plots --forceRecreateNLL -m "+ str(samples[s]['mass'])+"\n"
+                    print "python /afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics"+s_rename+dataset_label +".root --all --abs --pullDef relDiffAsymErrs -g pulls"+s_rename+dataset_label+".root"
+                    #tmp += "python /afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/test/diffNuisances.py fitDiagnostics"+s+contam_lab +".root --all --abs --pullDef relDiffAsymErrs -g pulls"+s+contam_lab +".root \n"
+                    print "Impacts"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" --doInitialFit --robustFit 1 --rMin -5 --rMax 5 \n"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" --robustFit 1 --doFits --rMin -5 --rMax 5 \n"
+                    #tmp += "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[s]['mass']) +" -o impacts"+ s+contam_lab +".json \n"
+                    #tmp += "plotImpacts.py -i impacts"+ s+contam_lab +".json -o impacts"+ s+contam_lab + " \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" --doInitialFit --robustFit 1 --rMin -5 --rMax 5 \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" --robustFit 1 --doFits --rMin -5 --rMax 5 \n"
+                    print "combineTool.py -M Impacts -d "+DATACARDS + "/" + workspace+" -m "+ str(samples[pr]['mass']) +" -o impacts"+ s_rename +".json \n"
+                    print "plotImpacts.py -i impacts"+ s_rename +dataset_label+".json -o impacts"+ s_rename+dataset_label + " \n"
+                    #exit()
+                job = open("job.sh", 'w')
+                job.write(tmp)
+                job.close()
+                os.system("sh job.sh > log.txt \n")
+                os.system("\n")
+                os.system("cat log.txt \n")
+                os.system("cat log.txt | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s_rename +dataset_label+".txt  \n")
+                os.system("cat log.txt | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s_rename +dataset_label+".txt\n")
+                #os.system("cat "+ RESULTS + "/" + s + ".txt  \n")
+                print "\n"
+                print "Limits written in ", RESULTS + "/" + s_rename + dataset_label+".txt"
+                print "Significance written in ", RESULTS + "/Significance_" + s_rename + dataset_label + ".txt"
+                print "*********************************************"
+
+            os.chdir(original_location[:-1])
+            os.system("eval `scramv1 runtime -sh`")
+            os.system("pwd")
+        
+
+    #print "Aborting, simply calculating integrals . . . ."
+    '''
+
+'''
 def evaluate_signal_contamination(tree_weight_dict,sign,main_pred_reg,extr_region,comb_fold_label="",regions_labels=[],datasets=[],add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=False,phi_cut=False,mu=1.):
 
     #Zero, we need to run the bkg pred on MC but with data SF (possible?)
@@ -5998,8 +7007,9 @@ def combine_datacards(sign,comb_fold_label="",regions_labels=[],datasets=[],add_
         os.system("eval `scramv1 runtime -sh`")
         os.system("pwd")
 
-def combine_datacards_AN(sign,comb_fold_label="",regions_labels=[],datasets=[],add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=True,phi_cut=False):
+def combine_datacards_AN(sign,comb_fold_label="",eras=[],add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=True,phi_cut=False,BR_SCAN_H=100):
 
+    '''
     if eta_cut:
         print "Apply acceptance cut |eta|<1."
         add_label+="_eta_1p0"
@@ -6024,16 +7034,43 @@ def combine_datacards_AN(sign,comb_fold_label="",regions_labels=[],datasets=[],a
             DATACARDDIR += "_vs_phi"+comb_fold_label
         else:
             DATACARDDIR += comb_fold_label
+    '''
 
-    #if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
-    DATACARDS = DATACARDDIR+"/datacards/"
-    #if not os.path.isdir(DATACARDS): os.mkdir(DATACARDS)
-    RESULTS = DATACARDDIR+"/combine_results/"
+    print "Inferring limits on absolute x-sec in fb"
+
+    CARDERA            = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v6_calo_AOD_%s_"+REGION+"/"
+    if not os.path.isdir(OUTCOMBI): os.mkdir(OUTCOMBI)
+    DATACARDDIR = OUTCOMBI+CHAN+"/"
+    if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+    CARDERA += CHAN+"/"
+
+    br_scan_fold = ""
+    if BR_SCAN_H==100:
+        br_scan_fold = "BR_h100_z0"
+    if BR_SCAN_H==75:
+        br_scan_fold = "BR_h75_z25"
+    if BR_SCAN_H==50:
+        br_scan_fold = "BR_h50_z50"
+    if BR_SCAN_H==25:
+        br_scan_fold = "BR_h25_z75"
+    if BR_SCAN_H==0:
+        br_scan_fold = "BR_h0_z100"
+
+    DATACARDDIR += br_scan_fold+"/"
+    CARDERA += br_scan_fold+"/"
+    if comb_fold_label!="":
+        if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+        print comb_fold_label
+        DATACARDDIR += comb_fold_label+"/"
+    if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+    DATACARDS = DATACARDDIR+"datacards/"
+    if not os.path.isdir(DATACARDS): os.mkdir(DATACARDS)
+    CARDERA += "datacards/"
+
+    RESULTS = DATACARDDIR+"combine_results/"
     if not os.path.isdir(RESULTS): os.mkdir(RESULTS)
 
-
-
-
+    print "Writing results in: " , RESULTS
 
     if signalMultFactor == 0.001:
         print '  x-sec calculated in fb '
@@ -6053,20 +7090,48 @@ def combine_datacards_AN(sign,comb_fold_label="",regions_labels=[],datasets=[],a
     sigma_2_down = {}
 
 
+    card_dict = {}
+    for era in eras:
+        if "2016" in era:
+            card_dict[era] = CARDERA % ("2016")
+        else:
+            card_dict[era] = CARDERA % (era)
+
+    loop_ct = ctaus
+    for pr in sign:
+        loop_ct = np.append(loop_ct,np.array([samples[pr]['ctau']]))
+    loop_ct = np.unique(loop_ct)
+
     for i,s in enumerate(sign):
-        for ct in np.append(np.array([ctaupoint]),ctaus):
-            ct_lab = "_ctau"+str(ct)
-            card_BF = DATACARDS + "/" + s + ct_lab+"_BF.txt"
-            card_REST = DATACARDS + "/" + s + ct_lab+"_REST.txt"
-            card_comb = DATACARDS + "/" + s +ct_lab+".txt"
+        for ct in loop_ct:
+            inp_card_string = ""
+            card_name = s.replace('_ctau'+str(samples[s]['ctau']),'_ctau'+str(ct))
+            n_valid = 0
+            for c in card_dict.keys():
+                tmp_card = card_dict[c]+card_name
+                if "2016" in c:
+                    tmp_card += c.replace("2016","")
+                tmp_card += ".txt"
+                if os.path.isfile(tmp_card):
+                    n_valid+=1
+            #print "n valid ", n_valid
+
+            if n_valid==4:
+                for c in card_dict.keys():
+                    inp_card_string += card_dict[c]+card_name
+                    if "2016" in c:
+                        inp_card_string += c.replace("2016","")
+                    inp_card_string +=".txt" + " "
+            print inp_card_string
             original_location = os.popen("pwd").read()
-            os.chdir("/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit")
-            #os.system("pwd")
-            print "\n"
 
             #combine commands
             #Limits
-            if run_combine:
+            if run_combine and n_valid==4:
+                os.chdir("/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit")
+                #os.system("pwd")
+                print "\n"
+                print "Combination card " + DATACARDS+card_name+".txt "
                 #os.system("source /cvmfs/cms.cern.ch/cmsset_default.sh")
                 #os.system("eval `scramv1 runtime -sh`")
                 #os.system("pwd")
@@ -6077,24 +7142,209 @@ def combine_datacards_AN(sign,comb_fold_label="",regions_labels=[],datasets=[],a
                 tmp += "module load cmssw\n"
                 #tmp += "pwd\n"
                 tmp += "cmsenv\n"
-                workspace = s+ct_lab+".root"
-                tmp += "combineCards.py " + card_BF + " " + card_REST + " > " + card_comb + " \n"
-                tmp += "combine -M AsymptoticLimits --datacard " + card_comb + "  --run blind -m " + str(samples[s]['mass']) + " \n"
-                tmp += "text2workspace.py " + card_comb + " " + " -o " + DATACARDS + "/" + workspace+"\n"
-                tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 \n"
+                ##workspace = s+ct_lab+".root"
+                workspace = card_name+".root"
+                ##tmp += "combineCards.py " + card_BF + " " + card_REST + " > " + card_comb + " \n"
+                ##tmp += "combine -M AsymptoticLimits --datacard " + card_comb + "  --run blind -m " + str(samples[s]['mass']) + " \n"
+                ##tmp += "text2workspace.py " + card_comb + " " + " -o " + DATACARDS + "/" + workspace+"\n"
+                ##tmp += "combine -M Significance " + DATACARDS + "/" + workspace + "  -t -1 --expectSignal=1 \n"
+                tmp += "combineCards.py " + inp_card_string + " > " + DATACARDS+card_name+".txt " + " \n"
+                tmp += "echo Running on: " + DATACARDS+card_name+".txt \n"
+                tmp += "combine -M AsymptoticLimits --datacard " + DATACARDS+card_name+".txt " + "  --run blind -m " + str(samples[s]['mass']) + " -n " +card_name+"_br"+str(BR_SCAN_H)+ " \n"
+                #tmp += "text2workspace.py " + DATACARDS+card_name+".txt " + " " + " -o " + DATACARDS + workspace+" \n"
+                #tmp += "combine -M Significance " + DATACARDS + workspace + " -m " + str(samples[s]['mass']) + " -n " +card_name+"_br"+str(BR_SCAN_H)+ " -t -1 --expectSignal=1 \n"
+                job = open("job"+card_name+"_br"+str(BR_SCAN_H)+".sh", 'w')
+                job.write(tmp)
+                job.close()
+                #Debug#print tmp
+                os.system("sh job"+card_name+"_br"+str(BR_SCAN_H)+".sh > log"+card_name+"_br"+str(BR_SCAN_H)+".txt \n")
+                os.system("\n")
+                os.system("cat log"+card_name+"_br"+str(BR_SCAN_H)+".txt \n")
+                os.system("cat log"+card_name+"_br"+str(BR_SCAN_H)+".txt | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + card_name +".txt  \n")
+                os.system("cat log"+card_name+"_br"+str(BR_SCAN_H)+".txt | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + card_name +".txt\n")
+                os.system("cat "+ RESULTS + "/" + card_name + ".txt  \n")
+                print "\n"
+                print "Limits written in ", RESULTS + "/" + card_name + ".txt"
+                print "Significance written in ", RESULTS + "/Significance_" + card_name + ".txt"
+                ##os.system("cat log.txt | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s + ct_lab+".txt  \n")
+                ##os.system("cat log.txt | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s + ct_lab+".txt\n")
+                ##os.system("cat "+ RESULTS + "/" + s + ".txt  \n")
+                ##print "\n"
+                ##print "Limits written in ", RESULTS + "/" + s + ".txt"
+                ##print "Significance written in ", RESULTS + "/Significance_" + s + ".txt"
+                print "*********************************************"
+                
+                os.chdir(original_location[:-1])
+                os.system("eval `scramv1 runtime -sh`")
+                os.system("pwd")
+
+
+def signal_injection_test(out_dir,comb_fold_label="",combination=True,add_label="",run_combine=False,BR_SCAN_H=100,n_toys=1000):
+
+    #Fix this_lumi
+    if combination==False:
+        if ERA=="2016":
+            if dataset_label == "_G-H":
+                this_lumi  = lumi[ "HighMET" ]["G"]+lumi[ "HighMET" ]["H"]#["tot"]
+            elif dataset_label == "_B-F":
+                this_lumi  = lumi[ "HighMET" ]["B"]+lumi[ "HighMET" ]["C"]+lumi[ "HighMET" ]["D"]+lumi[ "HighMET" ]["E"]+lumi[ "HighMET" ]["F"]#["tot"]
+        else:
+            this_lumi  = lumi[ "HighMET" ]["tot"]
+    else:
+        if comb_fold_label=="2016_BFGH_2017_2018":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_GH_2017_2018":
+            this_lumi = 111941.400399
+        else:
+            print "Invalid combination folder, can't calculate lumi, aborting"
+            exit()
+
+    print "LUMI: ", this_lumi
+    br_scan_fold = ""
+    if BR_SCAN_H==100:
+        br_scan_fold = "BR_h100_z0"
+    if BR_SCAN_H==75:
+        br_scan_fold = "BR_h75_z25"
+    if BR_SCAN_H==50:
+        br_scan_fold = "BR_h50_z50"
+    if BR_SCAN_H==25:
+        br_scan_fold = "BR_h25_z75"
+    if BR_SCAN_H==0:
+        br_scan_fold = "BR_h0_z100"
+
+    #1. Select only a few signal points
+    #2. Rewrite datacards increasing signal and background
+    #3. Run combine with a selection of r values
+    #4. Open files and plot the distribution and the fit
+    inj_sign = ['SUSY_mh127_ctau500','SUSY_mh200_ctau500','SUSY_mh400_ctau500','SUSY_mh1000_ctau500','SUSY_mh1800_ctau500',]
+    inj_scan = [0.5,1,2,5,10]
+    inj_scan = [5,10,20]
+
+    DATACARDDIR = out_dir+CHAN+"/"
+    DATACARDDIR += br_scan_fold+"/"
+
+    if combination:
+        DATACARDDIR += comb_fold_label+"/"
+        PLOTLIMITSDIR      = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/Limits_AN/v6_calo_AOD_"+REGION+"/"+br_scan_fold+"/"
+        if not os.path.isdir(PLOTLIMITSDIR):
+            os.mkdir(PLOTLIMITSDIR)
+        PLOTLIMITSDIR += comb_fold_label+"/"
+        PLOTLIMITSDIR += "signal_injection/"
+    else:
+        PLOTLIMITSDIR      = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/Limits_AN/v6_calo_AOD_"+ERA+"_"+REGION+"/"+br_scan_fold+"/"
+    RESULTS = DATACARDDIR + "/signal_injection/"
+
+    if not os.path.isdir(PLOTLIMITSDIR):
+        os.mkdir(PLOTLIMITSDIR)
+    print "Injection test in ", RESULTS
+    #os.system('ls '+RESULTS+'*txt')
+    card_files = [x for x in os.listdir(RESULTS) if os.path.isfile(os.path.join(RESULTS, x)) and "~" not in x]
+
+    if signalMultFactor == 0.001:
+        print '  x-sec calculated in fb '
+    elif (signalMultFactor >= 1 and signalMultFactor < 1000):
+        print '  x-sec calculated in pb '
+    else:
+        print 'Wrong signal mult. factor, aborting...'
+        exit()
+    print '-'*11*2
+
+    for card_name in card_files:
+        for j in inj_scan:
+            original_location = os.popen("pwd").read()
+            os.chdir("/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit")
+            #os.system("pwd")
+            print "\n"
+            print card_name
+
+            #combine commands
+            #Limits
+            if run_combine:
+                tmp  = "#!/bin/sh\n"
+                tmp += "source /etc/profile.d/modules.sh\n"
+                tmp += "module use -a /afs/desy.de/group/cms/modulefiles/\n"
+                tmp += "module load cmssw\n"
+                #tmp += "pwd\n"
+                tmp += "cmsenv\n"
+                tmp += "echo Running on: " + RESULTS+card_name+" \n"
+                #tmp += "combine -M FitDiagnostics -m "+str(samples[card_name.replace('.txt','')]['mass'])+" --datacard "+RESULTS+card_name+" --redefineSignalPOIs r -n "+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+" -t "+str(n_toys)+" --cminDefaultMinimizerStrategy 0 --setParameters r="+str(j)+" --setParameterRanges r=-100,100 -s -1 \n"
+                #tmp += "combine -M FitDiagnostics -m "+str(samples[card_name.replace('.txt','')]['mass'])+" --datacard "+RESULTS+card_name+" --redefineSignalPOIs r -n "+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+" -t "+str(n_toys)+" --cminDefaultMinimizerStrategy 0 --setParameters r="+str(j)+" --setParameterRanges r=-100,100 -s -1 --robustFit 1 \n"
+                tmp += "combine -M FitDiagnostics --datacard "+RESULTS+card_name+" --redefineSignalPOIs r -n "+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+" -t "+str(n_toys)+" --toysFrequentist --setParameters r="+str(j)+" --setParameterRanges r=-100,100 -s -1 --cminDefaultMinimizerStrategy 0 \n"# --robustFit 1  --setRobustFitTolerance 0.00001 \n"
+                #--bypassFrequentistFit
                 job = open("job.sh", 'w')
                 job.write(tmp)
                 job.close()
-                print tmp
+                ##Debug#print tmp
                 os.system("sh job.sh > log.txt \n")
                 os.system("\n")
-                os.system("cat log.txt \n")
-                os.system("cat log.txt | grep -e Observed -e Expected | awk '{print $NF}' > " + RESULTS + "/" + s + ct_lab+".txt  \n")
-                os.system("cat log.txt | grep -e Significance: | awk '{print $NF}' > " + RESULTS + "/Significance_" + s + ct_lab+".txt\n")
-                os.system("cat "+ RESULTS + "/" + s + ".txt  \n")
-                print "\n"
-                print "Limits written in ", RESULTS + "/" + s + ".txt"
-                print "Significance written in ", RESULTS + "/Significance_" + s + ".txt"
+                #os.system("cat log.txt \n")
+                print "   Injected signal: "+str(j)
+                root_file = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/fitDiagnostics"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".root"
+                if os.path.isfile(root_file):
+                    #gStyle.SetOptStat(111111111111)
+                    #gStyle.SetOptFit(111111111111)
+                    print "opening ", root_file
+                    hist = TH1F("r","",100,-j*5+j,j+j*5)
+                    err = TH1F("err","",100,-j*5+j,j+j*5)
+                    pull = TH1F("pull","",50,-5,5)
+                    chain = TChain("tree_fit_sb")
+                    chain.Add(root_file)
+                    chain.Project("r","r","fit_status==0 && abs(rErr/r)<100")
+                    chain.Project("err","rErr","fit_status==0 && abs(rErr/r)<100")
+                    chain.Project("pull","(r-"+str(j)+")/(0.5*(rHiErr+rLoErr))","fit_status==0 && abs(rErr/r)<100")
+                    fit = TF1("fit","gaus")
+                    pull.Fit(fit,"E")
+                    can = TCanvas("can","can",900,800)
+                    can.SetRightMargin(0.05)
+                    can.cd()
+                    can.SetGrid()
+                    pull.SetLineWidth(2)
+                    pull.GetYaxis().SetTitle("a.u.")
+                    pull.GetXaxis().SetTitle("(#mu - #mu_{inj})/#sigma_{#mu} ")
+                    pull.Draw("")
+                    leg1 = TLegend(0.6, 0.7, 0.99, 0.99)
+                    leg1.SetHeader("#mu_{inj} = "+str(j)+"; n. toys = "+str(n_toys))
+                    leg1.AddEntry(pull,samples[card_name.replace('.txt','')]['label'],"L")
+                    leg1.AddEntry(fit,"Gaus mean="+str(round(fit.GetParameter(1),2))+"; #sigma="+str(round(fit.GetParameter(2),2)),"L")
+                    leg1.Draw()
+                    can.Print(PLOTLIMITSDIR+"ToysFreq_InjectionTest_Pull_"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".pdf")
+                    can.Print(PLOTLIMITSDIR+"ToysFreq_InjectionTest_Pull_"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".png")
+                    can.Close()
+                    pull.Delete()
+
+                    can = TCanvas("can","can",900,800)
+                    can.SetRightMargin(0.05)
+                    can.cd()
+                    can.SetGrid()
+                    hist.SetLineWidth(2)
+                    hist.GetYaxis().SetTitle("a.u.")
+                    hist.GetXaxis().SetTitle("post-fit #mu")
+                    hist.Draw("")
+                    leg1 = TLegend(0.6, 0.7, 0.99, 0.99)
+                    leg1.SetHeader("#mu_{inj} = "+str(j)+"; n. toys = "+str(n_toys))
+                    leg1.AddEntry(hist,samples[card_name.replace('.txt','')]['label'],"L")
+                    leg1.Draw()
+                    can.Print(PLOTLIMITSDIR+"ToysFreq_InjectionTest_r_"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".pdf")
+                    can.Print(PLOTLIMITSDIR+"ToysFreq_InjectionTest_r_"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".png")
+                    can.Close()
+                    hist.Delete()
+
+                    can = TCanvas("can","can",900,800)
+                    can.SetRightMargin(0.05)
+                    can.cd()
+                    can.SetGrid()
+                    err.SetLineWidth(2)
+                    err.GetYaxis().SetTitle("a.u.")
+                    err.GetXaxis().SetTitle("post-fit #mu err.")
+                    err.Draw("")
+                    leg1 = TLegend(0.6, 0.7, 0.99, 0.99)
+                    leg1.SetHeader("#mu_{inj} = "+str(j)+"; n. toys = "+str(n_toys))
+                    leg1.AddEntry(err,samples[card_name.replace('.txt','')]['label'],"L")
+                    leg1.Draw()
+                    can.Print(PLOTLIMITSDIR+"ToysFreq_InjectionTest_err_"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".pdf")
+                    can.Print(PLOTLIMITSDIR+"ToysFreq_InjectionTest_err_"+card_name.replace('.txt','')+"_inj"+str(j).replace(".","p")+".png")
+                    can.Close()
+                    err.Delete()
                 print "*********************************************"
                 
             os.chdir(original_location[:-1])
@@ -6103,48 +7353,51 @@ def combine_datacards_AN(sign,comb_fold_label="",regions_labels=[],datasets=[],a
 
 
 
-def plot_limits_vs_mass(sign,comb_fold_label="",combination=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False):
+def plot_limits_vs_mass(out_dir,sign,comb_fold_label="",combination=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False,BR_SCAN_H=100):
 
-    LUMI = 137.4*1000
-    print "Using full run 2 lumi!! ", LUMI
-
-    #signalMultFactor = 1.
-    if combination:
-        DATACARDDIR = OUTPUTDIR+CHAN+"/"+TAGVAR
-        PLOTLIMITSDIR      = "plots/Limits/v5_calo_AOD_"+ERA+"_"+REGION+"_combination/"+TAGVAR#"/"#"_2017_signal/"#
-        print PLOTLIMITSDIR
-        exit()
+    #Fix this_lumi
+    if combination==False:
+        if ERA=="2016":
+            if dataset_label == "_G-H":
+                this_lumi  = lumi[ "HighMET" ]["G"]+lumi[ "HighMET" ]["H"]#["tot"]
+            elif dataset_label == "_B-F":
+                this_lumi  = lumi[ "HighMET" ]["B"]+lumi[ "HighMET" ]["C"]+lumi[ "HighMET" ]["D"]+lumi[ "HighMET" ]["E"]+lumi[ "HighMET" ]["F"]#["tot"]
+        else:
+            this_lumi  = lumi[ "HighMET" ]["tot"]
     else:
-        DATACARDDIR = OUTPUTDIR+CHAN+"/"+TAGVAR
-        #PLOTLIMITSDIR      = "plots/Limits_AN_combi/v5_calo_AOD_"+ERA+"_"+REGION+"/"+TAGVAR#_signal/"#"/"#
-        PLOTLIMITSDIR      = "plots/Limits_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"+TAGVAR#_signal/"#"/"#
+        if comb_fold_label=="2016_BFGH_2017_2018":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_GH_2017_2018":
+            this_lumi = 111941.400399
+        else:
+            print "Invalid combination folder, can't calculate lumi, aborting"
+            exit()
 
-    if eta_cut:
-        print "Apply acceptance cut |eta|<1."
-        DATACARDDIR+= "_eta_1p0"
-        PLOTLIMITSDIR+= "_eta_1p0"
-    if phi_cut:
-        print "Apply acceptance cut phi"
-        DATACARDDIR+= "_phi_cut"
-        PLOTLIMITSDIR+="_phi_cut"
-    if eta:
-        DATACARDDIR+="_vs_eta"
-        PLOTLIMITSDIR+="_vs_eta"
-    if phi:
-        DATACARDDIR+="_vs_phi"
-        PLOTLIMITSDIR+="_vs_phi"
+    print "LUMI: ", this_lumi
 
+    br_scan_fold = ""
+    if BR_SCAN_H==100:
+        br_scan_fold = "BR_h100_z0"
+    if BR_SCAN_H==75:
+        br_scan_fold = "BR_h75_z25"
+    if BR_SCAN_H==50:
+        br_scan_fold = "BR_h50_z50"
+    if BR_SCAN_H==25:
+        br_scan_fold = "BR_h25_z75"
+    if BR_SCAN_H==0:
+        br_scan_fold = "BR_h0_z100"
 
-    print "Here I miss combine results or datacards"
+    DATACARDDIR = out_dir+CHAN+"/"
+    DATACARDDIR += br_scan_fold+"/"
 
-    contam_lab = "_ctau"+str(ctaupoint)
-    if scale_mu!=1.:
-        contam_lab+='_scale_mu_'+str(scale_mu).replace(".","p")
-    if contamination:
-        contam_lab+='_contamination'
-
-    DATACARDDIR += comb_fold_label
-    PLOTLIMITSDIR+=comb_fold_label+"/"
+    if combination:
+        DATACARDDIR += comb_fold_label+"/"
+        PLOTLIMITSDIR      = "plots/Limits_AN/v6_calo_AOD_"+REGION+"/"+br_scan_fold+"/"
+        if not os.path.isdir(PLOTLIMITSDIR):
+            os.mkdir(PLOTLIMITSDIR)
+        PLOTLIMITSDIR += comb_fold_label+"/"
+    else:
+        PLOTLIMITSDIR      = "plots/Limits_AN/v6_calo_AOD_"+ERA+"_"+REGION+"/"+br_scan_fold+"/"
     RESULTS = DATACARDDIR + "/combine_results/"
 
     if not os.path.isdir(PLOTLIMITSDIR):
@@ -6160,265 +7413,46 @@ def plot_limits_vs_mass(sign,comb_fold_label="",combination=False,eta=False,phi=
         exit()
     print '-'*11*2
 
+
     #Dictionary with various predictions
     mass = []
-    theory = []
-    mean_val = {}
-    sigma_1_up = {}
-    sigma_1_down = {}
-    sigma_2_up = {}
-    sigma_2_down = {}
+    ctau = []
+    theory = defaultdict(dict)
+    mean_val = defaultdict(dict)
+    sigma_1_up = defaultdict(dict)
+    sigma_1_down = defaultdict(dict)
+    sigma_2_up = defaultdict(dict)
+    sigma_2_down = defaultdict(dict)
 
     for i,s in enumerate(sign):
-        print "m chi: ",samples[s]['mass']
-        print samples[s]['ctau']
-        print "theory x-sec (pb): ", sample[ samples[s]['files'][0] ]['xsec']
-        m = samples[s]['mass']
-        mass.append(m)
-        theory.append( 1000.*sample[ samples[s]['files'][0] ]['xsec']  )
-        card_name = RESULTS + "/" + s + contam_lab+".txt"
+        #theory.append( sample[ samples[s]['files'][0] ]['xsec']  )
+        #card_name = RESULTS + "/" + s + contam_lab+".txt"
+        card_name = RESULTS + "/" + s + ".txt"
+        if not os.path.isfile(card_name):
+            continue
         card = open( card_name, 'r')
         val = card.read().splitlines()
         if len(val) == 0:
             continue
-        sigma_2_down[m] = float(val[0])
-        sigma_1_down[m] = float(val[1])
-        mean_val[m]     = float(val[2])
-        sigma_1_up[m]   = float(val[3])
-        sigma_2_up[m]   = float(val[4])
-
-    mean_arr = []
-    sigma_1_up_arr = []
-    sigma_1_down_arr = []
-    sigma_2_up_arr = []
-    sigma_2_down_arr = []
-    Obs0s = TGraph()
-    Exp0s = TGraph()
-    Exp1s = TGraphAsymmErrors()
-    Exp2s = TGraphAsymmErrors()
-    Theory = TGraph()
-
-    mass = np.sort(np.array(mass))
-    theory = -np.sort(-np.array(theory))
-    print mass
-    print theory
-    n=0
-    for m in mass:
-        mean_arr.append(mean_val[m])
-        sigma_1_up_arr.append(sigma_1_up[m])
-        sigma_1_down_arr.append(sigma_1_down[m])
-        sigma_2_up_arr.append(sigma_2_up[m])
-        sigma_2_down_arr.append(sigma_2_down[m])
-
-        Exp0s.SetPoint(n, m, mean_val[m])
-        Exp1s.SetPoint(n, m, mean_val[m])
-        Exp1s.SetPointError(n, 0., 0., mean_val[m]-sigma_1_down[m], sigma_1_up[m]-mean_val[m])
-        Exp2s.SetPoint(n, m, mean_val[m])
-        Exp2s.SetPointError(n, 0., 0., mean_val[m]-sigma_2_down[m], sigma_2_up[m]-mean_val[m])
-
-        Theory.SetPoint(n, m, theory[n])#just a list with no index
-        n+=1
-    print mass
-    print mean_arr
-
-    Exp2s.SetLineWidth(2)
-    Exp2s.SetLineStyle(1)
-    Exp0s.SetLineStyle(2)
-    Exp0s.SetLineWidth(3)
-    Exp1s.SetFillColor(417)
-    Exp1s.SetLineColor(417)
-    Exp2s.SetFillColor(800)
-    Exp2s.SetLineColor(800)
-    Exp2s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
-    Exp2s.GetXaxis().SetNoExponent(True)
-    Exp2s.GetXaxis().SetMoreLogLabels(True)
-    Exp2s.GetXaxis().SetTitleSize(0.048)
-    Exp2s.GetYaxis().SetTitleSize(0.048)
-    Exp2s.GetYaxis().SetTitleOffset(0.8)
-    Theory.SetLineWidth(2)
-    Theory.SetLineColor(2)
-    Theory.SetLineStyle(2)
-    if contamination:
-        Exp0s.GetYaxis().SetTitleOffset(1.5)
-        print Exp0s.GetYaxis().GetLabelOffset()
-    Exp2s.GetXaxis().SetTitleOffset(0.9)    
-    top = 0.9
-    nitems = 4
-    leg = TLegend(0.45+0.15+0.05, top-nitems*0.3/5., 0.75+0.15+0.03, top)
-    leg.SetBorderSize(0)
-    leg.SetHeader("95% CL limits, c#tau_{"+particle+"}="+str(int(ctaupoint/1000))+" m")
-    leg.SetTextSize(0.04)
-
-    c1 = TCanvas("c1", "Exclusion Limits", 800, 600)
-    c1.cd()
-    c1.SetGridx()
-    c1.SetGridy()
-    c1.GetPad(0).SetTopMargin(0.06)
-    c1.GetPad(0).SetRightMargin(0.05)
-    c1.GetPad(0).SetTicks(1, 1)
-    c1.GetPad(0).SetLogy()
-    c1.GetPad(0).SetLogx()
-    if contamination:
-        c1.GetPad(0).SetLeftMargin(0.13)
-    if contamination:
-        leg.AddEntry(Exp0s,  "#mu ratio", "l")
-    else:
-        leg.AddEntry(Theory, "Theory", "l")
-        leg.AddEntry(Exp0s,  "Expected", "l")
-        leg.AddEntry(Exp1s, "#pm 1 std. deviation", "f")
-        leg.AddEntry(Exp2s, "#pm 2 std. deviations", "f")
-
-    Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-    if CHAN=="SUSY":
-        #Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b})/#sigma_{SUSY}")
-        if signalMultFactor == 0.001:
-            Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b}) (fb)")
-        else:
-            Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b})/#sigma_{SUSY}")
-    Exp2s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
-    Exp1s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
-    Exp0s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
-    Exp2s.SetMinimum(0.09)
-    Exp2s.SetMaximum(10001)
-    if contamination:
-        Exp0s.SetLineColor(2)
-        Exp0s.SetLineWidth(2)
-        Exp0s.SetMarkerColor(2)
-        Exp0s.SetMarkerStyle(24)
-        Exp0s.SetMinimum(0.98)
-        Exp0s.SetMaximum(1.02)
-        Exp0s.Draw("APL")
-        Exp0s.GetYaxis().SetTitle("#frac{Excluded #mu with signal contamination}{Excluded #mu w/o signal contamination}")
-        c1.SetLogy(0)
-    else:
-        Exp2s.Draw("A3")
-        Exp1s.Draw("SAME, 3")
-        Exp0s.Draw("SAME, L")
-        Theory.Draw("SAME, L")
-    leg.Draw()
-
-    if PRELIMINARY:
-        drawCMS(samples, LUMI, "Preliminary",left_marg_CMS=0.3,onTop=True)
-    else:
-        drawCMS(samples, LUMI, "",left_marg_CMS=0.32)
-
-    drawRegion(CHAN,top=0.7)
-    drawAnalysis("LL"+CHAN)
-    #drawTagVar(TAGVAR)
-
-    OUTSTRING = PLOTLIMITSDIR+"/Exclusion"+contam_lab#+TAGVAR+comb_fold_label+"_"+CHAN
-    newFile = TFile(PLOTLIMITSDIR+"/Exclusion" + contam_lab+".root", "RECREATE")#+"_"+TAGVAR+comb_fold_label+ ".root", "RECREATE")
-    newFile.cd()
-    Exp0s.Write("pl"+str(ctaupoint)+"_exp")
-    Exp1s.Write("pl"+str(ctaupoint)+"_1sigma")
-    Exp2s.Write("pl"+str(ctaupoint)+"_2sigma")
-    c1.Write()
-    newFile.Close()
-    print "Info: written file: ", PLOTLIMITSDIR+"/Exclusion" + contam_lab+".root"#"_"+TAGVAR+comb_fold_label+".root"
-
-    c1.Print(OUTSTRING+".png")
-    c1.Print(OUTSTRING+".pdf")
-    c1.Close()
-
-def plot_limits_vs_ctau(sign,comb_fold_label="",combination=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False):
-
-    LUMI = 137.4*1000
-    print "Using full run 2 lumi!! ", LUMI
-
-    #signalMultFactor = 1.
-    if combination:
-        DATACARDDIR = ""#"/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/HiggsAnalysis/CombinedLimit/v5_calo_AOD_combination/"+CHAN+"/"+TAGVAR
-        PLOTLIMITSDIR      = ""#"plots/Limits/v5_calo_AOD_combination/"+TAGVAR#"/"#"_2017_signal/"#
-    else:
-        DATACARDDIR = OUTPUTDIR+CHAN+"/"+TAGVAR
-        #PLOTLIMITSDIR      = "plots/Limits_AN_combi/v5_calo_AOD_"+ERA+"_"+REGION+"/"+TAGVAR#_signal/"#"/"#
-        PLOTLIMITSDIR      = "plots/Limits_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"+TAGVAR#_signal/"#"/"#
-
-    if eta_cut:
-        print "Apply acceptance cut |eta|<1."
-        DATACARDDIR+= "_eta_1p0"
-        PLOTLIMITSDIR+= "_eta_1p0"
-    if phi_cut:
-        print "Apply acceptance cut phi"
-        DATACARDDIR+= "_phi_cut"
-        PLOTLIMITSDIR+="_phi_cut"
-    if eta:
-        DATACARDDIR+="_vs_eta"
-        PLOTLIMITSDIR+="_vs_eta"
-    if phi:
-        DATACARDDIR+="_vs_phi"
-        PLOTLIMITSDIR+="_vs_phi"
-
-
-    print "Here I miss combine results or datacards"
-
-
-    DATACARDDIR += comb_fold_label
-    PLOTLIMITSDIR+=comb_fold_label+"/"
-    RESULTS = DATACARDDIR + "/combine_results/"
-
-    if not os.path.isdir(PLOTLIMITSDIR):
-        os.mkdir(PLOTLIMITSDIR)
-    print "Plotting these limits: ", DATACARDDIR
-
-    if signalMultFactor == 0.001:
-        print '  x-sec calculated in fb '
-    elif (signalMultFactor >= 1 and signalMultFactor < 1000):
-        print '  x-sec calculated in pb '
-    else:
-        print 'Wrong signal mult. factor, aborting...'
-        exit()
-    print '-'*11*2
-
-    #Dictionary with various predictions
-    mass = []
-    theory = []
-    mean_val = {}
-    sigma_1_up = {}
-    sigma_1_down = {}
-    sigma_2_up = {}
-    sigma_2_down = {}
-
-    for i,s in enumerate(sign):
-        print "m chi: ",samples[s]['mass']
-        print s
+        #print "m chi: ",samples[s]['mass']
+        #print samples[s]['ctau']
+        print "CHECK THIS"
         print "theory x-sec (pb): ", sample[ samples[s]['files'][0] ]['xsec']
-        mass = samples[s]['mass']
-        #Initialize here dictionaries
-        #Dictionary with various predictions
-        theory = []
-        mean_val = {}
-        sigma_1_up = {}
-        sigma_1_down = {}
-        sigma_2_up = {}
-        sigma_2_down = {}
+        m = samples[s]['mass']
+        if m not in mass:
+            mass.append(m)
+        ct = samples[s]['ctau']
+        if ct not in ctau:
+            ctau.append(ct)
+        theory[m][ct] = 1000.*sample[ samples[s]['files'][0] ]['xsec']
+        sigma_2_down[m][ct] = float(val[0])
+        sigma_1_down[m][ct] = float(val[1])
+        mean_val[m][ct]     = float(val[2])
+        sigma_1_up[m][ct]   = float(val[3])
+        sigma_2_up[m][ct]   = float(val[4])
 
-        #Here loop on card names and fill the values
-        #Add also original ctau
-        #ctaus = np.array([2000,30000])
-        #ctaus_old = ctaus
-        #ctaus = np.append(ctaus_old,np.array([ctaupoint]))
-        #ctaus = np.sort(ctaus)
-        for ct in np.sort(np.append(ctaus,np.array([ctaupoint]))):
-            print ct
-            contam_lab = ""
-            if scale_mu!=1.:
-                contam_lab+='_scale_mu_'+str(scale_mu).replace(".","p")
-            if contamination:
-                contam_lab+='_contamination'
-            contam_lab += "_ctau"+str(ct)
-            card_name = RESULTS + "/" + s + contam_lab+".txt"
-            card = open( card_name, 'r')
-            val = card.read().splitlines()
-            if len(val) == 0:
-                continue
-            sigma_2_down[ct] = float(val[0])
-            sigma_1_down[ct] = float(val[1])
-            mean_val[ct]     = float(val[2])
-            sigma_1_up[ct]   = float(val[3])
-            sigma_2_up[ct]   = float(val[4])
-            theory.append( 1000.*sample[ samples[s]['files'][0] ]['xsec']  )
 
+    for ct in ctau:
         mean_arr = []
         sigma_1_up_arr = []
         sigma_1_down_arr = []
@@ -6430,26 +7464,253 @@ def plot_limits_vs_ctau(sign,comb_fold_label="",combination=False,eta=False,phi=
         Exp2s = TGraphAsymmErrors()
         Theory = TGraph()
 
+        mass = np.sort(np.array(mass))
+        ##theory = -np.sort(-np.array(theory))
+        print mass
+        print theory
         n=0
-        for ct in np.sort(np.append(ctaus,np.array([ctaupoint]))):
-            if ct in mean_val.keys():
-                mean_arr.append(mean_val[ct])
-                sigma_1_up_arr.append(sigma_1_up[ct])
-                sigma_1_down_arr.append(sigma_1_down[ct])
-                sigma_2_up_arr.append(sigma_2_up[ct])
-                sigma_2_down_arr.append(sigma_2_down[ct])
-            
-                Exp0s.SetPoint(n, ct/1000., mean_val[ct])
-                Exp1s.SetPoint(n, ct/1000., mean_val[ct])
-                Exp1s.SetPointError(n, 0., 0., mean_val[ct]-sigma_1_down[ct], sigma_1_up[ct]-mean_val[ct])
-                Exp2s.SetPoint(n, ct/1000., mean_val[ct])
-                Exp2s.SetPointError(n, 0., 0., mean_val[ct]-sigma_2_down[ct], sigma_2_up[ct]-mean_val[ct])
+        for m in mass:
+            #mean_arr.append(mean_val[m][ct])
+            #sigma_1_up_arr.append(sigma_1_up[m][ct])
+            #sigma_1_down_arr.append(sigma_1_down[m][ct])
+            #sigma_2_up_arr.append(sigma_2_up[m][ct])
+            #sigma_2_down_arr.append(sigma_2_down[m][ct])
+            if ct not in mean_val[m].keys():
+                continue
+            Exp0s.SetPoint(n, m, mean_val[m][ct])
+            Exp1s.SetPoint(n, m, mean_val[m][ct])
+            Exp1s.SetPointError(n, 0., 0., mean_val[m][ct]-sigma_1_down[m][ct], sigma_1_up[m][ct]-mean_val[m][ct])
+            Exp2s.SetPoint(n, m, mean_val[m][ct])
+            Exp2s.SetPointError(n, 0., 0., mean_val[m][ct]-sigma_2_down[m][ct], sigma_2_up[m][ct]-mean_val[m][ct])
 
-                Theory.SetPoint(n, ct/1000., theory[n])#just a list with no index
+            Theory.SetPoint(n, m, theory[m][ct])#just a list with no index
+            n+=1
+        #print mass
+        #print mean_arr
+
+        Exp2s.SetLineWidth(2)
+        Exp2s.SetLineStyle(1)
+        Exp0s.SetLineStyle(2)
+        Exp0s.SetLineWidth(3)
+        Exp1s.SetFillColor(417)
+        Exp1s.SetLineColor(417)
+        Exp2s.SetFillColor(800)
+        Exp2s.SetLineColor(800)
+        Exp2s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
+        Exp2s.GetXaxis().SetNoExponent(True)
+        Exp2s.GetXaxis().SetMoreLogLabels(True)
+        Exp2s.GetXaxis().SetTitleSize(0.048)
+        Exp2s.GetYaxis().SetTitleSize(0.048)
+        Exp2s.GetYaxis().SetTitleOffset(0.9)
+        Theory.SetLineWidth(3)
+        Theory.SetLineColor(2)
+        Theory.SetLineStyle(2)
+        if contamination:
+            Exp0s.GetYaxis().SetTitleOffset(1.5)
+            print Exp0s.GetYaxis().GetLabelOffset()
+        Exp2s.GetXaxis().SetTitleOffset(0.9)    
+        top = 0.9
+        nitems = 4
+        leg = TLegend(0.6, top-nitems*0.3/5., 0.75+0.15+0.03, top)
+        leg.SetBorderSize(0)
+        leg.SetHeader("95% CL limits, c#tau_{"+particle+"}="+str(int(ct/1000) if ct>500 else 0.5)+" m")
+        leg.SetTextSize(0.04)
+
+        c1 = TCanvas("c1", "Exclusion Limits", 800, 600)
+        c1.cd()
+        c1.SetGridx()
+        c1.SetGridy()
+        c1.GetPad(0).SetTopMargin(0.06)
+        c1.GetPad(0).SetRightMargin(0.05)
+        c1.GetPad(0).SetTicks(1, 1)
+        c1.GetPad(0).SetLogy()
+        #c1.GetPad(0).SetLogx()
+        if contamination:
+            c1.GetPad(0).SetLeftMargin(0.13)
+        if contamination:
+            leg.AddEntry(Exp0s,  "#mu ratio", "l")
+        else:
+            leg.AddEntry(Theory, "Theory", "l")
+            leg.AddEntry(Exp0s,  "Expected", "l")
+            leg.AddEntry(Exp1s, "#pm 1 std. deviation", "f")
+            leg.AddEntry(Exp2s, "#pm 2 std. deviations", "f")
+
+        #Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
+        if signalMultFactor == 0.001:
+            #Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b}) (fb)")
+            ##Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} Z #tilde{G} #rightarrow b #bar{b} #tilde{G} q #bar{q} #tilde{G}) (fb); B(#sigma("+particle+") #rightarrow h #tilde{G}) = "+str(BR_SCAN_H)+"%; B(#sigma("+particle+") #rightarrow Z #tilde{G}) = "+str(100-BR_SCAN_H)+"%")
+            Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} Z #tilde{G} #rightarrow b #bar{b} #tilde{G} q #bar{q} #tilde{G}) (fb)")
+        else:
+            Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b})/#sigma_{SUSY}")
+        Exp2s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
+        Exp1s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
+        Exp0s.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
+        Exp2s.SetMinimum(0.009)
+        Exp2s.SetMaximum(10001)
+        if contamination:
+            Exp0s.SetLineColor(2)
+            Exp0s.SetLineWidth(2)
+            Exp0s.SetMarkerColor(2)
+            Exp0s.SetMarkerStyle(24)
+            Exp0s.SetMinimum(0.98)
+            Exp0s.SetMaximum(1.02)
+            Exp0s.Draw("APL")
+            Exp0s.GetYaxis().SetTitle("#frac{Excluded #mu with signal contamination}{Excluded #mu w/o signal contamination}")
+            c1.SetLogy(0)
+        else:
+            Exp2s.Draw("A3")
+            Exp1s.Draw("SAME, 3")
+            Exp0s.Draw("SAME, L")
+            Theory.Draw("SAME, L")
+        leg.Draw()
+
+        if PRELIMINARY:
+            drawCMS(samples, this_lumi, "Preliminary",left_marg_CMS=0.3,onTop=True)
+        else:
+            drawCMS(samples, this_lumi, "",left_marg_CMS=0.32)
+
+        drawRegion(CHAN,top=0.7)
+        drawBR(BR_SCAN_H)
+        #drawAnalysis("LL"+CHAN)
+        #drawTagVar(TAGVAR)
+
+        OUTSTRING = PLOTLIMITSDIR+"/Exclusion_vs_mass_ctau_"+str(ct)#+TAGVAR+comb_fold_label+"_"+CHAN
+        newFile = TFile(PLOTLIMITSDIR+"/Exclusion_vs_mass_ctau_"+str(ct)+".root", "RECREATE")#+"_"+TAGVAR+comb_fold_label+ ".root", "RECREATE")
+        newFile.cd()
+        Exp0s.Write("pl"+str(ct)+"_exp")
+        Exp1s.Write("pl"+str(ct)+"_1sigma")
+        Exp2s.Write("pl"+str(ct)+"_2sigma")
+        c1.Write()
+        newFile.Close()
+        print "Info: written file: ", PLOTLIMITSDIR+"/Exclusion_vs_mass_ctau_"+str(ct)+".root"#"_"+TAGVAR+comb_fold_label+".root"
+
+        c1.Print(OUTSTRING+".png")
+        c1.Print(OUTSTRING+".pdf")
+        c1.Close()
+
+def plot_limits_vs_ctau(out_dir,sign,comb_fold_label="",combination=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False,BR_SCAN_H=100):
+
+    #Fix this_lumi
+    if combination==False:
+        if ERA=="2016":
+            if dataset_label == "_G-H":
+                this_lumi  = lumi[ "HighMET" ]["G"]+lumi[ "HighMET" ]["H"]
+            elif dataset_label == "_B-F":
+                this_lumi  = lumi[ "HighMET" ]["B"]+lumi[ "HighMET" ]["C"]+lumi[ "HighMET" ]["D"]+lumi[ "HighMET" ]["E"]+lumi[ "HighMET" ]["F"]
+        else:
+            this_lumi  = lumi[ "HighMET" ]["tot"]
+    else:
+        if comb_fold_label=="2016_BFGH_2017_2018":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_GH_2017_2018":
+            this_lumi = 111941.400399
+        else:
+            print "Invalid combination folder, can't calculate lumi, aborting"
+            exit()
+
+    print "LUMI: ", this_lumi
+
+    br_scan_fold = ""
+    if BR_SCAN_H==100:
+        br_scan_fold = "BR_h100_z0"
+    if BR_SCAN_H==75:
+        br_scan_fold = "BR_h75_z25"
+    if BR_SCAN_H==50:
+        br_scan_fold = "BR_h50_z50"
+    if BR_SCAN_H==25:
+        br_scan_fold = "BR_h25_z75"
+    if BR_SCAN_H==0:
+        br_scan_fold = "BR_h0_z100"
+
+    DATACARDDIR = out_dir+CHAN+"/"
+    DATACARDDIR += br_scan_fold+"/"
+
+    if combination:
+        DATACARDDIR += comb_fold_label+"/"
+        PLOTLIMITSDIR      = "plots/Limits_AN/v6_calo_AOD_"+REGION+"/"+br_scan_fold+"/"
+        if not os.path.isdir(PLOTLIMITSDIR):
+            os.mkdir(PLOTLIMITSDIR)
+        PLOTLIMITSDIR += comb_fold_label+"/"
+    else:
+        PLOTLIMITSDIR      = "plots/Limits_AN/v6_calo_AOD_"+ERA+"_"+REGION+"/"+br_scan_fold+"/"
+    RESULTS = DATACARDDIR + "/combine_results/"
+
+    if not os.path.isdir(PLOTLIMITSDIR):
+        os.mkdir(PLOTLIMITSDIR)
+    print "Plotting these limits: ", DATACARDDIR
+
+    if signalMultFactor == 0.001:
+        print '  x-sec calculated in fb '
+    elif (signalMultFactor >= 1 and signalMultFactor < 1000):
+        print '  x-sec calculated in pb '
+    else:
+        print 'Wrong signal mult. factor, aborting...'
+        exit()
+    print '-'*11*2
+
+    #Dictionary with various predictions
+    '''
+    mass = []
+    theory = defaultdict(dict)
+    mean_val = defaultdict(dict)
+    sigma_1_up = defaultdict(dict)
+    sigma_1_down = defaultdict(dict)
+    sigma_2_up = defaultdict(dict)
+    sigma_2_down = defaultdict(dict)
+    '''
+
+    for i,s in enumerate(sign):
+        #print "theory x-sec (pb): ", sample[ samples[s]['files'][0] ]['xsec']
+        m = samples[s]['mass']
+        #Initialize here dictionaries
+        #Dictionary with various predictions
+        theory = defaultdict(dict)
+        mean_val = defaultdict(dict)
+        sigma_1_up = defaultdict(dict)
+        sigma_1_down = defaultdict(dict)
+        sigma_2_up = defaultdict(dict)
+        sigma_2_down = defaultdict(dict)
+
+        loop_ct = ctaus
+        loop_ct = np.append(loop_ct,np.array([500,3000]))
+        loop_ct = np.unique(loop_ct)
+
+        #for ct in np.sort(np.append(ctaus,np.array([samples[s]['ctau']]))):
+        for ct in np.sort(loop_ct):
+            #print ct
+            card_name = RESULTS + "/" + s.replace('_ctau'+str(samples[s]['ctau']),'_ctau'+str(ct)) + ".txt"
+            if not os.path.isfile(card_name):
+                continue
+            card = open( card_name, 'r')
+            val = card.read().splitlines()
+            if len(val) == 0:
+                continue
+            sigma_2_down[m][ct] = float(val[0])
+            sigma_1_down[m][ct] = float(val[1])
+            mean_val[m][ct]     = float(val[2])
+            sigma_1_up[m][ct]   = float(val[3])
+            sigma_2_up[m][ct]   = float(val[4])
+            theory[m][ct]       = 1000.*sample[ samples[s]['files'][0] ]['xsec']
+
+        Obs0s = TGraph()
+        Exp0s = TGraph()
+        Exp1s = TGraphAsymmErrors()
+        Exp2s = TGraphAsymmErrors()
+        Theory = TGraph()
+
+        n=0
+        #for ct in np.sort(np.append(ctaus,np.array([ctaupoint]))):
+        for ct in np.sort(loop_ct):
+            if ct in mean_val[m].keys():
+                print m, ct/1000., mean_val[m][ct]
+                Exp0s.SetPoint(n, ct/1000., mean_val[m][ct])
+                Exp1s.SetPoint(n, ct/1000., mean_val[m][ct])
+                Exp1s.SetPointError(n, 0., 0., mean_val[m][ct]-sigma_1_down[m][ct], sigma_1_up[m][ct]-mean_val[m][ct])
+                Exp2s.SetPoint(n, ct/1000., mean_val[m][ct])
+                Exp2s.SetPointError(n, 0., 0., mean_val[m][ct]-sigma_2_down[m][ct], sigma_2_up[m][ct]-mean_val[m][ct])
+
+                Theory.SetPoint(n, ct/1000., theory[m][ct])
                 n+=1
-
-        print ctaus
-        print mean_arr
 
         Exp2s.SetLineWidth(2)
         Exp2s.SetLineStyle(1)
@@ -6476,7 +7737,7 @@ def plot_limits_vs_ctau(sign,comb_fold_label="",combination=False,eta=False,phi=
         nitems = 4
         leg = TLegend(0.45, top-nitems*0.3/5., 0.8, top)
         leg.SetBorderSize(0)
-        leg.SetHeader("95% CL limits, m_{"+particle+"}="+str(mass)+" GeV")
+        leg.SetHeader("95% CL limits, m_{"+particle+"}="+str(m)+" GeV")
         leg.SetTextSize(0.04)
 
         c1 = TCanvas("c1", "Exclusion Limits", 800, 600)
@@ -6499,17 +7760,18 @@ def plot_limits_vs_ctau(sign,comb_fold_label="",combination=False,eta=False,phi=
             leg.AddEntry(Exp2s, "#pm 2 std. deviations", "f")
 
         Exp2s.GetYaxis().SetTitle("#sigma(H) B("+particle+particle+" #rightarrow b #bar{b} b #bar{b})/#sigma_{SM}")
-        if CHAN=="SUSY":
-            #Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b})/#sigma_{SUSY}")
-            if signalMultFactor == 0.001:
-                Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b}) (fb)")
-            else:
-                Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b})/#sigma_{SUSY}")
+
+        if signalMultFactor == 0.001:
+            Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} Z #tilde{G} #rightarrow b #bar{b} #tilde{G} q #bar{q} #tilde{G}) (fb)")
+        else:
+            Exp2s.GetYaxis().SetTitle("#sigma("+particle+particle+") B( h #tilde{G} h #tilde{G} #rightarrow b #bar{b} b #bar{b})/#sigma_{SUSY}")
         Exp2s.GetXaxis().SetTitle("c #tau_{"+particle+"} (m)")
         Exp1s.GetXaxis().SetTitle("c #tau_{"+particle+"} (m)")
         Exp0s.GetXaxis().SetTitle("c #tau_{"+particle+"} (m)")
-        Exp2s.SetMinimum(0.09)
-        Exp2s.SetMaximum(10001)
+        axis = Exp2s.GetXaxis()
+        axis.SetLimits(0.01,101.)
+        Exp2s.SetMinimum(0.009)
+        Exp2s.SetMaximum(100001)
         if contamination:
             Exp0s.SetLineColor(2)
             Exp0s.SetLineWidth(2)
@@ -6528,23 +7790,24 @@ def plot_limits_vs_ctau(sign,comb_fold_label="",combination=False,eta=False,phi=
             leg.Draw()
             
         if PRELIMINARY:
-            drawCMS(samples, LUMI, "Preliminary",left_marg_CMS=0.3,onTop=True)
+            drawCMS(samples, this_lumi, "Preliminary",left_marg_CMS=0.3,onTop=True)
         else:
-            drawCMS(samples, LUMI, "",left_marg_CMS=0.32)
+            drawCMS(samples, this_lumi, "",left_marg_CMS=0.32)
 
         drawRegion(CHAN,top=0.7)
-        drawAnalysis("LL"+CHAN)
+        drawBR(BR_SCAN_H)
+        #drawAnalysis("LL"+CHAN)
         #drawTagVar(TAGVAR)
 
-        OUTSTRING = PLOTLIMITSDIR+"/Exclusion_vs_ctau_m_"+str(mass)#+TAGVAR+comb_fold_label+"_"+CHAN
-        newFile = TFile(PLOTLIMITSDIR+"/Exclusion_vs_ctau_m_" + str(mass)+".root", "RECREATE")#+"_"+TAGVAR+comb_fold_label+ ".root", "RECREATE")
+        OUTSTRING = PLOTLIMITSDIR+"/Exclusion_vs_ctau_m_"+str(m)#+TAGVAR+comb_fold_label+"_"+CHAN
+        newFile = TFile(PLOTLIMITSDIR+"/Exclusion_vs_ctau_m_" + str(m)+".root", "RECREATE")#+"_"+TAGVAR+comb_fold_label+ ".root", "RECREATE")
         newFile.cd()
-        Exp0s.Write("m"+str(mass)+"_exp")
-        Exp1s.Write("m"+str(mass)+"_1sigma")
-        Exp2s.Write("m"+str(mass)+"_2sigma")
+        Exp0s.Write("m"+str(m)+"_exp")
+        Exp1s.Write("m"+str(m)+"_1sigma")
+        Exp2s.Write("m"+str(m)+"_2sigma")
         c1.Write()
         newFile.Close()
-        print "Info: written file: ", PLOTLIMITSDIR+"/Exclusion_vs_ctau_m_" +str(mass)+".root"#"_"+TAGVAR+comb_fold_label+".root"
+        print "Info: written file: ", PLOTLIMITSDIR+"/Exclusion_vs_ctau_m_" +str(m)+".root"#"_"+TAGVAR+comb_fold_label+".root"
 
         c1.Print(OUTSTRING+".png")
         c1.Print(OUTSTRING+".pdf")
@@ -7156,7 +8419,7 @@ clos = False
 #jet_tag = "_A-B"
 #kill QCD
 
-#jet_tag += "_B-F"#"_G-H"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#"_B-F"#
+#jet_tag += "_B-F"#"_B-F"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#"_B-F"#
 
 #jet_tag += "_PFJet500"
 if KILL_QCD:
@@ -7209,7 +8472,7 @@ elif ERA=="2016":
 
 
 print "Ntupledir: ", NTUPLEDIR
-print "Luminosity: ", data[0], LUMI
+#print "Luminosity: ", data[0], LUMI
 
 sample_dict = {}
 reg_comb = ""
@@ -7278,14 +8541,7 @@ else:
 #plot_roc_curve(get_tree_weights(sign),get_tree_weights(back),sign,back,add_label="",check_closure=False,eta=False,j_idx=-1,eta_cut=1.0,eta_invert=True)
 #compare_roc_curves(list_comparison=["","_eta_1p0","_eta_larger_1p0"],add_label="")
 #exit()
-
-
-##calculate_tag_eff(samples_to_run,add_label=jet_tag+"_closure_0p99",check_closure=True)#_low_dPhi_0p5_2_HLT_PFJet_combi
-##draw_tag_eff(samples_to_run,add_label=jet_tag+"_closure_0p99",check_closure=True)#_low_dPhi_0p5_2_HLT_PFJet_combi
-
 #jet_correlations(samples_to_run,add_label=jet_tag+"_zoom",check_closure=False)#_low_dPhi_0p5_2_HLT_PFJet_combi
-#exit()
-
 
 #jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
 '''
@@ -7360,54 +8616,8 @@ draw_data_combination(
 exit()
 '''
 
-#SR
 
-#closure
-#clos = True#False#True
-#jet_tag = "_closure_0p95"
-
-'''
-draw_data_combination(
-    ERA,
-    ["ZtoMM","ZtoEE","WtoMN","WtoEN","TtoEM","JetHT","DiJetMET"],
-    add_label="_closure_0p95",#"_vs_QCD_MC",#"_closure"
-    lab_2="",#"_MC",#"_vs_MC",#"_0p95",#""
-    check_closure=clos
-)
-exit()
-'''
-
-##'''
-### Older version
-##background_prediction(
-##    get_tree_weights(samples_to_run,LUMI),
-##    samples_to_run,
-##    #extr_regions= ["ZtoMM","ZtoEE","WtoMN","WtoEN","TtoEM","JetHT","DiJetMET"],
-##    add_label="_closure_0p95",#"",#
-##    label_2="_extrapolation_0p95",check_closure=clos
-##)
-##exit()
-##'''
-
-
-##'''
-### Older version
-##jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
-##
-##background_prediction_new(get_tree_weights(samples_to_run,LUMI),
-##                          samples_to_run,
-##                          extr_regions=["JetHT","DiJetMET","JetMET","WtoMN","MN","MR","SR"],
-##                          regions_labels = ["","",jet_tag,"","","","","","","","","","","","","","","","",""],
-##                          add_label="",
-##                          label_2="_extrapolation_triplet_quadruplet",check_closure=False)
-##
-##exit()
-##'''
-
-
-#jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
-#clos = False
-
+#Bkg pred
 '''
 background_prediction(
     get_tree_weights(samples_to_run,LUMI),
@@ -7462,8 +8672,105 @@ background_prediction(
 exit()
 '''
 
+#This works, still missing HZ/ZZ
 mu_scale = 1.#50.#0.01#1.#2.#5.#10.#0.1#
 contam = False
+br_h=100#75#50#25#0#
+
+label = "_G-H" if ERA=="2016" else ""
+
+combi_folder = "2016_BFGH_2017_2018"#"2016_GH_2017_2018",#
+era_list = ["2016_B-F","2016_G-H","2017","2018"]#["2016_G-H","2017","2018"],#
+limit_plot_dir = OUTCOMBI#OUTCOMBI,#OUTPUTDIR,
+
+#get_tree_weights_BR_scan(sign,br_h,dataset_label=label,main_pred_sample="HighMET")
+#exit()
+
+#for br_h in [100,75,50,25,0]:
+#for br_h in [100]:
+for br_h in [75,50,25,0]:
+    write_datacards(
+        get_tree_weights_BR_scan(sign,br_h,dataset_label=label,main_pred_sample="HighMET"),#LUMI),#137.4*1000 full Run2
+        sign,
+        main_pred_reg = REGION,
+        main_pred_sample="HighMET",
+        #extrapolation
+        extr_region= "WtoLN",
+        unc_list = ["lumi","bkg","PU","QCD_scales","PDF","jet","tau","DNN"],
+        dataset_label = label,
+        comb_fold_label = jet_tag,
+        check_closure=False,
+        pred_unc = 1.,#here to boost it if needed
+        run_combine = False,#True,#False,#True,#False,#True,#True,
+        eta = DO_ETA,
+        phi = DO_PHI,
+        eta_cut = CUT_ETA,
+        phi_cut = CUT_PHI,
+        scale_mu=mu_scale,
+        contamination = contam,
+        BR_SCAN_H=br_h
+    )
+    #exit()
+    
+    '''
+    combine_datacards_AN(
+        sign,
+        comb_fold_label = combi_folder,
+        eras = era_list,
+        add_label="",
+        label_2=jet_tag,#"_MinDPhi_0p5",#"",#"",#"_MinDPhi_0p5_new_bins",#"_extrapolation_0p996",
+        check_closure=clos,
+        pred_unc = 1.,#here to boost it if needed
+        run_combine = True,#False,#True,#
+        eta = DO_ETA,
+        phi = DO_PHI,
+        eta_cut = CUT_ETA,
+        phi_cut = CUT_PHI,
+        BR_SCAN_H=br_h
+    )
+    #OUTCOMBI
+    plot_limits_vs_mass(
+        limit_plot_dir,
+        sign,
+        comb_fold_label = combi_folder,
+        combination = True if limit_plot_dir==OUTCOMBI else False,
+        eta = DO_ETA,
+        eta_cut = CUT_ETA,
+        phi_cut = CUT_PHI,
+        scale_mu=mu_scale,
+        contamination = contam,
+        BR_SCAN_H=br_h
+    )
+    plot_limits_vs_ctau(
+        limit_plot_dir,
+        sign,
+        comb_fold_label = combi_folder,#"2016_BFGH_2017_2018",#"2016_GH_2017_2018",##
+        combination = True if limit_plot_dir==OUTCOMBI else False,
+        eta = DO_ETA,
+        eta_cut = CUT_ETA,
+        phi_cut = CUT_PHI,
+        scale_mu=mu_scale,
+        contamination = contam,
+        BR_SCAN_H=br_h
+    )
+    #exit()
+    '''
+    #signal_injection_test(
+    #    limit_plot_dir,
+    #    comb_fold_label=combi_folder,
+    #    combination=True if limit_plot_dir==OUTCOMBI else False,
+    #    add_label="",
+    #    run_combine=True,
+    #    BR_SCAN_H=br_h,
+    #    n_toys = 500,
+    #)
+    #exit()
+
+    
+exit()
+    
+
+##################################################
 uncertainties = {
     "obs" : -1,#0.2,#20.,#-1.,
     "bkg_yield" : 0.148,
@@ -7514,7 +8821,7 @@ LUMI_REST = LUMI - LUMI_BF
 
 
 '''
-write_datacards(
+old_write_datacards(
     get_tree_weights(sign,LUMI_REST),
     sign,
     main_pred_reg = REGION,
@@ -7721,119 +9028,3 @@ combine_limits(
 )
 
 exit()
-
-
-#2016:
-#calculate_tag_eff(samples_to_run,add_label="_RunB-F")#(back)#
-#calculate_tag_eff(samples_to_run,add_label="_RunG-H")#(back)#
-#draw_tag_eff(samples_to_run,add_label="_RunG-H")#(back)#
-
-'''
-background_prediction_new(get_tree_weights(samples_to_run,LUMI),
-                          samples_to_run,
-                          extr_regions=["WtoMN","SR","MN",],
-                          regions_labels = ["","",""],
-                          add_label="",
-                          label_2="_extrapolation_to_MN_quadruplet")
-'''
-
-
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_low_dPhi_1p5_Lep","JetMET_dPhi_1p5_Lep","JetMET_low_dPhi_1p5_MET_200_Lep","JetMET_dPhi_1p5_MET_200_Lep"],"","_JetMET_Lep_combinations")
-
-#QUAA
-'''
-background_prediction_new(get_tree_weights(samples_to_run),
-                          samples_to_run,
-                          extr_regions=["WtoMN","SR","MN","MR","JetMET","JetMET",],
-                          regions_labels = ["","","","","_low_dPhi_0p5_2_HLT_PFJet_combi","_low_dPhi_0p5_2_HLT_PFJet_500"],
-                          add_label="",
-                          label_2="_extrapolation_to_dPhi_0p5_2_HLT_PFJet_500")
-'''
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_low_dPhi_1p5_Lep","JetMET_dPhi_1p5_Lep","JetMET_low_dPhi_1p5_MET_200_Lep","JetMET_dPhi_1p5_MET_200_Lep"],"","_JetMET_Lep_combinations")
-
-
-#background_prediction_new(get_tree_weights(samples_to_run),samples_to_run,extr_regions=["WtoMN","MR","SR"],add_label="_RunB-F",label_2="_extrapolation")
-#background_prediction_new(get_tree_weights(samples_to_run),samples_to_run,extr_regions=["WtoMN","MR","SR"],add_label="_RunG-H",label_2="_extrapolation")
-
-#?#background_prediction_new_one_eff(get_tree_weights(samples_to_run),samples_to_run,extr_region="",add_label="_test_more_CR")
-#
-#
-#background_prediction_new(get_tree_weights(samples_to_run),samples_to_run,extr_regions=["WtoMN","WtoEN","MR","SR"],add_label="_RunG-H",label_2="")
-
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_all_triggers","JetMET_unprescaled_trigger","JetMET_dPhi_1p5_all_triggers","JetMET_MET_200_all_triggers","JetMET_dPhi_1p5_MET_200_all_triggers"],"","_MET_check")
-
-#HERE
-'''
-draw_data_combination(
-    ERA,
-    ["WtoMN","JetMET","JetMET","MR","MN",],
-    regions_labels=["","_low_dPhi_0p5_2_HLT_PFJet_500","_low_dPhi_0p5_2_HLT_PFJet_combi","","",""],
-    add_label="",
-    lab_2="_0_lepton_regions"
-
-    #["JetMET","JetMET","JetMET","JetMET","JetMET","JetMET","JetMET"],
-    #["JetMET","JetMET","JetMET","JetMET","JetMET","JetMET","JetMET"],
-    #regions_labels=["_dPhi_1p5_MET_200_HLT_PFJet_combi","_dPhi_1p5_MET_200","_dPhi_1p5_MET_200_HLT_PFJet260","_dPhi_1p5_MET_200_HLT_PFJet320","_dPhi_1p5_MET_200_HLT_PFJet400","_dPhi_1p5_MET_200_HLT_PFJet450","_dPhi_1p5_MET_200_HLT_PFJet500",],
-    #add_label="",
-    #lab_2="_up_macro_test_MET_200"
-
-    #["WtoMN","JetMET","JetMET","JetMET","JetMET","SR"],
-    #regions_labels=["","_dPhi_1p5_Lep_HLT_PFJet_combi","_dPhi_1p5_MET_200_Lep_HLT_PFJet_combi","_low_dPhi_1p5_Lep_HLT_PFJet_combi","_low_dPhi_1p5_MET_200_Lep_HLT_PFJet_combi",""],
-    #add_label="",
-    #lab_2="_Lep_HLT_PFJet_combination"
-
-    #["WtoMN","JetMET","JetMET","SR"],
-    #regions_labels=["","_dPhi_1p5_Lep_HLT_PFJet_combi","_dPhi_1p5_HLT_PFJet_combi",""],
-    #add_label="",
-    #lab_2="_compare_dPhi_1p5_Lep_HLT_PFJet_combination_more_bins"
-
-    #["WtoMN","JetMET","JetMET","SR"],
-    #regions_labels=["","_dPhi_1p5_MET_200_Lep_HLT_PFJet_combi","_dPhi_1p5_MET_200_HLT_PFJet_combi",""],
-    #add_label="",
-    #lab_2="_compare_dPhi_1p5_MET_200_Lep_HLT_PFJet_combination_more_bins"
-
-    #["WtoMN","JetMET","JetMET","JetMET","SR"],
-    #regions_labels=["","_low_dPhi_1p5_Lep_HLT_PFJet_combi","_low_dPhi_1p5_HLT_PFJet_combi","_low_dPhi_0p5_2_HLT_PFJet_combi",""],
-    #add_label="",
-    #lab_2="_compare_low_dPhi_1p5_Lep_HLT_PFJet_combination_more_bins"
-
-    #["WtoMN","JetMET","JetMET","SR"],
-    #regions_labels=["","_low_dPhi_1p5_MET_200_Lep_HLT_PFJet_combi","_low_dPhi_1p5_MET_200_HLT_PFJet_combi",""],
-    #add_label="",
-    #lab_2="_compare_low_dPhi_1p5_MET_200_Lep_HLT_PFJet_combination_more_bins"
-
-    #["WtoMN","JetMET","JetMET","MN","MR","SR"],
-    #regions_labels=["","_low_dPhi_1p5_Lep_HLT_PFJet_combi","_low_dPhi_1p5_HLT_PFJet_combi","","",""],
-    #add_label="",
-    #lab_2="_test_MN"
-)
-'''
-
-#draw_data_combination(ERA,["JetMET","JetMET","JetMET","JetMET","JetMET","JetMET","JetMET",],regions_labels=["_dPhi_1p5","_dPhi_1p5_HLT_PFJet140","_dPhi_1p5_HLT_PFJet200","_dPhi_1p5_HLT_PFJet260","_dPhi_1p5_HLT_PFJet320","_dPhi_1p5_HLT_PFJet400","_dPhi_1p5_HLT_PFJet450","_dPhi_1p5_HLT_PFJet500",],add_label="",lab_2="_up_macro_test")
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_low_dPhi_1p5","JetMET_low_dPhi_1p5_Lep","JetMET_dPhi_1p5_all_triggers","JetMET_dPhi_1p5_Lep"],regions_labels=[],add_label="",lab_2="_MET_dPhi_cut")
-
-#draw_data_combination(ERA,["WtoMN","SR","MR","JetMET_low_dPhi_1p5_MET_200","JetMET_low_dPhi_1p5_MET_200_Lep","JetMET_dPhi_1p5_MET_200_all_triggers","JetMET_dPhi_1p5_MET_200_Lep"],"","_MET_dPhi_cut_and_MET_200")
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_low_dPhi_1p5_Lep","JetMET_dPhi_1p5_Lep","JetMET_low_dPhi_1p5_MET_200_Lep","JetMET_dPhi_1p5_MET_200_Lep"],"","_JetMET_Lep_combinations")
-
-
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_all_triggers","JetMET_dPhi_1p5_all_triggers","JetMET_dPhi_1p5_MET_200_all_triggers","JetMET_dPhi_1p5_MET_200_Lep","JetMET_low_dPhi_1p5","JetMET_low_dPhi_1p5_Lep","JetMET_low_dPhi_1p5","JetMET_low_dPhi_1p5_Lep"],"","_MET_check_lower_met")
-#draw_data_combination(ERA,["WtoMN","SR","JetMET_dPhi_1p5_MET_200_all_triggers","JetMET_dPhi_1p5_MET_200_Lep"],"","_MET_check")
-
-#draw_data_combination(ERA,["WtoMN","WtoEN","MR","JetHT","JetHT_unprescaled"],"","_all")
-#draw_data_combination(ERA,["WtoMN","WtoEN","MR","JetHT"],"","_JetHT_check")
-#draw_data_combination(ERA,["ZtoMM","WtoMN","ZtoEE","WtoEN","SR"],"_RunG-H")
-#draw_data_combination(ERA,["ZtoMM","WtoMN","ZtoEE","WtoEN","SR"],"_RunB-F")
-#draw_data_combination(ERA,["WtoMN","ZtoMM","WtoEN","ZtoEE","SR_HEM"],"_no_HEM_cut")
-#draw_data_combination(ERA,["WtoMN","WtoEN","MR","SR","MRPho"],"","_more_CRs")
-#draw_data_combination(ERA,["ZtoMM","TtoEM","ZtoEE","WtoEN","SR"],"")
-#draw_data_combination(ERA,["SR","SR_HEM"],"","_HEM_effect")
-#draw_data_combination(ERA,["ZtoMM","WtoMN","ZtoEE","WtoEN","SR_HEM"],"_no_HEM_cut")
-#draw_data_combination(ERA,["ZtoMM","ZtoEE","TtoEM","WtoMN"],"_no_HEM_cut")
-#draw_data_combination(ERA,["SR","WtoMN","ZtoMM","WtoEN","ZtoEE"])#,"TtoEM"])
-
-##Compare with Jiajing
-#draw_comparison("2018",["WtoMN","ZtoMM","WtoEN"],"_all",maxeff=0.001)
-#draw_comparison("2018",["WtoMN"],"_SingleMuon",col=1)
-#draw_comparison("2018",["ZtoMM"],"_ZtoMM",col=2)
-#draw_comparison("2018",["WtoEN"],"_SingleElectron",col=4)
-#draw_comparison("2018",["ZtoEE"],"_ZtoEE",col=418)
