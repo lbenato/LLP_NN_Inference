@@ -68,46 +68,48 @@ if SEL=="SR":
     data = ["HighMET"]#["QCD"]
     back = ["ZJetsToNuNu"]
 sign = [
-    'SUSY_mh127_ctau500',
-    'SUSY_mh150_ctau500',
-    'SUSY_mh175_ctau500',
-    'SUSY_mh200_ctau500',
-    'SUSY_mh250_ctau500',
-    'SUSY_mh300_ctau500',
-    'SUSY_mh400_ctau500',
-    'SUSY_mh600_ctau500',
-    'SUSY_mh800_ctau500',
-    'SUSY_mh1000_ctau500',
-    'SUSY_mh1250_ctau500',
-    'SUSY_mh1500_ctau500',
-    'SUSY_mh1800_ctau500'
+    'SUSY_mh127_ctau500_HH',
+    'SUSY_mh150_ctau500_HH',
+    'SUSY_mh175_ctau500_HH',
+    'SUSY_mh200_ctau500_HH',
+    'SUSY_mh250_ctau500_HH',
+    'SUSY_mh300_ctau500_HH',
+    'SUSY_mh400_ctau500_HH',
+    'SUSY_mh600_ctau500_HH',
+    'SUSY_mh800_ctau500_HH',
+    'SUSY_mh1000_ctau500_HH',
+    'SUSY_mh1250_ctau500_HH',
+    'SUSY_mh1500_ctau500_HH',
+    'SUSY_mh1800_ctau500_HH'
 ]
 
 
 sign += [
-    'SUSY_mh127_ctau3000',
-    'SUSY_mh150_ctau3000',
-    'SUSY_mh175_ctau3000',
-    'SUSY_mh200_ctau3000',
-    'SUSY_mh250_ctau3000',
-    'SUSY_mh300_ctau3000',
-    'SUSY_mh400_ctau3000',
-    'SUSY_mh600_ctau3000',
-    'SUSY_mh800_ctau3000',
-    'SUSY_mh1000_ctau3000',
-    'SUSY_mh1250_ctau3000',
-    'SUSY_mh1500_ctau3000',
-    'SUSY_mh1800_ctau3000'
+    'SUSY_mh127_ctau3000_HH',
+    'SUSY_mh150_ctau3000_HH',
+    'SUSY_mh175_ctau3000_HH',
+    'SUSY_mh200_ctau3000_HH',
+    'SUSY_mh250_ctau3000_HH',
+    'SUSY_mh300_ctau3000_HH',
+    'SUSY_mh400_ctau3000_HH',
+    'SUSY_mh600_ctau3000_HH',
+    'SUSY_mh800_ctau3000_HH',
+    'SUSY_mh1000_ctau3000_HH',
+    'SUSY_mh1250_ctau3000_HH',
+    'SUSY_mh1500_ctau3000_HH',
+    'SUSY_mh1800_ctau3000_HH'
 ]
 
 #sign = ['SUSY_mh800_ctau3000','SUSY_mh1800_ctau3000']
+#sign = ['SUSY_mh400_ctau500_HH']
 
 #General main
-MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc/"
+#MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc/"
+MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_central_values/"
 MAIN_central = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_central_values/"
 MAIN_JERUp = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_JERUp/"
 MAIN_JERDown = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_JERDown/"
-OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_"+ERA+"_"+SEL+"_signal_uncertainties/"
+OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_"+ERA+"_"+SEL+"_signal_uncertainties_fix/"
 SF = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/data_MC_SF_DNN_"+ERA+"/"
 
 def deltaPhi_np( a1, v2):
@@ -179,6 +181,7 @@ def sign_unc_PU(label="",scale=True, do_smear=True,added=""):
             tmp_file = TFile(MAIN+ss+".root","READ")
             tree = tmp_file.Get("tree")
             tree_weight = tree.GetWeight()
+            print "tree weight: ", tree_weight
             for e in range(0,tree.GetEntries()):
                 tree.GetEntry(e)
                 jets = getattr(tree,"Jets")
@@ -641,8 +644,8 @@ def sign_unc_jet(label="",scale=True, do_smear=True,added=""):
                     bin_2_UnclDown.append(ev_weight * tree.TriggerWeight_UnclusteredEnDown)
     
         for j, ss in enumerate(samples[s]['files']):
-            print "Performing computation for ", ss+"_HH"
-            tmp_file = TFile(MAIN_JERUp+ss+"_HH.root","READ")
+            print "Performing computation for ", ss
+            tmp_file = TFile(MAIN_JERUp+ss+".root","READ")
             tree = tmp_file.Get("tree")
             tree_weight = tree.GetWeight()
             for e in range(0,min(max_events,tree.GetEntries())):
@@ -683,8 +686,8 @@ def sign_unc_jet(label="",scale=True, do_smear=True,added=""):
                     bin_2_JERUp.append(ev_weight * tree.TriggerWeight_JERUp)
 
         for j, ss in enumerate(samples[s]['files']):
-            print "Performing computation for ", ss+"_HH"
-            tmp_file = TFile(MAIN_JERDown+ss+"_HH.root","READ")
+            print "Performing computation for ", ss
+            tmp_file = TFile(MAIN_JERDown+ss+".root","READ")
             tree = tmp_file.Get("tree")
             tree_weight = tree.GetWeight()
             for e in range(0,min(max_events,tree.GetEntries())):
@@ -771,30 +774,64 @@ def sign_unc_lumi(label="",added=""):
     Correlated 2016,2017,2018   0.6,0.9,2.0
     Correlated 2017,2018      0.6,0.2
     '''
-    results = {}
-    if ERA=="2016":
-        results['lumi_2016_unc'] = 1.0 
-        ##results['lumi_2017_unc'] = 0.0 
-        ##results['lumi_2018_unc'] = 0.0 
-        results['lumi_corr_all'] = 0.6 
-        ##results['lumi_corr_2017_2018'] = 0.0 
-    if ERA=="2017":
-        ##results['lumi_2016_unc'] = 0.0 
-        results['lumi_2017_unc'] = 2.0 
-        ##results['lumi_2018_unc'] = 0.0
-        results['lumi_corr_all'] = 0.9 
-        results['lumi_corr_2017_2018'] = 0.6 
-    if ERA=="2018":
-        ##results['lumi_2016_unc'] = 0.0 
-        ##results['lumi_2017_unc'] = 0.0 
-        results['lumi_2018_unc'] = 1.5 
-        results['lumi_corr_all'] = 2.0 
-        results['lumi_corr_2017_2018'] = 0.2 
+    results = defaultdict(dict)
+    for s in sign:
+        s = s.replace("_HH","")
+        if ERA=="2016":
+            results[s]['lumi_2016_unc'] = 1.0 
+            ##results[s]['lumi_2017_unc'] = 0.0 
+            ##results[s]['lumi_2018_unc'] = 0.0 
+            results[s]['lumi_corr_all'] = 0.6 
+            ##results[s]['lumi_corr_2017_2018'] = 0.0 
+        if ERA=="2017":
+            ##results[s]['lumi_2016_unc'] = 0.0 
+            results[s]['lumi_2017_unc'] = 2.0 
+            ##results[s]['lumi_2018_unc'] = 0.0
+            results[s]['lumi_corr_all'] = 0.9 
+            results[s]['lumi_corr_2017_2018'] = 0.6 
+        if ERA=="2018":
+            ##results[s]['lumi_2016_unc'] = 0.0 
+            ##results[s]['lumi_2017_unc'] = 0.0 
+            results[s]['lumi_2018_unc'] = 1.5 
+            results[s]['lumi_corr_all'] = 2.0 
+            results[s]['lumi_corr_2017_2018'] = 0.2 
 
-    with open(OUT+"signal_lumi_unc"+label+".yaml","w") as f:
+    print results
+    with open(OUT+"signal_lumi_datacard_unc"+label+".yaml","w") as f:
         yaml.dump(results, f)
         f.close()
-    print "Written in ", OUT+"signal_lumi_unc"+label+".yaml"
+    print "Written in ", OUT+"signal_lumi_datacard_unc"+label+".yaml"
+
+
+
+def sign_unc_tau(label="",added=""):
+    results = defaultdict(dict)
+    for s in sign:
+        s = s.replace("_HH","")
+        results[s]['tau'] = 0.5 
+    print results
+    with open(OUT+"signal_tau_datacard_unc"+label+".yaml","w") as f:
+        yaml.dump(results, f)
+        f.close()
+    print "Written in ", OUT+"signal_tau_datacard_unc"+label+".yaml"
+
+
+def sign_unc_DNN(label=""):
+    with open(OUT+"signal_DNN_unc"+label+".yaml","r") as f:
+        results = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+    uncertainties = defaultdict(dict)
+
+    for s in sign:
+        s = s.replace("_HH","")
+        uncertainties[s]['DNN_'+ERA+label] = results[s]['diff_y2']
+
+    with open(OUT+"signal_DNN_datacard_unc"+label+".yaml","w") as f:
+        yaml.dump(uncertainties, f)
+        f.close()
+    print "Written in ", OUT+"signal_DNN_datacard_unc"+label+".yaml"
+
+
 
 def draw_syst_unc_PU(added):
     print "Drawing uncertainty vs mass"
@@ -882,6 +919,19 @@ def draw_syst_unc_PU(added):
     c1.Print(OUT+"signal_PU_uncertainty"+added+".png")
     c1.Close()
 
+    #Write datacards dictionary
+    uncertainties = defaultdict(dict)
+    for s in sign:
+        s = s.replace("_HH","")
+        uncertainties[s]['PU'] = max(results[s]['diff_y2_up'],results[s]['diff_y2_down'])
+
+    with open(OUT+"signal_PU_datacard_unc"+added+".yaml","w") as f:
+        yaml.dump(uncertainties, f)
+        f.close()
+    print "Written in ", OUT+"signal_PU_datacard_unc"+added+".yaml"
+
+
+
 def draw_syst_unc_envelope(unc_type,added):
     print "Drawing uncertainty vs mass"
     with open(OUT+"signal_"+unc_type+"_unc"+added+".yaml","r") as f:
@@ -963,11 +1013,24 @@ def draw_syst_unc_envelope(unc_type,added):
     c1.Print(OUT+"signal_"+unc_type+"_uncertainty"+added+".png")
     c1.Close()
 
+    #Write datacards dictionary
+    uncertainties = defaultdict(dict)
+    for s in sign:
+        s = s.replace("_HH","")
+        uncertainties[s][unc_type] = max(results[s]['diff_y2_up'],results[s]['diff_y2_down'])
+
+    with open(OUT+"signal_"+unc_type+"_datacard_unc"+added+".yaml","w") as f:
+        yaml.dump(uncertainties, f)
+        f.close()
+    print "Written in ", OUT+"signal_"+unc_type+"_datacard_unc"+added+".yaml"
+
+
 def draw_syst_unc_jet(added):
     print "Drawing uncertainty vs mass"
     with open(OUT+"signal_jet_unc"+added+".yaml","r") as f:
         results = yaml.load(f, Loader=yaml.Loader)
         f.close()
+
     samp = results.keys()
     masses = []
     ctaus = []
@@ -1199,28 +1262,51 @@ def draw_syst_unc_jet(added):
     c1.Print(OUT+"signal_unclustered_energy_uncertainty"+added+".png")
     c1.Close()
     mg.Delete()
+
+    #Write datacards dictionary
+    uncertainties = defaultdict(dict)
+    for s in sign:
+        if not ERA=="2018":
+            s = s.replace("_HH","")
+        #Don't want G-H or B-F separated
+        uncertainties[s.replace("_HH","")]['JES_'+ERA] = max(results[s]['diff_y2_JESUp'],results[s]['diff_y2_JESDown'])
+        uncertainties[s.replace("_HH","")]['JER_'+ERA] = max(results[s]['diff_y2_JERUp'],results[s]['diff_y2_JERDown'])
+        uncertainties[s.replace("_HH","")]['uncl_energy_'+ERA] = max(results[s]['diff_y2_UnclUp'],results[s]['diff_y2_UnclDown'])
+
+    with open(OUT+"signal_jet_datacard_unc"+added+".yaml","w") as f:
+        yaml.dump(uncertainties, f)
+        f.close()
+    print "Written in ", OUT+"signal_jet_datacard_unc"+added+".yaml"
+
  
 lab = "_not_scaled"#"_constant_1"
 lab = ""
 added = ""
-#added="_G-H"
-#added="_B-F"
+if ERA=="2016":
+    added="_G-H"
+    #added="_B-F"
+
+# DNN
+sign_unc_DNN(label=added)
+
+# Tau
+sign_unc_tau(label=added)
 
 # Lumi
 sign_unc_lumi(label=added)
 
 # JER JEC
 #sign_unc_jet(label=added)#+"_debug")
-#draw_syst_unc_jet(added)
+draw_syst_unc_jet(added)
 
 # PDF
 #sign_unc_PDF(label=added)
-#draw_syst_unc_envelope("PDF",added)
+draw_syst_unc_envelope("PDF",added)
 
 # QCD scales
 #sign_unc_QCD_scales(label=added)
-#draw_syst_unc_envelope("QCD_scales",added)
+draw_syst_unc_envelope("QCD_scales",added)
 
 # Pile-Up
-#sign_unc_PU(label=added)
-#draw_syst_unc_PU(added)
+#sign_unc_PU(label=added+"_test")
+draw_syst_unc_PU(added)

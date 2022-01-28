@@ -15,7 +15,7 @@ from sklearn.linear_model import LinearRegression
 from scipy.stats import chisquare
 #import matplotlib.pyplot as plt
 
-#from Analyzer.LLP2018.drawUtils import *
+#from Analyzer.LLP2017.drawUtils import *
 
 #import optparse
 #usage = "usage: %prog [options]"
@@ -37,16 +37,19 @@ data = [
     #'HighMETRun2016B-07Aug17_ver2-v1',  'HighMETRun2016E-07Aug17_v1',  'HighMETRun2016H-07Aug17_v1',
     #'HighMETRun2016C-07Aug17_v1',       'HighMETRun2016F-07Aug17_v1',
     #'HighMETRun2016D-07Aug17_v1',       'HighMETRun2016G-07Aug17_v1',
-    #"HighMETRun2017C-17Nov2017-v1BH",
+    "HighMETRun2017E-17Nov2017-v1",
+    #"HighMETRun2018A-17Sep2018-v1",
+    #"HighMETRun2018D-PromptReco-v2"
 ]
 ##MAIN = "/afs/desy.de/user/l/lbenato/LLP_code_slc7/CMSSW_10_2_18/src/Analyzer/LLP2018/"
 #MAIN = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/"
 ##MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2016_SR/"
-MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR/"
+MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR_negative_jets_HBHE/"
 ##OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_cosmic_veto_v3/"
 OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_2017_BeamHalo_studies/"
 ##OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_cosmic_veto_bin_1/"
 #OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_cosmic_veto_moar/"
+OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/check_cosmics_HBHE/"
 
 for d in data:
 
@@ -84,8 +87,13 @@ for d in data:
         cut_mask = np.logical_and(cut_mask,arrays["MinJetMetDPhi"]>0.5)
         #print "SELECT bin 1!!!"
         #cut_mask = np.logical_and(cut_mask,arrays["nTagJets_0p996_JJ"]==1)
-        print "SELECT events close in dphi"
-        cut_mask = np.logical_and(cut_mask,arrays["min_dPhi_jets"]<0.05)
+        #print "SELECT events close in dphi"
+        #cut_mask = np.logical_and(cut_mask,arrays["min_dPhi_jets"]<0.05)
+
+        print "SELECT affected event"
+        #cut_mask = np.logical_and(cut_mask,arrays["EventNumber"]==195197216)
+        #cut_mask = np.logical_and(cut_mask,arrays["EventNumber"]==1329879583)
+        #cut_mask = np.logical_and(cut_mask,arrays["EventNumber"]==270123341)
         isMC = arrays["isMC"][cut_mask]
         RunNumber = arrays["RunNumber"][cut_mask]
         LumiNumber = arrays["LumiNumber"][cut_mask]
@@ -317,7 +325,7 @@ for d in data:
                 std_t[k]  = np.std(DT_cl_time[k])
 
             mean_ECAL_tag_z = np.sum(ECAL_tag_z[ev].flatten())/np.size(ECAL_tag_z[ev])
-            #print "mean_ECAL_tag_z: ", mean_ECAL_tag_z
+            print "mean_ECAL_tag_z: ", mean_ECAL_tag_z
 
             pairs = {}
             #for n in range(n_pairs):
@@ -331,36 +339,41 @@ for d in data:
             ch_t_k1 = 0
             ch_t_k2 = 0
             for k1 in range(len(m.keys())):
-                #print k1
-                #print mean_x[k1], mean_y[k1]
+                print "k1: ", k1
+                print mean_x[k1], mean_y[k1], mean_z[k1]
                 for k2 in range(len(m.keys())):
-                    #print k2
-                    #print mean_x[k2], mean_x[k2]
+                    if k2!=k1: print "k2: ", k2
+                    if k2!=k1: print mean_x[k2], mean_x[k2], mean_z[k2]
                     #print "time sparsity: ", std_t[k1], std_t[k2]
                     ##if k2>k1 and ( (mean_x[k1]*mean_x[k2]<0 and mean_y[k1]*mean_y[k2]<0 and mean_t[k1]*mean_t[k2]<0) or (mean_t[k1]*mean_t[k2]<0 and mean_x[k1]*mean_x[k2]<0 and (abs(mean_y[k1]<0.2) or abs(mean_y[k2]<0.2))) ) and nCosmicsOneLeg[ev]>0 and nCosmics[ev]>1:
                     #if k2>k1 and ( (mean_x[k1]*mean_x[k2]<0 and mean_y[k1]*mean_y[k2]<0) or (mean_x[k1]*mean_x[k2]<0 and (abs(mean_y[k1]<0.2) or abs(mean_y[k2]<0.2))) ) and nCosmicsOneLeg[ev]>0 and nCosmics[ev]>1:
 
-                    if k2>k1 and ( (mean_x[k1]*mean_x[k2])<0 or (mean_y[k1]*mean_y[k2])<0 or (mean_z[k1]*mean_z[k2])<0 ) and nCosmicsOneLeg[ev]>0 and nCosmics[ev]>1:
+                    if k2!=k1 and ( (mean_x[k1]*mean_x[k2])<0 or (mean_y[k1]*mean_y[k2])<0 or (mean_z[k1]*mean_z[k2])<0 ) and nCosmicsOneLeg[ev]>0:# and nCosmics[ev]>1:
                         ##opposite emispheres
-                        #print "pair: ", k1, k2
-                        #print "z average: ", mean_z[k1], mean_z[k2]
+                        print "pair: ", k1, k2
+                        print "z average: ", mean_z[k1], mean_z[k2]
                         tmp_z = abs(mean_z[k1] - mean_z[k2])
                         dz_DT = min(dz_DT,tmp_z)
+                        print "tmp hits distance in z: ", tmp_z
+                        print "best hits distance in z: ", dz_DT
+                        print "do I need this?"
 
                         tmp_ECAL = abs((mean_z[k1]+mean_z[k2])/2. - mean_ECAL_tag_z)
                         dz_ECAL = min(dz_ECAL,tmp_ECAL)
-                        #print "ECAL distance in z: ", dz_ECAL
+                        print "tmp ECAL distance in z: ", tmp_ECAL
+                        print "best ECAL distance in z: ", dz_ECAL
 
-                        if dz_DT==tmp_z and dz_ECAL==tmp_ECAL:
+                        #if dz_DT==tmp_z and dz_ECAL==tmp_ECAL:
+                        if dz_ECAL==tmp_ECAL:
                             ch_k1 = k1
                             ch_k2 = k2
                             ch_t_k1 = mean_t[k1]
                             ch_t_k2 = mean_t[k2]
-                            #print "I choose you: ", k1, k2
+                            print "tmp chosen pairs: ", k1, k2
 
             #print "Overwrite DT dict"
             if ch_k1>-1 and ch_k2>-1:
-                print "Pair: (",k1,",",k2,")"
+                print "Pair: (",ch_k1,",",ch_k2,")"
                 print "Time sparsity: ", ch_t_k1, " ; ", ch_t_k2
                 tmp_DT_cl_0 = DT_cl[ch_k1]
                 tmp_DT_cl_1 = DT_cl[ch_k2]
@@ -387,7 +400,7 @@ for d in data:
                     #DT_n.vstack(tmp_cl_discarded[a])
                     #DT_cl[2+a] = tmp_cl_discarded[a]
             else:
-                print "No cosmic identified, all noise"
+                print "No good cosmic identified, all noise"
                 for a in (m.keys()):
                     DT_n = np.vstack((DT_n,DT_cl[a]))
                     DT_n_cyl = np.vstack((DT_n_cyl,DT_cl_cyl[a]))
@@ -404,11 +417,11 @@ for d in data:
             for a in (m.keys()):
                 DT_cl[a] = np.array([])
                 DT_cl_cyl[a] = np.array([])
-            #continue
+            continue
 
         if n_clusters_==0:
             print "No clusters, no cosmic identified, all noise"
-            #continue
+            continue
 
 
 
@@ -816,7 +829,7 @@ for d in data:
 
         leg = TLegend(0.75, 0.8, 1., 1.)
         leg = TLegend(0.75, 0.7, 1., 1.)
-        #leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
+        leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
         leg.AddEntry(h_xy_dt,"DT segments","P")
         leg.AddEntry(h_xy_csc,"CSC segments","P")
         leg.AddEntry(h_xy_ecal,"EB rec hits","P")
@@ -872,7 +885,7 @@ for d in data:
         #fit_xy.Draw("sames,L")
 
         h_xy_csc.SetMarkerStyle(20)
-        h_xy_csc.SetMarkerColor(880)
+        h_xy_csc.SetMarkerColor(800)
         h_xy_csc.Draw("sames")
 
         OUTSTRING = OUT
@@ -910,7 +923,7 @@ for d in data:
 
         ##etaphi
         leg = TLegend(0.75, 0.7, 1., 1.)
-        #leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
+        leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
         leg.AddEntry(h_etaphi_dt,"DT segments","P")
         leg.AddEntry(h_etaphi_csc,"CSC segments","P")
         leg.AddEntry(h_etaphi_ecal,"EB rec hits","P")
@@ -940,7 +953,7 @@ for d in data:
         #h_etaphi_cos1L.Draw("sames")
         #fit_etaphi.Draw("sames,L")
         h_etaphi_csc.SetMarkerStyle(20)
-        h_etaphi_csc.SetMarkerColor(880)
+        h_etaphi_csc.SetMarkerColor(800)
         h_etaphi_csc.Draw("sames")
 
 
@@ -1016,7 +1029,7 @@ for d in data:
         #fit_ecal_xz.Draw("sames,PL")
 
         h_xz_csc.SetMarkerStyle(20)
-        h_xz_csc.SetMarkerColor(880)
+        h_xz_csc.SetMarkerColor(800)
         h_xz_csc.Draw("sames")
 
         h_xz_dt.GetXaxis().SetTitle("z (m)")
@@ -1025,7 +1038,7 @@ for d in data:
         h_xz_ecal.GetYaxis().SetTitle("x (m)")
         h_xz_dt.GetYaxis().SetTitleOffset(1.4)
         leg = TLegend(0.75, 0.8, 1., 1.)
-        #leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
+        leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
         #leg.SetHeader(d)
         leg.AddEntry(h_xz_dt,"DT segments","P")
         leg.AddEntry(h_xz_csc,"CSC segments","P")
@@ -1081,7 +1094,7 @@ for d in data:
         h_yz_ecal_tag.Draw("sames")
 
         h_yz_csc.SetMarkerStyle(20)
-        h_yz_csc.SetMarkerColor(880)
+        h_yz_csc.SetMarkerColor(800)
         h_yz_csc.Draw("sames")
         #fit_yz.Draw("sames,L")
         fit_dt_yz.SetLineColor(856)
@@ -1104,7 +1117,7 @@ for d in data:
         h_yz_ecal.GetYaxis().SetTitle("y (m)")
         h_yz_dt.GetYaxis().SetTitleOffset(1.4)
         leg = TLegend(0.75, 0.8, 1., 1.)
-        #leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
+        leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
         #leg.SetHeader(d)
         leg.AddEntry(h_yz_dt,"DT segments","P")
         leg.AddEntry(h_yz_csc,"CSC segments","P")
@@ -1191,7 +1204,7 @@ for d in data:
         h_xyz_ecal_tag.Draw("sames")
 
         h_xyz_csc.SetMarkerStyle(20)
-        h_xyz_csc.SetMarkerColor(880)
+        h_xyz_csc.SetMarkerColor(800)
         h_xyz_csc.Draw("sames")
 
         fit_dt_3d.GetXaxis().SetTitle("z (m)")
@@ -1204,7 +1217,7 @@ for d in data:
         fit_dt_3d.GetYaxis().SetTitleOffset(1.8)
         fit_dt_3d.GetZaxis().SetTitleOffset(1.4)
         leg = TLegend(0.75, 0.7, 1., 1.)
-        #leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
+        leg.SetHeader("nCosmics: "+str(nCosmics[ev])+"; one leg: "+str(nCosmicsOneLeg[ev]))
         #leg.SetHeader(d)
         leg.AddEntry(h_xyz_dt,"DT segments","P")
         leg.AddEntry(h_xyz_csc,"CSC segments","P")

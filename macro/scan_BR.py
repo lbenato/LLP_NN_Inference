@@ -17,5 +17,5 @@ def retZ(H):
 for h in np.linspace(0,1,5):
     z = retZ(h)
     print "------------------------"
-    print "BR: H(", 100*h,"%), Z(", 100*z,"%)"
-    print ("Decay composition: HH %.2f, HZ %.2f, ZZ %.2f" % (h*h*100, 2*h*z*100, z*z*100))
+    print "BR: H(", h,"%), Z(", z,"%)"
+    print ("Decay composition: HH %.4f, HZ %.4f, ZZ %.4f" % (h*h, 2*h*z, z*z))

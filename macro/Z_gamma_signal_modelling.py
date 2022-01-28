@@ -1502,6 +1502,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     root_numpy.fill_hist(den_d_h_shift5, d_eta[m_d_time_shift5], d_EventWeight[m_d_time_shift5])
     root_numpy.fill_hist(den_d_h_shift6, d_eta[m_d_time_shift6], d_EventWeight[m_d_time_shift6])
 
+
     root_numpy.fill_hist(num_d_h_shift0, d_eta[np.logical_and(m_d_probs,m_d_time)],d_EventWeight[np.logical_and(m_d_probs,m_d_time)])
     root_numpy.fill_hist(num_d_h_shift1, d_eta[np.logical_and(m_d_probs_shift1,m_d_time_shift1)],d_EventWeight[np.logical_and(m_d_probs_shift1,m_d_time_shift1)])
     root_numpy.fill_hist(num_d_h_shift2, d_eta[np.logical_and(m_d_probs_shift2,m_d_time_shift2)],d_EventWeight[np.logical_and(m_d_probs_shift2,m_d_time_shift2)])
@@ -1509,6 +1510,29 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     root_numpy.fill_hist(num_d_h_shift4, d_eta[np.logical_and(m_d_probs_shift4,m_d_time_shift4)],d_EventWeight[np.logical_and(m_d_probs_shift4,m_d_time_shift4)])
     root_numpy.fill_hist(num_d_h_shift5, d_eta[np.logical_and(m_d_probs_shift5,m_d_time_shift5)],d_EventWeight[np.logical_and(m_d_probs_shift5,m_d_time_shift5)])
     root_numpy.fill_hist(num_d_h_shift6, d_eta[np.logical_and(m_d_probs_shift6,m_d_time_shift6)],d_EventWeight[np.logical_and(m_d_probs_shift6,m_d_time_shift6)])
+
+
+    #Store per era:
+    #Store in root file: den_b_h_shift1,num_b_h_shift1
+    #Store in root file: den_d_h_shift1,num_d_h_shift1
+    #OUT folder     era+lab.root
+    outfile = TFile(OUT+"DataMCNumDen_ZtoLLPho_"+ERA+lab+".root","RECREATE")
+    outfile.cd()
+    den_b_h_shift1.Write("den_b")
+    num_b_h_shift1.Write("num_b")
+    den_d_h_shift1.Write("den_d")
+    num_d_h_shift1.Write("num_d")
+    den_b_h_shift2.Write("den_b_2ns")
+    num_b_h_shift2.Write("num_b_2ns")
+    den_d_h_shift2.Write("den_d_2ns")
+    num_d_h_shift2.Write("num_d_2ns")
+    print "Store per era:" 
+    print "Store in root file: den_b_h_shift1,num_b_h_shift1" 
+    print "Store in root file: den_d_h_shift1,num_d_h_shift1" 
+    outfile.Close()
+    print "Written ",OUT+"DataMCNumDen_ZtoLLPho_"+ERA+lab+".root"
+    exit()
+
 
     #Compute sign
     for s in sign:
@@ -2532,6 +2556,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     d_graph1.Draw("P,sames")
     d_graph2.Draw("P,sames")
     for s in ['SUSY_mh600_ctau500','SUSY_mh800_ctau500','SUSY_mh1800_ctau500']:
+    #for s in ['SUSY_mh800_ctau500']:
         leg2.AddEntry(s_graph[s],samples[s]['label'],"PL")
         s_graph[s].Draw("P,sames")
     b_graph1.SetMaximum(1.01)
@@ -2541,6 +2566,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     leg2.Draw()
     OUTSTRING = OUT
     OUTSTRING += "data_vs_back_vs_sign_tag_eff_shifted_jet_time"
+    #OUTSTRING += "data_vs_back_vs_sign_tag_eff_shifted_jet_time_less_points"
     #drawAnalysis("LL"+CHAN)
     drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True,left_marg_CMS=0.1,left_marg_LUMI=0.75)
     drawRegion(SEL)
@@ -2550,6 +2576,10 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     can5.Close()
     ##
 
+
+    #Store per era:
+    #Store in root file: den_b_h_shift1,num_b_h_shift1
+    #Store in root file: den_d_h_shift1,num_d_h_shift1
 
     #Redo ratio
     #xxxxx
