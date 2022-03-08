@@ -65,11 +65,12 @@ gStyle.SetOptStat(0)
 #gStyle.SetPadRightMargin(-0.2)
 #gStyle.SetPadLeftMargin(-0.2)
 
-ERA                = "2018"
-REGION             = "SR"#"ZtoEEBoost"#"WtoMN"#"WtoEN"
-CUT                = "isSR"#"isZtoEE"#"isWtoMN"#"isWtoEN"#"isJetMET_low_dPhi_MET_200_Lep"#"isJetHT_unprescaled"
+#ERA
+ERA                = "2017"
+REGION             = "SR"#"HBHE"#"ZtoEEBoost"#"WtoMN"#"WtoEN"
+CUT                = "isSR"#"isSRHBHE"#"isZtoEE"#"isWtoMN"#"isWtoEN"#"isJetMET_low_dPhi_MET_200_Lep"#"isJetHT_unprescaled"
 KILL_QCD           = True#False
-DO_ETA             = True
+DO_ETA             = False
 DO_PHI             = False#False#
 if DO_PHI:
     DO_ETA = False
@@ -122,6 +123,8 @@ if REGION=="WtoEN_MET":
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoEN_noMT/"
 if REGION=="WtoMN_MET":
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+ERA+"_WtoMN_noMT/"
+if REGION=="HBHE":
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_HBHE/"
 if REGION=="SR":
     #print "Old dir good for MC bkg"
     #Used to calculate SFs
@@ -137,6 +140,20 @@ if REGION=="SR":
     print "SR in v6"
     NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR/"
 
+    #print "Karla's"
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v2_central_2018miniAOD_tracking_03Feb2021/"
+
+    #print "Gen in v6"
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_Gen/"
+
+    #print "tagger no time"
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_tagger_v3_no_time/"
+
+    #print "tagger pt weighted"
+    #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_tagger_v3_pt_weighted/"
+    print "tagger pt flat"
+    NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_tagger_v3_pt_flat/"
+
     #print "DEBUUUUG"
     #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_2018_SR_xcheck_tf_and_skim_condor_v5_updated/"
 
@@ -150,15 +167,30 @@ if REGION=="SR":
 #NTUPLEDIR          = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_faulty_eta/v5_calo_AOD_"+ERA+"_"+REGION+"/"
 
 PRE_PLOTDIR        = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
+PRE_PLOTDIR        = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
+PRE_PLOTDIR        = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"
 #PRE_PLOTDIR        = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+ERA+"_"
 
 PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+PLOTDIR            = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+PLOTDIR            = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+PLOTDIR            = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+REGION+"_v3_tagger_pt_flat/"#"_2017_signal/"#
+PRE_PLOTDIR        = PLOTDIR
+
+#PLOTDIR            = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+REGION+"_tagger_v3_no_time/"#"_2017_signal/"#
+#PRE_PLOTDIR        = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+REGION+"_tagger_v3_no_time/"#"_2017_signal/"#
+
+#PLOTDIR            = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+REGION+"_tagger_v3_pt_weighted/"#"_2017_signal/"#
+#PRE_PLOTDIR        = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+REGION+"_tagger_v3_pt_weighted/"#"_2017_signal/"#
+
+
 if REGION=="SR":
-    YIELDDIR_BASE      = "plots/Yields_AN/v6_calo_AOD_"+ERA+"_"
-    YIELDDIR           = "plots/Yields_AN/v6_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
-    UNCDIR             = "plots/v6_calo_AOD_"+ERA+"_SR_signal_uncertainties/"
+    YIELDDIR_BASE      = "plots/Yields_AN_fix/v6_calo_AOD_"+ERA+"_"
+    YIELDDIR           = "plots/Yields_AN_fix/v6_calo_AOD_"+ERA+"_"+REGION+"/"#"_2017_signal/"#
+    UNCDIR             = "plots/v6_calo_AOD_"+ERA+"_SR_signal_uncertainties_fix/"
 else:
     YIELDDIR_BASE      = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"
+    YIELDDIR_BASE      = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"
     YIELDDIR           = PLOTDIR
     UNCDIR             = ""
 
@@ -182,13 +214,20 @@ ctaupoint          = 500
 ctaus              = np.array([1, 3, 5, 7, 10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200, 2500, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
 ctaus              = np.array([10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200, 2500, 3000, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
 #ctaus = np.array([100,500,1000,5000])
+ctaus_500          = np.array([10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2150])
+ctaus_3000         = np.array([2150, 2200, 2500, 3000, 4000, 5000, 7000, 10000, 20000, 30000, 50000, 100000])
 
-#ctaus_500          = np.array([1, 3, 5, 7, 10, 30, 40, 50, 60, 80, 100, 200, 300, 400, 600, 700, 800, 900, 950, 980, 1000, 1100, 1200, 1300, 1400, 1500])
-#ctaus_3000         = np.array([2000, 2500, 4000, 5000, 10000, 20000, 30000, 50000, 100000])
+print "DEBUG"
+ctaus_500 = np.array([500,1000,2150,3000])
+ctaus_3000 = np.array([500,1000,2150,3000])
+
+#ctaus_500 = np.array([500,1000,2000,2150,3000])
+#ctaus_3000 = np.array([500,1000,2150,2500,3000])
+ctaus = np.unique(np.concatenate((ctaus_500,ctaus_3000)))
 ##ctaus_500 = ctaus
 #ctaus_500          = np.array([400, 600, 700, 1000])
 #ctaus_3000         = np.array([400, 600, 700, 1000,])
-#ctaus              = np.array([700])
+#ctaus              = np.array([3000])
 
 signalMultFactor   = 0.001#!!!
 PRELIMINARY        = True
@@ -210,12 +249,13 @@ back = ["DYJetsToLL"]
 back = ["All"]
 #back = ["VV"]
 #back = ["QCD","WJetsToLNu","TTbarGenMET"]
-#data = ["SingleMuon"]
-#data = ["SingleElectron"]
-#data = ["EGamma"]
+data = ["SingleMuon"]
+data = ["SingleElectron"]
+data = ["EGamma"]
 #data = ["MuonEG"]
 #data = ["MET"]
 data = ["HighMET"]
+#data = ["HighMETHBHE"]
 #data = ["JetHT"]
 sign = [
     'SUSY_mh127_ctau500',
@@ -231,19 +271,19 @@ sign = [
     'SUSY_mh1250_ctau500',
     'SUSY_mh1500_ctau500',
     'SUSY_mh1800_ctau500',
-    #'SUSY_mh127_ctau3000',
-    #'SUSY_mh150_ctau3000',
-    #'SUSY_mh175_ctau3000',
-    #'SUSY_mh200_ctau3000',
-    #'SUSY_mh250_ctau3000',
-    #'SUSY_mh300_ctau3000',
-    #'SUSY_mh400_ctau3000',
-    #'SUSY_mh600_ctau3000',
-    #'SUSY_mh800_ctau3000',
-    #'SUSY_mh1000_ctau3000',
-    #'SUSY_mh1250_ctau3000',
-    #'SUSY_mh1500_ctau3000',
-    #'SUSY_mh1800_ctau3000',
+    'SUSY_mh127_ctau3000',
+    'SUSY_mh150_ctau3000',
+    'SUSY_mh175_ctau3000',
+    'SUSY_mh200_ctau3000',
+    'SUSY_mh250_ctau3000',
+    'SUSY_mh300_ctau3000',
+    'SUSY_mh400_ctau3000',
+    'SUSY_mh600_ctau3000',
+    'SUSY_mh800_ctau3000',
+    'SUSY_mh1000_ctau3000',
+    'SUSY_mh1250_ctau3000',
+    'SUSY_mh1500_ctau3000',
+    'SUSY_mh1800_ctau3000',
     #"SUSY_all",
     #"SUSY_mh400_pl1000",
     #"SUSY_mh200_pl1000",
@@ -257,12 +297,18 @@ sign = [
     #'XXTo4J_M1000_CTau100mm','XXTo4J_M1000_CTau300mm','XXTo4J_M1000_CTau1000mm','XXTo4J_M1000_CTau3000mm','XXTo4J_M1000_CTau50000mm',
 ]
 
-#sign = [
-#    'SUSY_mh300_ctau500',
-#    'SUSY_mh300_ctau3000',
-#    'SUSY_mh1000_ctau500',
-#    'SUSY_mh1000_ctau3000',
-#]
+sign = [
+    #'SUSY_mh200_ctau500',
+    #'SUSY_mh200_ctau3000',
+    #'SUSY_mh300_ctau500',
+    #'SUSY_mh300_ctau3000',
+    #'SUSY_mh400_ctau500',
+    #'SUSY_mh400_ctau3000',
+    #'SUSY_mh1000_ctau500',
+    #'SUSY_mh1000_ctau3000',
+    'SUSY_mh1800_ctau500',
+    #'SUSY_mh1800_ctau3000',
+]
 
 if ERA=="2018":
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import sample, samples
@@ -361,15 +407,17 @@ less_bins_phi = array('d',[
 np_bins_eta = np.array(less_bins_eta)
 np_bins_eta = np_bins_eta[0:-1]
 
-maxeff = 0.0015#2#15
+maxeff = 0.0015#15#08#2#15
 
 def tau_weight_calc(llp_ct, new_ctau, old_ctau):
     '''
     llp_ct is a numpy array
     new_ctau and old_ctau are float
+    must be converted in cm
     '''
     source = np.exp(-1.0*llp_ct/old_ctau)/old_ctau**2
     weight = 1.0/new_ctau**2 * np.exp(-1.0*llp_ct/new_ctau)/source
+    #weight = (old_ctau**2/new_ctau**2)*np.exp(llp_ct*( 1./old_ctau -1./new_ctau))
     return weight
 
 def find_nearest(array, value):
@@ -589,6 +637,8 @@ def plot_roc_curve(tree_weight_dict_s,tree_weight_dict_b,sign,back,add_label="",
 
                 #HEM
                 if CUT == "isSR" and str(ERA)=="2018":
+                    cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM_pt_30_all_eta"]==0)))
+                if CUT == "isSRHBHE" and str(ERA)=="2018":
                     cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM_pt_30_all_eta"]==0)))
 
                 if KILL_QCD:
@@ -1171,6 +1221,21 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
     if phi_cut:
         print "Apply acceptance cut phi"
 
+    if eta_cut==True:
+        add_label+="_eta_1p0"
+
+    if phi_cut==True:
+        add_label+="_phi_cut"
+
+    if eta==True:
+        add_label+="_vs_eta"
+
+    if phi==True:
+        add_label+="_vs_phi"
+
+    if check_closure:
+        add_label+="_closure"+str(dnn_threshold).replace(".","p")
+
     for i, s in enumerate(sample_list):
         if eta==True:
             hist_den[s] = TH1F(s+"_den", s+"_den", len(more_bins_eta)-1, more_bins_eta)
@@ -1198,12 +1263,19 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
         start_uproot = time.time()
         array_size_tot = 0
         c = 0
-        list_of_variables = ["isMC","Jets.pt","Jets.phi","Jets.eta","Jets.sigprob","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight",CUT]#"nLeptons"
+        list_of_variables = ["isMC","Jets.pt","Jets.phi","Jets.eta","Jets.sigprob","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight"]#"nLeptons"
+        if CUT!="isSRHBHE":
+            list_of_variables += [CUT]
+        else:
+            list_of_variables += ["isSR"]
+
         if CUT=="isDiJetMET":
             list_of_variables += ["MinSubLeadingJetMetDPhi"]
         if ERA=="2018" and CUT == "isSR":
             list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
-        if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+        if ERA=="2018" and CUT == "isSRHBHE":
+            list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta","nCosmicMuons*","isDT_fit","dt_ecal_*"]
+        if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost" or REGION=="ZtoEE" or REGION=="ZtoMM":
             list_of_variables += ["Z_pt"]
         chain[s] = TChain("tree")
         for l, ss in enumerate(samples[s]['files']):
@@ -1234,8 +1306,8 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
                 array_size_tot+=len(arrays[ key_list[0] ])
                 tree_w_array = tree_weight_dict[s][ss]*np.ones( len(arrays[ key_list[0] ])  )
                 if CUT == "isJetHT":
-                    cut_mask = np.logical_and(arrays["HLT_PFJet500_v"]==True , arrays["pt"]<25)
-                    #cut_mask = np.logical_and(arrays["HLT_PFJet140_v"]==True , arrays["pt"]<25)
+                    #cut_mask = np.logical_and(arrays["HLT_PFJet500_v"]==True , arrays["pt"]<25)
+                    cut_mask = np.logical_and(arrays["HLT_PFJet140_v"]==True , arrays["pt"]<25)
                 elif CUT == "isDiJetMET":
                     #change!
                     #DiJetMET140
@@ -1274,6 +1346,10 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
                     #print "!!!! try to kill QCD!!!"
                     #cut_mask = np.logical_and(arrays[CUT]>0 , arrays["MinJetMetDPhi"]>0.5 )
                     #cut_mask = np.logical_and(arrays[CUT]>0 , arrays["MinJetMetDPhiBarrel"]>0.5 )
+                elif CUT == "isSRHBHE":
+                    cut_mask = arrays["isSR"]>0
+                    #enhance cosmics
+                    cut_mask = np.logical_and(cut_mask , arrays["nCosmicMuonsOneLeg"]>0 )
                 else:
                     cut_mask = (arrays[CUT]>0)
 
@@ -1281,7 +1357,7 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
                     cut_mask = np.logical_and(cut_mask,arrays["Z_pt"]>100)
 
                 #HEM
-                if CUT == "isSR" and str(ERA)=="2018":
+                if (CUT == "isSR" or CUT=="isSRHBHE") and str(ERA)=="2018":
                     cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM_pt_30_all_eta"]==0)))
                 ###cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM"]==0)))
 
@@ -1354,12 +1430,21 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
 
                 tag_mask = (sigprob > dnn_threshold)#Awkward array mask, same shape as original AwkArr
                 untag_mask = (sigprob <= dnn_threshold)
-                pt_untag = pt[untag_mask]
+                #pt_untag = pt[untag_mask]
                 pt_tag = pt[tag_mask]
+
 
                 eventweight = arrays["EventWeight"][cut_mask]
                 pureweight = arrays["PUReWeight"][cut_mask]
                 weight = np.multiply(eventweight,pureweight)*tree_weight_dict[s][ss]
+
+                #bin1_m = (sigprob[tag_mask].counts >=1)
+                #zpt = arrays["Z_pt"][cut_mask]
+                #zpt = zpt[bin1_m]
+                #print "events in bin 1-2"
+                #print "zpt"
+                #print zpt
+
                 del arrays
 
                 #Global fill
@@ -1369,10 +1454,13 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
                 #w_num = np.concatenate( (w_num, np.hstack( pt_tag[pt_tag>0].astype(bool)*weight ) ) )
                 #w_den = np.concatenate( (w_den, np.hstack( pt_untag[pt_untag>0].astype(bool)*weight ) ) )
 
+                #Major bug... den must be pt, not pt_untag...
                 passed_num = np.concatenate( (passed_num, np.hstack(pt_tag)) )
-                passed_den = np.concatenate( (passed_den, np.hstack(pt_untag)) )
+                #passed_den = np.concatenate( (passed_den, np.hstack(pt_untag)) )
+                passed_den = np.concatenate( (passed_den, np.hstack(pt)) )
                 w_num = np.concatenate( (w_num, np.hstack( pt_tag.astype(bool)*weight ) ) )
-                w_den = np.concatenate( (w_den, np.hstack( pt_untag.astype(bool)*weight ) ) )
+                #w_den = np.concatenate( (w_den, np.hstack( pt_untag.astype(bool)*weight ) ) )
+                w_den = np.concatenate( (w_den, np.hstack( pt.astype(bool)*weight ) ) )
 
                 #print passed_num.shape
                 #print passed_num
@@ -1458,22 +1546,6 @@ def calculate_tag_eff(tree_weight_dict,sample_list,add_label="",check_closure=Fa
         eff_cutbased[s].BayesDivide(hist_num_cutbased[s],hist_den[s])
 
 
-        if eta_cut==True:
-            add_label+="_eta_1p0"
-
-        if phi_cut==True:
-            add_label+="_phi_cut"
-
-        if eta==True:
-            add_label+="_vs_eta"
-
-        if phi==True:
-            add_label+="_vs_phi"
-
-        if check_closure:
-            add_label+="_closure"+str(dnn_threshold).replace(".","p")
-        #else:
-        #    add_label+="_wp"+str(dnn_threshold).replace(".","p")
 
         can = TCanvas("can","can", 1000, 800)
         can.cd()
@@ -1742,6 +1814,7 @@ def draw_tag_eff(sample_dict,reg_label,add_label="",check_closure=False,eta=Fals
     can.Print(NEWDIR+"TagEff_"+reg_label+add_label+".pdf")
 
     outfile_name_check = NEWDIR+"TagEff_"+reg_label+add_label+".root"
+    print outfile_name_check, "being checked"
     if not os.path.isfile(outfile_name_check):
         outfile_2 = TFile(outfile_name_check,"RECREATE")
         outfile_2.cd()
@@ -1759,20 +1832,15 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
         isMC = True
     if sample_dict == sign:
         isMC = True
+    
+    print "isMC?",isMC
+    exit()
+
     infiles = {}
     graph =  {}
     eff   =  {}
     hist_num = {}
     hist_den = {}
-    can = TCanvas("can","can", 1000, 800)
-    #can.SetRightMargin(0.1)
-    can.SetLeftMargin(0.15)
-    can.cd()
-    leg = TLegend(0.6, 0.7, 0.9, 0.9)
-    leg.SetTextSize(0.035)
-    leg.SetBorderSize(0)
-    leg.SetFillStyle(0)
-    leg.SetFillColor(0)
 
     if check_closure:
         dnn_threshold = 0.9#5
@@ -1814,6 +1882,7 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
             hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
             less_bins = less_bins_pt
 
+    #It makes a sum of all the samples
     for n,k in enumerate(sample_dict.keys()):
         print PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root"
         infiles = TFile(PRE_PLOTDIR+k+"/"+"TagEff_"+sample_dict[k]+add_label+".root", "READ")
@@ -1822,6 +1891,7 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
         hist_den[k] = infiles.Get("den_"+sample_dict[k])
         hist_num[k] = infiles.Get("num_"+sample_dict[k])
         print hist_num[k].Print()
+        print hist_den[k].Print()
         print "now add if needed: ", n
         ##if n==0:
         ##    hnum = hist_num[k]
@@ -1835,7 +1905,72 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
         ##    hden.Add(hist_den[k],1.)
         hnum.Add(hist_num[k],1.)
         hden.Add(hist_den[k],1.)
-        
+        if isMC:
+            can = TCanvas("can","can", 1000, 800)
+            #can.SetRightMargin(0.1)
+            can.SetLeftMargin(0.15)
+            can.cd()
+            leg = TLegend(0.6, 0.7, 0.9, 0.9)
+            leg.SetTextSize(0.035)
+            leg.SetBorderSize(0)
+            leg.SetFillStyle(0)
+            leg.SetFillColor(0)
+            print "one plot per sample"
+            graph = TGraphAsymmErrors()
+            den = hden.Rebin(len(less_bins)-1,reg_label+"_den2",less_bins)
+            num = hnum.Rebin(len(less_bins)-1,reg_label+"_num2",less_bins)
+            graph.BayesDivide(num,den)
+            eff = TEfficiency(num,den)
+            #graph.BayesDivide(hnum,hden)
+            #eff = TEfficiency(hnum,hden)
+            eff.SetStatisticOption(TEfficiency.kBBayesian)
+            eff.SetConfidenceLevel(0.68)
+            graph.SetMarkerSize(1.3)
+            graph.SetMarkerStyle(20)#(sign_sampl[s]['marker'])
+            graph.SetMarkerColor(1)#(samples[s]['linecolor'])#(2)
+            graph.SetFillColor(1)#(samples[s]['linecolor'])#(2) 
+            graph.SetLineColor(1)#(samples[s]['linecolor'])#(2)
+            graph.SetLineStyle(1)#(2)
+            graph.SetLineWidth(2)
+            graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else maxeff)
+            #graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else 0.7)#Lisa for signal
+            graph.GetYaxis().SetTitle("Mis-tag efficiency")#("Efficiency (L1+HLT)")
+            graph.GetYaxis().SetTitleOffset(1.4)#("Efficiency (L1+HLT)")
+            graph.GetYaxis().SetTitleSize(0.05)#DCMS
+            if eta:
+                #graph.GetXaxis().SetRangeUser(bins[0],bins[-1])
+                graph.GetXaxis().SetTitle("Jet #eta")
+            else:
+                if phi:
+                    graph.GetXaxis().SetTitle("Jet #varphi")
+                else:
+                    graph.GetXaxis().SetRangeUser(bins[2],bins[-1])
+                    graph.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+                    can.SetLogx()#?
+            graph.GetXaxis().SetTitleSize(0.04)
+            graph.GetXaxis().SetTitleOffset(1.1)
+            leg.AddEntry(graph, reg_label, "PL")
+            can.SetGrid()
+            graph.Draw("AP")
+            leg.Draw()
+            drawRegion(reg_label,left=True, left_marg_CMS=0.2, top=0.8)
+            drawCMS_simple(LUMI, "Preliminary", onTop=True)
+            can.Print(NEWDIR+"TagEff_"+k+"_"+reg_label+add_label+".png")
+            can.Print(NEWDIR+"TagEff_"+k+"_"+reg_label+add_label+".pdf")
+            can.Close()
+
+        else:
+            continue
+
+    can = TCanvas("can","can", 1000, 800)
+    #can.SetRightMargin(0.1)
+    can.SetLeftMargin(0.15)
+    can.cd()
+    leg = TLegend(0.6, 0.7, 0.9, 0.9)
+    leg.SetTextSize(0.035)
+    leg.SetBorderSize(0)
+    leg.SetFillStyle(0)
+    leg.SetFillColor(0)
     graph = TGraphAsymmErrors()
     den = hden.Rebin(len(less_bins)-1,reg_label+"_den2",less_bins)
     num = hnum.Rebin(len(less_bins)-1,reg_label+"_num2",less_bins)
@@ -1888,16 +2023,132 @@ def draw_tag_eff_updated(sample_dict,reg_label,add_label="",check_closure=False,
     can.Print(NEWDIR+"TagEff_"+reg_label+add_label+".pdf")
 
     outfile_name_check = NEWDIR+"TagEff_"+reg_label+add_label+".root"
-    if not os.path.isfile(outfile_name_check):
-        outfile_2 = TFile(outfile_name_check,"RECREATE")
-        outfile_2.cd()
-        eff.Write("eff_"+reg_label)
-        hden.Write("den_"+reg_label)
-        hnum.Write("num_"+reg_label)
-        can.Write()
-        print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
-        outfile_2.Close()
+    outfile_2 = TFile(outfile_name_check,"RECREATE")
+    outfile_2.cd()
+    eff.Write("eff_"+reg_label)
+    hden.Write("den_"+reg_label)
+    hnum.Write("num_"+reg_label)
+    can.Write()
+    print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
+    outfile_2.Close()
+    #if not os.path.isfile(outfile_name_check):
+    #    outfile_2 = TFile(outfile_name_check,"RECREATE")
+    #    outfile_2.cd()
+    #    eff.Write("eff_"+reg_label)
+    #    hden.Write("den_"+reg_label)
+    #    hnum.Write("num_"+reg_label)
+    #    can.Write()
+    #    print "Info in <TFile::Write>: root file "+outfile_name_check+" has been created"
+    #    outfile_2.Close()
 
+
+def draw_tag_eff_signal(sample_list,reg_label,add_label="",check_closure=False,eta=False,phi=False,eta_cut=False,phi_cut=False):
+    infiles = {}
+    graph =  {}
+    eff   =  {}
+    hist_num = {}
+    hist_den = {}
+
+    if check_closure:
+        dnn_threshold = 0.9#5
+        print  "Performing closure test with DNN threshold: ", dnn_threshold
+    else:
+        dnn_threshold = 0.996#0.98#6#0.996
+        print  "DNN threshold: ", dnn_threshold
+
+    if eta_cut==True:
+        add_label+="_eta_1p0"
+    if phi_cut==True:
+        add_label+="_phi_cut"
+    if eta:
+        add_label+="_vs_eta"
+    if phi:
+        add_label+="_vs_phi"
+    if check_closure:
+        add_label+="_closure"+str(dnn_threshold).replace(".","p")
+    #else:
+    #    add_label+="_wp"+str(dnn_threshold).replace(".","p")
+
+
+    print sample_list
+    print reg_label
+    NEWDIR = PLOTDIR#+reg_label+"/"
+    if not os.path.isdir(NEWDIR): os.mkdir(NEWDIR)
+
+    if eta==True:
+        hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_eta)-1, more_bins_eta)
+        hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_eta)-1, more_bins_eta)
+        less_bins = less_bins_eta
+    else:
+        if phi==True:
+            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins_phi)-1, more_bins_phi)
+            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins_phi)-1, more_bins_phi)
+            less_bins = less_bins_phi
+        else:
+            hden = TH1F(reg_label+"_den", reg_label+"_den", len(more_bins)-1, more_bins)
+            hnum = TH1F(reg_label+"_num", reg_label+"_num", len(more_bins)-1, more_bins)
+            less_bins = less_bins_pt
+
+    #It makes a sum of all the samples
+    for n,k in enumerate(sample_list):
+        print NEWDIR+"/"+"TagEff_"+sample_list[n]+add_label+".root"
+        infiles = TFile(NEWDIR+"/"+"TagEff_"+sample_list[n]+add_label+".root", "READ")
+        hden = infiles.Get("den_"+sample_list[n])
+        hnum = infiles.Get("num_"+sample_list[n])
+        hden.SetDirectory(0)
+        hnum.SetDirectory(0)
+
+        can = TCanvas("can","can", 1000, 800)
+        #can.SetRightMargin(0.1)
+        can.SetLeftMargin(0.15)
+        can.cd()
+        leg = TLegend(0.6, 0.7, 0.9, 0.9)
+        leg.SetTextSize(0.035)
+        leg.SetBorderSize(0)
+        leg.SetFillStyle(0)
+        leg.SetFillColor(0)
+        graph = TGraphAsymmErrors()
+        den = hden.Rebin(len(less_bins)-1,reg_label+"_den2",less_bins)
+        num = hnum.Rebin(len(less_bins)-1,reg_label+"_num2",less_bins)
+        graph.BayesDivide(num,den)
+        eff = TEfficiency(num,den)
+        #graph.BayesDivide(hnum,hden)
+        #eff = TEfficiency(hnum,hden)
+        eff.SetStatisticOption(TEfficiency.kBBayesian)
+        eff.SetConfidenceLevel(0.68)
+        graph.SetMarkerSize(1.3)
+        graph.SetMarkerStyle(20)#(sign_sampl[s]['marker'])
+        graph.SetMarkerColor(1)#(samples[s]['linecolor'])#(2)
+        graph.SetFillColor(1)#(samples[s]['linecolor'])#(2) 
+        graph.SetLineColor(1)#(samples[s]['linecolor'])#(2)
+        graph.SetLineStyle(1)#(2)
+        graph.SetLineWidth(2)
+        graph.GetYaxis().SetRangeUser(-0.0001,1.)
+        #graph.GetYaxis().SetRangeUser(-0.0001,0.01 if check_closure else 0.7)#Lisa for signal
+        graph.GetYaxis().SetTitle("Tag efficiency")#("Efficiency (L1+HLT)")
+        graph.GetYaxis().SetTitleOffset(1.4)#("Efficiency (L1+HLT)")
+        graph.GetYaxis().SetTitleSize(0.05)#DCMS
+        if eta:
+            #graph.GetXaxis().SetRangeUser(bins[0],bins[-1])
+            graph.GetXaxis().SetTitle("Jet #eta")
+        else:
+            if phi:
+                graph.GetXaxis().SetTitle("Jet #varphi")
+            else:
+                graph.GetXaxis().SetRangeUser(bins[2],bins[-1])
+                graph.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+                can.SetLogx()#?
+        graph.GetXaxis().SetTitleSize(0.04)
+        graph.GetXaxis().SetTitleOffset(1.1)
+        leg.AddEntry(graph, samples[k]['label'], "PL")
+        can.SetGrid()
+        graph.Draw("AP")
+        leg.Draw()
+        drawRegion(reg_label,left=True, left_marg_CMS=0.2, top=0.8)
+        drawCMS_simple(LUMI, "Preliminary", onTop=True)
+        can.Print(NEWDIR+"TagEff_"+k+"_"+reg_label+add_label+".png")
+        can.Print(NEWDIR+"TagEff_"+k+"_"+reg_label+add_label+".pdf")
+        can.Close()
 
 def draw_tag_eff_cutbased(sample_list,add_label=""):
     infiles = {}
@@ -1983,9 +2234,10 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
     label_dict["WtoLN_MET"] = "W #rightarrow l#nu + MET"
     label_dict["JetHT"] = "QCD"
     label_dict["TtoEM"] = "ttbar e + #mu"
+    label_dict["HBHE"] = "HB HE noise"
 
-    BASEDIR = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_"
-    OUTDIR  = "plots/Efficiency_AN/v5_calo_AOD_"+era+"_combination/"
+    BASEDIR = "plots/Efficiency_AN_fix/v5_calo_AOD_"+era+"_"
+    OUTDIR  = "plots/Efficiency_AN_fix/v5_calo_AOD_"+era+"_combination/"
     #BASEDIR = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_"
     #OUTDIR  = "plots/Efficiency_AN_additional_material/v5_calo_AOD_"+era+"_combination/"
     infiles = {}
@@ -2032,9 +2284,9 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
             elif r=="JetHT":
                 s = "QCD"
         else:
-            if r=="ZtoMM" or r=="WtoMN" or r=="WtoMN_MET" or r=="MN" or r=="WtoMN_noMT":
+            if r=="ZtoMM" or r=="WtoMN" or r=="WtoMN_MET" or r=="MN" or r=="WtoMN_noMT" or r=="ZtoMMBoost":
                 s = "SingleMuon"
-            elif r=="ZtoEE" or r=="WtoEN" or r=="WtoEN_MET" or r=="EN" or r=="WtoEN_noMT":
+            elif r=="ZtoEE" or r=="WtoEN" or r=="WtoEN_MET" or r=="EN" or r=="WtoEN_noMT" or r=="ZtoEEBoost":
                 if era=="2018":
                     s = "EGamma"
                 else:
@@ -2043,7 +2295,9 @@ def draw_data_combination(era,regions,regions_labels=[],datasets=[],add_label=""
                 s = "MuonEG"
             elif r=="JetHT":
                 s = "JetHT"
-            elif "ZtoLL" in r or "WtoLN" in r:
+            elif r=="HBHE":
+                s = "HighMETHBHE"
+            elif "ZtoLL" in r or "WtoLN" in r or "ZtoLLBoost" in r:
                 s=r
             #elif r=="JetMET":
             #    s = "JetHT"
@@ -2851,7 +3105,7 @@ def get_tree_weights_BR_scan(sample_list,br_h,dataset_label="",main_pred_sample=
 
     tree_w_dict = defaultdict(dict)
     for i, pr in enumerate(sample_list):
-        new_list = [pr+"_HH",pr+"_HZ",pr+"_ZZ"]
+        new_list = [pr+"_HH"]#,pr+"_HZ",pr+"_ZZ"]
         for s in new_list:
             #print s
             for l, ss in enumerate(samples[s]['files']):
@@ -3972,7 +4226,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
             if len(datasets)>0:
                 dset = datasets[i]
         results[r+reg_label+dset] = {}
-        EFFDIR[r+reg_label+dset] = "plots/Efficiency_AN/v5_calo_AOD_"+ERA+"_"+ r + "/"
+        EFFDIR[r+reg_label+dset] = "plots/Efficiency_AN_fix/v5_calo_AOD_"+ERA+"_"+ r + "/"
         table_yield[r+reg_label+dset] =  PrettyTable(['Sample', 'Bin 0 Yield', 'Bin 0 Err', 'Bin 1 Yield', 'Bin 1 Err', 'Bin 2 Yield', 'Bin 2 Err', 'Bin 2 Err combine'])
         table_pred[r+reg_label+dset] =  PrettyTable(['Sample', 'Bin 1 Pred', 'Bin 1 Pred Err', 'Bin 2 Pred', 'Bin 2 Pred Err', 'Bin 2 Pred from 1', 'Bin 2 Pred from 1 Err'])
         table_pred_new[r+reg_label+dset] =  PrettyTable(['Bin 1 Pred', 'Bin 1 Discr. %', 'Bin 2 Pred from 0', 'Bin 2 from 0 Discr. %', 'Bin 2 Pred from 1', 'Bin 2 from 1 Discr. %', 'Bin 2 Pred Stat Err', 'Bin 1 Pred Stat Err'])
@@ -3989,6 +4243,8 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
         elif "TtoEM" in r:
             eff_name=r#"MuonEG"
         elif "SR" in r:
+            eff_name=r#"HighMET"
+        elif "HBHE" in r:
             eff_name=r#"HighMET"
         elif "JetHT" in r:
             eff_name="JetHT"
@@ -4048,9 +4304,11 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
         start_uproot = time.time()
         array_size_tot = 0
         c = 0
-        list_of_variables = ["isMC","Jets.pt","Jets.eta","Jets.phi","Jets.sigprob","Jets.timeRMSRecHitsEB","Jets.nRecHitsEB","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM*","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight","HLT*PFMETNoMu*",CUT]#"nLeptons"
+        list_of_variables = ["isMC","Jets.pt","Jets.eta","Jets.phi","Jets.sigprob","Jets.timeRMSRecHitsEB","Jets.nRecHitsEB","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM*","EventNumber","RunNumber","LumiNumber","EventWeight","PUWeight","PUReWeight","HLT*PFMETNoMu*","Jets.timeRecHitsEB","Jets.cHadEFrac","Jets.nTrackConstituents",CUT]#"nLeptons"
         if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR and CUT=="isSR":
             list_of_variables += ["dt_ecal_dist","min_dPhi*"]
+        if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+            list_of_variables += ["Z_pt"]
         if ERA=="2018" and CUT=="isSR":
             list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
             if plot_distr!="":
@@ -4179,6 +4437,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 #Pandas df from dict
                 #tmp = pd.DataFrame.from_dict(arrays)
                 #tmp["tree_weight"] = tree_weight_dict[s][ss]*np.ones( len(arrays[ key_list[0] ])  )
+                print "Tree weight check: ", tree_weight_dict[s][ss]
                 tree_w_array = tree_weight_dict[s][ss]*np.ones( len(arrays[ key_list[0] ])  )
                 if CUT == "isJetHT":
                     #cut_mask = np.logical_and(arrays["HLT_PFJet500_v"]==True , arrays["pt"]<25)
@@ -4220,6 +4479,7 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                     cut_mask = arrays[CUT]>0
                     if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
                         #cosmic
+                        print "Without cosmic veto!"
                         cosmic_veto = arrays["dt_ecal_dist"]<0.5
                         cut_mask = np.logical_and(cut_mask,np.logical_not(cosmic_veto))
                     #print "!!!! try to kill QCD!!!"
@@ -4227,6 +4487,9 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                     #cut_mask = np.logical_and(arrays[CUT]>0 , arrays["MinJetMetDPhiBarrel"]>0.5 )
                 else:
                     cut_mask = (arrays[CUT]>0)
+
+                if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+                    cut_mask = np.logical_and(cut_mask,arrays["Z_pt"]>100)
 
                 #HEM
                 if CUT=="isSR" and str(ERA)=="2018":
@@ -4359,6 +4622,8 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 luminumber = arrays["LumiNumber"][cut_mask]
                 eventnumber = arrays["EventNumber"][cut_mask]
                 pureweight = arrays["PUReWeight"][cut_mask]
+                if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+                    zpt        = arrays["Z_pt"][cut_mask]
                 #pt_v = arrays["Jets.pt"][cut_mask]#new
                 #eta_v = arrays["Jets.eta"][cut_mask]#new
                 #phi_v = arrays["Jets.phi"][cut_mask]#new
@@ -4367,6 +4632,10 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 eta_v = arrays["Jets.eta"][cut_jets][cut_mask]#new
                 phi_v = arrays["Jets.phi"][cut_jets][cut_mask]#new
                 score_v = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
+                time_v = arrays["Jets.timeRecHitsEB"][cut_jets][cut_mask]#new
+                n_v = arrays["Jets.nRecHitsEB"][cut_jets][cut_mask]#new
+                nt_v = arrays["Jets.nTrackConstituents"][cut_jets][cut_mask]#new
+                cHadEFrac_v = arrays["Jets.cHadEFrac"][cut_jets][cut_mask]#new
                 weight = np.multiply(eventweight,pureweight)*tree_weight_dict[s][ss]*mult_factor
                 #Default value, we'll need more masks afterwards
                 n_obj = -1
@@ -4438,6 +4707,12 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 eta_v = eta_v[bin2_m]
                 phi_v = phi_v[bin2_m]
                 score_v = score_v[bin2_m]
+                n_v = n_v[bin2_m]
+                nt_v = nt_v[bin2_m]
+                time_v = time_v[bin2_m]
+                cHadEFrac_v = cHadEFrac_v[bin2_m]
+                if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+                    zpt = zpt[bin2_m]
                 bin0 = np.multiply(bin0_m,weight)
                 bin1 = np.multiply(bin1_m,weight)
                 bin2 = np.multiply(bin2_m,weight)
@@ -4541,10 +4816,16 @@ def background_prediction(tree_weight_dict,sample_list,extr_regions=[],regions_l
                 print "RunNumber: ", runnumber
                 print "LumiNumber: ", luminumber
                 print "EventNumber: ", eventnumber
-                print "score: ", score_v
                 print "pt: ", pt_v
                 print "eta: ", eta_v
                 print "phi: ", phi_v
+                print "nt: ", nt_v
+                print "time: ", time_v
+                print "n: ", n_v
+                print "score: ", score_v
+                print "cHadEFrac: ", cHadEFrac_v
+                if REGION=="ZtoMMBoost" or REGION=="ZtoEEBoost":
+                    print "zpt: ", zpt
                 #Predictions
                 bin1_pred = defaultdict(dict)
                 bin1_pred_up = defaultdict(dict)
@@ -5753,6 +6034,434 @@ def old_write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,ext
 
 '''
 
+def test_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_region,unc_list,dataset_label="",comb_fold_label="",add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False,BLIND=True,BR_SCAN_H=100):
+
+    print "\n"
+    #Fix 2016 lumi
+    if ERA=="2016":
+        if dataset_label == "_G-H":
+            this_lumi  = lumi[ main_pred_sample ]["G"]+lumi[ main_pred_sample ]["H"]#["tot"]
+        elif dataset_label == "_B-F":
+            this_lumi  = lumi[ main_pred_sample ]["B"]+lumi[ main_pred_sample ]["C"]+lumi[ main_pred_sample ]["D"]+lumi[ main_pred_sample ]["E"]+lumi[ main_pred_sample ]["F"]#["tot"]
+    else:
+        this_lumi  = lumi[ main_pred_sample ]["tot"]
+
+    if check_closure:
+        dnn_threshold = 0.9#
+        print  "Performing closure test with DNN threshold: ", dnn_threshold
+    else:
+        dnn_threshold = 0.996
+        print  "DNN threshold: ", dnn_threshold
+
+    '''
+    #Bkg yield
+    PREDDIR = YIELDDIR_BASE+main_pred_reg+"/"
+    pred_file_name = PREDDIR+"BkgPredResults_"+ERA+"_"+main_pred_reg+"_"+main_pred_sample
+
+    if eta_cut:
+        pred_file_name+="_eta_1p0"
+    if phi_cut==True:
+        pred_file_name+="_phi_cut"
+
+    if eta:
+        pred_file_name+= "_vs_eta"
+    if phi:
+        pred_file_name+= "_vs_phi"
+
+    if check_closure:
+        pred_file_name+="_closure"+str(dnn_threshold).replace(".","p")
+
+    #pred_file_name+=dataset_label
+    pred_file_name+=comb_fold_label
+
+    print "ERA and LUMI:"
+    print ERA, dataset_label, this_lumi
+    with open(pred_file_name+".yaml","r") as f:
+        print "  --  --  --  --  --"
+        print "Info: opening dictionary in file "+pred_file_name+".yaml"
+        print "Extrapolation region: ", extr_region+comb_fold_label
+        results = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        print "  --  --  --  --  --"
+
+    #extr_region+dataset_label+comb_fold_label --> extr_region+comb_fold_label
+    y_bkg  = results[extr_region+comb_fold_label][main_pred_sample]['pred_2_from_1']
+    y_data = y_bkg#int(y_bkg)#-1
+    if not BLIND:
+        y_data = results[extr_region+comb_fold_label][main_pred_sample]['y_2']
+
+
+    #Cosmic bkg yield
+    cosmic_file_name = PREDDIR+"BkgPredResults_"+ERA+"_SR_cosmic"+dataset_label+".yaml"
+    with open(cosmic_file_name,"r") as f:
+        print "  --  --  --  --  --"
+        print "Info: opening dictionary in file "+cosmic_file_name
+        cosmic = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        print "  --  --  --  --  --"
+    #Beam halo bkg yield
+    bh_file_name = PREDDIR+"BkgPredResults_"+ERA+"_SR_beam_halo"+dataset_label+".yaml"
+    with open(bh_file_name,"r") as f:
+        print "  --  --  --  --  --"
+        print "Info: opening dictionary in file "+bh_file_name
+        bh = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        print "  --  --  --  --  --"
+
+    #Syst uncertainties
+    bkg_unc_dict = defaultdict(dict)
+    sgn_unc_dict = defaultdict(dict)
+    for l in unc_list:
+        with open(UNCDIR+"signal_"+l+"_datacard_unc"+dataset_label+".yaml","r") as f:
+            uncertainties = yaml.load(f, Loader=yaml.Loader)
+            f.close()
+        #print l
+        if l=="bkg":
+            bkg_unc_dict = uncertainties
+        else:
+            for s in sign:
+                s = s.replace("_HH","")
+                ##sgn_unc_dict[s] = dict(list(sgn_unc_dict[s].items()) + list(uncertainties[s].items()))#
+                sgn_unc_dict[s].update(uncertainties[s])
+
+    print "Bkg uncertainties:"
+    print bkg_unc_dict
+    print "Sgn uncertainties:"
+    print sgn_unc_dict
+    '''
+    print "\n"
+    print " ********************************************************** "
+    print "\n"
+
+    print "Inferring limits on absolute x-sec in fb"
+    if not os.path.isdir(OUTPUTDIR): os.mkdir(OUTPUTDIR)
+    DATACARDDIR = OUTPUTDIR+CHAN+"/"
+    if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+
+    br_scan_fold = ""
+    if BR_SCAN_H==100:
+        br_scan_fold = "BR_h100_z0"
+    if BR_SCAN_H==75:
+        br_scan_fold = "BR_h75_z25"
+    if BR_SCAN_H==50:
+        br_scan_fold = "BR_h50_z50"
+    if BR_SCAN_H==25:
+        br_scan_fold = "BR_h25_z75"
+    if BR_SCAN_H==0:
+        br_scan_fold = "BR_h0_z100"
+
+    DATACARDDIR += br_scan_fold+"/"
+    if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
+    DATACARDS = DATACARDDIR+"datacards/"
+    if not os.path.isdir(DATACARDS): os.mkdir(DATACARDS)
+    RESULTS = DATACARDDIR+"combine_results/"
+    if not os.path.isdir(RESULTS): os.mkdir(RESULTS)
+
+    if signalMultFactor == 0.001:
+        print '  x-sec calculated in fb '
+    #elif signalMultFactor == 0.0001:
+    #    print '  x-sec calculated in fb --> for impacts '
+    elif (signalMultFactor >= 1 and signalMultFactor < 1000):
+        print '  x-sec calculated in pb '
+    else:
+        print 'Wrong signal mult. factor, aborting...'
+        exit()
+        print '-'*11*2
+
+
+    chainSignal = {}
+    list_of_variables = [TAGVAR,"isMC","Jets.pt","Jets.phi","Jets.eta","Jets.sigprob","Jets.timeRMSRecHitsEB","Jets.nRecHitsEB","HLT*","MT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM","EventNumber","RunNumber","LumiNumber","EventWeight","TriggerWeight","PUWeight","PUReWeight","GenLLPs.travelRadius","GenLLPs.travelX","GenLLPs.travelY","GenLLPs.travelZ","GenLLPs.travelTime","GenLLPs.beta","GenLLPs.*",CUT,"MeanNumInteractions"]#"nLeptons"
+
+    if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR and CUT=="isSR":
+        list_of_variables += ["dt_ecal_dist","min_dPhi_jets*"]
+
+    if ERA=="2018":
+        list_of_variables += ["nCHSJets_in_HEM_pt_30_all_eta"]
+
+    #These will be dictionaries
+    #Here: all the arrays, because we'll merge three root files for each sign
+    bin2 = defaultdict(dict)#np.array([])
+    ctau_weights = defaultdict(dict)#still to think if this is correct...
+    ctau_distr = defaultdict(dict)#still to think if this is correct...
+    y_2_ctau = defaultdict(dict)
+    e_2_ctau = defaultdict(dict)
+    n_mass = {}
+    
+    masses = []
+
+    #Initialize
+    #sgn_av_unc = defaultdict(dict)
+    loop_ct = ctaus
+    for pr in sign:
+        masses.append(samples[pr]['mass'])
+        loop_ct = np.append(loop_ct,np.array([samples[pr]['ctau']]))
+    for m in masses:
+        n_mass[m] = masses.count(m)
+    masses = np.unique(np.array(masses))
+    loop_ct = np.unique(loop_ct)
+
+    
+    for i,pr in enumerate(sign):
+        #for u in sgn_unc_dict[pr].keys():
+        #    sgn_av_unc[ samples[pr]['mass'] ][u] =   0
+        for ct in loop_ct:
+            ctau_weights[pr][ct] = np.array([])
+            ctau_distr[pr][ct] = np.array([])
+            y_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
+            e_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
+    
+    for i,pr in enumerate(sign):
+        new_list = [pr+"_HH"]#,pr+"_HZ",pr+"_ZZ"]
+        #Here: all the arrays, because we'll merge three root files for each sign
+        bin2[pr] = np.array([])
+        y_2 = {}
+        e_2 = {}
+
+        files_list = []
+        print "\n"
+        for s in new_list:
+            print "Iterating over ", s, " . . . "
+            for l, ss in enumerate(samples[s]['files']):
+                #print "weight for ", ss, tree_weight_dict[pr][ss] 
+                filename = NTUPLEDIR + ss + '.root'
+                gen = uproot.iterate(filename,"tree",list_of_variables)#,1)
+                for arrays in gen:
+                    st_it = time.time()
+                    key_list = arrays.keys()
+                    tree_w_array = tree_weight_dict[pr][ss]*np.ones( len(arrays[ key_list[0] ])  )
+
+
+                    #apply no cuts!
+
+                    if CUT == "isSR":
+                        cut_mask = arrays[CUT]>0
+                        if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
+                            #cosmic
+                            cosmic_veto = arrays["dt_ecal_dist"]<0.5
+                            cut_mask = np.logical_and(cut_mask,np.logical_not(cosmic_veto))
+                    else:
+                        cut_mask = (arrays[CUT]>0)
+
+                    if KILL_QCD:
+                        cut_mask = np.logical_and( cut_mask, arrays["MinJetMetDPhi"]>0.5)
+
+                    ##Default cut_jets, does nothing basically 
+                    cut_jets = arrays["Jets.pt"]>-999
+                    cut_jets = np.logical_and(cut_mask,cut_jets)
+                    cut_mask = (cut_jets.any()==True)
+                    
+                    if phi_cut==True and eta_cut==False:
+                        cut_mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                        cut_mask_phi = np.logical_and(cut_mask,cut_mask_phi)
+                        cut_mask = (cut_mask_phi.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_phi)#new
+
+                    elif eta_cut==True and phi_cut==False:
+                        cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
+                        cut_mask_eta = np.logical_and(cut_mask,cut_mask_eta)
+                        #This is needed to guarantee the shapes are consistent
+                        cut_mask = (cut_mask_eta.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_eta)#new
+
+                    elif phi_cut and eta_cut:
+                        cut_mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                        cut_mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)                    
+                        cut_mask_phi_eta = np.logical_and(cut_mask,np.logical_and(cut_mask_phi,cut_mask_eta))
+                        cut_mask_phi_eta = np.logical_and(cut_mask,cut_mask_phi_eta)
+                        #This is needed to guarantee the shapes are consistent
+                        cut_mask = (cut_mask_phi_eta.any()==True)
+                        cut_jets = np.logical_and(cut_jets,cut_mask_phi_eta)#new
+
+                    #Beam Halo veto
+                    if CUT == "isSR":
+                        if "v6_calo_AOD" in NTUPLEDIR and "v5_ntuples" not in NTUPLEDIR:
+                            #beam halo
+                            #cut_mask_bh = np.logical_not(np.logical_and(arrays["Jets.timeRMSRecHitsEB"]>=8 , arrays["Jets.nRecHitsEB"]<=10))
+                            #cut_mask_bh = np.logical_and(cut_mask,cut_mask_bh)
+                            #cut_mask = (cut_mask_bh.any()==True)
+                            #cut_jets = np.logical_and(cut_jets,cut_mask_bh)
+                            cut_mask_dphi = arrays["min_dPhi_jets_eta_1p0_0p996"]<0.05
+                            cut_mask_low_multi_tag = np.logical_and(arrays["Jets.sigprob"]>0.996 , arrays["Jets.nRecHitsEB"]<=10)
+                            cut_mask_low_multi_tag = np.logical_and(cut_mask_dphi,cut_mask_low_multi_tag)
+                            cut_mask_bh = np.logical_not(cut_mask_low_multi_tag.any()==True)
+                            cut_mask = np.logical_and(cut_mask,cut_mask_bh)
+                            cut_jets = np.logical_and(cut_jets,cut_mask)
+
+                    sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]#new
+
+                    #SR cut
+                    tag_mask = (sigprob > dnn_threshold)#Awkward array mask, same shape as original AwkArr
+                    bin2_m = (sigprob[tag_mask].counts >1)
+                    #print "Run:Lumi:Event"
+                    #print arrays["RunNumber"]
+                    #print arrays["LumiNumber"]
+                    #print arrays["EventNumber"]
+                    #cut_mask = arrays["pt"]>200
+                    #bin2_m = cut_mask
+                    eventweight = arrays["EventWeight"][cut_mask][bin2_m]
+                    pureweight = arrays["PUReWeight"][cut_mask][bin2_m]
+                    trgweight = arrays["TriggerWeight"][cut_mask][bin2_m]
+                    PU = arrays["MeanNumInteractions"][cut_mask][bin2_m]
+                    #trgweight must go only in MC in SR!!
+                    weight = np.multiply(eventweight,np.multiply(pureweight,trgweight))*tree_weight_dict[pr][ss]*signalMultFactor
+                    #Here: gen level stuff
+                    genRadius = arrays["GenLLPs.travelRadius"][cut_mask][bin2_m]
+                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m]
+                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m]
+                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m]
+                    genTime = arrays["GenLLPs.travelTime"][cut_mask][bin2_m]
+                    genBeta = arrays["GenLLPs.beta"][cut_mask][bin2_m]
+                    genGamma = np.divide(1.,np.sqrt(1-np.multiply(genBeta,genBeta)))
+                    genTravelDist = np.sqrt( np.multiply(genX,genX) + np.multiply(genY,genY) + np.multiply(genZ,genZ) )
+                    genPosteriorTime = np.divide(genTravelDist,np.multiply(genBeta , genGamma))
+                    del arrays
+
+                    if scale_mu!=1.:
+                        print "Scaling mu up by factor", scale_mu
+                        weight *= scale_mu
+
+                    ####bin2 = np.concatenate( (bin2,weight) )
+                    #print "concatenating: ", pr, s, ss
+                    #print "high weights?"
+                    #print "max: %.8f" % np.max(weight)
+                    #print "min: %.8f" % np.min(weight)
+                    #print "mean: %.8f" % np.mean(weight)
+                    #print "weight vect ", weight
+                    #print "argmin: ", np.argmin(weight)
+                    #print "eventweight ", eventweight[np.argmin(weight)]
+                    #print "pu weight ", pureweight[np.argmin(weight)]
+                    #print "trg weight ", trgweight[np.argmin(weight)]
+                    #print "mean num interactions", PU[np.argmin(weight)]
+                    #print "all PU", PU
+                    #print "events per sample:", np.sum(weight)
+                    #print "+- unc: ", np.sqrt( sum(x*x for x in weight) ).sum()
+                    #print "% unc: ", 100*np.sqrt( sum(x*x for x in weight) ).sum()/np.sum(weight)
+                    #print "entries per sample: ", np.sum(weight.astype(bool))
+                    #print "+- unc: ", np.sqrt( sum(x*x for x in weight.astype(bool)) ).sum()
+                    #print "% unc: ", 100*np.sqrt( sum(x*x for x in weight.astype(bool)) ).sum()/np.sum(weight.astype(bool))
+                    bin2[pr] = np.concatenate( (bin2[pr],weight) )
+                    #Weights must be stitched
+                    #If ctau<=2150 --> 500
+                    #If ctau>=2150 --> 3000
+                    for ct in ctaus_500:
+                        print "predict ctau ", ct, " from sample 500"
+                        if samples[pr]['ctau']==500:
+                            if ct!=500:
+                                #print "event weight"
+                                #print weight
+                                #print "input posterior time"
+                                #print genPosteriorTime
+                                #print "input posterior time sum"
+                                #print genPosteriorTime.sum()
+                                #print "ctau weight"
+                                #print tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)
+                                #print "ctau weight mean"
+                                #print np.mean(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.))
+                                #print "ctau weight times event weight"
+                                ctw = np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight) 
+                                #print "ctau weight"
+                                #print tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)
+                                #print "which means yield:", np.sum(ctw)
+                                #print "+- unc: ", np.sqrt( sum(x*x for x in ctw) ).sum()
+                                #print "% unc: ", 100*np.sqrt( sum(x*x for x in ctw) ).sum()/np.sum(ctw)
+                                ctau_weights[pr][ct] = np.concatenate(( ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.), weight) ))
+                                ctau_distr[pr][ct] = np.concatenate(( ctau_distr[pr][ct], genPosteriorTime.flatten() ))
+                                #To get the ctau distribution
+                                #ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.), genTravelDist ).flatten()  ) )
+                            else:
+                                ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], weight))
+                                ctau_distr[pr][ct] = np.concatenate( (ctau_distr[pr][ct], genPosteriorTime.flatten()))
+                    for ct in ctaus_3000:
+                        #print "ctau ", ct, ct, " from sample 3000"
+                        if samples[pr]['ctau']==3000:
+                            if ct!=3000:
+                                #print "event weight"
+                                #print weight
+                                #print "input posterior time"
+                                #print genPosteriorTime.sum()
+                                #print "ctau weight"
+                                #print tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)
+                                #print "ctau weight mean"
+                                #print np.mean(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.))
+                                #print "ctau weight times event weight"
+                                ctw = np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight) 
+                                #print ctw                                
+                                #print "which means yield:", np.sum(ctw)
+                                #print "+- unc: ", np.sqrt( sum(x*x for x in ctw) ).sum()
+                                #print "% unc: ", 100*np.sqrt( sum(x*x for x in ctw) ).sum()/np.sum(ctw)
+                                ctau_weights[pr][ct] = np.concatenate(( ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.), weight) ))
+                                ctau_distr[pr][ct] = np.concatenate(( ctau_distr[pr][ct], genPosteriorTime.flatten() ))
+                                #To get the ctau distribution
+                                #ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.), genTravelDist ).flatten()  ) )
+                            else:
+                                #print "adding gen time"
+                                ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], weight))
+                                #To get the ctau distribution
+                                ctau_distr[pr][ct] = np.concatenate( (ctau_distr[pr][ct], genPosteriorTime.flatten()))
+                                #ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], genTravelDist.flatten()))
+
+                    #exit()
+                del gen
+
+    
+
+    print "global yields and uncertainties(%)"
+    for k in ctau_weights.keys():
+        print k
+        for ct in ctaus:
+            print "ct:%d, entries:%d, yield:%.3f +- %.2f (percentage)" % (ct, len(ctau_weights[k][ct]), ctau_weights[k][ct].sum(), 100*np.sqrt( sum(x*x for x in ctau_weights[k][ct]) ).sum()/ctau_weights[k][ct].sum())
+            flat = ctau_weights[k][ct].tolist
+
+    exit()
+    for k in ctau_distr.keys():
+        print k
+        for ct in ctaus:
+            if len(ctau_distr[k][ct].flatten())>0:
+                hist = TH1F("t","t",100,0,600)#ct)
+                root_numpy.fill_hist(hist,ctau_distr[k][ct].flatten(),np.repeat(ctau_weights[k][ct],2))
+                can = TCanvas("can","can",900,800)
+                can.SetRightMargin(0.05)
+                can.cd()
+                can.SetGrid()
+                #can.SetLogy()
+                hist.Scale(1./hist.Integral())
+                hist.SetLineWidth(2)
+                hist.SetTitle(str(k))
+                hist.GetYaxis().SetTitle("a.u.")
+                hist.GetXaxis().SetTitle("ctau")
+                fit = TF1("fit","expo",0,600)#ct)
+                fit.SetParameter(1,-10./ct)
+                hist.Fit(fit,"ERB")
+                hist.SetMarkerStyle(21)
+                hist.SetMarkerColor(1)
+                hist.SetLineColor(1)
+                hist.Draw("PE")
+                fit.Draw("L,sames")
+                #hist.SetMinimum(0.00001)
+                #hist.SetMaximum(1)
+                leg1 = TLegend(0.7, 0.7, 0.95, 0.9)
+                leg1.SetHeader("predict ct "+str(ct/10.))
+                leg1.AddEntry(fit,("mean c #tau: %.2f"%(-1./fit.GetParameter(1))),"L")
+                leg1.Draw()
+                can.Print("test_"+k+"_ct"+str(ct).replace(".","p")+".pdf")
+                can.Print("test_"+k+"_ct"+str(ct).replace(".","p")+".png")
+                can.Close()
+                hist.Delete()
+
+    exit()
+    #Do the stitching: sum
+    for pr in sign:
+        for ct in ctaus:
+            y_2_ctau[samples[pr]['mass']][ct] = np.concatenate((y_2_ctau[samples[pr]['mass']][ct],ctau_weights[pr][ct]))
+
+    print "global yields after stitching"
+    for k in y_2_ctau.keys():
+        print k
+        for ct in ctaus:
+            print ct, y_2_ctau[k][ct].sum()
+
+    exit()
+
 def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_region,unc_list,dataset_label="",comb_fold_label="",add_label="",label_2="",check_closure=False,pred_unc=0,run_combine=False,eta=False,phi=False,eta_cut=False,phi_cut=False,scale_mu=1.,contamination=False,BLIND=True,BR_SCAN_H=100):
 
     print "\n"
@@ -5789,7 +6498,7 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
     if check_closure:
         pred_file_name+="_closure"+str(dnn_threshold).replace(".","p")
 
-    pred_file_name+=dataset_label
+    #pred_file_name+=dataset_label
     pred_file_name+=comb_fold_label
 
     print "ERA and LUMI:"
@@ -5802,10 +6511,29 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
         f.close()
         print "  --  --  --  --  --"
 
-    y_bkg  = results[extr_region+dataset_label+comb_fold_label][main_pred_sample]['pred_2_from_1']
+    #extr_region+dataset_label+comb_fold_label --> extr_region+comb_fold_label
+    y_bkg  = results[extr_region+comb_fold_label][main_pred_sample]['pred_2_from_1']
     y_data = y_bkg#int(y_bkg)#-1
     if not BLIND:
         y_data = results[extr_region+comb_fold_label][main_pred_sample]['y_2']
+
+
+    #Cosmic bkg yield
+    cosmic_file_name = PREDDIR+"BkgPredResults_"+ERA+"_SR_cosmic"+dataset_label+".yaml"
+    with open(cosmic_file_name,"r") as f:
+        print "  --  --  --  --  --"
+        print "Info: opening dictionary in file "+cosmic_file_name
+        cosmic = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        print "  --  --  --  --  --"
+    #Beam halo bkg yield
+    bh_file_name = PREDDIR+"BkgPredResults_"+ERA+"_SR_beam_halo"+dataset_label+".yaml"
+    with open(bh_file_name,"r") as f:
+        print "  --  --  --  --  --"
+        print "Info: opening dictionary in file "+bh_file_name
+        bh = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        print "  --  --  --  --  --"
 
     #Syst uncertainties
     bkg_unc_dict = defaultdict(dict)
@@ -5836,23 +6564,6 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
     if not os.path.isdir(OUTPUTDIR): os.mkdir(OUTPUTDIR)
     DATACARDDIR = OUTPUTDIR+CHAN+"/"
     if not os.path.isdir(DATACARDDIR): os.mkdir(DATACARDDIR)
-
-    ###DATACARDDIR += TAGVAR+comb_fold_label
-    '''
-    DATACARDDIR += TAGVAR
-    if eta_cut:
-        DATACARDDIR += "_eta_1p0"
-    if phi_cut:
-        DATACARDDIR += "_phi_cut"
-
-    if eta:
-        DATACARDDIR += "_vs_eta"+comb_fold_label
-    else:
-        if phi:
-            DATACARDDIR += "_vs_phi"+comb_fold_label
-        else:
-            DATACARDDIR += comb_fold_label
-    '''
 
     br_scan_fold = ""
     if BR_SCAN_H==100:
@@ -5920,7 +6631,6 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
         for u in sgn_unc_dict[pr].keys():
             sgn_av_unc[ samples[pr]['mass'] ][u] =   0
         for ct in loop_ct:
-            #ctau_weights[samples[pr]['mass']][ct] = np.array([])
             ctau_weights[pr][ct] = np.array([])
             y_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
             e_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
@@ -5933,7 +6643,7 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
         #print "    Ignoring HZ, ZZ  "
         #print "\n"
         #print "\n"
-        new_list = [pr+"_HH",pr+"_HZ",pr+"_ZZ"]
+        new_list = [pr+"_HH"]#,pr+"_HZ",pr+"_ZZ"]
         #Here: all the arrays, because we'll merge three root files for each sign
         bin2[pr] = np.array([])
         y_2 = {}
@@ -6057,6 +6767,48 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
                     #print tau_weight_calc(genPosteriorTime.sum(), 10./10., float(ctaupoint)/10.)#cm
                     del arrays
 
+                    if scale_mu!=1.:
+                        print "Scaling mu up by factor", scale_mu
+                        weight *= scale_mu
+
+                    ####bin2 = np.concatenate( (bin2,weight) )
+                    print "concatenating: ", pr, s, ss
+                    #print "entries:", weight.shape
+                    #w_tmp = weight.astype(bool)
+                    #print "entries w_tmp:",np.sum(w_tmp)
+                    #print "poissonian w_tmp:",np.sqrt( np.sum(w_tmp) )
+                    #print "% unc: ", 100*np.sqrt( np.sum(w_tmp) )/np.sum(w_tmp)
+                    #print "entries w_tmp unc:",np.sqrt( sum(x*x for x in w_tmp) ).sum()
+                    print "weight added:", np.sum(weight)
+                    print "+- unc: ", np.sqrt( sum(x*x for x in weight) ).sum()
+                    print "% unc: ", 100*np.sqrt( sum(x*x for x in weight) ).sum()/np.sum(weight)
+                    bin2[pr] = np.concatenate( (bin2[pr],weight) )
+
+                    #Weights must be stitched
+                    #If ctau<=2150 --> 500
+                    #If ctau>=2150 --> 3000
+                    for ct in ctaus_500:
+                        print "ctau ", ct
+                        if samples[pr]['ctau']==500:
+                            if ct!=500:
+                                ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight)  ) )
+                                print "added to vector [",pr,"][",ct,"]"
+                                print np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight).sum()
+                            else:
+                                ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], weight))
+                                print "added to vector [",pr,"][",ct,"]"
+                                print weight.sum()
+                    for ct in ctaus_3000:
+                        print "ctau ", ct
+                        if samples[pr]['ctau']==3000:
+                            if ct!=3000:
+                                ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight)  ) )
+                                print "added to vector [",pr,"][",ct,"]"
+                                print np.multiply(tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.),weight).sum()
+                            else:
+                                ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct], weight))
+                                print "added to vector [",pr,"][",ct,"]"
+                                print weight.sum()
 
                     '''
                     if samples[pr]['ctau']==500:
@@ -6070,12 +6822,10 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
                             #ctau_weights[ct] = np.concatenate( (ctau_weights[ct],tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)) )
                             ctau_weights[pr][ct] = np.concatenate( (ctau_weights[pr][ct],tau_weight_calc(genPosteriorTime.sum(), float(ct)/10., float( samples[pr]['ctau'] )/10.)) )
                     '''
-                    if scale_mu!=1.:
-                        print "Scaling mu up by factor", scale_mu
-                        weight *= scale_mu
-                    ####bin2 = np.concatenate( (bin2,weight) )
-                    #print "concatenating: ", pr, s, ss
-                    bin2[pr] = np.concatenate( (bin2[pr],weight) )
+
+                    '''
+                    #Averaging: not good
+
                     #print "partial bin 2 yield ", np.sum(bin2[pr])
                     for ct in ctaus:
                         if ct!=samples[pr]['ctau']:
@@ -6097,10 +6847,33 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
 )
                             ###y_2_ctau[ samples[pr]['mass'] ][ct] = np.array([])
                         #print "   sum up to now",np.sum(ctau_weights[pr][ct])
+                    '''
 
                 del gen
                 #print ctau_weights
 
+
+    print "global yields"
+    for k in ctau_weights.keys():
+        print k
+        for ct in ctaus:
+            print ct, ctau_weights[k][ct].sum()
+
+    #Do the stitching: sum
+    for pr in sign:
+        for ct in ctaus:
+            y_2_ctau[samples[pr]['mass']][ct] = np.concatenate((y_2_ctau[samples[pr]['mass']][ct],ctau_weights[pr][ct]))
+
+    print "global yields after stitching"
+    for k in y_2_ctau.keys():
+        print k
+        for ct in ctaus:
+            print ct, y_2_ctau[k][ct].sum()
+
+    exit()
+
+    #the averaging no longer needed
+    '''
     #We can redo the loop
     for pr in sign:
         for u in sgn_unc_dict[pr].keys():
@@ -6112,7 +6885,7 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
             #print "ct ", ct
             #print "will add: ", np.sum(ctau_weights[pr][ct])
             y_2_ctau[samples[pr]['mass']][ct] = np.concatenate((y_2_ctau[samples[pr]['mass']][ct],ctau_weights[pr][ct]))
-
+    '''
     for m in masses:
         for ct in ctaus:
             #uncertainties depend on the lifetime
@@ -6121,15 +6894,18 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
             y_av = y_2_ctau[m][ct]/n_mass[m]
             y_2 = np.sum(y_av)
             e_2 = np.sqrt( sum(x*x for x in y_av) ).sum()#*tree_weight --> already in w
-            #print m, ct, y_2, e_2
+            print m, ct, y_2, " +- ", e_2, 100*e_2/y_2
             #print "unc average"
             #for u in sgn_av_unc[m].keys():
             #    #print m, u, sgn_av_unc[m][u]
 
             #if (e_2/y_2 > 0.6 or y_2 == 0):
-            #    print "Large uncertainty or zero yield for ctau = ", ct
-            #    print y_2 , " +- ", e_2
-            #    continue
+            if (e_2/y_2 > 0.75):
+                #print "Large uncertainty or zero yield for ctau = ", ct
+                print "Large uncertainty for ctau = ", ct
+                print y_2 , " +- ", e_2
+                continue
+            continue
             s_rename = "SUSY_mh"+str(m)+"_ctau"+str(ct)
 
             #*******************************************************#
@@ -6149,12 +6925,16 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
             card += 'bin                            %-33s%-33s\n' % (CHAN, CHAN)
             card += 'process                        %-33s%-33s\n' % (s_rename, 'Bkg')
             card += 'process                        %-33s%-33s\n' % ('0', '1')
-            card += 'rate                           %-33f%-33f\n' % (y_2, y_bkg)
+            card += 'rate                           %-33f%-33f\n' % (y_2, y_bkg+cosmic["bkg_cosmic"]+bh["bkg_bh"])
             card += '-----------------------------------------------------------------------------------\n'
             #Syst uncertainties
             #bkg
             for u in bkg_unc_dict.keys():
                 card += ('%s '+(22-len(u))*' '+'lnN     %-33s%-33f\n') % (u,'-', 1.+bkg_unc_dict[u]/100.)
+            #cosmic
+            card += ('%s '+(22-len("bkg_cosmic"))*' '+'lnN     %-33s%-33f\n') % ("unc_cosmic",'-', 1.+cosmic["unc_cosmic"]/100.)
+            #bh
+            card += ('%s '+(22-len("unc_bh"))*' '+'lnN     %-33s%-33f\n') % ("unc_bh",'-', 1.+bh["unc_bh"]/100.)
             #sgn
             card += '%-18s     lnN     %-33f%-33s\n' % ('sig_stat_'+ERA,1.+e_2/y_2 if y_2>0 else 1.,'-')
             for u in sgn_av_unc[m].keys():
@@ -7104,6 +7884,7 @@ def combine_datacards_AN(sign,comb_fold_label="",eras=[],add_label="",label_2=""
 
     for i,s in enumerate(sign):
         for ct in loop_ct:
+            print ct
             inp_card_string = ""
             card_name = s.replace('_ctau'+str(samples[s]['ctau']),'_ctau'+str(ct))
             n_valid = 0
@@ -7111,10 +7892,11 @@ def combine_datacards_AN(sign,comb_fold_label="",eras=[],add_label="",label_2=""
                 tmp_card = card_dict[c]+card_name
                 if "2016" in c:
                     tmp_card += c.replace("2016","")
+                print "checking ", tmp_card
                 tmp_card += ".txt"
                 if os.path.isfile(tmp_card):
                     n_valid+=1
-            #print "n valid ", n_valid
+            print "n valid ", n_valid
 
             if n_valid==4:
                 for c in card_dict.keys():
@@ -7122,6 +7904,8 @@ def combine_datacards_AN(sign,comb_fold_label="",eras=[],add_label="",label_2=""
                     if "2016" in c:
                         inp_card_string += c.replace("2016","")
                     inp_card_string +=".txt" + " "
+            else:
+                continue
             print inp_card_string
             original_location = os.popen("pwd").read()
 
@@ -7192,6 +7976,10 @@ def signal_injection_test(out_dir,comb_fold_label="",combination=True,add_label=
             this_lumi  = lumi[ "HighMET" ]["tot"]
     else:
         if comb_fold_label=="2016_BFGH_2017_2018":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_BFGH_2017_2018_stat_unc_50":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_BFGH_2017_2018_stat_unc_75_average":
             this_lumi = 137478.722953
         elif comb_fold_label=="2016_GH_2017_2018":
             this_lumi = 111941.400399
@@ -7366,6 +8154,10 @@ def plot_limits_vs_mass(out_dir,sign,comb_fold_label="",combination=False,eta=Fa
             this_lumi  = lumi[ "HighMET" ]["tot"]
     else:
         if comb_fold_label=="2016_BFGH_2017_2018":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_BFGH_2017_2018_stat_unc_50":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_BFGH_2017_2018_stat_unc_75_average":
             this_lumi = 137478.722953
         elif comb_fold_label=="2016_GH_2017_2018":
             this_lumi = 111941.400399
@@ -7601,6 +8393,10 @@ def plot_limits_vs_ctau(out_dir,sign,comb_fold_label="",combination=False,eta=Fa
             this_lumi  = lumi[ "HighMET" ]["tot"]
     else:
         if comb_fold_label=="2016_BFGH_2017_2018":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_BFGH_2017_2018_stat_unc_50":
+            this_lumi = 137478.722953
+        elif comb_fold_label=="2016_BFGH_2017_2018_stat_unc_75_average":
             this_lumi = 137478.722953
         elif comb_fold_label=="2016_GH_2017_2018":
             this_lumi = 111941.400399
@@ -8406,7 +9202,7 @@ exit()
 
 
 
-samples_to_run = data#back#data#back#data#sign#data#back#data#back#data#back#data#sign#back#data#back#data#back+data#data#data+back#+data
+samples_to_run = sign#data#back#data#back#data#sign#data#back#data#back#data#back#data#sign#back#data#back#data#back+data#data#data+back#+data
 #jet_tag = "_low_dPhi_0p5_2_HLT_PFJet_500"
 #jet_tag = "_jet_1"
 jet_tag = ""#+
@@ -8419,7 +9215,10 @@ clos = False
 #jet_tag = "_A-B"
 #kill QCD
 
-#jet_tag += "_B-F"#"_B-F"#"_G-H"#"_G-H"#"_G-H"#"_B-F"#"_B-F"#
+#ERA
+if ERA=="2016":
+    jet_tag += "_B-F"
+    #jet_tag += "_G-H"#"_B-F"#"_B-F"#"_G-H"#"_G-H"#"_B-F"#"_B-F"#
 
 #jet_tag += "_PFJet500"
 if KILL_QCD:
@@ -8530,10 +9329,13 @@ else:
 #LUMI = 137.4*1000
 #print "Using full run 2 lumi!! ", LUMI
 
-#calculate_tag_eff(get_tree_weights(samples_to_run,LUMI),samples_to_run,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,j_idx=-1,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
+
+#clos=True
+calculate_tag_eff(get_tree_weights(samples_to_run,LUMI),samples_to_run,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,j_idx=-1,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
 ##draw_tag_eff(samples_to_run,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
 #draw_tag_eff_updated(sample_dict,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
-#exit()
+draw_tag_eff_signal(samples_to_run,reg_label=reg_comb,add_label=jet_tag,check_closure=clos,eta=DO_ETA,phi=DO_PHI,eta_cut=CUT_ETA,phi_cut=CUT_PHI)
+exit()
 
 #ROC:
 #plot_roc_curve(get_tree_weights(sign,LUMI),get_tree_weights(back,LUMI),sign,back,add_label="",check_closure=False,eta=False,j_idx=-1,eta_cut=0,eta_invert=False)
@@ -8577,7 +9379,7 @@ draw_data_combination(
     # universal
     #
     #["ZtoMM","ZtoEE","WtoMN","WtoEN","TtoEM","JetHT",],#"DiJetMET"],#SR
-    ["ZtoLL","WtoLN","TtoEM","JetHT","ZtoLLBoost"],#"DiJetMET"],#SR
+    ["ZtoLL","WtoLN","TtoEM","JetHT"],#"ZtoLLBoost","HBHE"],#"DiJetMET"],#SR
     #["ZtoLL","JetHT",],#"WtoLN","TtoEM","JetHT",],#"DiJetMET"],#SR
     #2016 B-F
     #["ZtoMM","WtoMN","TtoEM","JetHT",],#"DiJetMET"],#SR
@@ -8616,11 +9418,11 @@ draw_data_combination(
 exit()
 '''
 
-
 #Bkg pred
 '''
+#samples_to_run = ["SUSY_mh400_ctau3000_HH"]
 background_prediction(
-    get_tree_weights(samples_to_run,LUMI),
+    get_tree_weights(samples_to_run,LUMI),#137478.722953*0.001),#LUMI),
     samples_to_run,
     #extr_regions= ["JetHT","DiJetMET","WtoEN","WtoMN","SR"],#["QCD","WtoMN","WtoEN"],#["WtoEN"],#["JetHT","DiJetMET","JetMET","ZtoMM","WtoMN","MN","MR","SR"],
     #regions_labels = ["","","","","","","","","","","","",""],#["","",""],#[""],#["","",jet_tag,"","","","","","","","","","","","","","","","",""],
@@ -8628,7 +9430,7 @@ background_prediction(
     # 2017:
     #extr_regions = ["WtoLN"],#["WtoEN","WtoMN"],
     #extr_regions = ["ZtoLL","JetHT"],#"SR",
-    extr_regions = ["WtoLN","ZtoLL","TtoEM","JetHT"],#["ZtoMM"],
+    extr_regions = ["WtoLN","ZtoLL","TtoEM","JetHT",],#["ZtoMM"],
     #
     # universal
     #
@@ -8677,9 +9479,12 @@ mu_scale = 1.#50.#0.01#1.#2.#5.#10.#0.1#
 contam = False
 br_h=100#75#50#25#0#
 
-label = "_G-H" if ERA=="2016" else ""
+#ERA
+label = "_B-F" if ERA=="2016" else ""
 
 combi_folder = "2016_BFGH_2017_2018"#"2016_GH_2017_2018",#
+combi_folder = "2016_BFGH_2017_2018_stat_unc_50"#"2016_GH_2017_2018",#
+combi_folder = "2016_BFGH_2017_2018_stat_unc_75_average"#"2016_GH_2017_2018",#
 era_list = ["2016_B-F","2016_G-H","2017","2018"]#["2016_G-H","2017","2018"],#
 limit_plot_dir = OUTCOMBI#OUTCOMBI,#OUTPUTDIR,
 
@@ -8687,9 +9492,11 @@ limit_plot_dir = OUTCOMBI#OUTCOMBI,#OUTPUTDIR,
 #exit()
 
 #for br_h in [100,75,50,25,0]:
-#for br_h in [100]:
-for br_h in [75,50,25,0]:
-    write_datacards(
+for br_h in [100]:
+#for br_h in [50,25,0]:
+#for br_h in [100,75]:
+        
+    test_datacards(
         get_tree_weights_BR_scan(sign,br_h,dataset_label=label,main_pred_sample="HighMET"),#LUMI),#137.4*1000 full Run2
         sign,
         main_pred_reg = REGION,
@@ -8711,7 +9518,6 @@ for br_h in [75,50,25,0]:
         BR_SCAN_H=br_h
     )
     #exit()
-    
     '''
     combine_datacards_AN(
         sign,
@@ -8753,8 +9559,9 @@ for br_h in [75,50,25,0]:
         contamination = contam,
         BR_SCAN_H=br_h
     )
+    '''    
+
     #exit()
-    '''
     #signal_injection_test(
     #    limit_plot_dir,
     #    comb_fold_label=combi_folder,
@@ -8765,7 +9572,6 @@ for br_h in [75,50,25,0]:
     #    n_toys = 500,
     #)
     #exit()
-
     
 exit()
     
