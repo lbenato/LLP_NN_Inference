@@ -130,6 +130,18 @@
     <use name="PhysicsTools/TensorFlow" />
 </bin>
 
+<bin name="tf_and_skim_v6_signal_time_smearing" file="tf_and_skim_v6_signal_time_smearing.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_cosmics" file="tf_and_skim_v6_cosmics.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
 <bin name="tf_and_skim_v6_no_photonEFrac_cut" file="tf_and_skim_v6_no_photonEFrac_cut.cc">
     <use name="root" />
     <use name="rootcore" />
@@ -149,6 +161,60 @@
 </bin>
 
 <bin name="tf_and_skim_v5_Z_gamma" file="tf_and_skim_v5_Z_gamma.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v5_electron" file="tf_and_skim_v5_electron.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_negative_jets_0p95" file="tf_and_skim_v6_negative_jets_0p95.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_positive_jets_0p95" file="tf_and_skim_v6_positive_jets_0p95.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_positive_jets_0p7" file="tf_and_skim_v6_positive_jets_0p7.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_cosmics" file="tf_and_skim_v6_cosmics.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_tagger_v3_no_time" file="tf_and_skim_v6_tagger_v3_no_time.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="ttH" file="ttH.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="v5_electron_reweight" file="v5_electron_reweight.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="ttbar_reweight" file="ttbar_reweight.cc">
     <use name="root" />
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />
