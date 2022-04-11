@@ -502,9 +502,34 @@ requests = {
 'gluinoGMSB_M2400_ctau10000p0_TuneCP2_13TeV_pythia8-v2' : '/gluinoGMSB_M2400_ctau10000p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v2/AODSIM',
 'gluinoGMSB_M2400_ctau10000p0_TuneCP2_13TeV_pythia8-v1' : '/gluinoGMSB_M2400_ctau10000p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
 
+
+##'CosmicsRun2018A-06Jun2018-v1' : '/Cosmics/Run2018A-06Jun2018-v1/AOD',
+'CosmicsRun2018A-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018A-CosmicSP-PromptReco-v1/RAW-RECO',
+'CosmicsRun2018A-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018A-CosmicSP-PromptReco-v2/RAW-RECO',
+'CosmicsRun2018A-CosmicSP-PromptReco-v3' : '/Cosmics/Run2018A-CosmicSP-PromptReco-v3/RAW-RECO',
+'CosmicsRun2018B-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018B-CosmicSP-PromptReco-v1/RAW-RECO',
+'CosmicsRun2018B-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018B-CosmicSP-PromptReco-v2/RAW-RECO',
+'CosmicsRun2018C-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018C-CosmicSP-PromptReco-v1/RAW-RECO',
+'CosmicsRun2018C-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018C-CosmicSP-PromptReco-v2/RAW-RECO',
+'CosmicsRun2018C-CosmicSP-PromptReco-v3' : '/Cosmics/Run2018C-CosmicSP-PromptReco-v3/RAW-RECO',
+#'CosmicsRun2018D-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018D-CosmicSP-PromptReco-v1/RAW-RECO',
+#'CosmicsRun2018D-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018D-CosmicSP-PromptReco-v2/RAW-RECO',
+'CosmicsRun2018E-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018E-CosmicSP-PromptReco-v1/RAW-RECO',
+
 #TwinHiggs
 #VBF
 #'VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8-v2' : '/VBFH_HToSSTo4b_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18DRPremix-rp_102X_upgrade2018_realistic_v15-v2/GEN-SIM-RECO',
 #ggH
 #'ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8-v1' : '/ggH_HToSSTobbbb_MH-125_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18DRPremix-rp_102X_upgrade2018_realistic_v15-v1/GEN-SIM-RECO',
+
+#split SUSY private
+'splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+'splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+'splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+'splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+'splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+'splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+'splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v1/AODSIM',
+
+
 }
