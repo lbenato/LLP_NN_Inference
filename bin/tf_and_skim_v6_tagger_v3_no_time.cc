@@ -562,8 +562,8 @@ int main(int argc, char **argv) {
     bool doPFCand=false;
 
     // model and inference settings
-    std::string graphPathAK4 = basePath + "/tagger_AK4_v3/graph.pb";
-    std::string MetaDataFileAK4 = basePath + "/tagger_AK4_v3/metadata.dat";
+    std::string graphPathAK4 = basePath + "/tagger_AK4_v3_no_time/graph.pb";
+    std::string MetaDataFileAK4 = basePath + "/tagger_AK4_v3_no_time/metadata.dat";
     std::string inputTensorNameAK4 = "input_input";
     std::string outputTensorNameAK4 = "FCN/output/Softmax";//"FCN/dense_4/Softmax";//or Softmax?
     //int nInputs = 10;
@@ -1160,7 +1160,7 @@ int main(int argc, char **argv) {
 
     std::vector<TauType>    skimmedTaus;
     std::vector<JetType>    skimmedJets;
-    std::vector<JetType>    skimmedJetsNegative;
+    std::vector<JetType>    skimmedNegativeJets;
     std::vector<JetCaloType> skimmedJetsCalo;
     std::vector<FatJetType> skimmedFatJets;
     std::vector<ecalRecHitType> skimmedEcalRecHitsAK4;
@@ -1317,7 +1317,6 @@ int main(int argc, char **argv) {
     int nTausPassing(0);
 
     int nCHSJetsAcceptanceCalo;
-    int nCHSJetsNegativeAcceptanceCalo;
     int nCHSFatJetsAcceptanceCalo;
     int nCHSJets_in_HEM(0);
 
@@ -1443,6 +1442,9 @@ int main(int argc, char **argv) {
     outputTree->Branch("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
     outputTree->Branch("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, "Flag2_globalSuperTightHalo2016Filter/O");
+    outputTree->Branch("Flag2_HBHENoiseFilter", &Flag2_HBHENoiseFilter, "Flag2_HBHENoiseFilter/O");
+    outputTree->Branch("Flag2_HBHEIsoNoiseFilter", &Flag2_HBHEIsoNoiseFilter, "Flag2_HBHEIsoNoiseFilter/O");
+
 
     if(isData or isSignal)
       {
@@ -1544,7 +1546,6 @@ int main(int argc, char **argv) {
     outputTree->Branch("nCHSJets",          &nCHSJets,          "nCHSJets/I");
     outputTree->Branch("nCHSFatJets",       &nCHSFatJets,       "nCHSFatJets/I");
     outputTree->Branch("nCHSJetsAcceptanceCalo",          &nCHSJetsAcceptanceCalo,          "nCHSJetsAcceptanceCalo/I");
-    outputTree->Branch("nCHSJetsNegativeAcceptanceCalo",          &nCHSJetsNegativeAcceptanceCalo,          "nCHSJetsNegativeAcceptanceCalo/I");
     outputTree->Branch("nCHSFatJetsAcceptanceCalo",       &nCHSFatJetsAcceptanceCalo,       "nCHSFatJetsAcceptanceCalo/I");
     outputTree->Branch("nCHSJets_in_HEM" , &nCHSJets_in_HEM, "nCHSJets_in_HEM/I");
     outputTree->Branch("nCHSJets_in_HEM_pt_20_all_eta" , &nCHSJets_in_HEM_pt_20_all_eta, "nCHSJets_in_HEM_pt_20_all_eta/I");
@@ -1636,7 +1637,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("Photons", &Photons);
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("Jets", &skimmedJets);
-    outputTree->Branch("JetsNegative", &skimmedJetsNegative);
+    outputTree->Branch("JetsNegative", &skimmedNegativeJets);
     outputTree->Branch("JetsCaloAdd", &skimmedJetsCalo);
     outputTree->Branch("FatJets", &skimmedFatJets);
     outputTree->Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
@@ -1823,7 +1824,6 @@ int main(int argc, char **argv) {
         PUReWeightDown = 1.;
 	//Initialize nTagJets at every event
         nCHSJetsAcceptanceCalo = 0;
-        nCHSJetsNegativeAcceptanceCalo = 0;
         nCHSFatJetsAcceptanceCalo = 0;
 	nCHSJets_in_HEM = 0;
 	nCHSJets_in_HEM_pt_20_all_eta = 0;
@@ -2030,7 +2030,7 @@ int main(int argc, char **argv) {
 	//very dangerous with continue statement!
 	skimmedTaus.clear();
         skimmedJets.clear();
-        skimmedJetsNegative.clear();
+        skimmedNegativeJets.clear();
         skimmedJetsCalo.clear();
         skimmedFatJets.clear();
 	skimmedEBEnergyCSC.clear();
@@ -2202,12 +2202,14 @@ int main(int argc, char **argv) {
 	//MET filters always fulfilled
 	//Invert Beam Halo
         //if(Flag2_globalSuperTightHalo2016Filter) continue;
+	//InvertHBHE
+	if(Flag2_HBHENoiseFilter and Flag2_HBHEIsoNoiseFilter) continue;
 	if(not doGen)
 	  {
 	    if(!Flag2_globalSuperTightHalo2016Filter) continue;
 	    if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
-	    if(!Flag2_HBHENoiseFilter) continue;
-	    if(!Flag2_HBHEIsoNoiseFilter) continue;
+	    //if(!Flag2_HBHENoiseFilter) continue;
+	    //if(!Flag2_HBHEIsoNoiseFilter) continue;
 	    if(!Flag2_ecalBadCalibFilter) continue;
 	    if(!Flag2_eeBadScFilter) continue;
 	    if(!Flag2_BadPFMuonFilter) continue;
@@ -2552,10 +2554,7 @@ int main(int argc, char **argv) {
 
 	    //I want to save also jets with negative time<-1 to check beam halo
 	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)//cleaned jets!
-	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
-
-	    //No photonEFrac and eleEFrac cuts!!!
-	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1. and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6)//cleaned jets!
+	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
 	      {
 
 		//This should be done also for jets with negative time... otherwise that collection is biased...
@@ -2592,7 +2591,7 @@ int main(int argc, char **argv) {
 		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 		
 		//Here: passed acceptance
-		//if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
+		if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
 		if(MinLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
@@ -2636,33 +2635,33 @@ int main(int argc, char **argv) {
 		//here build the inputVector for each jet
 		std::vector<float> inputValues(featuresAK4.size());
 
-		//tagger_AK4_v3
+		//tagger_AK4_v3_no_time
 		inputValues.at(0) = Jets->at(j).nTrackConstituents;
 		inputValues.at(1) = Jets->at(j).nSelectedTracks;
-		inputValues.at(2) = Jets->at(j).timeRecHitsEB;
-		inputValues.at(3) = Jets->at(j).eFracRecHitsEB;
-		inputValues.at(4) = Jets->at(j).nRecHitsEB;
-		inputValues.at(5) = Jets->at(j).sig1EB;
-		inputValues.at(6) = Jets->at(j).sig2EB;
-		inputValues.at(7) = Jets->at(j).ptDEB;
+		//inputValues.at(2) = Jets->at(j).timeRecHitsEB;
+		inputValues.at(2) = Jets->at(j).eFracRecHitsEB;
+		inputValues.at(3) = Jets->at(j).nRecHitsEB;
+		inputValues.at(4) = Jets->at(j).sig1EB;
+		inputValues.at(5) = Jets->at(j).sig2EB;
+		inputValues.at(6) = Jets->at(j).ptDEB;
 		//v3 does not have those:
 		//inputValues.at(8) = Jets->at(j).sig1PF;
 		//inputValues.at(9) = Jets->at(j).sig2PF;
 		//inputValues.at(10) = Jets->at(j).ptDPF;
-		inputValues.at(8) = Jets->at(j).cHadEFrac;
-		inputValues.at(9) = Jets->at(j).nHadEFrac;
-		inputValues.at(10) = Jets->at(j).eleEFrac;
-		inputValues.at(11) = Jets->at(j).photonEFrac;
-		inputValues.at(12) = Jets->at(j).ptAllTracks;
-		inputValues.at(13) = Jets->at(j).ptAllPVTracks;
-		inputValues.at(14) = Jets->at(j).alphaMax;
-	        inputValues.at(15) = Jets->at(j).betaMax;
-		inputValues.at(16) = Jets->at(j).gammaMax;
-		inputValues.at(17) = Jets->at(j).gammaMaxEM;
-		inputValues.at(18) = Jets->at(j).gammaMaxHadronic;
-		inputValues.at(19) = Jets->at(j).gammaMaxET;
-		inputValues.at(20) = Jets->at(j).minDeltaRAllTracks;
-		inputValues.at(21) = Jets->at(j).minDeltaRPVTracks;
+		inputValues.at(7) = Jets->at(j).cHadEFrac;
+		inputValues.at(8) = Jets->at(j).nHadEFrac;
+		inputValues.at(9) = Jets->at(j).eleEFrac;
+		inputValues.at(10) = Jets->at(j).photonEFrac;
+		inputValues.at(11) = Jets->at(j).ptAllTracks;
+		inputValues.at(12) = Jets->at(j).ptAllPVTracks;
+		inputValues.at(13) = Jets->at(j).alphaMax;
+	        inputValues.at(14) = Jets->at(j).betaMax;
+		inputValues.at(15) = Jets->at(j).gammaMax;
+		inputValues.at(16) = Jets->at(j).gammaMaxEM;
+		inputValues.at(17) = Jets->at(j).gammaMaxHadronic;
+		inputValues.at(18) = Jets->at(j).gammaMaxET;
+		inputValues.at(19) = Jets->at(j).minDeltaRAllTracks;
+		inputValues.at(20) = Jets->at(j).minDeltaRPVTracks;
 
 		float* d = inputTensorAK4.flat<float>().data();
 		for (float v : inputValues) {
@@ -2722,14 +2721,11 @@ int main(int argc, char **argv) {
 		  }
 
 		//save also jets including negative times
-		skimmedJetsNegative.push_back(Jets->at(j));
+		skimmedNegativeJets.push_back(Jets->at(j));
 
 	      }//acceptance
 
 	  }//jet loop
-
-	nCHSJetsAcceptanceCalo = skimmedJets.size();
-        nCHSJetsNegativeAcceptanceCalo = skimmedJetsNegative.size();
 
 	if(isVerbose) std::cout << "n. tagged jets " << nTagJets_0p996_JJ << std::endl;
         if(isVerbose) std::cout << "======================================== " << std::endl;

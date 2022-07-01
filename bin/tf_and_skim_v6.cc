@@ -1160,7 +1160,7 @@ int main(int argc, char **argv) {
 
     std::vector<TauType>    skimmedTaus;
     std::vector<JetType>    skimmedJets;
-    std::vector<JetType>    skimmedNegativeJets;
+    std::vector<JetType>    skimmedJetsNegative;
     std::vector<JetCaloType> skimmedJetsCalo;
     std::vector<FatJetType> skimmedFatJets;
     std::vector<ecalRecHitType> skimmedEcalRecHitsAK4;
@@ -1317,6 +1317,7 @@ int main(int argc, char **argv) {
     int nTausPassing(0);
 
     int nCHSJetsAcceptanceCalo;
+    int nCHSJetsNegativeAcceptanceCalo;
     int nCHSFatJetsAcceptanceCalo;
     int nCHSJets_in_HEM(0);
 
@@ -1442,6 +1443,9 @@ int main(int argc, char **argv) {
     outputTree->Branch("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
     outputTree->Branch("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, "Flag2_globalSuperTightHalo2016Filter/O");
+    outputTree->Branch("Flag2_HBHENoiseFilter", &Flag2_HBHENoiseFilter, "Flag2_HBHENoiseFilter/O");
+    outputTree->Branch("Flag2_HBHEIsoNoiseFilter", &Flag2_HBHEIsoNoiseFilter, "Flag2_HBHEIsoNoiseFilter/O");
+
 
     if(isData or isSignal)
       {
@@ -1543,6 +1547,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("nCHSJets",          &nCHSJets,          "nCHSJets/I");
     outputTree->Branch("nCHSFatJets",       &nCHSFatJets,       "nCHSFatJets/I");
     outputTree->Branch("nCHSJetsAcceptanceCalo",          &nCHSJetsAcceptanceCalo,          "nCHSJetsAcceptanceCalo/I");
+    outputTree->Branch("nCHSJetsNegativeAcceptanceCalo",          &nCHSJetsNegativeAcceptanceCalo,          "nCHSJetsNegativeAcceptanceCalo/I");
     outputTree->Branch("nCHSFatJetsAcceptanceCalo",       &nCHSFatJetsAcceptanceCalo,       "nCHSFatJetsAcceptanceCalo/I");
     outputTree->Branch("nCHSJets_in_HEM" , &nCHSJets_in_HEM, "nCHSJets_in_HEM/I");
     outputTree->Branch("nCHSJets_in_HEM_pt_20_all_eta" , &nCHSJets_in_HEM_pt_20_all_eta, "nCHSJets_in_HEM_pt_20_all_eta/I");
@@ -1634,7 +1639,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("Photons", &Photons);
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("Jets", &skimmedJets);
-    outputTree->Branch("JetsNegative", &skimmedNegativeJets);
+    outputTree->Branch("JetsNegative", &skimmedJetsNegative);
     outputTree->Branch("JetsCaloAdd", &skimmedJetsCalo);
     outputTree->Branch("FatJets", &skimmedFatJets);
     outputTree->Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
@@ -1821,6 +1826,7 @@ int main(int argc, char **argv) {
         PUReWeightDown = 1.;
 	//Initialize nTagJets at every event
         nCHSJetsAcceptanceCalo = 0;
+        nCHSJetsNegativeAcceptanceCalo = 0;
         nCHSFatJetsAcceptanceCalo = 0;
 	nCHSJets_in_HEM = 0;
 	nCHSJets_in_HEM_pt_20_all_eta = 0;
@@ -2027,7 +2033,7 @@ int main(int argc, char **argv) {
 	//very dangerous with continue statement!
 	skimmedTaus.clear();
         skimmedJets.clear();
-        skimmedNegativeJets.clear();
+        skimmedJetsNegative.clear();
         skimmedJetsCalo.clear();
         skimmedFatJets.clear();
 	skimmedEBEnergyCSC.clear();
@@ -2199,9 +2205,12 @@ int main(int argc, char **argv) {
 	//MET filters always fulfilled
 	//Invert Beam Halo
         //if(Flag2_globalSuperTightHalo2016Filter) continue;
+	//InvertHBHE
+	//if(Flag2_HBHENoiseFilter and Flag2_HBHEIsoNoiseFilter) continue;
 	if(not doGen)
 	  {
-	    if(!Flag2_globalSuperTightHalo2016Filter) continue;
+	    //No beam halo filter at all!
+	    //if(!Flag2_globalSuperTightHalo2016Filter) continue;
 	    if(!Flag2_EcalDeadCellTriggerPrimitiveFilter) continue;
 	    if(!Flag2_HBHENoiseFilter) continue;
 	    if(!Flag2_HBHEIsoNoiseFilter) continue;
@@ -2481,16 +2490,6 @@ int main(int argc, char **argv) {
         //if(nElectrons>0) continue;
         ////if(HT<100) continue;
 
-
-
-
-
-
-	//if(EventNumber!=24897) continue;
-	//if(EventNumber!=465 and EventNumber!=761) continue;
-	//if(EventNumber!=5132 and EventNumber!=5337 and EventNumber!=5393) continue;
-	//if(EventNumber!=9203 and EventNumber!=9782 and EventNumber!=11772 and EventNumber!=12416) continue;
-	//if(EventNumber!=21293 and EventNumber!=21762 and EventNumber!=22932 and EventNumber!=23902 and EventNumber!=24800 and EventNumber!=25930 and EventNumber!=26204 and EventNumber!=27095 and EventNumber!=28026 and EventNumber!=29814 and EventNumber!=32131 and EventNumber!=33183 and EventNumber!=34625 and EventNumber!=40663 and EventNumber!=40817 and EventNumber!=42155 and EventNumber!=43313 and EventNumber!=43647 and EventNumber!=45957 and EventNumber!=45964 and EventNumber!=48371 and EventNumber!=48374 and EventNumber!=48945 and EventNumber!=51183 and EventNumber!=54334 and EventNumber!=56625 and EventNumber!=57244 and EventNumber!=60170 and EventNumber!=62348 and EventNumber!=63254 and EventNumber!=63849 and EventNumber!=67102 and EventNumber!=70399 and EventNumber!=71178 and EventNumber!=71479 and EventNumber!=72548 and EventNumber!=73261 and EventNumber!=74695 and EventNumber!=75125 and EventNumber!=77007 and EventNumber!=80297 and EventNumber!=80482 and EventNumber!=81979 and EventNumber!=82465 and EventNumber!=82921 and EventNumber!=88730 and EventNumber!=88901 and EventNumber!=93174 and EventNumber!=95557 and EventNumber!=97508 and EventNumber!=99740) continue;
         if(isVerbose) std::cout << "======================================== " << std::endl;
         if(isVerbose) std::cout << "EventNumber " << EventNumber << "\tLumiNumber " << LumiNumber << std::endl;
 
@@ -2550,6 +2549,12 @@ int main(int argc, char **argv) {
 	    //I want to save also jets with negative time<-1 to check beam halo
 	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)//cleaned jets!
 	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
+
+	    //Warning!!!!
+	    //special production w/o cuts on ele and photon e fraction
+	    //already remove jets with eta>1
+	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1. and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6)
+
 	      {
 
 		//This should be done also for jets with negative time... otherwise that collection is biased...
@@ -2586,7 +2591,8 @@ int main(int argc, char **argv) {
 		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 		
 		//Here: passed acceptance
-		if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
+		//Redone it at the end!!!
+		//if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
 		if(MinLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
@@ -2597,6 +2603,7 @@ int main(int argc, char **argv) {
 		  }
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
+		//obsolete!!
 		if(nCHSJetsAcceptanceCalo==2 && MinSubLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
 		  {
 		    MinSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
@@ -2604,6 +2611,7 @@ int main(int argc, char **argv) {
 		    if(isVerbose) std::cout << "MinSubLeadingJetMetDPhi calculated with jet " << j << " ; pt: " << Jets->at(j).pt << std::endl;
 		  }
 
+		//obsolete!
 		if(nCHSJetsAcceptanceCalo==3 && MinSubSubLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
 		  {
 		    MinSubSubLeadingJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
@@ -2716,11 +2724,14 @@ int main(int argc, char **argv) {
 		  }
 
 		//save also jets including negative times
-		skimmedNegativeJets.push_back(Jets->at(j));
+		skimmedJetsNegative.push_back(Jets->at(j));
 
 	      }//acceptance
 
 	  }//jet loop
+
+        nCHSJetsAcceptanceCalo = skimmedJets.size();
+        nCHSJetsNegativeAcceptanceCalo = skimmedJetsNegative.size();
 
 	if(isVerbose) std::cout << "n. tagged jets " << nTagJets_0p996_JJ << std::endl;
         if(isVerbose) std::cout << "======================================== " << std::endl;
@@ -3244,6 +3255,7 @@ int main(int argc, char **argv) {
 	  }
 	//Fit of the cosmic trajectory if present
 	//choose the right pair of cosmic clouds
+	////Special prod w/o cosmic muons one leg!
 	if(n_clusters>=2 and nCosmicMuonsOneLeg>0 and nCosmicMuons>1)
 	  {
 	    //This is clearly an overshooting
@@ -3580,6 +3592,7 @@ int main(int argc, char **argv) {
 	if(doJetMET and MinLeadingJetMetDPhi<0) continue;
 
 	//Exactly 2 jets
+	//obsolete!
 	if(doDiJetMET and nCHSJetsAcceptanceCalo!=2) continue;
 
 	//Fill lepton vector

@@ -470,7 +470,7 @@ int main(int argc, char **argv) {
     const float TAU_MASS  = 1.77686;
     const float Z_MASS   = 91.2;
 
-    if(argc<10)
+    if(argc<12)
     //if(argc<2)
       {
 	std::cout<<"Invalid arguments, exit!" << std::endl;
@@ -497,6 +497,9 @@ int main(int argc, char **argv) {
     bool doZtoEEPho(false);
     if(strcmp(argv[9], "doZtoEEPho")==0) doZtoEEPho=true;
 
+    bool doE(false);
+    if(strcmp(argv[9], "doE")==0) doE=true;
+
     bool doPho(false);
     if(strcmp(argv[9], "doPho")==0) doPho=true;
 
@@ -511,10 +514,13 @@ int main(int argc, char **argv) {
     std::cout << "MC PU file: " << argv[6] << std::endl;
     std::cout << "MC trigger file: " << argv[7] << std::endl;
     std::cout << "MC trigger string: " << argv[8] << std::endl;
+    std::cout << "HT weight file: " << argv[10] << std::endl;
+    std::cout << "ele weight file: " << argv[11] << std::endl;
     if(doZtoMM) std::cout << "ZtoMM selections" << std::endl;
     if(doZtoEE) std::cout << "ZtoEE selections" << std::endl;
     if(doZtoMMPho) std::cout << "ZtoMMPho selections" << std::endl;
     if(doZtoEEPho) std::cout << "ZtoEEPho selections" << std::endl;
+    if(doE) std::cout << "E CR selections" << std::endl;
 
 
     auto start = std::chrono::system_clock::now();//time!     
@@ -530,11 +536,10 @@ int main(int argc, char **argv) {
     std::string mcPUFilename = argv[6];
     std::string mcTriggerFilename = argv[7];
     std::string mcTriggerString = argv[8];
-    //std::string dataFilename = argv[5];
-    //std::string dataFilenameUp = argv[6];
-    //std::string dataFilenameDown = argv[7];
 
-    //std::string inputTreeName = "skim";
+    std::string ratioHTFilename = argv[10];
+    std::string ratioEleFilename = argv[11];
+
     std::string inputTreeName = "ntuple/tree";
     std::string outputTreeName = "tree";//inputTreeName;
 
@@ -588,11 +593,20 @@ int main(int argc, char **argv) {
     TH1F  *tr = (TH1F*)mcTriggerFile->Get(mcTriggerString.c_str());
     if(isVerbose) std::cout<< "Trigger histo loaded" << std::endl;
 
+    //HT and ele re-weight
+    TFile *ratioHTFile = TFile::Open(ratioHTFilename.data(),"READ"); if (!ratioHTFile) return 0;
+    TH1D  *ratioHT = (TH1D*)ratioHTFile->Get("ratio");
+
+    TFile *ratioEleFile = TFile::Open(ratioEleFilename.data(),"READ"); if (!ratioEleFile) return 0;
+    TH1D  *ratioEle = (TH1D*)ratioEleFile->Get("ratio");
+
+
     // Input variables
     Long64_t EventNumber;
     Long64_t RunNumber;
     Long64_t LumiNumber;
     float    EventWeight;
+    float    GenEventWeight;
     float    PUWeight;
     bool   isMC;
     bool   isVBF;
@@ -692,7 +706,6 @@ int main(int argc, char **argv) {
     std::vector<LeptonType>      *Muons = 0;
     std::vector<LeptonType>      *Electrons = 0;
     std::vector<JetType>         *Jets = 0;
-    std::vector<FatJetType>      *FatJets = 0;
     std::vector<PFCandidateType> *PFCandidatesAK4 = 0;
     std::vector<PFCandidateType> *PFCandidatesAK8 = 0;
     std::vector<ecalRecHitType>  *EcalRecHitsAK4 = 0;
@@ -711,7 +724,6 @@ int main(int argc, char **argv) {
     TBranch        *b_Muons = 0;
     TBranch        *b_Electrons = 0;
     TBranch        *b_Jets = 0;
-    TBranch        *b_FatJets = 0;
     TBranch        *b_PFCandidatesAK4 = 0;
     TBranch        *b_PFCandidatesAK8 = 0;
     TBranch        *b_MEt = 0;
@@ -726,6 +738,7 @@ int main(int argc, char **argv) {
     TBranch        *b_RunNumber;
     TBranch        *b_LumiNumber;
     TBranch        *b_EventWeight;
+    TBranch        *b_GenEventWeight;
     TBranch        *b_PUWeight;
     TBranch        *b_isMC;
     TBranch        *b_isVBF;
@@ -828,7 +841,6 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("Muons",             &Muons,             &b_Muons);
     inputTree->SetBranchAddress("Electrons",         &Electrons,         &b_Electrons);
     inputTree->SetBranchAddress("Jets",              &Jets,              &b_Jets);
-    inputTree->SetBranchAddress("FatJets",           &FatJets,           &b_FatJets);
     inputTree->SetBranchAddress("PFCandidatesAK4",   &PFCandidatesAK4,   &b_PFCandidatesAK4);
     inputTree->SetBranchAddress("PFCandidatesAK8",   &PFCandidatesAK8,   &b_PFCandidatesAK8);
     inputTree->SetBranchAddress("EcalRecHitsAK4",    &EcalRecHitsAK4,    &b_EcalRecHitsAK4);
@@ -841,6 +853,7 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("RunNumber",         &RunNumber,         &b_RunNumber);
     inputTree->SetBranchAddress("LumiNumber",        &LumiNumber,        &b_LumiNumber);
     inputTree->SetBranchAddress("EventWeight",       &EventWeight,       &b_EventWeight);
+    inputTree->SetBranchAddress("GenEventWeight",       &GenEventWeight,       &b_GenEventWeight);
     inputTree->SetBranchAddress("PUWeight",          &PUWeight,          &b_PUWeight);
     inputTree->SetBranchAddress("isMC",              &isMC,              &b_isMC);
     inputTree->SetBranchAddress("isVBF",             &isVBF,             &b_isVBF);
@@ -964,27 +977,6 @@ int main(int argc, char **argv) {
       }
     finAK4.close();
 
-    //AK8
-    std::ifstream finAK8;
-    std::string featAK8;
-    finAK8.open(MetaDataFileAK8);
-    std::vector<std::string> featuresAK8;
-    std::string toEraseAK8 = "FatJet_";
-    //std::cout << "   -- > Features AK8: " << std::endl;
-    while (finAK8 >> featAK8)
-      {
-	size_t pos = featAK8.find(toEraseAK8);
-	if (pos != std::string::npos)
-	  {
-	    // If found then erase it from string
-	    featAK8.erase(pos, toEraseAK8.length());
-	  }
-	//std::string new_feat = featAK8.substr(position);
-	//std::cout << featAK8 << std::endl;
-	featuresAK8.push_back(featAK8);
-      }
-    finAK8.close();
-
 
     //inputTree->SetBranchStatus("Jets_pt",1);//needed?
     
@@ -1016,14 +1008,14 @@ int main(int argc, char **argv) {
     // Output
     // ================= 
 
-    TFile* outputFile = new TFile(outputPath.c_str(), "RECREATE");
-    outputFile->cd();
     TTree *outputTree = new TTree(outputTreeName.c_str(), "");
 
 
     //Flags for SR/CR
     bool isZtoMM(false);
     bool isZtoEE(false);
+    
+    bool isE(false);
 
     bool isZtoMMPho(false);
     bool isZtoEEPho(false);
@@ -1034,11 +1026,10 @@ int main(int argc, char **argv) {
     bool isDT_fit(false);
     bool isCosmicVetoWithTags(false);
 
+    std::vector<LeptonType> skimmedElectrons;
     std::vector<TauType>    skimmedTaus;
     std::vector<JetType>    skimmedJets;
-    std::vector<JetType>    skimmedNegativeJets;
-    std::vector<JetCaloType> skimmedJetsCalo;
-    std::vector<FatJetType> skimmedFatJets;
+    std::vector<JetType>    skimmedJetsNegative;
     std::vector<ecalRecHitType> skimmedEcalRecHitsAK4;
     std::vector<ecalRecHitType> skimmedAcceptanceEcalRecHitsAK4;
     std::vector<float>          skimmedEBEnergyCSC;
@@ -1070,37 +1061,6 @@ int main(int argc, char **argv) {
     std::vector<float> DT_fit_zz;
     std::vector<float> DT_fit_res;
     //Beam Halo
-    float min_dPhi_jets(9999.);
-    float min_dEta_jets(9999.);
-    float min_dR_jets(9999.);
-    float min_dPhi_jets_0p7(9999.);
-    float min_dEta_jets_0p7(9999.);
-    float min_dR_jets_0p7(9999.);
-    float min_dPhi_jets_0p9(9999.);
-    float min_dEta_jets_0p9(9999.);
-    float min_dR_jets_0p9(9999.);
-    float min_dPhi_jets_0p9_no_tags(9999.);
-    float min_dEta_jets_0p9_no_tags(9999.);
-    float min_dR_jets_0p9_no_tags(9999.);
-    float min_dPhi_jets_0p996(9999.);
-    float min_dEta_jets_0p996(9999.);
-    float min_dR_jets_0p996(9999.);
-
-    float min_dPhi_jets_eta_1p0(9999.);
-    float min_dEta_jets_eta_1p0(9999.);
-    float min_dR_jets_eta_1p0(9999.);
-    float min_dPhi_jets_eta_1p0_0p7(9999.);
-    float min_dEta_jets_eta_1p0_0p7(9999.);
-    float min_dR_jets_eta_1p0_0p7(9999.);
-    float min_dPhi_jets_eta_1p0_0p9(9999.);
-    float min_dEta_jets_eta_1p0_0p9(9999.);
-    float min_dR_jets_eta_1p0_0p9(9999.);
-    float min_dPhi_jets_eta_1p0_0p9_no_tags(9999.);
-    float min_dEta_jets_eta_1p0_0p9_no_tags(9999.);
-    float min_dR_jets_eta_1p0_0p9_no_tags(9999.);
-    float min_dPhi_jets_eta_1p0_0p996(9999.);
-    float min_dEta_jets_eta_1p0_0p996(9999.);
-    float min_dR_jets_eta_1p0_0p996(9999.);
 
     float eta_spread_tagged_EB(-9999.);
     float phi_spread_tagged_EB(-9999.);
@@ -1112,17 +1072,19 @@ int main(int argc, char **argv) {
     float PUReWeightUp(1.);
     float PUReWeightDown(1.);
     float TriggerWeight(1.);
+    float EventReWeight(1.);
+    float HTWeight(1.);
+    float EleWeight(1.);
     float MinLeadingJetMetDPhi(-1.);
     float MinSubLeadingJetMetDPhi(-1.);
     float MinSubSubLeadingJetMetDPhi(-1.);
-    float MinFatJetMetDPhi(10.);
-    float MinFatJetMetDPhiBarrel(10.);
-    float MinFatJetMetDPhiBarrelMatched(10.);
     float MinJetMetDPhi(10.);
     float MinJetMetDPhiStar(10.);
     float MinJetMetDPhiBarrel(10.);
     float MinJetMetDPhiBarrelStar(10.);
 
+    float dPhi_ele(-9.);
+    float MT_ele(-1.);
     float dPhi(-9.);
     float MT(-1.);
     float Z_mass(-1.);
@@ -1160,7 +1122,7 @@ int main(int argc, char **argv) {
     int nTausPassing(0);
 
     int nCHSJetsAcceptanceCalo;
-    int nCHSFatJetsAcceptanceCalo;
+    int nCHSJetsNegativeAcceptanceCalo;
     int nCHSJets_in_HEM(0);
 
     int nCHSJets_in_HEM_pt_20_all_eta(0);
@@ -1198,48 +1160,6 @@ int main(int argc, char **argv) {
     int nTagJets_0p996_JJ_eta_1p0(0);
     int nTagJets_0p997_JJ(0);
 
-    int nTagFatJets_cutbased(0);
-    int nTagFatJets_0p8(0);
-    int nTagFatJets_0p9(0);
-    int nTagFatJets_0p92(0);
-    int nTagFatJets_0p95(0);
-    int nTagFatJets_0p96(0);
-    int nTagFatJets_0p97(0);
-    int nTagFatJets_0p98(0);
-    int nTagFatJets_0p99(0);
-    int nTagFatJets_0p995(0);
-    int nTagFatJets_0p997(0);
-    int nTagFatJets_0p999(0);
-    int nTagFatJets_0p9995(0);
-    int nTagFatJets_0p9999(0);
-    int nTagFatJets_0p99995(0);
-    int nTagFatJets_0p99999(0);
-    int nTagFatJets_0p999995(0);
-    int nTagFatJets_0p999999(0);
-
-    bool isTagAK8_0p9999_170;
-    bool isTagAK8_0p9999_200;
-    bool isTagAK8_0p9999_250;
-    bool isTagAK8_0p9999_300;
-    bool isTagAK8_0p9999_350;
-
-    bool isTagAK8_0p99999_170;
-    bool isTagAK8_0p99999_200;
-    bool isTagAK8_0p99999_250;
-    bool isTagAK8_0p99999_300;
-    bool isTagAK8_0p99999_350;
-
-    bool isTagAK8_0p999995_170;
-    bool isTagAK8_0p999995_200;
-    bool isTagAK8_0p999995_250;
-    bool isTagAK8_0p999995_300;
-    bool isTagAK8_0p999995_350;
-
-    bool isTagAK8_0p999999_170;
-    bool isTagAK8_0p999999_200;
-    bool isTagAK8_0p999999_250;
-    bool isTagAK8_0p999999_300;
-    bool isTagAK8_0p999999_350;
 
     bool isTagAK4_0p99;
     bool isTagAK4_0p994;
@@ -1255,17 +1175,23 @@ int main(int argc, char **argv) {
     outputTree->Branch("RunNumber",         &RunNumber,         "RunNumber/L");
     outputTree->Branch("LumiNumber",        &LumiNumber,        "LumiNumber/L");
     outputTree->Branch("EventWeight",       &EventWeight,       "EventWeight/F");
+    outputTree->Branch("GenEventWeight",       &GenEventWeight,       "GenEventWeight/F");
     outputTree->Branch("PUWeight",          &PUWeight,          "PUWeight/F");
     outputTree->Branch("PUReWeight",        &PUReWeight,        "PUReWeight/F");
     outputTree->Branch("PUReWeightUp",      &PUReWeightUp,      "PUReWeightUp/F");
     outputTree->Branch("PUReWeightDown",    &PUReWeightDown,    "PUReWeightDown/F");
     outputTree->Branch("TriggerWeight",     &TriggerWeight,     "TriggerWeight/F");
+    outputTree->Branch("EventReWeight",       &EventReWeight,       "EventReWeight/F");
+    outputTree->Branch("HTWeight",          &HTWeight,          "HTWeight/F");
+    outputTree->Branch("EleWeight",         &EleWeight,         "EleWeight/F");
     outputTree->Branch("isMC",              &isMC,              "isMC/O");
     outputTree->Branch("isCosmic",          &isCosmic,          "isCosmic/O");
     outputTree->Branch("isDT_fit",          &isDT_fit,          "isDT_fit/O");
     outputTree->Branch("isCosmicVetoWithTags", &isCosmicVetoWithTags, "isCosmicVetoWithTags/O");
     outputTree->Branch("isZtoMM",           &isZtoMM,           "isZtoMM/O");
     outputTree->Branch("isZtoEE",           &isZtoEE,           "isZtoEE/O");
+
+    outputTree->Branch("isE",           &isE,           "isE/O");
 
     outputTree->Branch("isZtoMMPho",           &isZtoMMPho,           "isZtoMMPho/O");
     outputTree->Branch("isZtoEEPho",           &isZtoEEPho,           "isZtoEEPho/O");
@@ -1309,6 +1235,8 @@ int main(int argc, char **argv) {
     outputTree->Branch("HT",                &HT,                "HT/F");
     outputTree->Branch("MT",                &MT,                "MT/F");
     outputTree->Branch("dPhi",              &dPhi,              "dPhi/F");
+    outputTree->Branch("MT_ele",                &MT_ele,                "MT_ele/F");
+    outputTree->Branch("dPhi_ele",              &dPhi_ele,              "dPhi_ele/F");
     outputTree->Branch("Z_mass",            &Z_mass,            "Z_mass/F");
     outputTree->Branch("Z_pt",              &Z_pt,              "Z_pt/F");
     outputTree->Branch("Z_phi",             &Z_phi,             "Z_phi/F");
@@ -1338,9 +1266,6 @@ int main(int argc, char **argv) {
     outputTree->Branch("MinJetMetDPhiBarrel",  &MinJetMetDPhiBarrel,  "MinJetMetDPhiBarrel/F");
     outputTree->Branch("MinJetMetDPhiStar",  &MinJetMetDPhiStar,  "MinJetMetDPhiStar/F");
     outputTree->Branch("MinJetMetDPhiBarrelStar",  &MinJetMetDPhiBarrelStar,  "MinJetMetDPhiBarrelStar/F");
-    outputTree->Branch("MinFatJetMetDPhi",  &MinFatJetMetDPhi,  "MinFatJetMetDPhi/F");
-    outputTree->Branch("MinFatJetMetDPhiBarrel",  &MinFatJetMetDPhiBarrel,  "MinFatJetMetDPhiBarrel/F");
-    outputTree->Branch("MinFatJetMetDPhiBarrelMatched",  &MinFatJetMetDPhiBarrelMatched,  "MinFatJetMetDPhiBarrelMatched/F");
     outputTree->Branch("MinLeadingJetMetDPhi", &MinLeadingJetMetDPhi, "MinLeadingJetMetDPhi/F");
     outputTree->Branch("MinSubLeadingJetMetDPhi", &MinSubLeadingJetMetDPhi, "MinSubLeadingJetMetDPhi/F");
     outputTree->Branch("MinSubSubLeadingJetMetDPhi", &MinSubSubLeadingJetMetDPhi, "MinSubSubLeadingJetMetDPhi/F");
@@ -1348,7 +1273,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("nCHSJets",          &nCHSJets,          "nCHSJets/I");
     outputTree->Branch("nCHSFatJets",       &nCHSFatJets,       "nCHSFatJets/I");
     outputTree->Branch("nCHSJetsAcceptanceCalo",          &nCHSJetsAcceptanceCalo,          "nCHSJetsAcceptanceCalo/I");
-    outputTree->Branch("nCHSFatJetsAcceptanceCalo",       &nCHSFatJetsAcceptanceCalo,       "nCHSFatJetsAcceptanceCalo/I");
+    outputTree->Branch("nCHSJetsNegativeAcceptanceCalo",          &nCHSJetsNegativeAcceptanceCalo,          "nCHSJetsNegativeAcceptanceCalo/I");
     outputTree->Branch("nCHSJets_in_HEM" , &nCHSJets_in_HEM, "nCHSJets_in_HEM/I");
     outputTree->Branch("nCHSJets_in_HEM_pt_20_all_eta" , &nCHSJets_in_HEM_pt_20_all_eta, "nCHSJets_in_HEM_pt_20_all_eta/I");
     outputTree->Branch("nCHSJets_in_HEM_pt_30_all_eta" , &nCHSJets_in_HEM_pt_30_all_eta, "nCHSJets_in_HEM_pt_30_all_eta/I");
@@ -1390,37 +1315,6 @@ int main(int argc, char **argv) {
     outputTree->Branch("c_xz", &c_xz, "c_xz/F");
     outputTree->Branch("m_yz", &m_yz, "m_yz/F");
     outputTree->Branch("c_yz", &c_yz, "c_yz/F");
-    outputTree->Branch("min_dR_jets", &min_dR_jets, "min_dR_jets/F");
-    outputTree->Branch("min_dPhi_jets", &min_dPhi_jets, "min_dPhi_jets/F");
-    outputTree->Branch("min_dEta_jets", &min_dEta_jets, "min_dEta_jets/F");
-    outputTree->Branch("min_dR_jets_0p7", &min_dR_jets_0p7, "min_dR_jets_0p7/F");
-    outputTree->Branch("min_dPhi_jets_0p7", &min_dPhi_jets_0p7, "min_dPhi_jets_0p7/F");
-    outputTree->Branch("min_dEta_jets_0p7", &min_dEta_jets_0p7, "min_dEta_jets_0p7/F");
-    outputTree->Branch("min_dR_jets_0p9", &min_dR_jets_0p9, "min_dR_jets_0p9/F");
-    outputTree->Branch("min_dPhi_jets_0p9", &min_dPhi_jets_0p9, "min_dPhi_jets_0p9/F");
-    outputTree->Branch("min_dEta_jets_0p9", &min_dEta_jets_0p9, "min_dEta_jets_0p9/F");
-    outputTree->Branch("min_dR_jets_0p9_no_tags", &min_dR_jets_0p9_no_tags, "min_dR_jets_0p9_no_tags/F");
-    outputTree->Branch("min_dPhi_jets_0p9_no_tags", &min_dPhi_jets_0p9_no_tags, "min_dPhi_jets_0p9_no_tags/F");
-    outputTree->Branch("min_dEta_jets_0p9_no_tags", &min_dEta_jets_0p9_no_tags, "min_dEta_jets_0p9_no_tags/F");
-    outputTree->Branch("min_dR_jets_0p996", &min_dR_jets_0p996, "min_dR_jets_0p996/F");
-    outputTree->Branch("min_dPhi_jets_0p996", &min_dPhi_jets_0p996, "min_dPhi_jets_0p996/F");
-    outputTree->Branch("min_dEta_jets_0p996", &min_dEta_jets_0p996, "min_dEta_jets_0p996/F");
-
-    outputTree->Branch("min_dR_jets_eta_1p0", &min_dR_jets_eta_1p0, "min_dR_jets_eta_1p0/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0", &min_dPhi_jets_eta_1p0, "min_dPhi_jets_eta_1p0/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0", &min_dEta_jets_eta_1p0, "min_dEta_jets_eta_1p0/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p7", &min_dR_jets_eta_1p0_0p7, "min_dR_jets_eta_1p0_0p7/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p7", &min_dPhi_jets_eta_1p0_0p7, "min_dPhi_jets_eta_1p0_0p7/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p7", &min_dEta_jets_eta_1p0_0p7, "min_dEta_jets_eta_1p0_0p7/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p9", &min_dR_jets_eta_1p0_0p9, "min_dR_jets_eta_1p0_0p9/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p9", &min_dPhi_jets_eta_1p0_0p9, "min_dPhi_jets_eta_1p0_0p9/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p9", &min_dEta_jets_eta_1p0_0p9, "min_dEta_jets_eta_1p0_0p9/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p9_no_tags", &min_dR_jets_eta_1p0_0p9_no_tags, "min_dR_jets_eta_1p0_0p9_no_tags/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p9_no_tags", &min_dPhi_jets_eta_1p0_0p9_no_tags, "min_dPhi_jets_eta_1p0_0p9_no_tags/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p9_no_tags", &min_dEta_jets_eta_1p0_0p9_no_tags, "min_dEta_jets_eta_1p0_0p9_no_tags/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p996", &min_dR_jets_eta_1p0_0p996, "min_dR_jets_eta_1p0_0p996/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p996", &min_dPhi_jets_eta_1p0_0p996, "min_dPhi_jets_eta_1p0_0p996/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p996", &min_dEta_jets_eta_1p0_0p996, "min_dEta_jets_eta_1p0_0p996/F");
 
     outputTree->Branch("eta_spread_tagged_EB", &eta_spread_tagged_EB, "eta_spread_tagged_EB/F");
     outputTree->Branch("phi_spread_tagged_EB", &phi_spread_tagged_EB, "phi_spread_tagged_EB/F");
@@ -1435,13 +1329,11 @@ int main(int argc, char **argv) {
     //outputTree->Branch("ctau", &ctau, "ctau/I");
     //outputTree->Branch("is_central", &is_central, "is_central/O");
     outputTree->Branch("Muons", &Muons);
-    outputTree->Branch("Electrons", &Electrons);
+    outputTree->Branch("Electrons", &skimmedElectrons);
     outputTree->Branch("Photons", &Photons);
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("Jets", &skimmedJets);
-    outputTree->Branch("JetsNegative", &skimmedNegativeJets);
-    outputTree->Branch("JetsCaloAdd", &skimmedJetsCalo);
-    outputTree->Branch("FatJets", &skimmedFatJets);
+    outputTree->Branch("JetsNegative", &skimmedJetsNegative);
     outputTree->Branch("EcalRecHitsAK4", &EcalRecHitsAK4);
     outputTree->Branch("skimmedEcalRecHitsAK4", &skimmedEcalRecHitsAK4);
     outputTree->Branch("skimmedAcceptanceEcalRecHitsAK4", &skimmedAcceptanceEcalRecHitsAK4);
@@ -1477,24 +1369,6 @@ int main(int argc, char **argv) {
     outputTree->Branch("nTagJets_0p996_JJ_eta_1p0",     &nTagJets_0p996_JJ_eta_1p0,      "nTagJets_0p996_JJ_eta_1p0/I");
     outputTree->Branch("nTagJets_0p997_JJ",     &nTagJets_0p997_JJ,      "nTagJets_0p997_JJ/I");
 
-    outputTree->Branch("nTagFatJets_cutbased", &nTagFatJets_cutbased,  "nTagFatJets_cutbased/I");
-    outputTree->Branch("nTagFatJets_0p8",      &nTagFatJets_0p8,       "nTagFatJets_0p8/I");
-    outputTree->Branch("nTagFatJets_0p9",      &nTagFatJets_0p9,       "nTagFatJets_0p9/I");
-    outputTree->Branch("nTagFatJets_0p92",      &nTagFatJets_0p92,       "nTagFatJets_0p92/I");
-    outputTree->Branch("nTagFatJets_0p95",     &nTagFatJets_0p95,      "nTagFatJets_0p95/I");
-    outputTree->Branch("nTagFatJets_0p96",     &nTagFatJets_0p96,      "nTagFatJets_0p96/I");
-    outputTree->Branch("nTagFatJets_0p97",     &nTagFatJets_0p97,      "nTagFatJets_0p97/I");
-    outputTree->Branch("nTagFatJets_0p98",     &nTagFatJets_0p98,      "nTagFatJets_0p98/I");
-    outputTree->Branch("nTagFatJets_0p99",     &nTagFatJets_0p99,      "nTagFatJets_0p99/I");
-    outputTree->Branch("nTagFatJets_0p995",     &nTagFatJets_0p995,      "nTagFatJets_0p995/I");
-    outputTree->Branch("nTagFatJets_0p996",     &nTagFatJets_0p997,      "nTagFatJets_0p997/I");
-    outputTree->Branch("nTagFatJets_0p997",     &nTagFatJets_0p999,      "nTagFatJets_0p999/I");
-    outputTree->Branch("nTagFatJets_0p9995",     &nTagFatJets_0p9995,      "nTagFatJets_0p9995/I");
-    outputTree->Branch("nTagFatJets_0p9999",     &nTagFatJets_0p9999,      "nTagFatJets_0p9999/I");
-    outputTree->Branch("nTagFatJets_0p99995",     &nTagFatJets_0p99995,      "nTagFatJets_0p99995/I");
-    outputTree->Branch("nTagFatJets_0p99999",     &nTagFatJets_0p99999,      "nTagFatJets_0p99999/I");
-    outputTree->Branch("nTagFatJets_0p999995",     &nTagFatJets_0p999995,      "nTagFatJets_0p999995/I");
-    outputTree->Branch("nTagFatJets_0p999999",     &nTagFatJets_0p999999,      "nTagFatJets_0p999999/I");
 
     outputTree->Branch("isTagAK4_0p99", &isTagAK4_0p99, "isTagAK4_0p99/O");
     outputTree->Branch("isTagAK4_0p994", &isTagAK4_0p994, "isTagAK4_0p994/O");
@@ -1504,30 +1378,6 @@ int main(int argc, char **argv) {
     outputTree->Branch("isTagAK4_0p994_JJ", &isTagAK4_0p994_JJ, "isTagAK4_0p994_JJ/O");
     outputTree->Branch("isTagAK4_0p996_JJ", &isTagAK4_0p996_JJ, "isTagAK4_0p996_JJ/O");
     outputTree->Branch("isTagAK4_0p997_JJ", &isTagAK4_0p997_JJ, "isTagAK4_0p997_JJ/O");
-
-    outputTree->Branch("isTagAK8_0p9999_170",  &isTagAK8_0p9999_170,   "isTagAK8_0p9999_170/O");
-    outputTree->Branch("isTagAK8_0p9999_200",  &isTagAK8_0p9999_200,   "isTagAK8_0p9999_200/O");
-    outputTree->Branch("isTagAK8_0p9999_250",  &isTagAK8_0p9999_250,   "isTagAK8_0p9999_250/O");
-    outputTree->Branch("isTagAK8_0p9999_300",  &isTagAK8_0p9999_300,   "isTagAK8_0p9999_300/O");
-    outputTree->Branch("isTagAK8_0p9999_350",  &isTagAK8_0p9999_350,   "isTagAK8_0p9999_350/O");
-
-    outputTree->Branch("isTagAK8_0p99999_170",  &isTagAK8_0p99999_170,   "isTagAK8_0p99999_170/O");
-    outputTree->Branch("isTagAK8_0p99999_200",  &isTagAK8_0p99999_200,   "isTagAK8_0p99999_200/O");
-    outputTree->Branch("isTagAK8_0p99999_250",  &isTagAK8_0p99999_250,   "isTagAK8_0p99999_250/O");
-    outputTree->Branch("isTagAK8_0p99999_300",  &isTagAK8_0p99999_300,   "isTagAK8_0p99999_300/O");
-    outputTree->Branch("isTagAK8_0p99999_350",  &isTagAK8_0p99999_350,   "isTagAK8_0p99999_350/O");
-
-    outputTree->Branch("isTagAK8_0p999995_170",  &isTagAK8_0p999995_170,   "isTagAK8_0p999995_170/O");
-    outputTree->Branch("isTagAK8_0p999995_200",  &isTagAK8_0p999995_200,   "isTagAK8_0p999995_200/O");
-    outputTree->Branch("isTagAK8_0p999995_250",  &isTagAK8_0p999995_250,   "isTagAK8_0p999995_250/O");
-    outputTree->Branch("isTagAK8_0p999995_300",  &isTagAK8_0p999995_300,   "isTagAK8_0p999995_300/O");
-    outputTree->Branch("isTagAK8_0p999995_350",  &isTagAK8_0p999995_350,   "isTagAK8_0p999995_350/O");
-
-    outputTree->Branch("isTagAK8_0p999999_170",  &isTagAK8_0p999999_170,   "isTagAK8_0p999999_170/O");
-    outputTree->Branch("isTagAK8_0p999999_200",  &isTagAK8_0p999999_200,   "isTagAK8_0p999999_200/O");
-    outputTree->Branch("isTagAK8_0p999999_250",  &isTagAK8_0p999999_250,   "isTagAK8_0p999999_250/O");
-    outputTree->Branch("isTagAK8_0p999999_300",  &isTagAK8_0p999999_300,   "isTagAK8_0p999999_300/O");
-    outputTree->Branch("isTagAK8_0p999999_350",  &isTagAK8_0p999999_350,   "isTagAK8_0p999999_350/O");
 
 
     //do it as a loop
@@ -1548,24 +1398,22 @@ int main(int argc, char **argv) {
     tensorflow::Tensor inputTensorAK4(tensorflow::DT_FLOAT, {1, int(featuresAK4.size()) });
     float outputValueAK4;
 
-    tensorflow::GraphDef* graphDefAK8 = tensorflow::loadGraphDef(graphPathAK8);
-    tensorflow::Session* sessionAK8 = tensorflow::createSession(graphDefAK8, nThreads);
-    tensorflow::Tensor inputTensorAK8(tensorflow::DT_FLOAT, {1, int(featuresAK8.size()) });
-    float outputValueAK8;
-
-
     // Event loop
+    int events_passing(0);
 
     //for(int i = 0; i < 10; i++) {
     for(int i = 0; i < inputTree->GetEntriesFast(); i++) {
 
         TriggerWeight = 1.;
+	EventReWeight = 1.;
+	HTWeight = 1.;
+	EleWeight = 1.;
         PUReWeight = 1.;
         PUReWeightUp = 1.;
         PUReWeightDown = 1.;
 	//Initialize nTagJets at every event
         nCHSJetsAcceptanceCalo = 0;
-        nCHSFatJetsAcceptanceCalo = 0;
+        nCHSJetsNegativeAcceptanceCalo = 0;
 	nCHSJets_in_HEM = 0;
 	nCHSJets_in_HEM_pt_20_all_eta = 0;
 	nCHSJets_in_HEM_pt_30_all_eta = 0;
@@ -1579,13 +1427,10 @@ int main(int argc, char **argv) {
 	MinLeadingJetMetDPhi = -1.;
 	MinSubLeadingJetMetDPhi = -1.;
 	MinSubSubLeadingJetMetDPhi = -1.;
-	MinFatJetMetDPhi = 10.;
 	MinJetMetDPhi = 10.;
 	MinJetMetDPhiBarrel = 10.;
 	MinJetMetDPhiStar = 10.;
 	MinJetMetDPhiBarrelStar = 10.;
-	MinFatJetMetDPhiBarrel = 10.;
-	MinFatJetMetDPhiBarrelMatched = 10.;
 	//Initialize veto objects counter
 	nTausPreVeto = 0;
 	nTaus = 0;
@@ -1619,38 +1464,6 @@ int main(int argc, char **argv) {
 	m_yz = -9999.;
 	c_yz = -9999.;
 
-	min_dR_jets = 9999.;
-	min_dPhi_jets = 9999.;
-	min_dEta_jets = 9999.;
-	min_dR_jets_0p7 = 9999.;
-	min_dPhi_jets_0p7 = 9999.;
-	min_dEta_jets_0p7 = 9999.;
-	min_dR_jets_0p9 = 9999.;
-	min_dPhi_jets_0p9 = 9999.;
-	min_dEta_jets_0p9 = 9999.;
-	min_dR_jets_0p9_no_tags = 9999.;
-	min_dPhi_jets_0p9_no_tags = 9999.;
-	min_dEta_jets_0p9_no_tags = 9999.;
-	min_dR_jets_0p996 = 9999.;
-	min_dPhi_jets_0p996 = 9999.;
-	min_dEta_jets_0p996 = 9999.;
-
-	min_dR_jets_eta_1p0 = 9999.;
-	min_dPhi_jets_eta_1p0 = 9999.;
-	min_dEta_jets_eta_1p0 = 9999.;
-	min_dR_jets_eta_1p0_0p7 = 9999.;
-	min_dPhi_jets_eta_1p0_0p7 = 9999.;
-	min_dEta_jets_eta_1p0_0p7 = 9999.;
-	min_dR_jets_eta_1p0_0p9 = 9999.;
-	min_dPhi_jets_eta_1p0_0p9 = 9999.;
-	min_dEta_jets_eta_1p0_0p9 = 9999.;
-	min_dR_jets_eta_1p0_0p9_no_tags = 9999.;
-	min_dPhi_jets_eta_1p0_0p9_no_tags = 9999.;
-	min_dEta_jets_eta_1p0_0p9_no_tags = 9999.;
-	min_dR_jets_eta_1p0_0p996 = 9999.;
-	min_dPhi_jets_eta_1p0_0p996 = 9999.;
-	min_dEta_jets_eta_1p0_0p996 = 9999.;
-
 	eta_spread_tagged_EB = -9999.;
 	phi_spread_tagged_EB = -9999.;
 	x_spread_tagged_EB = -9999.;
@@ -1680,48 +1493,6 @@ int main(int argc, char **argv) {
 	nTagJets_0p996_JJ = 0;
 	nTagJets_0p996_JJ_eta_1p0 = 0;
 	nTagJets_0p997_JJ = 0;
-	nTagFatJets_cutbased = 0;
-	nTagFatJets_0p8 = 0;
-	nTagFatJets_0p9 = 0;
-	nTagFatJets_0p92 = 0;
-	nTagFatJets_0p95 = 0;
-	nTagFatJets_0p96 = 0;
-	nTagFatJets_0p97 = 0;
-	nTagFatJets_0p98 = 0;
-	nTagFatJets_0p99 = 0;
-	nTagFatJets_0p995 = 0;
-	nTagFatJets_0p997 = 0;
-	nTagFatJets_0p999 = 0;
-	nTagFatJets_0p9995 = 0;
-	nTagFatJets_0p9999 = 0;
-	nTagFatJets_0p99995 = 0;
-	nTagFatJets_0p99999 = 0;
-	nTagFatJets_0p999995 = 0;
-	nTagFatJets_0p999999 = 0;
-
-        isTagAK8_0p9999_170 = false;
-        isTagAK8_0p9999_200 = false;
-        isTagAK8_0p9999_250 = false;
-        isTagAK8_0p9999_300 = false;
-        isTagAK8_0p99999_170 = false;
-        isTagAK8_0p99999_200 = false;
-        isTagAK8_0p99999_250 = false;
-        isTagAK8_0p99999_300 = false;
-        isTagAK8_0p99999_350 = false;
-
-        isTagAK8_0p999995_170 = false;
-        isTagAK8_0p999995_200 = false;
-        isTagAK8_0p999995_250 = false;
-        isTagAK8_0p999995_300 = false;
-        isTagAK8_0p999995_350 = false;
-
-        isTagAK8_0p999999_170 = false;
-        isTagAK8_0p999999_200 = false;
-        isTagAK8_0p999999_250 = false;
-        isTagAK8_0p999999_300 = false;
-        isTagAK8_0p999999_350 = false;
-
-        isTagAK8_0p9999_350 = false;
 	isTagAK4_0p99 = false;
 	isTagAK4_0p994 = false;
 	isTagAK4_0p996 = false;
@@ -1733,11 +1504,10 @@ int main(int argc, char **argv) {
 
 	//Clear all the vectors
 	//very dangerous with continue statement!
+	skimmedElectrons.clear();
 	skimmedTaus.clear();
         skimmedJets.clear();
-        skimmedNegativeJets.clear();
-        skimmedJetsCalo.clear();
-        skimmedFatJets.clear();
+        skimmedJetsNegative.clear();
 	skimmedEBEnergyCSC.clear();
 	skimmedEcalRecHitsAK4.clear();
 	skimmedAcceptanceEcalRecHitsAK4.clear();
@@ -1793,12 +1563,17 @@ int main(int argc, char **argv) {
 	if(doZtoMMPho and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
 	if(doZtoEEPho and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v or HLT_Ele32_eta2p1_WPLoose_Gsf_v) ) continue;
 
+	if(doE and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v or HLT_Ele32_eta2p1_WPLoose_Gsf_v) ) continue;
+
 	if(doPho and not(HLT_Photon22_v or HLT_Photon30_v or HLT_Photon33_v or HLT_Photon36_v or HLT_Photon50_v or HLT_Photon75_v or HLT_Photon90_v or HLT_Photon120_v or HLT_Photon125_v or HLT_Photon150_v or HLT_Photon200_v or HLT_Photon175_v or HLT_Photon250_NoHE_v or HLT_Photon300_NoHE_v or HLT_Photon500_v or HLT_Photon600_v) ) continue;
 
 	//Selection on MET
 	if(doZtoMM and MEt->pt>=30) continue;
 	if(doZtoEE and MEt->pt>=30) continue;
 	if(doPho and MEt->pt>=30) continue;
+	if(doE and MEt->pt<70) continue;
+	if(doE and HT<200) continue;
+	if(doE and nPhotons>0) continue;
 
 	//Loop on veto objects
 	//JJ
@@ -1856,6 +1631,8 @@ int main(int argc, char **argv) {
 	      }
 
 	    //ZtoEE CR
+	    //E CR: increase theshold to pt 70
+	    if( (doE) and (Electrons->at(e).pt<70 or !Electrons->at(e).isTight or abs(Electrons->at(e).eta)>1) ) continue;
 	    if( (doZtoEE) and (Electrons->at(e).pt<37 or !Electrons->at(e).isTight) ) continue;
 	    if( (doZtoEEPho) and (Electrons->at(e).pt<37 or !Electrons->at(e).isTight) ) continue;
 
@@ -1874,10 +1651,12 @@ int main(int argc, char **argv) {
 	    LeptonsStruct.push_back(tmpElectron);
 	    ElectronsStruct.push_back(tmpElectron);
 	    nElectronsPassing++;
+	    skimmedElectrons.push_back(Electrons->at(e));
 
 	  }
 
 	//ZtoEE
+	if(doE and ElectronsStruct.size()!=1 and skimmedElectrons.size()!=1) continue;
 	if(doZtoEE and ElectronsStruct.size()!=2) continue;
 	if(doZtoEEPho and ElectronsStruct.size()!=2) continue;
 
@@ -1968,7 +1747,7 @@ int main(int argc, char **argv) {
 	//Pho CR
 	if( doPho and PhotonsStruct.size() != 1 ) continue;
 
-	//Z + gamma: one and only one photon, let's keep loose photons at the moment
+	//Z + gamma: one and only pne photon, let's keep loose photons at the moment
 	if( doZtoMMPho and PhotonsStruct.size() != 1 ) continue;
 	if( doZtoEEPho and PhotonsStruct.size() != 1 ) continue;
 
@@ -1980,6 +1759,10 @@ int main(int argc, char **argv) {
 	  }
 	dPhi = reco::deltaPhi(MEt->phi, lepp4.Phi());
 	MT = sqrt(2*(MEt->pt)*lepp4.Pt()*(1-cos(dPhi)));
+
+	dPhi_ele = reco::deltaPhi(MEt->phi, ElectronsStruct[0].vec.Phi());
+	MT_ele = sqrt(2*(MEt->pt)*ElectronsStruct[0].vec.Pt()*(1-cos(dPhi_ele)));
+
 	nLeptons = LeptonsStruct.size();
 
 	//Z reconstruction
@@ -2071,7 +1854,6 @@ int main(int argc, char **argv) {
 
 	//Apply acceptance cuts to jets and fat jets 
 	std::vector<int> validJetIndex;
-	std::vector<int> validFatJetIndex;
 
 	for (unsigned int j=0; j<Jets->size(); j++)
 	  {
@@ -2122,24 +1904,40 @@ int main(int argc, char **argv) {
 	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)
 
 	    //I want to save also jets with negative time<-1 to check beam halo
-	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)//cleaned jets!
-	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6)//and Jets->at(j).photonEFrac<0.8)//cleaned jets!
+	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6)//and Jets->at(j).photonEFrac<0.8)//cleaned jets!
+	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1. and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6)// and Jets->at(j).eleEFrac<0.6)//and Jets->at(j).photonEFrac<0.8)//cleaned jets!
 	      {
-
 		//This limits to jets with positive times. should redo it including negative time... otherwise biase
 		//if(Jets->at(j).timeRecHitsEB>-1)
 		//{
 
 		//Ignore jets overlapped to leptons, photons and taus
 		float jet_iso = 0.4;
-		//Leptons
-		float dR_lep = -1;
-		for(auto& lep : LeptonsStruct)
+
+		//Muons
+		float dR_mu = -1;
+		for(auto& lep : MuonsStruct)
 		  {
 		    float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
-		    if(dR_lep < 0 || thisDR < dR_lep) dR_lep = thisDR;
+		    if(dR_mu < 0 || thisDR < dR_mu) dR_mu = thisDR;
 		  }
-		if(dR_lep > 0 && dR_lep < jet_iso) continue;
+		if(dR_mu > 0 && dR_mu < jet_iso) continue;
+
+		//Electrons
+		float dR_ele = -1;
+		for(auto& lep : ElectronsStruct)
+		  {
+		    float thisDR = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,lep.vec.Eta(),lep.vec.Phi());
+		    if(dR_ele < 0 || thisDR < dR_ele) dR_ele = thisDR;
+		  }
+		if(doE)
+		  {
+		    if(dR_ele < 0 or dR_ele > jet_iso) continue;
+		  }		
+		else
+		  {
+		    if(dR_ele > 0 && dR_ele < jet_iso) continue;
+		  }
 
 		//Taus
 		float dR_tau = -1;
@@ -2154,29 +1952,13 @@ int main(int argc, char **argv) {
 		//Do NOT perform photon cleaning!!! Instead, we should ask overlap!!!
 		//REVERT pho cleaning!!!
 		float dR_pho = -1;
-		for(auto& pho : PhotonsStruct)
-		  {
-		    //this object will have size one, hence only one loop performed!
-		    float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
-		    if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
-		  }
-		if(doZtoEEPho or doZtoMMPho)
-		  {
-		    //If the photon is not found or the photon does not overlap a jet, skip
-		    //This procedure should basically save only jets overlapping the only photon in the event
-		    //Not sure if it's correct...
-		    if(dR_pho<0 or dR_pho > jet_iso) continue;
-		    std::cout << "--> debug: photon overlaps jets " << std::endl;
-		    std::cout << "Jet eta/phi: " << Jets->at(j).eta << " " << Jets->at(j).phi << std::endl; 
-		    std::cout << "Photon eta/phi: " << PhotonsStruct.at(0).vec.Eta() << " " << PhotonsStruct.at(0).vec.Phi() << std::endl; 
-		  }
-		else
-		  {
-		    if(dR_pho > 0 && dR_pho < jet_iso) continue;
-		  }
+                for(auto& pho : PhotonsStruct)
+                  {
+                    float thisDR_pho = reco::deltaR(Jets->at(j).eta,Jets->at(j).phi,pho.vec.Eta(),pho.vec.Phi());
+                    if(dR_pho < 0 || thisDR_pho < dR_pho) dR_pho = thisDR_pho;
+                  }
+                if(dR_pho > 0 && dR_pho < jet_iso) continue;
 
-		//Here: passed acceptance
-		if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
 		if(MinLeadingJetMetDPhi<0 and Jets->at(j).timeRecHitsEB>-1)
@@ -2295,155 +2077,39 @@ int main(int argc, char **argv) {
 		if(outputValueAK4>0.997 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1) nTagJets_0p997_JJ++;
 
 
-
-		if(Jets->at(j).timeRecHitsEB>-1.)
+		if(Jets->at(j).pt>70)
 		  {
-		    //store jets passing acceptance and with inference
-		    skimmedJets.push_back(Jets->at(j));
-		    JetCaloType JetCalo;
-		    FillJetCaloType( JetCalo, Jets->at(j), isMC );
-		    skimmedJetsCalo.push_back(JetCalo);
-		    validJetIndex.push_back(j);
+		    //set a cut on jet pt>70 and eta<1
+		    if(Jets->at(j).timeRecHitsEB>-1.)
+		      {
+			//store jets passing acceptance and with inference
+			skimmedJets.push_back(Jets->at(j));
+			validJetIndex.push_back(j);
+		      }
+		
+		    skimmedJetsNegative.push_back(Jets->at(j));
 		  }
-
-		//save also jets including negative times
-		skimmedNegativeJets.push_back(Jets->at(j));
-
 	      }//acceptance
 
 	  }//jet loop
 
+	//Here: passed acceptance
+	nCHSJetsAcceptanceCalo = skimmedJets.size();
+	nCHSJetsNegativeAcceptanceCalo = skimmedJetsNegative.size();
+
+	if(doE and (skimmedJets.size()!=1 and skimmedJetsNegative.size()!=1)) continue;
+
+	EventReWeight *= EventWeight; 
+	if(isMC and doE)
+	  {
+	    HTWeight = ratioHT->GetBinContent(ratioHT->GetXaxis()->FindBin(HT));
+	    EleWeight = ratioEle->GetBinContent(ratioEle->GetXaxis()->FindBin(skimmedElectrons.at(0).pt));
+	    EventReWeight*=HTWeight;
+	    EventReWeight*=EleWeight;
+	  }
+
 	if(isVerbose) std::cout << "n. tagged jets " << nTagJets_0p996_JJ << std::endl;
         if(isVerbose) std::cout << "======================================== " << std::endl;
-
-        for (unsigned int j=0; j<FatJets->size(); j++)
-          {
-	    if(fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi)) < MinFatJetMetDPhi) MinFatJetMetDPhi = fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi));
-
-            if( FatJets->at(j).pt>170 && fabs(FatJets->at(j).eta)<1.48 and FatJets->at(j).timeRecHitsEB>-100.)
-              {
-		if(fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi)) < MinFatJetMetDPhiBarrel) MinFatJetMetDPhiBarrel = fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi));
-
-
-		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
-		FatJets->at(j).eFracRecHitsEB = (FatJets->at(j).energy>0 and FatJets->at(j).energyRecHitsEB>0) ? FatJets->at(j).energyRecHitsEB/FatJets->at(j).energy : -1.;
-
-
-		std::vector<float> inputValues(featuresAK8.size());
-
-		inputValues.at(0) = FatJets->at(j).nConstituents;
-		inputValues.at(1) = FatJets->at(j).nTrackConstituents;
-		inputValues.at(2) = FatJets->at(j).timeRecHitsEB;
-		inputValues.at(3) = FatJets->at(j).eFracRecHitsEB;
-		inputValues.at(4) = FatJets->at(j).nRecHitsEB;
-		inputValues.at(5) = FatJets->at(j).cHadEFrac;
-		inputValues.at(6) = FatJets->at(j).nHadEFrac;
-		inputValues.at(7) = FatJets->at(j).eleEFrac;
-		inputValues.at(8) = FatJets->at(j).photonEFrac;
-		inputValues.at(9) = FatJets->at(j).ptPVTracksMax;
-		inputValues.at(10) = FatJets->at(j).gammaMaxET;
-		inputValues.at(11) = FatJets->at(j).minDeltaRAllTracks;
-		inputValues.at(12) = FatJets->at(j).minDeltaRPVTracks;
-		inputValues.at(13) = FatJets->at(j).chsTau21;
-		inputValues.at(14) = FatJets->at(j).sig1EB;
-		inputValues.at(15) = FatJets->at(j).sig2EB;
-		inputValues.at(16) = FatJets->at(j).ptDEB;
-
-		float* d = inputTensorAK8.flat<float>().data();
-		for (float v : inputValues) {
-		  //std::cout<< " input value: " << v <<std::endl;
-		  *d = v;
-		  d++;
-		}
-
-		// run the inference
-		std::vector<tensorflow::Tensor> outputsAK8;
-		tensorflow::run(sessionAK8, {{inputTensorNameAK8, inputTensorAK8}}, {outputTensorNameAK8}, &outputsAK8, threadPool);
-
-		// store the result
-		outputValueAK8 = outputsAK8[0].matrix<float>()(0, 1);
-		// keras cannot predict the output for invalid jets
-		// fix it manually
-		if(FatJets->at(j).pt<0) outputValueAK8 = -1;
-		FatJets->at(j).sigprob = outputValueAK8;
-
-		if(outputValueAK8>0.8) nTagFatJets_0p8++;
-		if(outputValueAK8>0.9) nTagFatJets_0p9++;
-		if(outputValueAK8>0.92) nTagFatJets_0p92++;
-		if(outputValueAK8>0.95) nTagFatJets_0p95++;
-		if(outputValueAK8>0.96) nTagFatJets_0p96++;
-		if(outputValueAK8>0.97) nTagFatJets_0p97++;
-		if(outputValueAK8>0.98) nTagFatJets_0p98++;
-		if(outputValueAK8>0.99) nTagFatJets_0p99++;
-		if(outputValueAK8>0.995) nTagFatJets_0p995++;
-		if(outputValueAK8>0.997) nTagFatJets_0p997++;
-		if(outputValueAK8>0.999) nTagFatJets_0p999++;
-		if(outputValueAK8>0.9995) nTagFatJets_0p9995++;
-		if(outputValueAK8>0.9999) nTagFatJets_0p9999++;
-		if(outputValueAK8>0.99995) nTagFatJets_0p99995++;
-		if(outputValueAK8>0.99999) nTagFatJets_0p99999++;
-		if(outputValueAK8>0.999995) nTagFatJets_0p999995++;
-		if(outputValueAK8>0.999999) nTagFatJets_0p999999++;
-
-		//Classify boosted analysis
-		//based on having a fat jet
-		//with a certain pT
-		if(FatJets->at(j).pt>170 and outputValueAK8>0.9999) isTagAK8_0p9999_170 = true;
-		if(FatJets->at(j).pt>200 and outputValueAK8>0.9999) isTagAK8_0p9999_200 = true;
-		if(FatJets->at(j).pt>250 and outputValueAK8>0.9999) isTagAK8_0p9999_250 = true;
-		if(FatJets->at(j).pt>300 and outputValueAK8>0.9999) isTagAK8_0p9999_300 = true;
-		if(FatJets->at(j).pt>350 and outputValueAK8>0.9999) isTagAK8_0p9999_350 = true;
-
-		if(FatJets->at(j).pt>170 and outputValueAK8>0.99999) isTagAK8_0p99999_170 = true;
-		if(FatJets->at(j).pt>200 and outputValueAK8>0.99999) isTagAK8_0p99999_200 = true;
-		if(FatJets->at(j).pt>250 and outputValueAK8>0.99999) isTagAK8_0p99999_250 = true;
-		if(FatJets->at(j).pt>300 and outputValueAK8>0.99999) isTagAK8_0p99999_300 = true;
-		if(FatJets->at(j).pt>350 and outputValueAK8>0.99999) isTagAK8_0p99999_350 = true;
-
-		if(FatJets->at(j).pt>170 and outputValueAK8>0.999995) isTagAK8_0p999995_170 = true;
-		if(FatJets->at(j).pt>200 and outputValueAK8>0.999995) isTagAK8_0p999995_200 = true;
-		if(FatJets->at(j).pt>250 and outputValueAK8>0.999995) isTagAK8_0p999995_250 = true;
-		if(FatJets->at(j).pt>300 and outputValueAK8>0.999995) isTagAK8_0p999995_300 = true;
-		if(FatJets->at(j).pt>350 and outputValueAK8>0.999995) isTagAK8_0p999995_350 = true;
-
-		if(FatJets->at(j).pt>170 and outputValueAK8>0.999999) isTagAK8_0p999999_170 = true;
-		if(FatJets->at(j).pt>200 and outputValueAK8>0.999999) isTagAK8_0p999999_200 = true;
-		if(FatJets->at(j).pt>250 and outputValueAK8>0.999999) isTagAK8_0p999999_250 = true;
-		if(FatJets->at(j).pt>300 and outputValueAK8>0.999999) isTagAK8_0p999999_300 = true;
-		if(FatJets->at(j).pt>350 and outputValueAK8>0.999999) isTagAK8_0p999999_350 = true;
-
-
-		//Redo gen-matchign to compute double matched jets
-		int n_g = 0;
-		for (unsigned int g=0; g<GenBquarks->size(); g++)
-		  {
-		    if(GenBquarks->at(g).travelRadiusLLP==FatJets->at(j).radiusLLP and FatJets->at(j).isGenMatchedCaloCorrLLPAccept)
-		      {
-			float dr = fabs(reco::deltaR(FatJets->at(j).eta, FatJets->at(j).phi, GenBquarks->at(g).eta, GenBquarks->at(g).phi)) ;
-			if( dr<0.8 )
-			  {
-			    n_g++;
-			  }
-		      }
-		  }
-
-		FatJets->at(j).nMatchedGenBquarksCaloCorr = n_g;
-		if(fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi)) < MinFatJetMetDPhiBarrelMatched && FatJets->at(j).nMatchedGenBquarksCaloCorr==2) MinFatJetMetDPhiBarrelMatched = fabs(reco::deltaPhi(FatJets->at(j).phi, MEt->phi));
-                nCHSFatJetsAcceptanceCalo++;
-                skimmedFatJets.push_back(FatJets->at(j));
-                validFatJetIndex.push_back(j);
-              }
-          }
-
-	//Define categories
-        if(nTagJets_0p99>1) isTagAK4_0p99 = true;
-        if(nTagJets_0p994>1) isTagAK4_0p994 = true;
-        if(nTagJets_0p996>1) isTagAK4_0p996 = true;
-        if(nTagJets_0p997>1) isTagAK4_0p997 = true;
-        if(nTagJets_0p99_JJ>1) isTagAK4_0p99_JJ = true;
-        if(nTagJets_0p994_JJ>1) isTagAK4_0p994_JJ = true;
-        if(nTagJets_0p996_JJ>1) isTagAK4_0p996_JJ = true;
-        if(nTagJets_0p997_JJ>1) isTagAK4_0p997_JJ = true;
 
 
 	//No jets in acceptance, go to next event
@@ -2518,137 +2184,10 @@ int main(int argc, char **argv) {
 
 	      }//loop on EcalRecHitsAK4
 
-	    skimmedJetsCalo.at(j).energyEB2CSC = csc_energy > 0 ? csc_energy : -1;
-	    skimmedJetsCalo.at(j).eFracEB2CSC  = skimmedJetsCalo.at(j).energyRecHitsEB > 0 ? csc_energy / skimmedJetsCalo.at(j).energyRecHitsEB : -1.;
-
-	    skimmedJetsCalo.at(j).energyEB2CSC0p1 = csc_energy_0p1 > 0 ? csc_energy_0p1 : -1;
-	    skimmedJetsCalo.at(j).eFracEB2CSC0p1  = skimmedJetsCalo.at(j).energyRecHitsEB > 0 ? csc_energy_0p1 / skimmedJetsCalo.at(j).energyRecHitsEB : -1.;
-
-	    skimmedJetsCalo.at(j).energyEB2CSC0p04 = csc_energy_0p04 > 0 ? csc_energy_0p04 : -1;
-	    skimmedJetsCalo.at(j).eFracEB2CSC0p04  = skimmedJetsCalo.at(j).energyRecHitsEB > 0 ? csc_energy_0p04 / skimmedJetsCalo.at(j).energyRecHitsEB : -1.;
-
-	    skimmedJetsCalo.at(j).meanEtaEB = avg(EBeta_j);
-	    skimmedJetsCalo.at(j).meanPhiEB = avg(EBphi_j);
-	    skimmedJetsCalo.at(j).meanATLASEB = avg(EB_Dphi_j);
-	    skimmedJetsCalo.at(j).meanXEB = avg(EBx_j);
-	    skimmedJetsCalo.at(j).meanYEB = avg(EBy_j);
-	    skimmedJetsCalo.at(j).meanZEB = avg(EBz_j);
-	    skimmedJetsCalo.at(j).meanREB = avg(EBr_j);
-	    skimmedJetsCalo.at(j).spreadEtaEB = stdev(EBeta_j);
-	    skimmedJetsCalo.at(j).spreadPhiEB = stdev(EBphi_j);
-	    skimmedJetsCalo.at(j).spreadATLASEB = stdev(EB_Dphi_j);
-	    skimmedJetsCalo.at(j).spreadXEB = stdev(EBx_j);
-	    skimmedJetsCalo.at(j).spreadYEB = stdev(EBy_j);
-	    skimmedJetsCalo.at(j).spreadZEB = stdev(EBz_j);
-	    skimmedJetsCalo.at(j).spreadREB = stdev(EBr_j);
-
-	    //Energy weighted
-	    skimmedJetsCalo.at(j).meanWeightedEtaEB = weighted_avg(EBeta_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).meanWeightedPhiEB = weighted_avg(EBphi_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).meanWeightedATLASEB = weighted_avg(EB_Dphi_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).meanWeightedXEB = weighted_avg(EBx_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).meanWeightedYEB = weighted_avg(EBy_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).meanWeightedZEB = weighted_avg(EBz_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).meanWeightedREB = weighted_avg(EBr_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedEtaEB = biased_weighted_stdev(EBeta_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedPhiEB = biased_weighted_stdev(EBphi_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedATLASEB = biased_weighted_stdev(EB_Dphi_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedXEB = biased_weighted_stdev(EBx_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedYEB = biased_weighted_stdev(EBy_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedZEB = biased_weighted_stdev(EBz_j,EBenergy_j);
-	    skimmedJetsCalo.at(j).spreadWeightedREB = biased_weighted_stdev(EBr_j,EBenergy_j);
 
 	  }//loop on jet indices
 
 
-
-	///////
-	for (unsigned int j=0; j<skimmedJets.size(); j++)
-	  {
-	    //second loop on jets to calculate delta phi/R
-	    for (unsigned int k=j+1; k<skimmedJets.size() && k!=j; k++)
-	      {
-		//std::cout << "Doing general pair: (" << j <<" , "<<k<<")"<<std::endl;
-
-		min_dPhi_jets = std::min(fabs(min_dPhi_jets),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-		min_dEta_jets = std::min(fabs(min_dEta_jets),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-		min_dR_jets = std::min(min_dR_jets,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-
-		if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
-		  {
-		    min_dPhi_jets_eta_1p0 = std::min(fabs(min_dPhi_jets_eta_1p0),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-		    min_dEta_jets_eta_1p0 = std::min(fabs(min_dEta_jets_eta_1p0),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-		    min_dR_jets_eta_1p0 = std::min(min_dR_jets_eta_1p0,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-		  }
-
-		//0p7
-		if(skimmedJets.at(j).sigprob>0.7 and skimmedJets.at(k).sigprob>0.7)
-		  {
-		    min_dPhi_jets_0p7 = std::min(fabs(min_dPhi_jets_0p7),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-		    min_dEta_jets_0p7 = std::min(fabs(min_dEta_jets_0p7),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-		    min_dR_jets_0p7 = std::min(min_dR_jets_0p7,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-
-		    if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
-		      {
-			min_dPhi_jets_eta_1p0_0p7 = std::min(fabs(min_dPhi_jets_eta_1p0_0p7),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-			min_dEta_jets_eta_1p0_0p7 = std::min(fabs(min_dEta_jets_eta_1p0_0p7),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-			min_dR_jets_eta_1p0_0p7 = std::min(min_dR_jets_eta_1p0_0p7,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-		      }
-		  }
-
-		//0p9
-		if(skimmedJets.at(j).sigprob>0.9 and skimmedJets.at(k).sigprob>0.9)
-		  {
-		    min_dPhi_jets_0p9 = std::min(fabs(min_dPhi_jets_0p9),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-		    min_dEta_jets_0p9 = std::min(fabs(min_dEta_jets_0p9),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-		    min_dR_jets_0p9 = std::min(min_dR_jets_0p9,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-		    //And both not tagged
-		    if(skimmedJets.at(j).sigprob<=0.996 and skimmedJets.at(k).sigprob<=0.996)
-		      {
-			min_dPhi_jets_0p9_no_tags = std::min(fabs(min_dPhi_jets_0p9_no_tags),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-			min_dEta_jets_0p9_no_tags = std::min(fabs(min_dEta_jets_0p9_no_tags),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-			min_dR_jets_0p9_no_tags = std::min(min_dR_jets_0p9_no_tags,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-
-		      }
-
-		    if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
-		      {
-			min_dPhi_jets_eta_1p0_0p9 = std::min(fabs(min_dPhi_jets_eta_1p0_0p9),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-			min_dEta_jets_eta_1p0_0p9 = std::min(fabs(min_dEta_jets_eta_1p0_0p9),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-			min_dR_jets_eta_1p0_0p9 = std::min(min_dR_jets_eta_1p0_0p9,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-
-			//And both not tagged
-			if(skimmedJets.at(j).sigprob<=0.996 and skimmedJets.at(k).sigprob<=0.996)
-			  {
-			    min_dPhi_jets_eta_1p0_0p9_no_tags = std::min(fabs(min_dPhi_jets_eta_1p0_0p9_no_tags),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-			    min_dEta_jets_eta_1p0_0p9_no_tags = std::min(fabs(min_dEta_jets_eta_1p0_0p9_no_tags),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-			    min_dR_jets_eta_1p0_0p9_no_tags = std::min(min_dR_jets_eta_1p0_0p9_no_tags,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-
-			  }
-		      }
-		  }
-		//0p996
-		if(skimmedJets.at(j).sigprob>0.996 and skimmedJets.at(k).sigprob>0.996)
-		  {
-		    //std::cout << "Doing min_dPhi_jets_0p996 with jet pair: (" << j <<" , "<<k<<")"<<std::endl;
-		    //std::cout << "prev min_dPhi_jets_0p996 " << min_dPhi_jets_0p996 << std::endl;
-		    //std::cout << "their distance: "<< fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi))  << std::endl;
-		    min_dPhi_jets_0p996 = std::min(fabs(min_dPhi_jets_0p996),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-		    min_dEta_jets_0p996 = std::min(fabs(min_dEta_jets_0p996),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-		    min_dR_jets_0p996 = std::min(min_dR_jets_0p996,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-		    //std::cout << "post min_dPhi_jets_0p996 " << min_dPhi_jets_0p996 << std::endl;
-
-		    if( abs(skimmedJets.at(j).eta)<1.0 and abs(skimmedJets.at(k).eta)<1.0)
-		      {
-			min_dPhi_jets_eta_1p0_0p996 = std::min(fabs(min_dPhi_jets_eta_1p0_0p996),fabs(reco::deltaPhi(skimmedJets.at(j).phi,skimmedJets.at(k).phi)));
-			min_dEta_jets_eta_1p0_0p996 = std::min(fabs(min_dEta_jets_eta_1p0_0p996),fabs(skimmedJets.at(j).eta - skimmedJets.at(k).eta));
-			min_dR_jets_eta_1p0_0p996 = std::min(min_dR_jets_eta_1p0_0p996,reco::deltaR(skimmedJets.at(j).eta,skimmedJets.at(j).phi,skimmedJets.at(k).eta,skimmedJets.at(k).phi));
-		      }
-		  }
-
-	      }
-
-	  }
 	//////
 	//Veto objects
 
@@ -2671,6 +2210,7 @@ int main(int argc, char **argv) {
 	if(doZtoMM) isZtoMM = true;
 	if(doZtoEE) isZtoEE = true;
 	if(doPho) isPho = true;
+	if(doE) isE = true;
 
 	//Observed worse agreement, skip this --> redo
 	n_pass->Fill(0.);
@@ -2678,24 +2218,39 @@ int main(int argc, char **argv) {
 	if(EventNumber % 2 != 0) n_odd->Fill(0.);
 	if(skipTrain==true and EventNumber % 2 == 0) continue;
 	outputTree->Fill();
+	events_passing++;
 
     }
 
 
     // finalize files
-    outputTree->SetWeight(tree_weight);
-    counter->Write();
-    n_pass->Write();
-    n_odd->Write();
-    n_even->Write();
-    b_skipTrain->Write();
+    std::cout<<"n. events_passing: " << events_passing<<std::endl;
 
-    outputFile->Write();
-    outputFile->Close();
+    if(events_passing>0)
+      {
+	TFile* outputFile = new TFile(outputPath.c_str(), "RECREATE");
+	outputFile->cd();
+	outputTree->SetDirectory(outputFile);
+	outputTree->SetWeight(tree_weight);
+	counter->Write();
+	n_pass->Write();
+	n_odd->Write();
+	n_even->Write();
+	b_skipTrain->Write();
+	outputTree->Write();
+	outputTree->Delete();
+	outputFile->Write();
+	outputFile->Close();
+      }
+    else
+      {
+	outputTree->Delete();
+      }
     mcPUFile->Close();
     mcTriggerFile->Close();
+    ratioHTFile->Close();
+    ratioEleFile->Close();
     inputFile->Close();
-    
 
     auto end = std::chrono::system_clock::now();//time!
     std::chrono::duration<double> elapsed_seconds = end-start;
@@ -2707,9 +2262,18 @@ int main(int argc, char **argv) {
     //std::cout << "**************************************************" << std::endl;
     //std::cout << " " << std::endl;
 
-    std::cout << "**************************************************" << std::endl;
-    std::cout << "Output written: " << outputPath << std::endl;
-    std::cout << "\n" << std::endl;
+    if(events_passing>0)
+      {
+	std::cout << "**************************************************" << std::endl;
+	std::cout << "Output written: " << outputPath << std::endl;
+	std::cout << "\n" << std::endl;
+      }
+    else
+      {
+	std::cout << "--------------------------------------------------" << std::endl;
+	std::cout << "No output " << std::endl;
+	std::cout << "\n" << std::endl;
+      }
 
     return 0;
 }

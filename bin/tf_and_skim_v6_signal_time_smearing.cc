@@ -38,6 +38,7 @@
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
+//#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6_smear.h"
 #include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6.h"
 #include "NNInferenceCMSSW/LLP_NN_Inference/plugins/CaloObjects_v6.h"
 #include "NNInferenceCMSSW/LLP_NN_Inference/plugins/dbscan.h"
@@ -468,7 +469,7 @@ int main(int argc, char **argv) {
     const float TAU_MASS  = 1.77686;
     const float Z_MASS   = 91.2;
 
-    if(argc<10)
+    if(argc<11)
     //if(argc<2)
       {
 	std::cout<<"Invalid arguments, exit!" << std::endl;
@@ -551,6 +552,13 @@ int main(int argc, char **argv) {
     std::string mcPUFilename = argv[6];
     std::string mcTriggerFilename = argv[7];
     std::string mcTriggerString = argv[8];
+
+    std::string timeCBFilename = argv[10];
+
+    //This is not really needed. It changes the event yield but not the acceptance. Do it later.
+    //std::string phoSFFilename = argv[13];
+    //std::string eleSFFilename = argv[14];
+
     //std::string dataFilename = argv[5];
     //std::string dataFilenameUp = argv[6];
     //std::string dataFilenameDown = argv[7];
@@ -608,6 +616,48 @@ int main(int argc, char **argv) {
     TFile *mcTriggerFile = TFile::Open(mcTriggerFilename.data(),"READ"); if (!mcTriggerFile) return 0;
     TH1F  *tr = (TH1F*)mcTriggerFile->Get(mcTriggerString.c_str());
     if(isVerbose) std::cout<< "Trigger histo loaded" << std::endl;
+
+    TFile *timeCBFile = TFile::Open(timeCBFilename.data(),"READ"); if (!timeCBFile) return 0;
+    TF1  *dataCB = (TF1*)timeCBFile->Get("data_CB");
+    TF1  *mcCB = (TF1*)timeCBFile->Get("back_CB");
+
+    TF1 *smearCB = (TF1*)dataCB->Clone("smear_cb");
+    smearCB->SetParameter(0,dataCB->GetParameter(0));
+    smearCB->SetParameter(1,dataCB->GetParameter(1) - mcCB->GetParameter(1));
+    smearCB->SetParameter(2, sqrt( abs( pow(dataCB->GetParameter(2),2) - pow(mcCB->GetParameter(2),2) )) );
+    smearCB->SetParameter(3,dataCB->GetParameter(3));
+    smearCB->SetParameter(4,dataCB->GetParameter(4));
+
+    //TFile *phoSFFile = TFile::Open(phoSFFilename.data(),"READ"); if (!phoSFFile) return 0;
+    //TH1F  *phoSF_1ns = (TH1F*)phoSFFile->Get("ratio_1ns");
+    //TH1F  *phoSF_2ns = (TH1F*)phoSFFile->Get("ratio_2ns");
+    //float sf_pho_1ns = phoSF_1ns->GetBinContent(1);
+    //float sf_pho_2ns = phoSF_2ns->GetBinContent(1);
+    //float sf_pho;
+    //if(abs(1-sf_pho_1ns) > abs(1-sf_pho_2ns))
+    //{
+    //sf_pho = sf_pho_1ns;
+    //}
+    //else
+    //{
+    //sf_pho = sf_pho_2ns;
+    //}
+    
+    //TFile *eleSFFile = TFile::Open(eleSFFilename.data(),"READ"); if (!eleSFFile) return 0;
+    //TH1F  *eleSF_1ns = (TH1F*)eleSFFile->Get("ratio_1ns");
+    //TH1F  *eleSF_2ns = (TH1F*)eleSFFile->Get("ratio_2ns");
+    //float sf_ele_1ns = eleSF_1ns->GetBinContent(1);
+    //float sf_ele_2ns = eleSF_2ns->GetBinContent(1);
+    //float sf_ele;
+    //if(abs(1-sf_ele_1ns) > abs(1-sf_ele_2ns))
+    //{
+    //sf_ele = sf_ele_1ns;
+    //}
+    //else
+    //{
+    //sf_ele = sf_ele_2ns;
+    //}
+
 
     //PU reweighting
     //TFile *mcPUFile = TFile::Open(mcPUFilename.data(),"READ"); if (!mcPUFile) return 0;
@@ -1442,7 +1492,15 @@ int main(int argc, char **argv) {
     outputTree->Branch("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v/O");
     outputTree->Branch("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
+
     outputTree->Branch("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, "Flag2_globalSuperTightHalo2016Filter/O");
+    outputTree->Branch("Flag2_goodVertices", &Flag2_goodVertices, "Flag2_goodVertices/O");
+    outputTree->Branch("Flag2_EcalDeadCellTriggerPrimitiveFilter", &Flag2_EcalDeadCellTriggerPrimitiveFilter, "Flag2_EcalDeadCellTriggerPrimitiveFilter/O");
+    outputTree->Branch("Flag2_HBHENoiseFilter", &Flag2_HBHENoiseFilter, "Flag2_HBHENoiseFilter/O");
+    outputTree->Branch("Flag2_HBHEIsoNoiseFilter", &Flag2_HBHEIsoNoiseFilter, "Flag2_HBHEIsoNoiseFilter/O");
+    outputTree->Branch("Flag2_ecalBadCalibFilter", &Flag2_ecalBadCalibFilter, "Flag2_ecalBadCalibFilter/O");
+    outputTree->Branch("Flag2_eeBadScFilter", &Flag2_eeBadScFilter, "Flag2_eeBadScFilter/O");
+    outputTree->Branch("Flag2_BadPFMuonFilter", &Flag2_BadPFMuonFilter, "Flag2_BadPFMuonFilter/O");
 
     if(isData or isSignal)
       {
@@ -1806,10 +1864,15 @@ int main(int argc, char **argv) {
     tensorflow::Tensor inputTensorAK4(tensorflow::DT_FLOAT, {1, int(featuresAK4.size()) });
     float outputValueAK4;
 
-    tensorflow::GraphDef* graphDefAK8 = tensorflow::loadGraphDef(graphPathAK8);
-    tensorflow::Session* sessionAK8 = tensorflow::createSession(graphDefAK8, nThreads);
-    tensorflow::Tensor inputTensorAK8(tensorflow::DT_FLOAT, {1, int(featuresAK8.size()) });
-    float outputValueAK8;
+    tensorflow::GraphDef* graphDefUnsmearedAK4 = tensorflow::loadGraphDef(graphPathAK4);
+    tensorflow::Session* sessionUnsmearedAK4 = tensorflow::createSession(graphDefUnsmearedAK4, nThreads);
+    tensorflow::Tensor inputTensorUnsmearedAK4(tensorflow::DT_FLOAT, {1, int(featuresAK4.size()) });
+    float outputValueUnsmearedAK4;
+
+    //tensorflow::GraphDef* graphDefAK8 = tensorflow::loadGraphDef(graphPathAK8);
+    //tensorflow::Session* sessionAK8 = tensorflow::createSession(graphDefAK8, nThreads);
+    //tensorflow::Tensor inputTensorAK8(tensorflow::DT_FLOAT, {1, int(featuresAK8.size()) });
+    //float outputValueAK8;
 
 
     // Event loop
@@ -2202,6 +2265,8 @@ int main(int argc, char **argv) {
 	//MET filters always fulfilled
 	//Invert Beam Halo
         //if(Flag2_globalSuperTightHalo2016Filter) continue;
+	//InvertHBHE
+	//if(Flag2_HBHENoiseFilter and Flag2_HBHEIsoNoiseFilter) continue;
 	if(not doGen)
 	  {
 	    if(!Flag2_globalSuperTightHalo2016Filter) continue;
@@ -2484,16 +2549,6 @@ int main(int argc, char **argv) {
         //if(nElectrons>0) continue;
         ////if(HT<100) continue;
 
-
-
-
-
-
-	//if(EventNumber!=24897) continue;
-	//if(EventNumber!=465 and EventNumber!=761) continue;
-	//if(EventNumber!=5132 and EventNumber!=5337 and EventNumber!=5393) continue;
-	//if(EventNumber!=9203 and EventNumber!=9782 and EventNumber!=11772 and EventNumber!=12416) continue;
-	//if(EventNumber!=21293 and EventNumber!=21762 and EventNumber!=22932 and EventNumber!=23902 and EventNumber!=24800 and EventNumber!=25930 and EventNumber!=26204 and EventNumber!=27095 and EventNumber!=28026 and EventNumber!=29814 and EventNumber!=32131 and EventNumber!=33183 and EventNumber!=34625 and EventNumber!=40663 and EventNumber!=40817 and EventNumber!=42155 and EventNumber!=43313 and EventNumber!=43647 and EventNumber!=45957 and EventNumber!=45964 and EventNumber!=48371 and EventNumber!=48374 and EventNumber!=48945 and EventNumber!=51183 and EventNumber!=54334 and EventNumber!=56625 and EventNumber!=57244 and EventNumber!=60170 and EventNumber!=62348 and EventNumber!=63254 and EventNumber!=63849 and EventNumber!=67102 and EventNumber!=70399 and EventNumber!=71178 and EventNumber!=71479 and EventNumber!=72548 and EventNumber!=73261 and EventNumber!=74695 and EventNumber!=75125 and EventNumber!=77007 and EventNumber!=80297 and EventNumber!=80482 and EventNumber!=81979 and EventNumber!=82465 and EventNumber!=82921 and EventNumber!=88730 and EventNumber!=88901 and EventNumber!=93174 and EventNumber!=95557 and EventNumber!=97508 and EventNumber!=99740) continue;
         if(isVerbose) std::cout << "======================================== " << std::endl;
         if(isVerbose) std::cout << "EventNumber " << EventNumber << "\tLumiNumber " << LumiNumber << std::endl;
 
@@ -2542,25 +2597,19 @@ int main(int argc, char **argv) {
 	      }
 	    
 
-	    
-	    //  Additional pre-selections
-	    //"muEFrac" : {"min" : -1., "max" : 0.6},
-	    //	"eleEFrac" : {"min" : -1., "max" : 0.6},
-	    //	"photonEFrac" : {"min" : -1., "max" : 0.8},
 
-	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)
+	    //Time smearing!
+	    //We need:
+	    //1. data file --> can pass from python
+	    //2. signal file fit --> can pass from python
+	    //3. name of the CB --> can pass from python
 
-	    //I want to save also jets with negative time<-1 to check beam halo
-	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1)//cleaned jets!
-	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
 
-	    //No photonEFrac and eleEFrac cuts!!!
-	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1. and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6)//cleaned jets!
+
+	    //Don't remove jets with eta>1 now, it messes up with the cosmic veto!
+	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
+	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1. and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
 	      {
-
-		//This should be done also for jets with negative time... otherwise that collection is biased...
-		//if(Jets->at(j).timeRecHitsEB>-1)
-		//{
 
 		//Ignore jets overlapped to leptons, photons and taus
 		float jet_iso = 0.4;
@@ -2592,6 +2641,7 @@ int main(int argc, char **argv) {
 		if(dR_pho > 0 && dR_pho < jet_iso) continue;
 		
 		//Here: passed acceptance
+		//Redone at the end!!!
 		//if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
 		//JetMET CR: MinLeadingJetMetDPhi bw leading jet and met should be large (back to back)
@@ -2630,11 +2680,17 @@ int main(int argc, char **argv) {
 		//Fix also timeRMS dividing by sqrt nRecHitsEB
 		Jets->at(j).timeRMSRecHitsEB = (Jets->at(j).nRecHitsEB>0) ? Jets->at(j).timeRMSRecHitsEB/sqrt(Jets->at(j).nRecHitsEB) : -1.;
 
-		//std::cout<< "FIXED: Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
+		//Time smearing here
+		float pre_time = Jets->at(j).timeRecHitsEB;
+		float smearer = smearCB->GetRandom();
+		//Keep also the original time if needed
+		Jets->at(j).timeRecHitsHB = pre_time;
+		Jets->at(j).timeRecHitsEB = pre_time + smearer;
 
 		//std::cout<< "Jet n. " << j << " pt: " << Jets->at(j).pt << " ; sigprob: " << Jets->at(j).sigprob  << std::endl;
 		//here build the inputVector for each jet
 		std::vector<float> inputValues(featuresAK4.size());
+		std::vector<float> inputValuesUnsmeared(featuresAK4.size());
 
 		//tagger_AK4_v3
 		inputValues.at(0) = Jets->at(j).nTrackConstituents;
@@ -2664,6 +2720,29 @@ int main(int argc, char **argv) {
 		inputValues.at(20) = Jets->at(j).minDeltaRAllTracks;
 		inputValues.at(21) = Jets->at(j).minDeltaRPVTracks;
 
+		inputValuesUnsmeared.at(0) = Jets->at(j).nTrackConstituents;
+		inputValuesUnsmeared.at(1) = Jets->at(j).nSelectedTracks;
+		inputValuesUnsmeared.at(2) = Jets->at(j).timeRecHitsHB;
+		inputValuesUnsmeared.at(3) = Jets->at(j).eFracRecHitsEB;
+		inputValuesUnsmeared.at(4) = Jets->at(j).nRecHitsEB;
+		inputValuesUnsmeared.at(5) = Jets->at(j).sig1EB;
+		inputValuesUnsmeared.at(6) = Jets->at(j).sig2EB;
+		inputValuesUnsmeared.at(7) = Jets->at(j).ptDEB;
+		inputValuesUnsmeared.at(8) = Jets->at(j).cHadEFrac;
+		inputValuesUnsmeared.at(9) = Jets->at(j).nHadEFrac;
+		inputValuesUnsmeared.at(10) = Jets->at(j).eleEFrac;
+		inputValuesUnsmeared.at(11) = Jets->at(j).photonEFrac;
+		inputValuesUnsmeared.at(12) = Jets->at(j).ptAllTracks;
+		inputValuesUnsmeared.at(13) = Jets->at(j).ptAllPVTracks;
+		inputValuesUnsmeared.at(14) = Jets->at(j).alphaMax;
+	        inputValuesUnsmeared.at(15) = Jets->at(j).betaMax;
+		inputValuesUnsmeared.at(16) = Jets->at(j).gammaMax;
+		inputValuesUnsmeared.at(17) = Jets->at(j).gammaMaxEM;
+		inputValuesUnsmeared.at(18) = Jets->at(j).gammaMaxHadronic;
+		inputValuesUnsmeared.at(19) = Jets->at(j).gammaMaxET;
+		inputValuesUnsmeared.at(20) = Jets->at(j).minDeltaRAllTracks;
+		inputValuesUnsmeared.at(21) = Jets->at(j).minDeltaRPVTracks;
+
 		float* d = inputTensorAK4.flat<float>().data();
 		for (float v : inputValues) {
 		  //std::cout<< " input value: " << v <<std::endl;
@@ -2681,6 +2760,24 @@ int main(int argc, char **argv) {
 		// fix it manually
 		if(Jets->at(j).pt<0) outputValueAK4 = -1;
 		Jets->at(j).sigprob = outputValueAK4;
+
+
+		//Unsmeared
+		float* u = inputTensorUnsmearedAK4.flat<float>().data();
+		for (float s : inputValuesUnsmeared) {
+		  *u = s;
+		  u++;
+		}
+
+		// run the inference
+		std::vector<tensorflow::Tensor> outputsUnsmearedAK4;
+		tensorflow::run(sessionUnsmearedAK4, {{inputTensorNameAK4, inputTensorUnsmearedAK4}}, {outputTensorNameAK4}, &outputsUnsmearedAK4, threadPool);
+		// store the result
+		outputValueUnsmearedAK4 = outputsUnsmearedAK4[0].matrix<float>()(0, 1);
+		// keras cannot predict the output for invalid jets
+		// fix it manually
+		if(Jets->at(j).pt<0) outputValueUnsmearedAK4 = -1;
+		Jets->at(j).pfXWP1000 = outputValueUnsmearedAK4;
 
 		//
 		// Cut based- definition:
@@ -2727,8 +2824,8 @@ int main(int argc, char **argv) {
 	      }//acceptance
 
 	  }//jet loop
-
-	nCHSJetsAcceptanceCalo = skimmedJets.size();
+	
+        nCHSJetsAcceptanceCalo = skimmedJets.size();
         nCHSJetsNegativeAcceptanceCalo = skimmedJetsNegative.size();
 
 	if(isVerbose) std::cout << "n. tagged jets " << nTagJets_0p996_JJ << std::endl;
@@ -2746,6 +2843,7 @@ int main(int argc, char **argv) {
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		FatJets->at(j).eFracRecHitsEB = (FatJets->at(j).energy>0 and FatJets->at(j).energyRecHitsEB>0) ? FatJets->at(j).energyRecHitsEB/FatJets->at(j).energy : -1.;
 
+		/*
 
 		std::vector<float> inputValues(featuresAK8.size());
 
@@ -2829,6 +2927,7 @@ int main(int argc, char **argv) {
 		if(FatJets->at(j).pt>250 and outputValueAK8>0.999999) isTagAK8_0p999999_250 = true;
 		if(FatJets->at(j).pt>300 and outputValueAK8>0.999999) isTagAK8_0p999999_300 = true;
 		if(FatJets->at(j).pt>350 and outputValueAK8>0.999999) isTagAK8_0p999999_350 = true;
+		*/
 
 
 		//Redo gen-matchign to compute double matched jets

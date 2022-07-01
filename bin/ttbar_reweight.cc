@@ -37,7 +37,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
   
-  if(argc<4)
+  if(argc<3)
     {
       std::cout<<"Invalid arguments, exit!" << std::endl;
       return 0;
@@ -45,13 +45,10 @@ int main(int argc, char **argv) {
 
   std::cout << "Input file: " << argv[1] << std::endl;
   std::cout << "Output file: " << argv[2] << std::endl;
-  std::cout << "Ratio HT file: " << argv[3] << std::endl;
-  std::cout << "Ratio ele file: " << argv[4] << std::endl;
 
   std::string inputPath = argv[1];
   std::string outputPath = argv[2];
-  std::string ratioHTFilename = argv[3];
-  std::string ratioEleFilename = argv[4];
+  std::string ratioFilename = argv[3];
   std::string inputTreeName = "tree";
   std::string outputTreeName = "tree";
   TFile* inputFile = new TFile(inputPath.c_str(), "READ");
@@ -63,11 +60,8 @@ int main(int argc, char **argv) {
   TH1F   *b_skipTrain = (TH1F*)inputFile->Get("b_skipTrain");
   float  tree_weight = inputTree->GetWeight();
   
-  TFile *ratioHTFile = TFile::Open(ratioHTFilename.data(),"READ"); if (!ratioHTFile) return 0;
-  TH1D  *ratioHT = (TH1D*)ratioHTFile->Get("ratio");
-
-  TFile *ratioEleFile = TFile::Open(ratioEleFilename.data(),"READ"); if (!ratioEleFile) return 0;
-  TH1D  *ratioEle = (TH1D*)ratioEleFile->Get("ratio");
+  TFile *ratioFile = TFile::Open(ratioFilename.data(),"READ"); if (!ratioFile) return 0;
+  TH1D  *ratio = (TH1D*)ratioFile->Get("r");
 
   TFile* outputFile = new TFile(outputPath.c_str(), "RECREATE");
   outputFile->cd();
@@ -75,47 +69,35 @@ int main(int argc, char **argv) {
   //outputTree->CopyEntries(inputTree);
 
   float   HT;
-  float   oldEventWeight;
-  //float   oldGenEventWeight;
-  float   oldHTWeight;
-  float   oldEleWeight;
-  std::vector<LeptonType> *Electrons=0;
+  float   EventWeight;
+  std::vector<JetType> *Jets=0;
   TBranch *b_HT;
   TBranch *b_EventWeight_old;
-  //TBranch *b_GenEventWeight_old;
-  TBranch *b_HTWeight_old;
-  TBranch *b_EleWeight_old;
-  TBranch        *b_Electrons = 0;
+  TBranch *b_Jets = 0;
   inputTree->SetBranchAddress("HT", &HT, &b_HT);
-  inputTree->SetBranchAddress("EventWeight", &oldEventWeight, &b_EventWeight_old);
-  //inputTree->SetBranchAddress("GenEventWeight", &oldGenEventWeight, &b_GenEventWeight_old);
-  inputTree->SetBranchAddress("HTWeight", &oldHTWeight, &b_HTWeight_old);
-  inputTree->SetBranchAddress("EleWeight", &oldEleWeight, &b_EleWeight_old);
-  inputTree->SetBranchAddress("Electrons",         &Electrons,         &b_Electrons);
+  inputTree->SetBranchAddress("EventWeight", &EventWeight, &b_EventWeight_old);
+  inputTree->SetBranchAddress("Jets",         &Jets,         &b_Jets);
 
   //Branch to be cleared
-  float   EventWeight;
+  float   NewEventWeight;
   TBranch *b_EventWeight;
-  outputTree->SetBranchAddress("EventWeight", &EventWeight, &b_EventWeight);
+  outputTree->SetBranchAddress("EventWeight", &NewEventWeight, &b_EventWeight);
 
   //Output tree
   //int nEvents(0);
-  //auto my_new_branch = outputTree->Branch("NewEventWeight", &EventWeight, "EventWeight/F");
+  //auto my_new_branch = outputTree->Branch("NewEventWeight", &NewEventWeight, "NewEventWeight/F");
   for (Long64_t entry = 0 ; entry < inputTree->GetEntriesFast() ; ++entry )
   //for (Long64_t entry = 0 ; entry < 10 ; ++entry )
     {
       inputTree->GetEntry(entry);
-      EventWeight = oldEventWeight;
-      float w_ht = ratioHT->GetBinContent(ratioHT->GetXaxis()->FindBin(HT));
-      if(w_ht>0) EventWeight *= w_ht;
-      else std::cout<<"HT: " << HT << "; weight: " << w_ht << std::endl;
-      float w_ele = ratioEle->GetBinContent(ratioEle->GetXaxis()->FindBin(Electrons->at(0).pt));
-      if(w_ele>0) EventWeight *= w_ele;
-      else std::cout<<"ele pt: " << Electrons->at(0).pt << "; weight: " << w_ele << std::endl;
-      //(oldEventWeight*ratioHT->GetBinContent(ratioHT->GetXaxis()->FindBin(HT)))/(oldHTWeight*oldEleWeight);
-      //EventWeight *= ratioEle->GetBinContent(ratioEle->GetXaxis()->FindBin(Electrons->at(0).pt));
+      NewEventWeight = EventWeight;
+      for(unsigned int j=0;j<Jets->size();j++)
+	{
+	  if(j==0) NewEventWeight*=ratio->GetBinContent(ratio->GetXaxis()->FindBin(Jets->at(j).photonEFrac));;
+	}
       b_EventWeight->Clear();
       outputTree->Fill();
+      //my_new_branch->Fill();
     }
 
   outputTree->SetWeight(tree_weight);
@@ -126,8 +108,7 @@ int main(int argc, char **argv) {
   b_skipTrain->Write();
   outputFile->Write();
 
-  ratioHTFile->Close();
-  if(ratioEleFile) ratioEleFile->Close();
+  ratioFile->Close();
   outputFile->Close();
   inputFile->Close();
 
