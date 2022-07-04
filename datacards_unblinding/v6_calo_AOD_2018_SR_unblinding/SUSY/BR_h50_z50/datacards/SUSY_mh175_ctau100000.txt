@@ -1,0 +1,30 @@
+imax 1
+jmax *
+kmax *
+shapes * * FAKE 
+-----------------------------------------------------------------------------------
+bin                            SUSY
+observation                    0.000000
+-----------------------------------------------------------------------------------
+bin                            SUSY                          SUSY                          SUSY                          SUSY                          
+process                        SUSY_mh175_ctau100000         Bkg                           Cosmic                        BeamHalo                      
+process                        0                             1                             2                             3                             
+rate                           0.000643                      0.017342                      0.005102                      0.000000                      
+-----------------------------------------------------------------------------------
+bkg_composition        lnN     -                             1.482402                      -                             -                             
+bkg_method             lnN     -                             1.012051                      -                             -                             
+bkg_stat_2018          lnN     -                             1.152694                      -                             -                             
+unc_cosmic             lnN     -                             -                             2.169926                      -                             
+unc_bh                 lnN     -                             -                             -                             1.000000                      
+sig_stat_2018          lnN     1.098781                      -                             -                             -                             
+tau                    lnN     1.005000                      -                             -                             -                             
+JER_2018               lnN     1.078304                      -                             -                             -                             
+QCD_scales             lnN     1.048282                      -                             -                             -                             
+PU                     lnN     1.009598                      -                             -                             -                             
+lumi_corr_all          lnN     1.020000                      -                             -                             -                             
+DNN_2018               lnN     1.195874                      -                             -                             -                             
+JES_2018               lnN     1.104741                      -                             -                             -                             
+lumi_corr_2017_2018    lnN     1.002000                      -                             -                             -                             
+uncl_energy_2018       lnN     1.030588                      -                             -                             -                             
+lumi_2018_unc          lnN     1.015000                      -                             -                             -                             
+PDF                    lnN     1.010209                      -                             -                             -                             
