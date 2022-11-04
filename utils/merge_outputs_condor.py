@@ -256,6 +256,10 @@ elif options.lists == "v6_HighMET_2016":
     LUMI = lumi["HighMET"]["tot"]#["tot"]
     print "total LUMI: ", LUMI
 
+elif options.lists == "v6_cosmics":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import *
+    from NNInferenceCMSSW.LLP_NN_Inference.crab_requests_lists_calo_AOD_2018 import *
+    LUMI = 1.
 
 else:
     print("No sample list indicated, aborting!")
@@ -270,7 +274,7 @@ print(LUMI, " fb -1")
 print("*****************************************************************************")
 
 
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","SingleMuon","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","WJetsToLNuIncl","JetJet","splitSUSY","gluinoGMSB","EGamma","TTbarGenMET","MuonEG","MET","HighMET","JetHT","SingleElectron","SinglePhoton","SUSY_HH","SUSY_HZ","SUSY_ZZ"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","SingleMuon","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","WJetsToLNuIncl","JetJet","splitSUSY","gluinoGMSB","EGamma","TTbarGenMET","MuonEG","MET","HighMET","JetHT","SingleElectron","SinglePhoton","SUSY_HH","SUSY_HZ","SUSY_ZZ","Cosmics","CosmicsMC"]
 print("Possible subgroups of samples:")
 for a in list_of_samples:
     print(a)
@@ -308,17 +312,17 @@ for b, k in enumerate(requests.keys()):
             print(k)
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="SUSY_HH":
-        if "HH" in k:
+        if "00_HH" in k:
             if "TChi" in k:
                 print(k)
                 selected_requests[k] = requests[k]
     elif options.groupofsamples=="SUSY_HZ":
-        if "HZ" in k:
+        if "00_HZ" in k:
             if "TChi" in k:
                 print(k)
                 selected_requests[k] = requests[k]
     elif options.groupofsamples=="SUSY_ZZ":
-        if "ZZ" in k:
+        if "00_ZZ" in k:
             if "TChi" in k:
                 print(k)
                 selected_requests[k] = requests[k]
@@ -332,6 +336,9 @@ for b, k in enumerate(requests.keys()):
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="splitSUSY":
         if "GluinoGluinoToNeutralinoNeutralinoTo2T2B2S" in k:
+            print k
+            selected_requests[k] = requests[k]
+        if "splitSUSY" in k:
             print k
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="gluinoGMSB":
@@ -422,8 +429,10 @@ def weight(name):
         elif('XXTo4J') in name:
             xs = 1.
         elif('GluinoGluinoToNeutralinoNeutralinoTo2T2B2S') in name:
-            xs = 1.
+            xs = 1. 
         elif('gluinoGMSB') in name:
+            xs = 1.
+        elif('splitSUSY') in name:
             xs = 1.
         else:
             xs = sample[name]['xsec'] * sample[name]['kfactor']#to correct MET phase-space

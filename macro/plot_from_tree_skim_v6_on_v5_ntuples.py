@@ -30,6 +30,7 @@ parser.add_option("-r", "--region", action="store", type="string", dest="region"
 parser.add_option("-f", "--formula", action="store", type="string", dest="formula", default="")
 parser.add_option("-t", "--treename", action="store", type="string", dest="treename", default="ntuple/tree")
 parser.add_option("-B", "--blind", action="store_true", default=False, dest="blind")
+parser.add_option("-w", "--write", action="store_true", default=False, dest="write")
 (options, args) = parser.parse_args()
 if options.bash: gROOT.SetBatch(True)
 gStyle.SetOptStat(0)
@@ -38,15 +39,21 @@ gStyle.SetOptStat(0)
 
 ERA = "2017"
 
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_TtoEM_v5_ntuples_validate_timeRecHits/"
-PLOTDIR     = "plots/v6_calo_AOD_2018_TtoEM_v5_ntuples_validate_timeRecHits/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_TtoEM_v5_ntuples_validate_timeRecHits/"
+PLOTDIR     = "plots/v6_calo_AOD_"+ERA+"_TtoEM_v5_ntuples_validate_timeRecHits/"
 
 #NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_ZtoMM_v5_ntuples_validate_timeRecHits/"
 #PLOTDIR     = "plots/v6_calo_AOD_2018_ZtoMM_v5_ntuples_validate_timeRecHits/"
 #Use ttbar
 
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_ZtoMMPho_v5_ntuples/"
-PLOTDIR     = "plots/v6_calo_AOD_"+ERA+"_ZtoMMPho_v5_ntuples/"
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_ZtoMMPho_v5_ntuples/"
+#PLOTDIR     = "plots/v6_calo_AOD_"+ERA+"_ZtoMMPho_v5_ntuples/"
+
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_E_v5_ntuples/"#weighted/"
+PLOTDIR     = "plots/v6_calo_AOD_"+ERA+"_E_v5_ntuples/"#weighted/"
+
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_v5_ntuples/"#weighted/"
+PLOTDIR     = "plots/v6_calo_AOD_"+ERA+"_SR_v5_ntuples/"#weighted/"
 
 SIGNAL = 1#000#000#now!
 POISSON     = False
@@ -55,11 +62,11 @@ POISSON     = False
 
 #data = ["data_obs"]
 #data = ["SingleMuon"]
-data_tag =  "SingleMuon"#+"BH"#"MET"#"data_obs"
-#data_tag = "SingleElectron"
+#data_tag =  "SingleMuon"#+"BH"#"MET"#"data_obs"
+data_tag = "SingleElectron"
 #data_tag = "EGamma"
 #data_tag = "MuonEG"
-#data_tag = "HighMET"#+"BH"
+data_tag = "HighMET"#+"BH"
 #data_tag = "JetHT"
 data = [data_tag]
 #back = ["VV","WJetsToQQ","WJetsToLNu","DYJetsToQQ","DYJetsToLL","ZJetsToNuNu","ST","TTbar","QCD"]#
@@ -68,9 +75,9 @@ data = [data_tag]
 #back = [data_tag]#
 #back = ["JetHTMC"]
 #back = ["QCD"]
-back = ["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
+#back = ["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
 #back = ["WJetsToLNu"]
-#back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbarGenMET","QCD"]#good order for JetHT
+back = ["VV","TTbarGenMET","QCD","WJetsToLNu","ZJetsToNuNu",]#good order for JetHT
 #back = ["All"]
 #back = [data_tag+"BH"]
 #back = [data_tag]
@@ -78,6 +85,8 @@ back = ["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
 #back = [data_tag+"BH"]
 #back = ["TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]
 #back = ["TTbarGenMET"]
+#back = ["WJetsToLNu"]
+#back = ["Wtop"]
 
 if ERA=="2018":
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import sample, samples
@@ -112,7 +121,7 @@ print "Luminosity: ", data[0], LUMI
 #data = back = []
 sign = []
 #sign = ['SUSY_mh400_pl1000']#,'SUSY_mh300_pl1000','SUSY_mh200_pl1000']#,'Event277096']#,'SUSY_mh200_pl1000','SUSY_mh150_pl1000']
-sign += ['SUSY_mh127_ctau500','SUSY_mh300_ctau500','SUSY_mh600_ctau500','SUSY_mh1000_ctau500','SUSY_mh1800_ctau500']
+#sign += ['SUSY_mh127_ctau500','SUSY_mh300_ctau500','SUSY_mh600_ctau500','SUSY_mh1000_ctau500','SUSY_mh1800_ctau500']
 #sign += ['SUSY_mh127_ctau3000','SUSY_mh300_ctau3000','SUSY_mh600_ctau3000','SUSY_mh1000_ctau3000','SUSY_mh1800_ctau3000']
 #back = ['SUSY_mh300_pl1000']
 
@@ -150,8 +159,8 @@ def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
     #weight = "EventWeight*2"
     #weight = "2"
     #weight = "1"
-    #weight = "EventWeight*PUReWeight*TriggerWeight"
-    weight = "EventWeight*PUReWeight"
+    weight = "EventWeight*PUReWeight*TriggerWeight"
+    #weight = "EventWeight*PUReWeight"
     #weight = "EventWeight*PUWeight"
     print weight
 
@@ -241,6 +250,16 @@ def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
     ### Other operations ###
     # Print table
     if len(data+back)>0: printTable(samples, hist, sign, SIGNAL,  data_tag=data_tag)
+
+    #store histogram
+    if options.write:
+        outfile = TFile(pathname+"/"+var.replace('.', '_').replace('/','_div_')+suffix+".root","RECREATE")
+        outfile.cd()
+        for i, s in enumerate(data+back+sign+['BkgSum']):
+            print hist[s].Print()
+            hist[s].Write(s)
+        outfile.Close()
+        print "Written "+pathname+"/"+var.replace('.', '_').replace('/','_div_')+suffix+".root"
     
     if not gROOT.IsBatch(): raw_input("Press Enter to continue...")
 

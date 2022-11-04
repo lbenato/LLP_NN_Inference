@@ -8,6 +8,7 @@ from ROOT import ROOT, gROOT, gStyle, gRandom, TSystemDirectory, gPad
 from ROOT import TFile, TChain, TTree, TCut, TH1, TH1F, TH1D, TH2F, THStack, TGraph, TGraphAsymmErrors
 from ROOT import TStyle, TCanvas, TPad
 from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis, TAxis
+from decimal import Decimal, ROUND_UP
 
 #### IMPORT SAMPLES AND VARIABLES DICTIONARIES ####
 
@@ -54,15 +55,11 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
             tmpcut = cut
             tmpcut_s = cut_s
             tmpcut_d = cut_d
-            #if s=="TTbarGenMET":
-            #    weight = weight+"*1.65623"
-            if not 'data' in s:
-                if s.endswith('_0b'): tmpcut += " && nBJets==0"
-                elif s.endswith('_1b'): tmpcut += " && nBJets==1"
-                elif s.endswith('_2b'): tmpcut += " && nBJets>=2"
-                if s.endswith('_0l'): tmpcut += " && genNl==0"
-                elif s.endswith('_1l'): tmpcut += " && genNl==1"
-                elif s.endswith('_2l'): tmpcut += " && genNl>=2"
+
+            #Scale up QCD
+            #if s=="QCD":
+            #    weight += "*( HT<400 ? ( HT<300 ? 0.6 : 0.7) :  ( HT>400 && HT<500 ? 0.9  :  1.1 ) )" 
+
             cutstring = "("+weight+")" + ("*("+tmpcut+")" if len(tmpcut)>0 else "")
             cutstring_s = "("+weight+")" + ("*("+tmpcut_s+")" if len(tmpcut_s)>0 else "")
             cutstring_d = "("+weight+")" + ("*("+tmpcut_d+")" if len(tmpcut_d)>0 else "")
@@ -103,16 +100,20 @@ def project(samples,var, cut, cut_s, cut_d, weight, samplelist, pd, ntupledir, t
             #print s, " has total of ", chain[s].GetEntries(), " entries"
             #print s, " with cut: ", chain[s].GetEntries(tmpcut), " entries"
             #print s, " with weight and cut: ", chain[s].GetEntries(cutstring), " entries"
+            #print s, " histogram ", hist[s].Integral(), " entries"
 
             hist[s].SetOption("%s" % chain[s].GetTree().GetEntriesFast())
             hist[s].Scale(samples[s]['weight'] if hist[s].Integral() >= 0 else 0)
             #if s in sign:
                 #print "Is it empty?"
                 
+            #print "dont normalize!"
             print "normalize!"
+            ##print "Entries: ", s, hist[s].GetEntries()
+            ##print "Integral pre: ", s, hist[s].Integral()
             if hist[s].Integral()>0:
                 hist[s].Scale(1./hist[s].Integral())
-            #print "Integral: ", s, hist[s].Integral()
+            ##print "Integral: ", s, hist[s].Integral()
 
         hist[s].SetFillColorAlpha(samples[s]['fillcolor'],alpha)
         hist[s].SetFillStyle(samples[s]['fillstyle'])
@@ -134,7 +135,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         hist['BkgSum'].Reset("MICES")
         for i, s in enumerate(back): hist['BkgSum'].Add(hist[s])
     hist['BkgSum'].SetMarkerStyle(0)
-    
+
     # Some style
     for i, s in enumerate(data):
         hist[s].SetMarkerStyle(21)
@@ -270,8 +271,13 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
     if log:
         bkg.GetYaxis().SetNoExponent(bkg.GetMaximum() < 1.e4)
         bkg.GetYaxis().SetMoreLogLabels(True)
-        #bkg.SetMinimum(5.e-1)#!!
+        print "Wanna change thiiiis"
+        #bkg.SetMinimum(5.e-7)#!!
+        bkg.SetMinimum(5.e-3)#!!
+        hist[data_tag].SetMinimum(5.e-3)#!!
         bkg.GetYaxis().SetTitleOffset(bkg.GetYaxis().GetTitleOffset()*1.075)
+
+
 
     #w#bkg.SetMaximum(2.e7)
     leg.Draw()
@@ -281,6 +287,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
     
     setHistStyle(bkg, 1.2 if ratio else 1.1)
     setHistStyle(hist['BkgSum'], 1.2 if ratio else 1.1)
+
 
     if ratio:
         c1.cd(2)
@@ -318,6 +325,7 @@ def draw(samples, hist, data, back, sign, snorm=1, ratio=0, poisson=False, log=F
         else: res = None
     c1.Update()
     
+
     # return list of objects created by the draw() function
     return [c1, bkg, leg, err if ratio else None, errLine if ratio else None, res if ratio else None, data_graph if poisson else None, res_graph if poisson else None]
 
@@ -353,7 +361,7 @@ def drawSignal(samples, hist, sign, log=False, logx=False):
         hist[s+'Err'].Add(hist[s])
         hist[s+'Err'].SetMarkerStyle(0)
         hist[s+'Err'].SetFillStyle(3003)
-        hist[s+'Err'].SetFillColor(samples[s]['fillcolor'])
+        hist[s+'Err'].SetFillColor(samples[s]['fillcolor'] if samples[s]['fillcolor']!=0 else 922)
 
     max_val = 0
     for i, s in enumerate(sign): 
@@ -516,7 +524,7 @@ def drawCMS(samples, LUMI, text, ERA="", onTop=False, left_marg_CMS=0.15,data_ob
     if ERA!="":
         era_str = ", "+ERA
     if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
-        latex.DrawLatex(0.95, 0.985, ("%.1f fb^{-1}  (13 TeV%s)") % (float(LUMI)/1000.,era_str) )
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP) ,era_str ) )
     elif type(LUMI) is str:
         latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
     if not onTop:
@@ -564,11 +572,10 @@ def drawCMS(samples, LUMI, text, ERA="", onTop=False, left_marg_CMS=0.15,data_ob
         latex2.DrawLatex(0.65, 0.9, dat)
 
 
-
-def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_LUMI=0.95):
+def drawCMS_supplementary(LUMI, text, ERA="", onTop=False, top_margin=0.84,left_marg_CMS=0.15,data_obs=[],text_size=0.045):
     latex = TLatex()
     latex.SetNDC()
-    latex.SetTextSize(0.04)
+    latex.SetTextSize(text_size)
     latex.SetTextColor(1)
     latex.SetTextFont(42)
     latex.SetTextAlign(33)
@@ -576,16 +583,45 @@ def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_
     if ERA!="":
         era_str = ", "+ERA
     if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
-        latex.DrawLatex(left_marg_LUMI, 0.985, ("%.1f fb^{-1}  (13 TeV%s)") % (float(LUMI)/1000.,era_str) )
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP) ,era_str ) )
+    elif type(LUMI) is str:
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
+    #latex.SetTextAlign(11)
+    latex.SetTextFont(62)
+    latex.SetTextSize(text_size if len(text)>0 else 0.06)
+    latex.DrawLatex(left_marg_CMS, top_margin, "CMS")
+    latex.SetTextSize(text_size)
+    latex.SetTextFont(52)
+    latex.DrawLatex(left_marg_CMS+0.25*text_size/0.045, top_margin, text)
+
+def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_LUMI=0.95,text_size=0.045,cms_text_size=0.06,lumi_text_size=0.04,custom_spacing=0):
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextSize(lumi_text_size)
+    latex.SetTextColor(1)
+    latex.SetTextFont(42)
+    latex.SetTextAlign(33)
+    era_str = ""
+    if ERA!="":
+        era_str = ", "+ERA
+    if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
+        latex.DrawLatex(left_marg_LUMI, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP) ,era_str ) )#( round(float(LUMI)/1000.,0),era_str) )
     elif type(LUMI) is str:
         latex.DrawLatex(left_marg_LUMI, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
     if not onTop: latex.SetTextAlign(11)
     latex.SetTextFont(62)
-    latex.SetTextSize(0.05 if len(text)>0 else 0.06)
+    #latex.SetTextSize(0.05 if len(text)>0 else 0.06)
+    latex.SetTextSize(cms_text_size)
     latex.DrawLatex(left_marg_CMS, 0.98, "CMS")
-    latex.SetTextSize(0.045)
-    latex.SetTextFont(52)
-    latex.DrawLatex(left_marg_CMS+0.2, 0.98, text)
+    latex.SetTextFont(52)#times 12.5
+    spacing = left_marg_CMS+0.3*(cms_text_size/0.06)
+    if len(text)>11:
+        spacing+=(len(text)/100.)
+    print text
+    print len(text)
+    if custom_spacing!=0:
+        spacing = left_marg_CMS+custom_spacing
+    latex.DrawLatex(spacing, 0.98, text)
 
 def drawAnalysis(s, center=False):
     analyses = {
@@ -606,6 +642,23 @@ def drawAnalysis(s, center=False):
     latex.SetTextFont(42)
     #latex.SetTextAlign(33)
     latex.DrawLatex(0.15 if not center else 0.3, 0.95, s if not s in analyses else analyses[s])
+
+
+def drawBR(h, center=False, x_pos=0.15,y_pos=0.95):
+    #br_string = "B(#chi #rightarrow h #tilde{G}) = "+str(h)+"%; B(#chi #rightarrow Z #tilde{G}) = "+str(100-h)+"%"
+    if h==100:
+        br_string = "B(#chi #rightarrow H #tilde{G}) = "+str(h)+"%"
+    elif h==0:
+        br_string = "B(#chi #rightarrow Z #tilde{G}) = "+str(100)+"%"
+    else:
+        br_string = "B(#chi #rightarrow H #tilde{G}) = "+str(h)+"%; B(#chi #rightarrow Z #tilde{G}) = "+str(100-h)+"%"
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextSize(0.04)
+    latex.SetTextFont(42)
+    #latex.SetTextAlign(33)
+    #latex.DrawLatex(0.15 if not center else 0.3, 0.95, s if not s in analyses else analyses[s])
+    latex.DrawLatex(x_pos if not center else 0.3, y_pos, br_string)
 
 def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75, setNDC=True, color=1):
     region = {
@@ -636,6 +689,7 @@ def drawRegion(channel, left=False, left_marg_CMS=0.15, top=0.75, setNDC=True, c
         "ZtoEE": "Z #rightarrow ee MR",
         "ZtoLL": "Z #rightarrow ll MR",
         "ZtoLLPho": "Z #rightarrow ll#gamma",
+        "E": "1 e overlapping 1 jet + MET",
         "WtoEN": "W #rightarrow e#nu MR",
         "WtoMN": "W #rightarrow #mu#nu MR",
         "WtoLN": "W #rightarrow l#nu MR",

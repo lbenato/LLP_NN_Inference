@@ -63,6 +63,26 @@ lumi = {
         "tot" : 0,
     },
 
+    "HighMETHBHE" :#RAW-RECO
+    {
+        "B" : 0,#(4.793348375)*1000,
+        "C" : 0,#(9.633137470)*1000,
+        "D" : 0,#(4.247682094)*1000,
+        "E" : 0,#(9.313949740)*1000,
+        "F" : 0,#(13.498571706)*1000,
+        "tot" : 0,
+    },
+
+    "HighMETBH" :#RAW-RECO
+    {
+        "B" : 0,#(4.793348375)*1000,
+        "C" : 0,#(9.633137470)*1000,
+        "D" : 0,#(4.247682094)*1000,
+        "E" : 0,#(9.313949740)*1000,
+        "F" : 0,#(13.498571706)*1000,
+        "tot" : 0,
+    },
+
     "JetHT" :
     {
         #unprescaled:
@@ -85,8 +105,9 @@ lumi = {
 
 
 for a in lumi.keys():
-    #print a, lumi[a]
     lumi[a]["tot"] = lumi[a]["B"] + lumi[a]["C"] + lumi[a]["D"] + lumi[a]["E"] + lumi[a]["F"]
+    #print a, lumi[a]["tot"]
+    
 
 #print lumi
 #lumi["SingleMuon"]["tot"] = lumi["SingleMuon"]["A"] + lumi["SingleMuon"]["B"] + lumi["SingleMuon"]["C"] + lumi["SingleMuon"]["D"]

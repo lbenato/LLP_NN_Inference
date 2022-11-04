@@ -6,6 +6,31 @@ long_string += ")"
 
 selection = {
     "none" : "",
+    "ele" : "isE && HT>200",
+
+    "elePUCMSFinal" : "isE && HT>200 && MEt.pt> 70 && nCHSJetsAcceptanceCalo==1 && nPhotons==0 && Electrons[0].pt>70 && Jets[0].pt>70",
+    "elePUCMSFinalNegative" : "isE && HT>200 && MEt.pt> 70 && nCHSJetsNegativeAcceptanceCalo==1 && nPhotons==0 && Electrons[0].pt>70 && JetsNegative[0].pt>70",
+
+    "signPUCMSFinal" : "HT>200 && nCHSJetsAcceptanceCalo==1 && Jets[0].pt>70 && abs(Jets[0].eta)<1.",
+    "signPUCMSFinalNegative" : "HT>200 && nCHSJetsAcceptanceCalo==1 && JetsNegative[0].pt>70 && abs(JetsNegative[0].eta)<1.",
+
+    "elePUCaltech" : "isE && HT>200 && nCHSJetsAcceptanceCalo==1",
+
+    "elePUCMS" : "isE && HT>200 && nCHSJetsAcceptanceCalo==1",
+    "elePUCaltechVetoPho" : "isE && HT>200 && nCHSJetsAcceptanceCalo==1 && nPhotons==0",
+    "elePUCMSVetoPho" : "isE && HT>200 && nCHSJetsAcceptanceCalo==1 && nPhotons==0",
+
+    "elePUCMSMETPtVetoPho" : "isE && HT>200 && MEt.pt> 70 && nCHSJetsAcceptanceCalo==1 && nPhotons==0 && Electrons[0].pt>50 && Jets[0].pt>50",
+
+    "elePUCMSMETPt70VetoPho" : "isE && HT>200 && MEt.pt> 70 && nCHSJetsAcceptanceCalo==1 && nPhotons==0 && Electrons[0].pt>70 && Jets[0].pt>70",
+    "elePUCaltechMETPt70VetoPho" : "isE && HT>200 && MEt.pt> 70 && nCHSJetsAcceptanceCalo==1 && nPhotons==0 && Electrons[0].pt>70 && Jets[0].pt>70",
+
+    "elePUCMSPtVetoPho" : "isE && HT>200 && nCHSJetsAcceptanceCalo==1 && nPhotons==0 && Electrons[0].pt>50 && Jets[0].pt>50",
+
+    "ele_met50" : "isE && HT>200 && MEt.pt>50",
+    "ele_jets50" : "isE && HT>200 && Jets.pt>50",
+    "ele_metjets50" : "isE && HT>200 && Jets.pt>50 && MEt.pt>50",
+    "ele_no_top" : "isE && HT>200",
     "isMC" : "isMC",
     "ctau500" : "",
     "ctau500match" : "Jets[0].isGenMatchedCaloCorrLLPAccept",
@@ -26,9 +51,12 @@ selection = {
     "bin2_tagged_eta_phi" : "nTagJets_0p996_JJ>1 && Jets.sigprob>0.996 && abs(Jets.eta)<1. && Jets.phi<2.5",
     "ZtoMM" : "isZtoMM",
     "TtoEM" : "isTtoEM && MEt.pt>200",
+    "TtoEM_bin2" : "isTtoEM && MEt.pt>200 && abs(Jets.eta)<1 && nTagJets_0p996_JJ>1",
     "TtoEM_CSV" : "isTtoEM && Jets.CSV>0.9",
     "TtoEM_CSV_j0" : "isTtoEM && Jets[0].CSV>0.8 && MEt.pt>200",
     "TtoEM_CSV_nj0" : "isTtoEM && JetsNegative[0].CSV>0.8 && MEt.pt>200",
+    "SR_negative" : "isSR && JetsNegative.timeRecHitsEB<-1 && MEt.pt>200",
+    "SR_positive" : "isSR && JetsNegative.timeRecHitsEB>-1 && MEt.pt>200",
     #"DiJetMET" : "isDiJetMET && nCHSJetsAcceptanceCalo==2  && (HLT_PFJet260_v || HLT_PFJet320_v || HLT_PFJet400_v || HLT_PFJet450_v || HLT_PFJet500_v)",
     #"DiJetMET" : "isDiJetMET && nCHSJetsAcceptanceCalo==2 && MinLeadingJetMetDPhi<0.4 && MEt.pt<100  && (HLT_PFJet260_v || HLT_PFJet320_v || HLT_PFJet400_v || HLT_PFJet450_v || HLT_PFJet500_v) ",
     "DiJetMET" : "isDiJetMET && nCHSJetsAcceptanceCalo==2 && MinLeadingJetMetDPhi<0.4 && MEt.pt<100 && (HLT_PFJet500_v) ",
@@ -80,7 +108,11 @@ selection = {
     "MR" : "isMR && nLeptons==1 && MT<100",
     "MN" : "isMN && nLeptons==1",
     "EN" : "isEN && nLeptons==1",
+    "SR_low_nRecHitsEB" : "isSR && Jets.nRecHitsEB<5",
     "WtoMN" : "isWtoMN && MT<100",
+    "WtoMN_low_nRecHitsEB" : "isWtoMN && MT<100 && Jets.nRecHitsEB<10",
+    "WtoMN_tag" : "isWtoMN && MT<100 && Jets.sigprob>0.996",
+    "WtoMN_no_tag" : "isWtoMN && MT<100 && Jets.sigprob<=0.996",
     "WtoMN_noMT" : "isWtoMN",
     "WtoMN_noMT_yes_BH" : "isWtoMN && !Flag2_globalSuperTightHalo2016Filter",
     "WtoMN_noMT_bin1" : "isWtoMN && nTagJets_0p996_JJ==1",
@@ -98,6 +130,29 @@ selection = {
     "WtoEN_HEM" : "isWtoEN && MT<100 && (isMC ? 1 : ( RunNumber>=319077 ? (nCHSJets_in_HEM==0) : 1))",
     #"SR"  : "isSR && Flag2_globalSuperTightHalo2016Filter",
     "SR"  : "isSR",
+    "SR_boost"  : "isSR && HT>250 && MEt.pt>250 && nTagJets_0p996_JJ<2",
+
+    "SR_kill_qcd_met300"  : "isSR && MEt.pt>300 && MinJetMetDPhi>0.5 && HT>300",
+    "SR_kill_qcd_met250"  : "isSR && MEt.pt>250 && MinJetMetDPhi>0.5 && HT>300",
+    "SR_kill_qcd_met200"  : "isSR && MEt.pt>200 && MinJetMetDPhi>0.5 && HT>300",
+    "SR_kill_qcd_ht200"  : "isSR && MinJetMetDPhi>0.5 && HT>200",
+    "SR_kill_qcd_ht300"  : "isSR && MinJetMetDPhi>0.5 && HT>300 && MEt.pt>240",
+    "SR_met250"  : "isSR && MEt.pt>300 && HT>300",
+    "SR_met250"  : "isSR && MEt.pt>250 && HT>300",
+    "SR_met200"  : "isSR && MEt.pt>200 && HT>300",
+    "SR_ht200"  : "isSR && HT>200",
+    "SR_ht300"  : "isSR && HT>300 && MEt.pt>240",
+    "SR"  : "isSR",
+    "SR_kill_qcd"  : "isSR && MinJetMetDPhi>0.5",
+
+    "SR_compare"  : "isSR && MinJetMetDPhi>0.5",
+    "SR_compare_low_pt"  : "isSR && MinJetMetDPhi>0.5 && Jets.pt<70",
+    "SR_match_compare"  : "isSR && Jets.isGenMatchedCaloCorrLLPAccept && MinJetMetDPhi>0.5",
+    "SR_match_compare_low_pt"  : "isSR && Jets.isGenMatchedCaloCorrLLPAccept && MinJetMetDPhi>0.5 && Jets.pt<70",
+
+    "SR_match"  : "isSR && Jets.isGenMatchedCaloCorrLLPAccept",
+    "SR_match_low_score"  : "isSR && Jets.isGenMatchedCaloCorrLLPAccept && Jets.sigprob<0.05",
+
     "SR_2cosmic"  : "isSR && nCosmicMuons>=2",
     "SR_1cosmiconeleg"  : "isSR && nCosmicMuonsOneLeg>=1",
     "SRPositiveWeights"  : "isSR && EventWeight>=0.",
@@ -106,7 +161,10 @@ selection = {
     "bin2_clean"  : "isSR && dt_ecal_dist>0.5 && min_dPhi_jets_0p996>0.05 && nTagJets_0p996_JJ>1",
     #"SR_clean"  : "isSR && nTagJets_0p996_JJ>1",
     "SRmatch"  : "isSR && (isMC ? Jets.isGenMatchedCaloCorrLLPAccept : 1)",
+    "SRmatch_tag"  : "isSR && (isMC ? Jets.isGenMatchedCaloCorrLLPAccept : 1) && Jets.sigprob>0.996",
     "SRmatch_less10hits"  : "isSR && (isMC ? Jets.isGenMatchedCaloCorrLLPAccept : 1) && Jets.nRecHitsEB<10",
+    "SR_accumulation" : "isSR && nTagJets_0p996_JJ<2 && Jets.sigprob>0.6478790 && Jets.sigprob<0.6478792",
+    "SR_no_accumulation" : "isSR && nTagJets_0p996_JJ<2 && (Jets.sigprob<=0.6478790 || Jets.sigprob>=0.6478792)",
     "SR_bin0"  : "isSR && nTagJets_0p996_JJ==0",
     "SR_bin1"  : "isSR && nTagJets_0p996_JJ==1",
     "SR_bin2"  : "isSR && nTagJets_0p996_JJ>1",
@@ -134,6 +192,11 @@ selection = {
     "SR_veto_bin2_cosmics_j"  : "isSR && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? Jets.phi<2.7 : 1) && ( RunNumber>=315252 ? (Jets.phi<0.4 || Jets.phi>0.9) : 1 )",
     "SR_veto_bin2_cosmics_nj"  : "isSR && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? JetsNegative.phi<2.7 : 1) && ( RunNumber>=315252 ? (JetsNegative.phi<0.4 || JetsNegative.phi>0.9) : 1 )",
     "SR_veto_bin2_cosmics_nj_match"  : "isSR && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? JetsNegative.phi<2.7 : 1) && ( RunNumber>=315252 ? (JetsNegative.phi<0.4 || JetsNegative.phi>0.9) : 1 ) && JetsNegative.isGenMatchedCaloCorrLLPAccept",
+
+    "SR_veto_bin2_cosmics_nj_time"  : "isSR && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? JetsNegative.phi<2.7 : 1) && ( RunNumber>=315252 ? (JetsNegative.phi<0.4 || JetsNegative.phi>0.9) : 1 ) && JetsNegative.timeRecHitsEB<-1.",
+    "SR_veto_bin2_cosmics_nj_time_match"  : "isSR && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? JetsNegative.phi<2.7 : 1) && ( RunNumber>=315252 ? (JetsNegative.phi<0.4 || JetsNegative.phi>0.9) : 1 ) && JetsNegative.timeRecHitsEB<-1. && JetsNegative.isGenMatchedCaloCorrLLPAccept",
+
+
     "SR_veto_bin2_cosmics_tag_nj"  : "isSR && JetsNegative.sigprob>0.996 && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? JetsNegative.phi<2.7 : 1) && ( RunNumber>=315252 ? (JetsNegative.phi<0.4 || JetsNegative.phi>0.9) : 1 )",
     "SR_veto_bin2_cosmics_tag_nj_0p9"  : "isSR && JetsNegative.sigprob>0.9 && nTagJets_0p996_JJ<2 && (isMC ? 1 : (isDT_fit ? dt_ecal_dist>=0.5 : 1) ) && ( RunNumber>=319077 ? (nCHSJets_in_HEM_pt_30_all_eta==0) : 1) && ( (RunNumber>=297020 && RunNumber<=306462) ? JetsNegative.phi<2.7 : 1) && ( RunNumber>=315252 ? (JetsNegative.phi<0.4 || JetsNegative.phi>0.9) : 1 )",
 
@@ -242,6 +305,12 @@ selection = {
     #Gen-level
     "SRsel" : "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && Flag2_globalSuperTightHalo2016Filter && Flag2_goodVertices && Flag2_EcalDeadCellTriggerPrimitiveFilter && Flag2_HBHENoiseFilter && Flag2_HBHEIsoNoiseFilter && Flag2_ecalBadCalibFilter && Flag2_eeBadScFilter && Flag2_BadPFMuonFilter && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nTausPassing==0 && nPhotonsPassing==0",
     "SRsel" : "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nTausPassing==0 && nPhotonsPassing==0",
+
+    "SR_fail_HBHE" : "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && !Flag2_HBHEIsoNoiseFilter && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nTausPassing==0 && nPhotonsPassing==0",
+    "SR_fail_HBHE_match" : "(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v) && !Flag2_HBHEIsoNoiseFilter && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nTausPassing==0 && nPhotonsPassing==0 && Jets.isGenMatchedCaloCorrLLPAccept",
+    "SR_gen_match" : "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v && MEt.pt>200 && nMuonsPassing==0 && nElectronsPassing==0 && nTausPassing==0 && nPhotonsPassing==0 && Jets.isGenMatchedCaloCorrLLPAccept",
+
+
     "1j_h0" : "n_j_higgs_0==1",
     "1j_h1" : "n_j_higgs_1==1",
     "2j_h0" : "n_j_higgs_0==2",
@@ -258,6 +327,8 @@ selection = {
     "2j_h1_prompt" : "n_j_higgs_1==2 && fabs(GenHiggs[1].travelRadiusLLP)<30",
     "2j_h0_calo" : "n_j_higgs_0==2 && fabs(GenHiggs[0].travelRadiusLLP)<184. && fabs(GenHiggs[0].travelRadiusLLP)>30",
     "2j_h1_calo" : "n_j_higgs_1==2 && fabs(GenHiggs[1].travelRadiusLLP)<184. && fabs(GenHiggs[1].travelRadiusLLP)>30",
+
+    "MET" : "MEt.pt>200",
 
 }
 selection["PreselSkim"] = "MEt.pt>200"# && EventNumber%2!=0"

@@ -248,6 +248,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
         for v in var_to_model:
             jv = "Jets[0]."+v
             chain[s].Project("d_"+v, jv, prj_weight+"*("+cut+" && fabs(Jets[0].eta)<1)")
+            print "Entries in year", ERA,": ",chain[s].GetEntries(prj_weight+"*("+cut+" && fabs(Jets[0].eta)<1)")
             hist_var_d[v].Scale(1./hist_var_d[v].Integral())
             #hist_var_rd[v] = hist_var_s[v].Clone("rd_"+v)
             #hist_var_rd[v].Divide(hist_var_d[v])
@@ -451,6 +452,11 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     b_h_shift6 = TH1F("b_h_shift6",";"+variable[var]['title'],100,-10,10)
     b_h_shift6.Sumw2()
 
+    den_b_h_pre = TH1F("den_b_h_pre","",len(bins_eta)-1,bins_eta)
+    den_b_h_pre.Sumw2()
+    den_b_h_pre_0p9 = TH1F("den_b_h_pre_0p9","",len(bins_eta)-1,bins_eta)
+    den_b_h_pre_0p9.Sumw2()
+
     den_b_h_shift0 = TH1F("den_b_h_shift0","",len(bins_eta)-1,bins_eta)
     den_b_h_shift0.Sumw2()
     den_b_h_shift1 = TH1F("den_b_h_shift1","",len(bins_eta)-1,bins_eta)
@@ -465,6 +471,11 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     den_b_h_shift5.Sumw2()
     den_b_h_shift6 = TH1F("den_b_h_shift6","",len(bins_eta)-1,bins_eta)
     den_b_h_shift6.Sumw2()
+
+    num_b_h_pre = TH1F("num_b_h_pre","",len(bins_eta)-1,bins_eta)
+    num_b_h_pre.Sumw2()
+    num_b_h_pre_0p9 = TH1F("num_b_h_pre_0p9","",len(bins_eta)-1,bins_eta)
+    num_b_h_pre_0p9.Sumw2()
 
     num_b_h_shift0 = TH1F("num_b_h_shift0","",len(bins_eta)-1,bins_eta)
     num_b_h_shift0.Sumw2()
@@ -514,6 +525,11 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     d_h_shift6 = TH1F("d_h_shift6",";"+variable[var]['title'],100,-10,10)
     d_h_shift6.Sumw2()
 
+    den_d_h_pre = TH1F("den_d_h_pre","",len(bins_eta)-1,bins_eta)
+    den_d_h_pre.Sumw2()
+    den_d_h_pre_0p9 = TH1F("den_d_h_pre_0p9","",len(bins_eta)-1,bins_eta)
+    den_d_h_pre_0p9.Sumw2()
+
     den_d_h_shift0 = TH1F("den_d_h_shift0","",len(bins_eta)-1,bins_eta)
     den_d_h_shift0.Sumw2()
     den_d_h_shift1 = TH1F("den_d_h_shift1","",len(bins_eta)-1,bins_eta)
@@ -528,6 +544,11 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     den_d_h_shift5.Sumw2()
     den_d_h_shift6 = TH1F("den_d_h_shift6","",len(bins_eta)-1,bins_eta)
     den_d_h_shift6.Sumw2()
+
+    num_d_h_pre = TH1F("num_d_h_pre","",len(bins_eta)-1,bins_eta)
+    num_d_h_pre.Sumw2()
+    num_d_h_pre_0p9 = TH1F("num_d_h_pre_0p9","",len(bins_eta)-1,bins_eta)
+    num_d_h_pre_0p9.Sumw2()
 
     num_d_h_shift0 = TH1F("num_d_h_shift0","",len(bins_eta)-1,bins_eta)
     num_d_h_shift0.Sumw2()
@@ -601,6 +622,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     b_nTrackConstituents = np.array([])
     b_nSelectedTracks = np.array([])
     b_timeRecHitsEB = np.array([])
+    b_sigprob = np.array([])
     b_timeSmeared = np.array([])
     b_timeShift1 = np.array([])
     b_timeShift2 = np.array([])
@@ -634,6 +656,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     d_nTrackConstituents = np.array([])
     d_nSelectedTracks = np.array([])
     d_timeRecHitsEB = np.array([])
+    d_sigprob = np.array([])
     #d_timeSmeared = np.array([])
     d_timeShift1 = np.array([])
     d_timeShift2 = np.array([])
@@ -741,6 +764,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
                 b_tmp_nTrackConstituents = []
                 b_tmp_nSelectedTracks = []
                 b_tmp_timeRecHitsEB = []
+                b_tmp_sigprob = []
                 b_tmp_eFracRecHitsEB = []
                 b_tmp_nRecHitsEB = []
                 b_tmp_sig1EB = []
@@ -821,8 +845,10 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
                         b_tmp_minDeltaRAllTracks.append(neg_jets[n].minDeltaRAllTracks)
                         b_tmp_minDeltaRPVTracks.append(neg_jets[n].minDeltaRPVTracks)
                         b_tmp_eta.append(neg_jets[n].eta)
+                        b_tmp_sigprob.append(neg_jets[n].sigprob)
 
 
+                b_sigprob = np.concatenate((b_sigprob,np.array(b_tmp_sigprob)))
                 b_timeSmeared = np.concatenate((b_timeSmeared, np.array(b_tmp_time)))
                 b_EventWeight = np.concatenate((b_EventWeight, np.array(b_tmp_weight)))
                 b_nTrackConstituents = np.concatenate(( b_nTrackConstituents, b_tmp_nTrackConstituents ))
@@ -1072,6 +1098,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     b_probs_shift5 = model.predict(b_X_shift5)
     b_probs_shift6 = model.predict(b_X_shift6)
 
+    m_b_time_pre    = (b_timeRecHitsEB > -1)
     m_b_time_smear  = (b_timeSmeared  > -1 )
     m_b_time_shift1 = (b_timeShift1   > -1)
     m_b_time_shift2 = (b_timeShift2   > -1)
@@ -1080,6 +1107,8 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     m_b_time_shift5 = (b_timeShift5   > -1)
     m_b_time_shift6 = (b_timeShift6   > -1)
 
+    m_b_probs_pre = (b_sigprob > 0.996)
+    m_b_probs_pre_0p9 = (b_sigprob > 0.9)
     m_b_probs_smear  = (b_probs_smear[:,1]  > 0.996)
     m_b_probs_shift1 = (b_probs_shift1[:,1] > 0.996)
     m_b_probs_shift2 = (b_probs_shift2[:,1] > 0.996)
@@ -1106,6 +1135,12 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     root_numpy.fill_hist(b_h_shift5, b_timeShift5[m_b_time_shift5], b_EventWeight[m_b_time_shift5])
     root_numpy.fill_hist(b_h_shift6, b_timeShift6[m_b_time_shift6], b_EventWeight[m_b_time_shift6])
 
+
+    root_numpy.fill_hist(den_b_h_pre, b_eta[m_b_time_pre],  b_EventWeight[m_b_time_pre])
+    root_numpy.fill_hist(den_b_h_pre_0p9, b_eta[m_b_time_pre],  b_EventWeight[m_b_time_pre])
+    root_numpy.fill_hist(num_b_h_pre, b_eta[ np.logical_and(m_b_probs_pre,m_b_time_pre) ],  b_EventWeight[np.logical_and(m_b_probs_pre,m_b_time_pre)])
+    root_numpy.fill_hist(num_b_h_pre_0p9, b_eta[ np.logical_and(m_b_probs_pre_0p9,m_b_time_pre) ],  b_EventWeight[np.logical_and(m_b_probs_pre_0p9,m_b_time_pre)])
+
     root_numpy.fill_hist(den_b_h_shift0, b_eta[m_b_time_smear],  b_EventWeight[m_b_time_smear])
     root_numpy.fill_hist(den_b_h_shift1, b_eta[m_b_time_shift1], b_EventWeight[m_b_time_shift1])
     root_numpy.fill_hist(den_b_h_shift2, b_eta[m_b_time_shift2], b_EventWeight[m_b_time_shift2])
@@ -1113,7 +1148,6 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     root_numpy.fill_hist(den_b_h_shift4, b_eta[m_b_time_shift4], b_EventWeight[m_b_time_shift4])
     root_numpy.fill_hist(den_b_h_shift5, b_eta[m_b_time_shift5], b_EventWeight[m_b_time_shift5])
     root_numpy.fill_hist(den_b_h_shift6, b_eta[m_b_time_shift6], b_EventWeight[m_b_time_shift6])
-
     
     root_numpy.fill_hist(num_b_h_shift0, b_eta[np.logical_and(m_b_probs_smear,m_b_time_smear)],b_EventWeight[np.logical_and(m_b_probs_smear,m_b_time_smear)])
     root_numpy.fill_hist(num_b_h_shift1, b_eta[np.logical_and(m_b_probs_shift1,m_b_time_shift1)],b_EventWeight[np.logical_and(m_b_probs_shift1,m_b_time_shift1)])
@@ -1141,6 +1175,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
             d_tmp_nTrackConstituents = []
             d_tmp_nSelectedTracks = []
             d_tmp_timeRecHitsEB = []
+            d_tmp_sigprob = []
             d_tmp_eFracRecHitsEB = []
             d_tmp_nRecHitsEB = []
             d_tmp_sig1EB = []
@@ -1220,8 +1255,9 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
                     d_tmp_minDeltaRAllTracks.append(neg_jets[n].minDeltaRAllTracks)
                     d_tmp_minDeltaRPVTracks.append(neg_jets[n].minDeltaRPVTracks)
                     d_tmp_eta.append(neg_jets[n].eta)
+                    d_tmp_sigprob.append(neg_jets[n].sigprob)
 
-
+            d_sigprob = np.concatenate(( d_sigprob, np.array(d_tmp_sigprob) ))
             d_EventWeight = np.concatenate((d_EventWeight, np.array(d_tmp_weight)))
             d_nTrackConstituents = np.concatenate(( d_nTrackConstituents, d_tmp_nTrackConstituents ))
             d_nSelectedTracks = np.concatenate(( d_nSelectedTracks, d_tmp_nSelectedTracks))
@@ -1445,6 +1481,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     d_probs_shift5 = model.predict(d_X_shift5)
     d_probs_shift6 = model.predict(d_X_shift6)
 
+    m_d_time_pre    = (d_timeRecHitsEB > -1 )
     m_d_time        = (d_timeRecHitsEB > -1 )
     m_d_time_shift1 = (d_timeShift1    > -1)
     m_d_time_shift2 = (d_timeShift2    > -1)
@@ -1452,6 +1489,9 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     m_d_time_shift4 = (d_timeShift4    > -1)
     m_d_time_shift5 = (d_timeShift5    > -1)
     m_d_time_shift6 = (d_timeShift6    > -1)
+
+    m_d_probs_pre       = (d_sigprob  > 0.996 )
+    m_d_probs_pre_0p9   = (d_sigprob  > 0.9 )
 
     m_d_probs        = (d_probs[:,1]  > 0.996 )
     m_d_probs_shift1 = (d_probs_shift1[:,1] > 0.996)
@@ -1494,6 +1534,11 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     #print "mean_d_h_shift5 ", d_h_shift5.GetMean()
     #print "mean_d_h_shift6 ", d_h_shift6.GetMean()
 
+    root_numpy.fill_hist(den_d_h_pre, d_eta[m_d_time_pre],  d_EventWeight[m_d_time_pre])
+    root_numpy.fill_hist(den_d_h_pre_0p9, d_eta[m_d_time_pre],  d_EventWeight[m_d_time_pre])
+    root_numpy.fill_hist(num_d_h_pre, d_eta[np.logical_and(m_d_probs_pre,m_d_time_pre)],d_EventWeight[np.logical_and(m_d_probs_pre,m_d_time_pre)])
+    root_numpy.fill_hist(num_d_h_pre_0p9, d_eta[np.logical_and(m_d_probs_pre_0p9,m_d_time_pre)],d_EventWeight[np.logical_and(m_d_probs_pre_0p9,m_d_time_pre)])
+
     root_numpy.fill_hist(den_d_h_shift0, d_eta[m_d_time],  d_EventWeight[m_d_time])
     root_numpy.fill_hist(den_d_h_shift1, d_eta[m_d_time_shift1], d_EventWeight[m_d_time_shift1])
     root_numpy.fill_hist(den_d_h_shift2, d_eta[m_d_time_shift2], d_EventWeight[m_d_time_shift2])
@@ -1531,7 +1576,6 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     print "Store in root file: den_d_h_shift1,num_d_h_shift1" 
     outfile.Close()
     print "Written ",OUT+"DataMCNumDen_ZtoLLPho_"+ERA+lab+".root"
-    exit()
 
 
     #Compute sign
@@ -1834,6 +1878,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     can.Close()
 
 
+
     ##
 
     can2 = TCanvas("can2","can2",900,800)
@@ -1908,6 +1953,51 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     can3.Print(OUTSTRING+label+'_log.pdf')
     can3.Close()
 
+    #Compare data/bkg sigprob after smearing
+    canK = TCanvas("canK","canK",900,800)
+    canK.SetRightMargin(0.05)
+    canK.cd()
+    leg2 = TLegend(0.4, 0.75, 0.4+0.2, 0.9)
+    #leg2.SetHeader(samples[back[0]]['label']+", MC")
+    #leg2.AddEntry(b_h_sigprob_shift0,samples[back[0]]['label'],"L")
+    leg2.AddEntry(b_h_sigprob_shift1,"MC smeared","L")
+
+    #leg2.AddEntry(d_h_sigprob_shift0,samples[data[0]]['label'],"L")
+    leg2.AddEntry(d_h_sigprob_shift1,"data smeared","L")
+
+    d_h_sigprob_shift0.SetLineWidth(2)
+    d_h_sigprob_shift1.SetLineWidth(2)
+    d_h_sigprob_shift0.SetMarkerStyle(20)
+    d_h_sigprob_shift1.SetMarkerStyle(20)
+    d_h_sigprob_shift0.SetMarkerColor(4)
+    d_h_sigprob_shift1.SetMarkerColor(4)
+    d_h_sigprob_shift0.SetLineColor(4)
+    d_h_sigprob_shift1.SetLineColor(4)
+
+    b_h_sigprob_shift1.SetLineColor(8)
+
+    d_h_sigprob_shift1.GetXaxis().SetTitle("jet DNN score")
+    d_h_sigprob_shift1.GetYaxis().SetTitle("Events")
+    #d_h_sigprob_shift0.Draw("PE")
+    d_h_sigprob_shift1.Draw("PE,sames")
+    #b_h_sigprob_shift0.Draw("HIST,sames")
+    b_h_sigprob_shift1.Draw("HIST,sames")
+    leg2.Draw()
+    OUTSTRING = OUT
+    OUTSTRING += "back_data_sigprob_shift_jet_time"
+    #drawAnalysis("LL"+CHAN)
+    drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+    drawRegion(SEL)
+    canK.Update()
+    canK.Print(OUTSTRING+label+'.png')
+    canK.Print(OUTSTRING+label+'.pdf')
+    canK.SetLogy()
+    canK.Update()
+    canK.Print(OUTSTRING+label+'_log.png')
+    canK.Print(OUTSTRING+label+'_log.pdf')
+    canK.Close()
+
+
 
     #time_bins = np.array([-10.,-9.,-8.,-7.,-6.,-5.,-4.,-3.,-2.,-1.,0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.])
     b_graph0 = TGraphAsymmErrors()
@@ -1944,7 +2034,6 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     #num_b_h_shift6.Rebin(len(bins_eta)-1,"num_b_h_shift6_2",bins_eta)
     #den_b_h_shift6.Rebin(len(bins_eta)-1,"den_b_h_shift6_2",bins_eta)
     b_graph6.BayesDivide(num_b_h_shift6,den_b_h_shift6)
-
 
     b_graph0.SetMarkerStyle(20)
     b_graph1.SetMarkerStyle(20)
@@ -2425,6 +2514,63 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     print "ratio6"
     print ratio6.Print()
 
+
+
+    b_graph_pre = TGraphAsymmErrors()
+    b_graph_pre.BayesDivide(num_b_h_pre,den_b_h_pre)
+    b_graph_pre_0p9 = TGraphAsymmErrors()
+    b_graph_pre_0p9.BayesDivide(num_b_h_pre_0p9,den_b_h_pre_0p9)
+    d_graph_pre = TGraphAsymmErrors()
+    d_graph_pre.BayesDivide(num_d_h_pre,den_d_h_pre)
+    d_graph_pre_0p9 = TGraphAsymmErrors()
+    d_graph_pre_0p9.BayesDivide(num_d_h_pre_0p9,den_d_h_pre_0p9)
+
+    b_graph_pre.SetMarkerStyle(20)
+    b_graph_pre.SetMarkerColor(4)
+    b_graph_pre.SetLineColor(4)
+    b_graph_pre.SetLineWidth(2)
+    b_graph_pre_0p9.SetMarkerStyle(20)
+    b_graph_pre_0p9.SetMarkerColor(8)
+    b_graph_pre_0p9.SetLineColor(8)
+    b_graph_pre_0p9.SetLineWidth(2)
+    d_graph_pre.SetMarkerStyle(21)
+    d_graph_pre.SetMarkerColor(1)
+    d_graph_pre.SetLineColor(1)
+    d_graph_pre.SetLineWidth(2)
+    d_graph_pre_0p9.SetMarkerStyle(21)
+    d_graph_pre_0p9.SetMarkerColor(2)
+    d_graph_pre_0p9.SetLineColor(2)
+    d_graph_pre_0p9.SetLineWidth(2)
+
+    can_pre = TCanvas("can_pre","can_pre",900,800)
+    can_pre.SetRightMargin(0.05)
+    can_pre.cd()
+    leg2 = TLegend(0.1+0.45, 0.7, 0.95, 0.9)
+    #leg2.AddEntry(b_graph_pre,"no smear MC","PL")
+    leg2.AddEntry(b_graph_pre_0p9,"no smear MC, loose w.p.(0.9)","PL")
+    #leg2.AddEntry(d_graph_pre,"no smear data","PL")
+    leg2.AddEntry(d_graph_pre_0p9,"no smear data, loose w.p.(0.9)","PL")
+    #b_graph_pre.Draw("AP")
+    b_graph_pre_0p9.Draw("AP")
+    #d_graph_pre.Draw("P,sames")
+    d_graph_pre_0p9.Draw("P,sames")
+    b_graph_pre_0p9.SetMaximum(0.41)
+    b_graph_pre_0p9.SetMinimum(-0.01)
+    b_graph_pre_0p9.GetXaxis().SetTitle("jet #eta")
+    b_graph_pre_0p9.GetYaxis().SetTitle("tag efficiency")
+    leg2.Draw()
+    OUTSTRING = OUT
+    OUTSTRING += "data_vs_back_tag_eff_no_smearing"
+    #drawAnalysis("LL"+CHAN)
+    drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+    drawRegion(SEL)
+    can_pre.Update()
+    can_pre.Print(OUTSTRING+label+'.png')
+    can_pre.Print(OUTSTRING+label+'.pdf')
+    can_pre.Close()
+
+
+
     can5_bkg = TCanvas("can5_bkg","can5_bkg",900,800)
     can5_bkg.SetRightMargin(0.05)
     can5_bkg.cd()
@@ -2813,5 +2959,5 @@ if SEL=="SR":
     #signal_smearing(var="JetsNegative.timeRecHitsEB",cut = "isSR && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+"_all_jets",scale=True,do_smear=True)
     draw_syst_unc()
 if SEL=="ZtoLLPho":
-    lab = "_G-H"
+    lab = "_B-F"
     calc_sf(var="JetsNegative[0].timeRecHitsEB",cut = "fabs(Z_mass-91.2)<10. && Z_pho_tight && MinJetMetDPhi>0.5",label=lab,scale=True,do_smear=False)

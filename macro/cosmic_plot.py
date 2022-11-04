@@ -26,7 +26,7 @@ gROOT.SetBatch(True)
 gStyle.SetOptStat(0000)
 
 data = ["HighMET"]
-sign = ['SUSY_mh1800_ctau500','SUSY_mh127_ctau500','SUSY_mh300_ctau500','SUSY_mh600_ctau500','SUSY_mh1000_ctau500',]
+sign = ['SUSY_mh1800_ctau500_HH','SUSY_mh127_ctau500_HH','SUSY_mh300_ctau500_HH','SUSY_mh600_ctau500_HH','SUSY_mh1000_ctau500_HH',]
 SEL = "SR"
 
 def cosmic_plot(var,cut_d,cut_s):
@@ -47,8 +47,11 @@ def cosmic_plot(var,cut_d,cut_s):
         s_hist[s].Sumw2()
 
 
+    #with cosmic one leg requirement
     MAIN_d = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_"+SEL+"_bin_1_2/"
     MAIN_s = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_"+SEL+"/"
+    #MAIN_d = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_no_cosmicOneLeg/"
+    #MAIN_s = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_no_cosmicOneLeg/"
     eras = ["2016","2017","2018"]
 
     for s in data:
@@ -71,6 +74,10 @@ def cosmic_plot(var,cut_d,cut_s):
                 print "TChain "+(MAIN_d%era)+ss + ".root"
                 d_chain.Add((MAIN_d%era) + ss + ".root")
     
+    #count how many events passed the selection
+    print "Data events being vetoed"
+    print d_chain.GetEntries("MinJetMetDPhi>0.5 && dt_ecal_dist<0.5")
+                
     d_chain.Project("d_hist", var, prj_weight+"*("+cut_d+")")
     d_hist.SetMarkerStyle(21)
     d_hist.SetLineColor(1)
@@ -90,10 +97,14 @@ def cosmic_plot(var,cut_d,cut_s):
                 print "TChain "+(MAIN_s%era)+ss + ".root"
                 s_chain[s].Add((MAIN_s%era) + ss + ".root")
 
+    print "Signal events being vetoed"
     for s in sign:
+        print s
+        print s_chain[s].GetEntries("MinJetMetDPhi>0.5 && dt_ecal_dist<0.5")
         s_chain[s].Project("s_hist_"+s, var, prj_weight+"*("+cut_d+")")
         s_hist[s].SetLineColor(samples[s]['linecolor'])
         s_hist[s].SetLineWidth(2)
+
 
     can = TCanvas("can","can",900,800)
     can.SetRightMargin(0.04)
@@ -114,6 +125,7 @@ def cosmic_plot(var,cut_d,cut_s):
     leg.Draw()
     OUTSTRING = "plots/"+var
     OUTSTRING += "_all_years"
+    #OUTSTRING += "_all_years_noCosmicOneLeg"
     drawCMS_simple(LUMI, "Preliminary", ERA="", onTop=True)
     drawRegion(SEL)
     leg.Draw()

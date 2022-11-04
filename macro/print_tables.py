@@ -30,8 +30,19 @@ from NNInferenceCMSSW.LLP_NN_Inference.variables import *
 from NNInferenceCMSSW.LLP_NN_Inference.selections import *
 from NNInferenceCMSSW.LLP_NN_Inference.drawUtils import *
 
-BASEDIR = "plots/Efficiency_AN/v5_calo_AOD_"#+ERA+"_"+REGION+"/"
-SYST_UNC = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_%s_SR_signal_uncertainties/"
+#This is for the real SR
+BASEDIR = "plots/%s_AN_fix_ARC/v%s_calo_AOD_"#+ERA+"_"+REGION+"/"
+#BASEDIR = "plots/Yields_AN/v%s_calo_AOD_"#+ERA+"_"+REGION+"/"
+SYST_UNC = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_%s_SR_signal_uncertainties_fix/"
+SYST_UNC_ALL = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_all_SR_signal_uncertainties_fix/"
+
+
+#Testing:
+REGION = "SRtoMN"
+REGION = "SRtoEN"
+BASEDIR = "plots/%s_AN_fix/v%s_calo_AOD_"#+ERA+"_"+REGION+"/"
+SYST_UNC = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_%s_"+REGION+"_signal_uncertainties_fix/"
+SYST_UNC_ALL = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_all_"+REGION+"_signal_uncertainties_fix/"
 
 def print_tab(ERAS,inp_dict):
 
@@ -56,6 +67,7 @@ def print_tab(ERAS,inp_dict):
 
     for era in ERAS:
 
+
         label=""
         if inp_dict["eta_cut"]==True:
             label+="_eta_1p0"
@@ -66,15 +78,17 @@ def print_tab(ERAS,inp_dict):
             if inp_dict["phi"]:
                 label+="_vs_phi"
         if inp_dict["clos"]:
-            dnn_threshold = 0.9
+            dnn_threshold = 0.7
             label+="_closure"+str(dnn_threshold).replace(".","p")
 
         more_label = ""
-        if len(era)>4:
+        if len(era)>4 and inp_dict["clos"]==False:
             more_label=era[4:]
         #print "more_label: ", more_label
         if inp_dict["kill_qcd"]:
             more_label += "_MinDPhi_0p5"
+        if len(era)>4 and inp_dict["clos"]==True:
+            more_label+=era[4:]
 
         year = era[:4]
         print "\n"
@@ -100,23 +114,50 @@ def print_tab(ERAS,inp_dict):
 
         #Here we need a loop on the datasets composing the REGION
         for tag in tags:
+
+            if era=="2016_B-F" and tag=="SRtoEN":
+                continue
+
             s = tag
+            v = "5"
+            fold = "Efficiency"
             if tag=="TtoEM":
                 s = "MuonEG"
             if tag=="SR":
                 s = "HighMET"
                 #s = "All"
+                v = "6"
+                fold = "Yields"
+            if tag=="BHpos":
+                s = "HighMET"
+                #s = "All"
+                v = "6"
+                fold = "Yields"
+            if tag=="BHneg":
+                s = "HighMET"
+                #s = "All"
+                v = "6"
+                fold = "Yields"
             if tag=="ZtoEE" or tag=="WtoEN" or tag=="WtoEN_MET":
                 s = "EGamma" if era=="2018" else "SingleElectron"
             if tag=="ZtoMM" or tag=="WtoMN" or tag=="WtoMN_MET":
                 s = "SingleMuon"
+            if tag=="SRtoEN":
+                s = "EGamma" if era=="2018" else "SingleElectron"
+                v = "5"
+            if tag=="SRtoMN":
+                s = "SingleMuon"
+                v = "5"
 
-            PLOTDIR = BASEDIR + year + "_" + tag + "/"
+            INPDIR = (BASEDIR % (fold,v)) + year + "_" + tag + "/"
+            if tag=="SRtoMN" or tag=="SRtoEN":
+                INPDIR = (BASEDIR % (fold,v)) + year + "_" + tag + "_unblinding_ARC/"
+            print "Reading from... ", INPDIR
 
-            with open(PLOTDIR+"BkgPredResults_"+year+"_"+tag+ "_"+s+ label+more_label+inp_dict["label_2"]+".yaml","r") as f:
+            with open(INPDIR+"BkgPredResults_"+year+"_"+tag+ "_"+s+ label+more_label+inp_dict["label_2"]+".yaml","r") as f:
                 results = yaml.load(f, Loader=yaml.Loader)
                 f.close()
-            #print "Info: yaml open: "+PLOTDIR+"BkgPredResults_"+year+"_"+tag+"_"+s+label+more_label+inp_dict["label_2"]+".yaml"
+            #print "Info: yaml open: "+INPDIR+"BkgPredResults_"+year+"_"+tag+"_"+s+label+more_label+inp_dict["label_2"]+".yaml"
             #print "It contains the following dictionary:"
             #print results
             #print "\n"
@@ -172,23 +213,62 @@ def print_tab(ERAS,inp_dict):
     e_2_meth = abs(pred_2 - pred_2_alt)
 
     #Store uncertainties in yaml
-    if len(ERAS)==1:
+    if len(ERAS)==1 and inp_dict["REGION"]=="SR":
         era = ERAS[0]
         year = era[0:4]
         added = era[4:]
         OUTDIR = SYST_UNC % year
-        results = {}
-        results['bkg_stat_'+era] = 100*math.sqrt(e_2_stat_sq)/pred_2
-        results['bkg_method'] = 100*e_2_meth/pred_2
-        results['bkg_composition'] = 100*e_2_comp/pred_2
-        #print results
+        uncertainties_all = {}
+        uncertainties_all['bkg_stat_'+era] = 100*math.sqrt(e_2_stat_sq)/pred_2
+        uncertainties_all['bkg_method'] = 100*e_2_meth/pred_2
+        uncertainties_all['bkg_composition'] = 100*e_2_comp/pred_2
+        uncertainties_all['bkg_tot'] = 100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2
+        uncertainties_all['bkg_tot_bin1'] = 100*math.sqrt(e_1_stat_sq + e_1_comp**2)/pred_1
+        uncertainties_all['bkg_stat_bin1'] = 100*e_1_stat_sq/pred_1
+        uncertainties_all['bkg_composition_bin1'] = 100*e_1_comp/pred_1
+
+        uncertainties = {}
+        uncertainties['bkg_stat_'+era] = 100*math.sqrt(e_2_stat_sq)/pred_2
+        uncertainties['bkg_method'] = 100*e_2_meth/pred_2
+        uncertainties['bkg_composition'] = 100*e_2_comp/pred_2
+        print uncertainties
         with open(OUTDIR+"signal_bkg_unc"+added+".yaml","w") as f:
-            yaml.dump(results, f)
+            yaml.dump(uncertainties_all, f)
             f.close()
         print "Bkg unc written in ", OUTDIR+"signal_bkg_unc"+added+".yaml"
+        with open(OUTDIR+"signal_bkg_datacard_unc"+added+".yaml","w") as f:
+            yaml.dump(uncertainties, f)
+            f.close()
+        print "Bkg unc written in ", OUTDIR+"signal_bkg_datacard_unc"+added+".yaml"
 
 
-    round_fact = 3 if (inp_dict["REGION"]=="SR" or inp_dict["REGION"]=="ZtoLL") else 2
+    if len(ERAS)>1 and (inp_dict["REGION"]=="SR"):# or inp_dict["REGION"]=="SRtoMN" or inp_dict["REGION"]=="SRtoEN"):
+        OUTDIR = SYST_UNC_ALL
+        uncertainties_all = {}
+        uncertainties_all['bkg_stat'] = 100*math.sqrt(e_2_stat_sq)/pred_2
+        uncertainties_all['bkg_method'] = 100*e_2_meth/pred_2
+        uncertainties_all['bkg_composition'] = 100*e_2_comp/pred_2
+        uncertainties_all['bkg_tot'] = 100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2
+        uncertainties_all['bkg_tot_bin1'] = 100*math.sqrt(e_1_stat_sq + e_1_comp**2)/pred_1
+        uncertainties_all['bkg_stat_bin1'] = 100*e_1_stat_sq/pred_1
+        uncertainties_all['bkg_composition_bin1'] = 100*e_1_comp/pred_1
+
+        uncertainties = {}
+        uncertainties['bkg_stat'] = 100*math.sqrt(e_2_stat_sq)/pred_2
+        uncertainties['bkg_method'] = 100*e_2_meth/pred_2
+        uncertainties['bkg_composition'] = 100*e_2_comp/pred_2
+        print uncertainties_all
+        with open(OUTDIR+"signal_bkg_unc"+".yaml","w") as f:
+            yaml.dump(uncertainties_all, f)
+            f.close()
+        print "Bkg unc written in ", OUTDIR+"signal_bkg_unc"+".yaml"
+        with open(OUTDIR+"signal_bkg_datacard_unc"+".yaml","w") as f:
+            yaml.dump(uncertainties, f)
+            f.close()
+        print "Bkg unc written in ", OUTDIR+"signal_bkg_datacard_unc"+".yaml"
+
+
+    round_fact = 3 if (inp_dict["REGION"]=="SR" or inp_dict["REGION"]=="SRtoEN" or inp_dict["REGION"]=="SRtoMN" or inp_dict["REGION"]=="ZtoLL" or inp_dict["REGION"]=="TtoEM") else 2
     '''
     print "\n"
     print "bin 0: ", y_0, "+-", round(math.sqrt(e_0_sq),0)
@@ -225,9 +305,56 @@ def print_tab(ERAS,inp_dict):
     #" & ", round(math.sqrt(e_2_stat_sq),round_fact) , " & ", round(e_2_meth,round_fact) , " & ", round(e_2_comp,round_fact), "\\"+"\\"
     ###print ERAS[0].replace("_"," ") if len(ERAS)==1 else "Tot.", " & ", str(int(y_2)), (" & %.2"+str(round_fact) % round(pred_2,round_fact)), " $\pm$ ", round(math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq),round_fact)  , "(", round(100*math.sqrt(e_2_comp**2 + e_2_meth**2 + e_2_stat_sq)/pred_2,1),"\%)", " & ", round(math.sqrt(e_2_stat_sq),round_fact) , " & ", round(e_2_meth,round_fact) , " & ", round(e_2_comp,round_fact), "\\"+"\\"
 
+inp_dict = {
+    "REGION" : REGION,#"SRtoEN",
+    "main"   : "WtoLN",
+    "extr_reg" : ["ZtoLL","WtoLN","TtoEM","JetHT"],
+    "kill_qcd" : True,
+    "eta" : True,
+    "phi" : False,
+    "eta_cut" : True,
+    "phi_cut" : True,
+    "clos" : False,
+    "label_2" : "",
+    }
 
+#print_tab(["2016_B-F"],inp_dict)
+print_tab(["2016_G-H"],inp_dict)
+print_tab(["2017"],inp_dict)
+print_tab(["2018"],inp_dict)
+print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
+exit()
 inp_dict = {
     "REGION" : "SR",
+    "main"   : "WtoLN",
+    "extr_reg" : ["ZtoLL","WtoLN","TtoEM","JetHT"],
+    "kill_qcd" : True,
+    "eta" : True,
+    "phi" : False,
+    "eta_cut" : True,
+    "phi_cut" : True,
+    "clos" : False,
+    "label_2" : "",
+    }
+
+
+print_tab(["2016_B-F"],inp_dict)
+print_tab(["2016_G-H"],inp_dict)
+print_tab(["2017"],inp_dict)
+print_tab(["2018"],inp_dict)
+print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
+
+
+##print_tab(["2016_B-F","2017","2018"],inp_dict)
+
+#"ERAS" : ["2016_B-F","2016_G-H","2017","2018"],
+exit()
+
+
+'''
+###Special MET prediction
+inp_dict = {
+    "REGION" : "WtoLN_MET",
     "main"   : "WtoLN",
     "extr_reg" : ["ZtoLL","WtoLN","TtoEM","JetHT"],
     "kill_qcd" : True,
@@ -243,11 +370,39 @@ print_tab(["2016_B-F"],inp_dict)
 print_tab(["2016_G-H"],inp_dict)
 print_tab(["2017"],inp_dict)
 print_tab(["2018"],inp_dict)
-#print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
+print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
 ##print_tab(["2016_B-F","2017","2018"],inp_dict)
 
 #"ERAS" : ["2016_B-F","2016_G-H","2017","2018"],
 exit()
+'''
+
+'''
+###Beam halo
+inp_dict = {
+    "REGION" : "BHpos",
+    "main"   : "TtoEM",
+    "extr_reg" : ["ZtoLL","TtoEM"],
+    "kill_qcd" : True,
+    "eta" : True,
+    "phi" : False,
+    "eta_cut" : True,
+    "phi_cut" : True,
+    "clos" : True,
+    #"label_2" : "_positive",
+    "label_2" : "_positive_no_veto",
+    }
+
+print_tab(["2016_B-F"],inp_dict)
+#print_tab(["2016_G-H"],inp_dict)
+#print_tab(["2017"],inp_dict)
+#print_tab(["2018"],inp_dict)
+#print_tab(["2016_B-F","2016_G-H","2017","2018"],inp_dict)
+
+#"ERAS" : ["2016_B-F","2016_G-H","2017","2018"],
+exit()
+'''
+
 
 inp_dict = {
     "REGION" : "SR",

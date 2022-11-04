@@ -79,6 +79,14 @@ sample = {
         'kfactor' : 1.,
     },
     #TTbar
+    'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 797.4,#x-sec from mcm
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+
+
     'TTJets_SingleLeptFromT_genMET-150_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1' : {
         'nevents' : 1,
         'xsec'    : 6.212,#x-sec DB 2017! not existing in 2016
@@ -283,161 +291,163 @@ sample = {
     },
     #HH old approach
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m127_ctau500' : {
-        'nevents' : 164114,
-        'xsec'    : 10.31*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 7.7314,#10.31*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m127_ctau3000' : {
-        'nevents' : 162306,
-        'xsec'    : 10.31*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 7.7314,#10.31*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m150_ctau500' : {
-        'nevents' : 135983,
-        'xsec'    : 1e-03*3832.31*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 4.00783,#1e-03*3832.31*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m150_ctau3000' : {
-        'nevents' : 136349,
-        'xsec'    : 1e-03*3832.31*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 4.00783,#1e-03*3832.31*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m175_ctau500' : {
-        'nevents' : 89471,
-        'xsec'    : 1e-03*2583.96*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 2.29307,#1e-03*2583.96*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m175_ctau3000' : {
-        'nevents' : 94055,
-        'xsec'    : 1e-03*2583.96*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 2.29307,#1e-03*2583.96*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m200_ctau500' : {
-        'nevents' : 67193,
-        'xsec'    : 1e-03*1335.62*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 1.4065,#1e-03*1335.62*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m200_ctau3000' : {
-        'nevents' : 65703,
-        'xsec'    : 1e-03*1335.62*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 1.4065,#1e-03*1335.62*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m250_ctau500' : {
-        'nevents' : 37517,
-        'xsec'    : 1e-03*810.24*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 0.61117,#1e-03*810.24*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m250_ctau3000' : {
-        'nevents' : 36228,
-        'xsec'    : 1e-03*810.24*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 0.61117,#1e-03*810.24*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m300_ctau500' : {
-        'nevents' : 24403,
-        'xsec'    : 1e-03*284.855*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 0.302815,#1e-03*284.855*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m300_ctau3000' : {
-        'nevents' : 26652,
-        'xsec'    : 1e-03*284.855*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 0.302815,#1e-03*284.855*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m400_ctau500' : {
-        'nevents' : 11962,
-        'xsec'    : 1e-03*88.7372*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 0.0946976,#1e-03*88.7372*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m400_ctau3000' : {
-        'nevents' : 14107,
-        'xsec'    : 1e-03*88.7372*0.5824*0.5824,
+        'nevents' : 1,
+        'xsec'    : 0.0946976,#1e-03*88.7372*0.5824*0.5824,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m600_ctau500' : {
-        'nevents' : 12831,
-        'xsec'    : 1e-03*0.5824*0.5824*14.6677,
+        'nevents' : 1,
+        'xsec'    : 0.0156263,#1e-03*0.5824*0.5824*14.6677,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m600_ctau3000' : {
-        'nevents' : 13069,
-        'xsec'    : 1e-03*0.5824*0.5824*14.6677,
+        'nevents' : 1,
+        'xsec'    : 0.0156263,#1e-03*0.5824*0.5824*14.6677,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m800_ctau500' : {
-        'nevents' : 12391,
-        'xsec'    : 1e-03*0.5824*0.5824*3.46143,
+        'nevents' : 1,
+        'xsec'    : 0.00366385,#1e-03*0.5824*0.5824*3.46143,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m800_ctau3000' : {
-        'nevents' : 12560,
-        'xsec'    : 1e-03*0.5824*0.5824*3.46143,
+        'nevents' : 1,
+        'xsec'    : 0.00366385,#1e-03*0.5824*0.5824*3.46143,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1000_ctau500' : {
-        'nevents' : 12986,
-        'xsec'    : 1e-03*0.5824*0.5824*0.968853,
+        'nevents' : 1,
+        'xsec'    : 0.00102654,#1e-03*0.5824*0.5824*0.968853,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1000_ctau3000' : {
-        'nevents' : 13069,
-        'xsec'    : 1e-03*0.5824*0.5824*0.968853,
+        'nevents' : 1,
+        'xsec'    : 0.00102654,#1e-03*0.5824*0.5824*0.968853,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1250_ctau500' : {
-        'nevents' : 12265,
-        'xsec'    : 1e-03*0.5824*0.5824*0.240471,
+        'nevents' : 1,
+        'xsec'    : 0.000243209,#1e-03*0.5824*0.5824*0.240471,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1250_ctau3000' : {
-        'nevents' : 11783,
-        'xsec'    : 1e-03*0.5824*0.5824*0.240471,
+        'nevents' : 1,
+        'xsec'    : 0.000243209,#1e-03*0.5824*0.5824*0.240471,
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1500_ctau500' : {
-        'nevents' : 12644,
-        'xsec'    : 1e-03*0.5824*0.5824*0.,#not done yet!!
+        'nevents' : 1,
+        'xsec'    : 6.09395e-05,#1e-03*0.5824*0.5824*0.,#not done yet!!
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1500_ctau3000' : {
-        'nevents' : 12283,
-        'xsec'    : 1e-03*0.5824*0.5824*0.,#not done yet!!
+        'nevents' : 1,
+        'xsec'    : 6.09395e-05,#1e-03*0.5824*0.5824*0.,#not done yet!!
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1800_ctau500' : {
-        'nevents' : 12198,
-        'xsec'    : 1e-03*0.5824*0.5824*0.,#not done yet!!
+        'nevents' : 1,
+        'xsec'    : 1.2491e-05,#1e-03*0.5824*0.5824*0.,#not done yet!!
         'matcheff': 1.,
         'kfactor' : 1.,
     },
     'SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m1800_ctau3000' : {
-        'nevents' : 11719,
-        'xsec'    : 1e-03*0.5824*0.5824*0.,#not done yet!!
+        'nevents' : 1,
+        'xsec'    : 1.2491e-05,#1e-03*0.5824*0.5824*0.,#not done yet!!
         'matcheff': 1.,
         'kfactor' : 1.,
     },
+
+
 
     #HH new x-sec according to https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYNLONNLLCrossSections13TeVHinoAll
 
@@ -1236,8 +1246,8 @@ samples = {
             'HighMETRun2016D-07Aug17_v1',
             'HighMETRun2016E-07Aug17_v1',
             'HighMETRun2016F-07Aug17_v1',
-            #'HighMETRun2016G-07Aug17_v1',
-            #'HighMETRun2016H-07Aug17_v1'
+            'HighMETRun2016G-07Aug17_v1',
+            'HighMETRun2016H-07Aug17_v1'
         ],
         'fillcolor' : 0,
         'fillstyle' : 1,
@@ -1245,6 +1255,62 @@ samples = {
         'linewidth' : 2,
         'linestyle' : 1,
         'label' : "HighMET 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'HighMETBF' : {
+        'order' : 0,
+        'files' : [
+            'HighMETRun2016B-07Aug17_ver2-v1',
+            'HighMETRun2016C-07Aug17_v1',
+            'HighMETRun2016D-07Aug17_v1',
+            'HighMETRun2016E-07Aug17_v1',
+            'HighMETRun2016F-07Aug17_v1',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "HighMET 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'HighMETGH' : {
+        'order' : 0,
+        'files' : [
+            'HighMETRun2016G-07Aug17_v1',
+            'HighMETRun2016H-07Aug17_v1'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "HighMET 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'HighMETHBHE' : {
+        'order' : 0,
+        'files' : [
+            'HighMETRun2016B-07Aug17_ver2-v1HBHE',
+            'HighMETRun2016C-07Aug17_v1HBHE',
+            'HighMETRun2016D-07Aug17_v1HBHE',
+            'HighMETRun2016E-07Aug17_v1HBHE',
+            'HighMETRun2016F-07Aug17_v1HBHE',
+            'HighMETRun2016G-07Aug17_v1HBHE',
+            'HighMETRun2016H-07Aug17_v1HBHE'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "HighMET 2016 HB HE noise",
         'weight': 1.,
         'plot': True,
     },
@@ -1330,6 +1396,43 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+
+    'SingleMuonBF' : {
+        'order' : 0,
+        'files' : [
+            ##'SingleMuonRun2016B-07Aug17_ver1-v1',
+            'SingleMuonRun2016B-07Aug17_ver2-v1',
+            'SingleMuonRun2016C-07Aug17-v1',
+            'SingleMuonRun2016D-07Aug17-v1',
+            'SingleMuonRun2016E-07Aug17-v1',
+            'SingleMuonRun2016F-07Aug17-v1',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "SingleMuon 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'SingleMuonGH' : {
+        'order' : 0,
+        'files' : [
+            'SingleMuonRun2016G-07Aug17-v1',
+            'SingleMuonRun2016H-07Aug17-v1'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "SingleMuon 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
     'SingleElectron' : {
         'order' : 0,
         'files' : [
@@ -1351,20 +1454,89 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+    'SingleElectronBF' : {
+        'order' : 0,
+        'files' : [
+            ##'SingleElectronRun2016B-07Aug17_ver1-v1',
+            'SingleElectronRun2016B-07Aug17_ver2-v2',
+            'SingleElectronRun2016C-07Aug17-v1',
+            'SingleElectronRun2016D-07Aug17-v1',
+            'SingleElectronRun2016E-07Aug17-v1',
+            'SingleElectronRun2016F-07Aug17-v1',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "SingleEle 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+    'SingleElectronGH' : {
+        'order' : 0,
+        'files' : [
+            #'SingleElectronRun2016G-07Aug17-v1',
+            'SingleElectronRun2016H-07Aug17-v1'#only one good
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "SingleEle 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
 
 
     'SingleLepton' : {
         'order' : 0,
         'files' : [
             ##'SingleMuonRun2016B-07Aug17_ver1-v1',
-            #'SingleMuonRun2016B-07Aug17_ver2-v1',
-            #'SingleMuonRun2016C-07Aug17-v1',
-            #'SingleMuonRun2016D-07Aug17-v1',
-            #'SingleMuonRun2016E-07Aug17-v1',
-            #'SingleMuonRun2016F-07Aug17-v1',
+            'SingleMuonRun2016B-07Aug17_ver2-v1',
+            'SingleMuonRun2016C-07Aug17-v1',
+            'SingleMuonRun2016D-07Aug17-v1',
+            'SingleMuonRun2016E-07Aug17-v1',
+            'SingleMuonRun2016F-07Aug17-v1',
             'SingleMuonRun2016G-07Aug17-v1',
             'SingleMuonRun2016H-07Aug17-v1',
             'SingleElectronRun2016G-07Aug17-v1',
+            'SingleElectronRun2016H-07Aug17-v1'#only one good
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "SingleMuon+Ele 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+    'SingleLeptonBF' : {
+        'order' : 0,
+        'files' : [
+            'SingleMuonRun2016B-07Aug17_ver2-v1',
+            'SingleMuonRun2016C-07Aug17-v1',
+            'SingleMuonRun2016D-07Aug17-v1',
+            'SingleMuonRun2016E-07Aug17-v1',
+            'SingleMuonRun2016F-07Aug17-v1',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "SingleMuon+Ele 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+    'SingleLeptonGH' : {
+        'order' : 0,
+        'files' : [
+            'SingleMuonRun2016G-07Aug17-v1',
+            'SingleMuonRun2016H-07Aug17-v1',
             'SingleElectronRun2016H-07Aug17-v1'#only one good
         ],
         'fillcolor' : 0,
@@ -1381,11 +1553,11 @@ samples = {
         'order' : 0,
         'files' : [
             ##'JetHTRun2016B-07Aug17_ver1-v1',
-            #'JetHTRun2016B-07Aug17_ver2-v1',
-            #'JetHTRun2016C-07Aug17-v1',
-            #'JetHTRun2016D-07Aug17-v1',
-            #'JetHTRun2016E-07Aug17-v1',
-            #'JetHTRun2016F-07Aug17-v1',
+            'JetHTRun2016B-07Aug17_ver2-v1',
+            'JetHTRun2016C-07Aug17-v1',
+            'JetHTRun2016D-07Aug17-v1',
+            'JetHTRun2016E-07Aug17-v1',
+            'JetHTRun2016F-07Aug17-v1',
             'JetHTRun2016G-07Aug17-v1',
             'JetHTRun2016H-07Aug17-v1'
         ],
@@ -1398,15 +1570,50 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+    'JetHTBF' : {
+        'order' : 0,
+        'files' : [
+            ##'JetHTRun2016B-07Aug17_ver1-v1',
+            'JetHTRun2016B-07Aug17_ver2-v1',
+            'JetHTRun2016C-07Aug17-v1',
+            'JetHTRun2016D-07Aug17-v1',
+            'JetHTRun2016E-07Aug17-v1',
+            'JetHTRun2016F-07Aug17-v1',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "JetHT 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+    'JetHTGH' : {
+        'order' : 0,
+        'files' : [
+            'JetHTRun2016G-07Aug17-v1',
+            'JetHTRun2016H-07Aug17-v1'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "JetHT 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
     'MuonEG' : {
         'order' : 0,
         'files' : [
             ##'MuonEGRun2016B-07Aug17_ver1-v1',
-            #'MuonEGRun2016B-07Aug17_ver2-v1',
-            #'MuonEGRun2016C-07Aug17-v1',
-            #'MuonEGRun2016D-07Aug17-v1',
-            #'MuonEGRun2016E-07Aug17-v1',
-            #'MuonEGRun2016F-07Aug17-v1',
+            'MuonEGRun2016B-07Aug17_ver2-v1',
+            'MuonEGRun2016C-07Aug17-v1',
+            'MuonEGRun2016D-07Aug17-v1',
+            'MuonEGRun2016E-07Aug17-v1',
+            'MuonEGRun2016F-07Aug17-v1',
             'MuonEGRun2016G-07Aug17-v1',
             'MuonEGRun2016H-07Aug17-v1'
         ],
@@ -1419,6 +1626,41 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+    'MuonEGBF' : {
+        'order' : 0,
+        'files' : [
+            ##'MuonEGRun2016B-07Aug17_ver1-v1',
+            'MuonEGRun2016B-07Aug17_ver2-v1',
+            'MuonEGRun2016C-07Aug17-v1',
+            'MuonEGRun2016D-07Aug17-v1',
+            'MuonEGRun2016E-07Aug17-v1',
+            'MuonEGRun2016F-07Aug17-v1',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "MuonEG 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+    'MuonEGGH' : {
+        'order' : 0,
+        'files' : [
+            'MuonEGRun2016G-07Aug17-v1',
+            'MuonEGRun2016H-07Aug17-v1'
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "MuonEG 2016",
+        'weight': 1.,
+        'plot': True,
+    },
+
     'SinglePhoton' : {
         'order' : 0,
         'files' : [
@@ -1542,9 +1784,7 @@ samples = {
     #TTbar
     'TTbar' : {
         'files' : [
-             'TTJets_SingleLeptFromT_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
-             'TTJets_SingleLeptFromTbar_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v2',
-             'TTJets_DiLept_genMET-150_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
+             'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8-v1',
         ],
         'fillcolor' : 798,
         'fillstyle' : 1001,
@@ -1552,6 +1792,29 @@ samples = {
         'linewidth' : 2,
         'linestyle' : 1,
         'label' : "t#bar{t}",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    #Wtop
+    'Wtop' : {
+        'files' : [
+            'WJetsToLNu_HT-70To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8-v1',
+            'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8-v1',
+        ],
+        'fillcolor' : 885,#616,
+        'fillstyle' : 1001,
+        'linecolor' : 885,#616,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "W #rightarrow l #nu, t#bar{t}",
         'weight': 1.,
         'plot': True,
     },
@@ -2114,9 +2377,9 @@ samples = {
         'files' : ['SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m200_ctau500_HH'],
         'mass' : 200,
         'ctau' : 500,
-        'fillcolor' : 2,
+        'fillcolor' : 880-3,
         'fillstyle' : 0,
-        'linecolor' : 2,
+        'linecolor' : 880-3,
         'linewidth' : 3,
         'linestyle' : 1,
         'label' : "m_{#chi} = 200 GeV, c#tau_{0} = 0.5 m",
@@ -3344,5 +3607,105 @@ samples = {
         'weight': 1.,
         'plot': True,
     },
+
+    #split SUSY
+    'splitSUSY_M2400_100_ctau0p1' : {
+        'files' : ['splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 0.1,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 0.1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'splitSUSY_M2400_100_ctau1p0' : {
+        'files' : ['splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 1,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 1 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'splitSUSY_M2400_100_ctau10p0' : {
+        'files' : ['splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 10,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 10 mm",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'splitSUSY_M2400_100_ctau100p0' : {
+        'files' : ['splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 100,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 0.1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'splitSUSY_M2400_100_ctau1000p0' : {
+        'files' : ['splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 1000,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 1 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'splitSUSY_M2400_100_ctau10000p0' : {
+        'files' : ['splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 10000,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 10 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'splitSUSY_M2400_100_ctau100000p0' : {
+        'files' : ['splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8-v1'],
+        'mass' : 100,
+        'ctau' : 100000,
+        'fillcolor' : 1,
+        'fillstyle' : 0,
+        'linecolor' : 1,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 100 m",
+        'weight': 1.,
+        'plot': True,
+    },
+
 
 }

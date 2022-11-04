@@ -68,7 +68,7 @@ if SEL=="SR":
 sign = ['SUSY_mh127_ctau500','SUSY_mh150_ctau500','SUSY_mh175_ctau500','SUSY_mh200_ctau500','SUSY_mh250_ctau500','SUSY_mh300_ctau500','SUSY_mh400_ctau500','SUSY_mh600_ctau500','SUSY_mh800_ctau500','SUSY_mh1000_ctau500','SUSY_mh1250_ctau500','SUSY_mh1500_ctau500','SUSY_mh1800_ctau500']
 sign += ['SUSY_mh127_ctau3000','SUSY_mh150_ctau3000','SUSY_mh175_ctau3000','SUSY_mh200_ctau3000','SUSY_mh250_ctau3000','SUSY_mh300_ctau3000','SUSY_mh400_ctau3000','SUSY_mh600_ctau3000','SUSY_mh800_ctau3000','SUSY_mh1000_ctau3000','SUSY_mh1250_ctau3000','SUSY_mh1500_ctau3000','SUSY_mh1800_ctau3000']
 
-sign = ['SUSY_mh127_ctau500','SUSY_mh300_ctau500','SUSY_mh600_ctau500','SUSY_mh1000_ctau500','SUSY_mh1800_ctau500']
+sign = ['SUSY_mh127_ctau500_HH','SUSY_mh300_ctau500_HH','SUSY_mh600_ctau500_HH','SUSY_mh1000_ctau500_HH','SUSY_mh1800_ctau500_HH']
 
 MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_"+SEL+"_v5_ntuples/"
 MAIN_MM = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_ZtoMM_v5_ntuples/"
@@ -2121,6 +2121,128 @@ def jet_response(var_list,cut,dnn,label=""):
     '''
 
 
+def signal_jet_response(cut,dnn,label=""):
+
+    if SEL=="SR":
+        prj_weight = "EventWeight*PUReWeight*TriggerWeight"
+    else:
+        prj_weight = "EventWeight*PUReWeight"
+
+    if ERA=="2016":
+        from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2016 import samples
+        from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2016 import lumi
+    if ERA=="2017":
+        from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import samples
+        from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2017 import lumi
+    if ERA=="2018":
+        from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import samples
+        from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2018 import lumi
+
+    for s in sign:
+        chain = TChain("tree")
+        for j, ss in enumerate(samples[s]['files']):
+            chain.Add(MAIN_MET + ss + ".root")
+
+        var_x = "Jets.pt/Jets.ptGenJ"
+        nbins_x = 50
+        binmin_x = 0
+        binmax_x = 5#10
+        nbins_y = 50
+        binmin_y = 0
+        binmax_y = 1
+
+
+        h = TH1F("h"+s,"", nbins_x, binmin_x, binmax_x)
+        h.Sumw2()
+        ht = TH1F("ht"+s,"", nbins_x, binmin_x, binmax_x)
+        ht.Sumw2()
+        h2 = TH2F("h2"+s,"", nbins_y, binmin_y, binmax_y, nbins_x, binmin_x, binmax_x)
+        h2.Sumw2()
+
+        chain.Project("h"+s, var_x, prj_weight+"*("+cut+")")
+        chain.Project("ht"+s, var_x, prj_weight+"*("+cut+" && Jets.sigprob>0.996)")
+        chain.Project("h2"+s, var_x+":Jets.sigprob", prj_weight+"*("+cut+")")
+
+        #Plot resolution
+        can = TCanvas("can","can",900,800)
+        can.SetRightMargin(0.04)
+        can.SetLeftMargin(0.12)
+        can.cd()
+        can.SetGrid()
+        can.SetLogy()
+        leg = TLegend(0.6, 0.65, 0.97, 0.9)
+        h.SetMarkerStyle(21)
+        h.SetMarkerColor(samples[s]['linecolor'])
+        h.SetLineColor(samples[s]['linecolor'])
+        h.SetLineWidth(2)
+
+        ht.SetMarkerStyle(20)
+        ht.SetMarkerColor(samples[s]['linecolor']+5)
+        ht.SetLineColor(samples[s]['linecolor']+5)
+        ht.SetLineWidth(2)
+        
+        h.Scale(1./h.Integral())
+        ht.Scale(1./ht.Integral())
+
+        h.Draw("PE,sames")
+        ht.Draw("PE,sames")
+        h.GetXaxis().SetTitle("Jet response (p_{T}^{reco}/p_{T}^{gen})")
+
+        #h.SetMinimum(binmin_y)
+        #h.SetMaximum(binmax_y)
+        
+        OUTSTRING = OUT
+        OUTSTRING += s+"_jet_response"
+        #OUTSTRING += "_vs_DNN_score_zoom"
+        drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+        drawRegion("isSR")
+        leg.AddEntry(h,samples[s]['label'],"PL")
+        leg.AddEntry(ht,"tagged jets","PL")
+        leg.Draw()
+        can.Update()
+        can.Print(OUTSTRING+label+'.png')
+        can.Print(OUTSTRING+label+'.pdf')
+        can.Close()
+
+
+        #Plot response vs prob
+        can = TCanvas("can","can",900,800)
+        can.SetRightMargin(0.04)
+        can.SetLeftMargin(0.12)
+        can.cd()
+        can.SetGrid()
+        leg = TLegend(0.7, 0.7, 0.95, 0.9)
+        profX = TProfile(h2.ProfileX("b_prof"))
+        profX.SetMarkerStyle(21)
+        profX.SetMarkerColor(samples[s]['linecolor'])
+        profX.SetLineColor(samples[s]['linecolor'])
+        profX.SetLineWidth(2)
+        
+        profX.Draw("PE,sames")
+        profX.GetYaxis().SetTitle("Jet response (p_{T}^{reco}/p_{T}^{gen})")
+        profX.GetXaxis().SetTitle("AK4 jet[0] DNN score")#("p_{T}^{Z}")
+
+        profX.SetMinimum(0)
+        profX.SetMaximum(2)
+        
+        OUTSTRING = OUT
+        OUTSTRING += s+"_jet_response"
+        OUTSTRING += "_vs_DNN_score_zoom"
+        drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+        drawRegion("isSR")
+        leg.AddEntry(profX,samples[s]['label'],"PL")
+        leg.Draw()
+        can.Update()
+        can.Print(OUTSTRING+label+'.png')
+        can.Print(OUTSTRING+label+'.pdf')
+        profX.Delete()
+        can.Close()
+
+        h.Delete()
+        ht.Delete()
+        h2.Delete()
+
+
 def draw_syst_unc():
     print "Drawing uncertainty vs mass"
     with open(OUT+"signal_time_smearing_integrals.yaml","r") as f:
@@ -2182,6 +2304,10 @@ def draw_syst_unc():
  
 
 lab = ""
+
+signal_jet_response(cut = "abs(Jets.eta)<1 && isSR && MinJetMetDPhi>0.5",label="_DNN_0p996",dnn=0.996)
+exit()
+
 if SEL=="SR":
     #time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "isSR",label=lab,scale=True,do_smear=False)
     #time_fit(var="JetsNegative.timeRecHitsEB",cut = "isSR && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+"_all_jets",scale=True,do_smear=False)

@@ -512,9 +512,13 @@ requests = {
 'CosmicsRun2018C-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018C-CosmicSP-PromptReco-v1/RAW-RECO',
 'CosmicsRun2018C-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018C-CosmicSP-PromptReco-v2/RAW-RECO',
 'CosmicsRun2018C-CosmicSP-PromptReco-v3' : '/Cosmics/Run2018C-CosmicSP-PromptReco-v3/RAW-RECO',
-#'CosmicsRun2018D-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018D-CosmicSP-PromptReco-v1/RAW-RECO',
-#'CosmicsRun2018D-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018D-CosmicSP-PromptReco-v2/RAW-RECO',
+'CosmicsRun2018D-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018D-CosmicSP-PromptReco-v1/RAW-RECO',
+'CosmicsRun2018D-CosmicSP-PromptReco-v2' : '/Cosmics/Run2018D-CosmicSP-PromptReco-v2/RAW-RECO',
 'CosmicsRun2018E-CosmicSP-PromptReco-v1' : '/Cosmics/Run2018E-CosmicSP-PromptReco-v1/RAW-RECO',
+
+#Cosmics MC
+'LooseMuCosmic_38T_p5-3000-RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v9' : '/LooseMuCosmic_38T_p5-3000/RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v9/AODSIM',
+'TKCosmic_38T_p20-3000-RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v8' : '/TKCosmic_38T_p20-3000/RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v8/AODSIM',
 
 #TwinHiggs
 #VBF

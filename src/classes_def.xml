@@ -19,6 +19,8 @@
   <class name="TrackType"/>
   <class name="LorentzType"/>
   <class name="JetCaloType"/>
+  <class name="CaloMEtType"/>
+  <class name="Point"/>
   <class name="std::vector<JetCaloType>"/>
   <class name="std::vector<JetType>"/>
   <class name="std::vector<FatJetType>"/>
@@ -38,4 +40,6 @@
   <class name="std::vector<hcalRecHitType>"/>
   <class name="std::vector<TrackType>"/>
   <class name="std::vector<LorentzType>"/>
+  <class name="std::vector<CaloMEtType>"/>                                                                             
+  <class name="std::vector<Point>"/>                                                                             
 </lcgdict>

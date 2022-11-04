@@ -24,7 +24,8 @@ import cmsml
 #model = keras.models.load_model('nn_inference/tagger_AK8_v1/model.h5')
 #model = keras.models.load_model('nn_inference/tagger_AK4_v3/model.h5')
 #model = keras.models.load_model('nn_inference/tagger_AK4_miniAOD_v3/model.h5')
-model = keras.models.load_model('nn_inference/tagger_AK8_v2_double_match/model.h5')
+#model = keras.models.load_model('nn_inference/tagger_AK8_v2_double_match/model.h5')
+model = keras.models.load_model('nn_inference/tagger_AK4_v3_pt_flat/model.h5')
 
 
 #import tensorflow.python.keras.backend as K
@@ -51,8 +52,8 @@ print([node.op.name for node in model.inputs])
 #    print(i.name)
 
 print('\n')
-cmsml.tensorflow.save_graph("nn_inference/tagger_AK8_v2_double_match/graph.pb", model, variables_to_constants=True)
-cmsml.tensorflow.save_graph("nn_inference/tagger_AK8_v2_double_match/graph.pb.txt", model, variables_to_constants=True)
+cmsml.tensorflow.save_graph("nn_inference/tagger_AK4_v3_pt_flat/graph.pb", model, variables_to_constants=True)
+cmsml.tensorflow.save_graph("nn_inference/tagger_AK4_v3_pt_flat/graph.pb.txt", model, variables_to_constants=True)
 
 #outputs = [node.op.name for node in model.outputs]
 #min_graph = tf.graph_util.convert_variables_to_constants(sess, sess.graph.as_graph_def(), [node.op.name for node in model.outputs])

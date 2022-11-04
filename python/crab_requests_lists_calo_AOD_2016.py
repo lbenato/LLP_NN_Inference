@@ -30,6 +30,7 @@ requests = {
 
 ##############################
 ###TTbar inclusive
+'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8-v1':'/TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8/RunIISummer16DR80Premix-PUMoriond17_backup_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
 #/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8//AODSIMXXX #
 #/TTToHadronic_TuneCP5_13TeV-powheg-pythia8//AODSIMXXX #
 #/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8//AODSIMXXX #
@@ -326,4 +327,14 @@ requests = {
 ##'n3n2-n1-hbb-hbb_mh127_pl1000' : '/n3n2-n1-hbb-hbb_mh127_pl1000_ev100000/jmao-crab_CMSSW_9_4_12_n3n2-n1-hbb-hbb_mchi127_pl1000_ev100000_AODSIM_CaltechT2-37ac8d442b9840be1abba4facfa67e70/USER',
 ###############################################
 #Heavy Higgs
+
+#split SUSY private
+'splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+'splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
+
 }

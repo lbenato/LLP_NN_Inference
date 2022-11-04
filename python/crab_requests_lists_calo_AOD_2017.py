@@ -354,4 +354,17 @@ requests = {
 'GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-2000_TuneCP5_13TeV-pythia8_PRIVATE-MC' : '/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-2000_TuneCP5_13TeV-pythia8_PRIVATE-MC/lbenato-RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM-51dbace3c073d03a4eeb2fde7d5a06e2/USER',
 'GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-5000_TuneCP5_13TeV-pythia8_PRIVATE-MC' : '/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-5000_TuneCP5_13TeV-pythia8_PRIVATE-MC/lbenato-RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM-51dbace3c073d03a4eeb2fde7d5a06e2/USER',
 'GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-10000_TuneCP5_13TeV-pythia8_PRIVATE-MC' : '/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-10000_TuneCP5_13TeV-pythia8_PRIVATE-MC/lbenato-RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15_AODSIM-51dbace3c073d03a4eeb2fde7d5a06e2/USER',
+
+'CosmicsRun2017F-CosmicSP-PromptReco-v1' : '/Cosmics/Run2017F-CosmicSP-PromptReco-v1/RAW-RECO',
+
+#split SUSY private
+'splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+'splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+'splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+'splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+'splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+'splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+'splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8-v1' : '/splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8/RunIIFall17DRPremix-PU2017_94X_mc2017_realistic_v11-v1/AODSIM',
+
+
 }

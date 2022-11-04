@@ -212,6 +212,37 @@ sample = {
         'kfactor' : 1.,
     },
 
+    #split SUSY
+    'splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
+    'splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8-v1' : {
+        'nevents' : 1,
+        'xsec'    : 1,
+        'matcheff': 1.,
+        'kfactor' : 1.,
+    },
 
 
     #GMSB SUSY
@@ -1247,17 +1278,17 @@ samples = {
     'Cosmics' : {
         'order' : 0,
         'files' : [
-            #'CosmicsRun2018A-06Jun2018-v1',
-            #'CosmicsRun2018A-CosmicSP-PromptReco-v1',
+            ##'CosmicsRun2018A-06Jun2018-v1',
+            'CosmicsRun2018A-CosmicSP-PromptReco-v1',
             'CosmicsRun2018A-CosmicSP-PromptReco-v2',
-            #'CosmicsRun2018A-CosmicSP-PromptReco-v3',
+            'CosmicsRun2018A-CosmicSP-PromptReco-v3',
             'CosmicsRun2018B-CosmicSP-PromptReco-v1',
             'CosmicsRun2018B-CosmicSP-PromptReco-v2',
             'CosmicsRun2018C-CosmicSP-PromptReco-v1',
             'CosmicsRun2018C-CosmicSP-PromptReco-v2',
-            #'CosmicsRun2018C-CosmicSP-PromptReco-v3',
-            #'CosmicsRun2018D-CosmicSP-PromptReco-v1',
-            #'CosmicsRun2018D-CosmicSP-PromptReco-v2',
+            'CosmicsRun2018C-CosmicSP-PromptReco-v3',
+            'CosmicsRun2018D-CosmicSP-PromptReco-v1',
+            'CosmicsRun2018D-CosmicSP-PromptReco-v2',#check!
             'CosmicsRun2018E-CosmicSP-PromptReco-v1',
         ],
         'fillcolor' : 0,
@@ -1266,6 +1297,53 @@ samples = {
         'linewidth' : 2,
         'linestyle' : 1,
         'label' : "Cosmics 2018",
+        'weight': 1.,
+        'plot': True,
+    },
+
+
+    'CosmicsMC' : {
+        'order' : 0,
+        'files' : [
+            'LooseMuCosmic_38T_p5-3000-RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v9',
+            'TKCosmic_38T_p20-3000-RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v8',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Cosmics 2018 MC",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'CosmicsMCLooseMu' : {
+        'order' : 0,
+        'files' : [
+            'LooseMuCosmic_38T_p5-3000-RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v9',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Cosmics 2018 MC",
+        'weight': 1.,
+        'plot': True,
+    },
+
+    'CosmicsMCTK' : {
+        'order' : 0,
+        'files' : [
+            'TKCosmic_38T_p20-3000-RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v8',
+        ],
+        'fillcolor' : 0,
+        'fillstyle' : 1,
+        'linecolor' : 1,
+        'linewidth' : 2,
+        'linestyle' : 1,
+        'label' : "Cosmics 2018 MC",
         'weight': 1.,
         'plot': True,
     },
@@ -1347,9 +1425,9 @@ samples = {
             'EGammaRun2018A-17Sep2018-v2',
             'EGammaRun2018B-17Sep2018-v1', 
             'EGammaRun2018C-17Sep2018-v1', 
-            #'EGammaRun2018D-PromptReco-v2', 
-            'EGammaRun2018D-PromptReco-v2_part1', 
-            'EGammaRun2018D-PromptReco-v2_part2', 
+            'EGammaRun2018D-PromptReco-v2', 
+            #'EGammaRun2018D-PromptReco-v2_part1', 
+            #'EGammaRun2018D-PromptReco-v2_part2', 
         ],
         'fillcolor' : 1,
         'fillstyle' : 1,
@@ -1444,7 +1522,7 @@ samples = {
             'QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8-v1', #partially  done? 
             'QCD_HT200to300_TuneCP5_13TeV-madgraphMLM-pythia8-v1', #partially  done? 
             'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', #almost done
-            'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
+            'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8-v1', ##high weight
             'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
             'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
             'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8-v1', 
@@ -1602,9 +1680,9 @@ samples = {
             'WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
             'WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8-v1',
         ],
-        'fillcolor' : 616,
+        'fillcolor' : 885,
         'fillstyle' : 1001,
-        'linecolor' : 616,
+        'linecolor' : 885,
         'linewidth' : 2,
         'linestyle' : 1,
         'label' : "W #rightarrow l #nu, t#bar{t}",
@@ -1780,9 +1858,9 @@ samples = {
         'files' : ['SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3_m200_ctau500'],
         'mass' : 200,
         'ctau' : 500,
-        'fillcolor' : 2,
+        'fillcolor' : 8,
         'fillstyle' : 0,
-        'linecolor' : 2,
+        'linecolor' : 8,
         'linewidth' : 3,
         'linestyle' : 1,
         'label' : "m_{#chi} = 200 GeV, c#tau_{0} = 0.5 m",
@@ -2372,6 +2450,19 @@ samples = {
         'linewidth' : 3,
         'linestyle' : 1,
         'label' : "m_{#chi} = 1000 GeV, c#tau_{0} = 0.5 m",
+        'weight': 1.,
+        'plot': True,
+    },
+    'fake' : {
+        'files' : ['fake'],
+        'mass' : 1000,
+        'ctau' : 500,
+        'fillcolor' : 2,
+        'fillstyle' : 1001,
+        'linecolor' : 2,
+        'linewidth' : 3,
+        'linestyle' : 1,
+        'label' : "same but p_{T}<70 GeV",
         'weight': 1.,
         'plot': True,
     },
@@ -5118,8 +5209,8 @@ samples = {
     #split SUSY
     'splitSUSY_M2400_100_ctau0p1' : {
         'files' : ['splitSUSY_M2400_100_ctau0p1_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
-        'ctau' : 1000,
+        'mass' : 100,
+        'ctau' : 0.1,
         'fillcolor' : 1,
         'fillstyle' : 0,
         'linecolor' : 1,
@@ -5132,8 +5223,8 @@ samples = {
 
     'splitSUSY_M2400_100_ctau1p0' : {
         'files' : ['splitSUSY_M2400_100_ctau1p0_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
-        'ctau' : 1000,
+        'mass' : 100,
+        'ctau' : 1.,
         'fillcolor' : 1,
         'fillstyle' : 0,
         'linecolor' : 1,
@@ -5146,8 +5237,8 @@ samples = {
 
     'splitSUSY_M2400_100_ctau10p0' : {
         'files' : ['splitSUSY_M2400_100_ctau10p0_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
-        'ctau' : 1000,
+        'mass' : 100,
+        'ctau' : 10.,
         'fillcolor' : 1,
         'fillstyle' : 0,
         'linecolor' : 1,
@@ -5160,8 +5251,8 @@ samples = {
 
     'splitSUSY_M2400_100_ctau100p0' : {
         'files' : ['splitSUSY_M2400_100_ctau100p0_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
-        'ctau' : 1000,
+        'mass' : 100,
+        'ctau' : 100.,
         'fillcolor' : 1,
         'fillstyle' : 0,
         'linecolor' : 1,
@@ -5174,7 +5265,7 @@ samples = {
 
     'splitSUSY_M2400_100_ctau1000p0' : {
         'files' : ['splitSUSY_M2400_100_ctau1000p0_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
+        'mass' : 100,
         'ctau' : 1000,
         'fillcolor' : 1,
         'fillstyle' : 0,
@@ -5188,28 +5279,28 @@ samples = {
 
     'splitSUSY_M2400_100_ctau10000p0' : {
         'files' : ['splitSUSY_M2400_100_ctau10000p0_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
-        'ctau' : 1000,
+        'mass' : 100,
+        'ctau' : 10000,
         'fillcolor' : 1,
         'fillstyle' : 0,
         'linecolor' : 1,
         'linewidth' : 3,
         'linestyle' : 1,
-        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 10 mm",
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 10 m",
         'weight': 1.,
         'plot': True,
     },
 
     'splitSUSY_M2400_100_ctau100000p0' : {
         'files' : ['splitSUSY_M2400_100_ctau100000p0_TuneCP2_13TeV_pythia8-v1'],
-        'mass' : 400,
-        'ctau' : 1000,
+        'mass' : 100,
+        'ctau' : 100000,
         'fillcolor' : 1,
         'fillstyle' : 0,
         'linecolor' : 1,
         'linewidth' : 3,
         'linestyle' : 1,
-        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 100 mm",
+        'label' : "m_{X} = 2400 GeV, c#tau_{0} = 100 m",
         'weight': 1.,
         'plot': True,
     },

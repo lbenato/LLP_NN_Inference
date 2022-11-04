@@ -1,6 +1,8 @@
 #include <vector>
-#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6.h"
+//#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6.h"
+#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/Objects_v6_cosmics.h"
 #include "NNInferenceCMSSW/LLP_NN_Inference/plugins/CaloObjects_v6.h"
+#include "NNInferenceCMSSW/LLP_NN_Inference/plugins/dbscan.h"
 //#include "Analyzer/LLP2018/plugins/RecoObjects.h"
 
 namespace { 
@@ -26,6 +28,8 @@ namespace {
     //RecoLeptonType dummy16;
     TrackType dummy17;
     LorentzType dummy18;
+    CaloMEtType dummy19;
+    Point dummy20;
 
     JetCaloType calo0;
     std::vector<JetCaloType> caloVector0;
@@ -50,6 +54,8 @@ namespace {
     //std::vector<RecoLeptonType> dummyVector16;
     std::vector<TrackType> dummyVector17;
     std::vector<LorentzType> dummyVector18;
+    std::vector<CaloMEtType> dummyVector19;
+    std::vector<Point> dummyVector20;
 
   };
 }

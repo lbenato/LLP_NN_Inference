@@ -19,41 +19,41 @@ gROOT.SetBatch(True)
 gStyle.SetOptStat(0)
 
 from NNInferenceCMSSW.LLP_NN_Inference.drawUtils import *
-from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import samples
+from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import samples
 from NNInferenceCMSSW.LLP_NN_Inference.selections import *
 from NNInferenceCMSSW.LLP_NN_Inference.variables import *
 
 
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2017_tf_and_skim_unmerged_no_cuts_compare_JJ_tagger_v3/"
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_2017_SR/"#_InvertBeamHalo/"
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_2017_SR/"#_InvertBeamHalo/"
-#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_2017_WtoMN_noMT/"#JetHT/"#WtoEN_noMT/"#_InvertBeamHalo/"
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR/"#_InvertBeamHalo/"
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR_cosmic_veto_all_tagged/"
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR_cosmic_veto_eta_1p0_tagged/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_tf_and_skim_unmerged_no_cuts_compare_JJ_tagger_v3/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_2018_SR/"#_InvertBeamHalo/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_2018_SR/"#_InvertBeamHalo/"
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_2018_WtoMN_noMT/"#JetHT/"#WtoEN_noMT/"#_InvertBeamHalo/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_SR/"#_InvertBeamHalo/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_SR_cosmic_veto_all_tagged/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_SR_cosmic_veto_eta_1p0_tagged/"
 
 #Data
-NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR/"#_BeamHalo/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_SR/"#_BeamHalo/"
 #MC
-#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_SR_v5_ntuples/"#_BeamHalo/"
+#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_SR_v5_ntuples/"#_BeamHalo/"
 
-#NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2017_Gen/"
+NTUPLEDIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_2018_Gen/"
 LUMI = 59.74*1000
 
-#MAIN_OUT = "plots/v6_calo_AOD_2017_BeamHalo_studies_with_time_RMS/"#_InvertBeamHalo/"
-#MAIN_OUT = "plots/v6_calo_AOD_2017_Gen/"#_InvertBeamHalo/"
+#MAIN_OUT = "plots/v6_calo_AOD_2018_BeamHalo_studies_with_time_RMS/"#_InvertBeamHalo/"
+#MAIN_OUT = "plots/v6_calo_AOD_2018_Gen/"#_InvertBeamHalo/"
 #eta phi spikes
-MAIN_OUT = "plots/v6_calo_AOD_2017_SR_eta_phi/"#_InvertBeamHalo/"
+MAIN_OUT = "plots/v6_calo_AOD_2018_SR_eta_phi/"#_InvertBeamHalo/"
 #beam halo
-MAIN_OUT = "plots/v6_calo_AOD_2017_BeamHalo_AN/"#_InvertBeamHalo/"
+MAIN_OUT = "plots/v6_calo_AOD_2018_BeamHalo_AN/"#_InvertBeamHalo/"
+MAIN_OUT = "plots/v6_calo_AOD_2018_Gen/"
 
-#MAIN_OUT = "plots/v6_calo_AOD_2017_veto_debug/"#_InvertBeamHalo/"
-#MAIN_OUT = "plots/v6_calo_AOD_2017_cosmic_veto/"#_InvertBeamHalo/"
-#MAIN_OUT = "plots/v5_calo_AOD_2017_WtoMN/"#JetHT/"#WtoEN/"#_InvertBeamHalo/"
+#MAIN_OUT = "plots/v6_calo_AOD_2018_veto_debug/"#_InvertBeamHalo/"
+#MAIN_OUT = "plots/v6_calo_AOD_2018_cosmic_veto/"#_InvertBeamHalo/"
+#MAIN_OUT = "plots/v5_calo_AOD_2018_WtoMN/"#JetHT/"#WtoEN/"#_InvertBeamHalo/"
 
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbar","QCD"]
 #sgn = ["ggH_MH1000_MS150_ctau1000_XL"]
-sgn = ['SUSY_mh400_pl1000','SUSY_mh300_pl1000','SUSY_mh200_pl1000','SUSY_mh150_pl1000']
 sgn = [
     'SUSY_mh400_pl1000','SUSY_mh300_pl1000','SUSY_mh200_pl1000','SUSY_mh150_pl1000',
     'SUSY_mh127_ctau500', 'SUSY_mh127_ctau3000',
@@ -78,10 +78,11 @@ sgn = [
 #sgn = ["SingleElectron"]
 #sgn = ["EGamma"]
 #sgn = ["JetHT"]
-sgn = ["HighMET","HighMETBH","SUSY_mh400_ctau500","SUSY_mh1800_ctau500","SUSY_mh1800_ctau3000"]
+sgn = ["HighMET","HighMETBH","SUSY_mh400_ctau500_HH","SUSY_mh1800_ctau500_HH","SUSY_mh1800_ctau3000_HH"]
 #sgn = ["HighMET"]
 #sgn = ["SUSY_mh400_pl1000"]
 #sgn = ["Event277096"]
+sgn = ["SUSY_mh200_ctau500_HH","SUSY_mh400_ctau500_HH","SUSY_mh1000_ctau500_HH","SUSY_mh1800_ctau3000_HH"]
 
 gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
@@ -89,6 +90,7 @@ gStyle.SetPadTopMargin(0.06)
 gStyle.SetPadRightMargin(0.05)
 gStyle.SetPadRightMargin(0.15)
 
+gStyle.SetPalette(52)
 h = {}
 num = {}
 den = {}
@@ -98,8 +100,10 @@ c2 = {}
 profX = {}
 bins=np.array([0.9,2.5,5,7.5,10,12.5,15,20,30,40,50,60,70,80,90,100,120,140,160,200,250,500,1000,1500])
 WEIGHT = "EventWeight"
+
 def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cut="Jets.isGenMatchedCaloCorr",do_radius=False,add_label=""):
     print "cut: ", cut
+
     r_ecal = 129
     r_hcal = 179
     r_magnet = 295
@@ -111,8 +115,8 @@ def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cu
     r_TIB3 = 55
     r_TIB2 = 40
     r_TIB1 = 25
-    minimum = 0
-    maximum = 1
+    minimum = variable[v_y]["min"]
+    maximum = variable[v_y]["max"]
     v_TOB3 = TLine(r_TOB3,minimum,r_TOB3,maximum)
     v_TOB2 = TLine(r_TOB2,minimum,r_TOB2,maximum)
     v_TOB1 = TLine(r_TOB1,minimum,r_TOB1,maximum)
@@ -124,9 +128,9 @@ def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cu
     v_magnet = TLine(r_magnet,minimum,r_magnet,maximum)
     v_mb1 = TLine(r_mb1,minimum,r_mb1,maximum)
     v_mb4 = TLine(r_mb4,minimum,r_mb4,maximum)
-    v_ecal.SetLineColor(2)
+    v_ecal.SetLineColor(801)
     v_hcal.SetLineColor(881)
-    v_magnet.SetLineColor(1)
+    v_magnet.SetLineColor(418)
     v_mb1.SetLineColor(801)
     v_mb4.SetLineColor(4)
     v_ecal.SetLineWidth(4)
@@ -140,18 +144,27 @@ def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cu
     v_TOB1.SetLineWidth(3)
     v_TOB2.SetLineWidth(3)
     v_TOB3.SetLineWidth(3)
-
+    
     v_TIB1.SetLineStyle(4)
     v_TIB2.SetLineStyle(4)
     v_TIB3.SetLineStyle(4)
     v_TOB1.SetLineStyle(4)
     v_TOB2.SetLineStyle(4)
     v_TOB3.SetLineStyle(4)
+
+    v_TIB1.SetLineColor(866)
+    v_TIB2.SetLineColor(865)
+    v_TIB3.SetLineColor(861)
+    v_TOB1.SetLineColor(862)
+    v_TOB2.SetLineColor(863)
+    v_TOB3.SetLineColor(864)
+
     v_ecal.SetLineStyle(9)
     v_hcal.SetLineStyle(2)
     v_magnet.SetLineStyle(3)
     v_mb1.SetLineStyle(8)
     v_mb4.SetLineStyle(8)
+
 
     for b in sampl:#back+sgn:
         tree[b] = TChain(tree_name)
@@ -172,18 +185,18 @@ def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cu
         h[b].GetXaxis().SetTitle(variable[v_x]["title"])
         h[b].GetYaxis().SetTitle(variable[v_y]["title"])
 
-        if do_radius:
-            leg = TLegend(1-0.3, 0.65-0.2, 0.95, 0.9-0.1)
+        if do_radius or "radiusLLP" in v_x:
+            leg = TLegend(1-0.45, 0.65, 0.85, 0.9)
         else:
             leg = TLegend(1-0.3, 0.9-0.2, 0.95, 0.9-0.1)
         leg.SetHeader(samples[b]["label"])
-        if do_radius:
+        if do_radius or "radius" in v_x:
             leg.AddEntry(v_TOB3,"Strips", "L")
             leg.AddEntry(v_ecal,"ECAL","L")
             leg.AddEntry(v_hcal,"HCAL","L")
             leg.AddEntry(v_magnet,"solenoid","L")
-            leg.AddEntry(v_mb1,"MB1","L")
-            leg.AddEntry(v_mb4,"MB4","L")
+            #leg.AddEntry(v_mb1,"MB1","L")
+            #leg.AddEntry(v_mb4,"MB4","L")
             
         c2[b] = TCanvas("can","can",1000,800)
         c2[b].cd()
@@ -196,14 +209,15 @@ def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cu
         h[b].SetMarkerSize(.3)
         h[b].SetMarkerStyle(24)
         h[b].Draw("COLZ")#()#
-        profX[b].SetLineColor(632+2)
-        profX[b].SetMarkerColor(632+2)
+        profX[b].SetLineColor(2)#(632+2)
+        profX[b].SetMarkerColor(2)#(632+2)
         profX[b].SetMarkerStyle(20)
         profX[b].SetMarkerSize(1.2)
         profX[b].SetLineWidth(3)
         profX[b].Draw("PL,sames")
 
-        if do_radius:
+
+        if do_radius or "radius" in v_x:
             v_ecal.Draw("sames")
             v_hcal.Draw("sames")
             v_magnet.Draw("sames")
@@ -216,7 +230,7 @@ def pl(sampl,tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cu
             v_TIB2.Draw("sames")
             v_TIB1.Draw("sames")
         leg.Draw()
-        drawCMS_simple(LUMI, "Preliminary", ERA="2017", onTop=True)
+        drawCMS_simple(LUMI, "Preliminary", ERA="2018", onTop=True)
         c2[b].Print(MAIN_OUT+v_y.replace('.', '_').replace('/','_div_')+'_vs_'+v_x.replace('.', '_').replace('/','_div_')+'_'+b+add_label+'.png')
         c2[b].Print(MAIN_OUT+v_y.replace('.', '_').replace('/','_div_')+'_vs_'+v_x.replace('.', '_').replace('/','_div_')+'_'+b+add_label+'.pdf')
         c2[b].Close()
@@ -343,7 +357,42 @@ def pl_eff(tree_name="tree",v_x="Jets.radiusLLPCaloCorr",v_y="Jets.sigprob",cut=
         leg.Draw()
         c2[b].Print(MAIN_OUT+'eff_vs_'+v_x.replace(".","_")+'_'+b+add_label+'.png')
         c2[b].Print(MAIN_OUT+'eff_vs_'+v_x.replace(".","_")+'_'+b+add_label+'.pdf')
-            
+    
+#again eff vs radius
+pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.nTracksPVMax",cut="Jets.isGenMatched")
+#pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.nTrackConstituents",cut="Jets.isGenMatched")
+
+exit()
+
+##2D eff
+#Why more nRecHits for displaced jets?
+pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.nRecHitsEB",cut="Jets.isGenMatched",)
+pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.pt",cut="Jets.isGenMatched",)
+pl(sgn,v_x="Jets.pt",v_y="Jets.nRecHitsEB",cut="Jets.isGenMatched",)
+pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.eFracRecHitsEB",cut="Jets.isGenMatched",)
+pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.hcalE",cut="Jets.isGenMatched",)
+pl(sgn,v_x="Jets.radiusLLP",v_y="Jets.ecalE",cut="Jets.isGenMatched",)
+exit()
+
+
+
+#14.01.2022
+#These plots show there's correlation bw d phi and tagging score in BH, not in data or signal
+CUT = "isSR && nTagJets_0p996_JJ<2"
+label ="_BH_correlation"
+x="Jets.sigprob"#"meanXEB"
+y="min_dPhi_jets"#"meanYEB"
+pl(sgn,v_x=x,v_y=y,cut=CUT,add_label=label)
+
+#CUT = "isSR && nTagJets_0p996_JJ<2"
+#label ="_BH_correlation_tag_op9"
+#x="Jets.sigprob"#"meanXEB"
+#y="min_dPhi_jets_0p9"#"meanYEB"
+#pl(sgn,v_x=x,v_y=y,cut=CUT,add_label=label)
+exit()
+
+
+        
 #Beam halo final
 lab = "_DNN_0p9"
 cutb = selection["SR_veto_bin2_cosmics_tag_0p9"]
@@ -648,9 +697,9 @@ pl(tree_name="tree",v_x="MEt.phi",v_y="Jets[0].phi",cut=CUT,do_radius=False,add_
 '''
 chain = TChain("tree")
 ##chain.Add("/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/prova_"+sampl+".root")
-chain.Add("/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2017_tf_and_skim_unmerged_no_cuts_compare_JJ/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1.root")
-#chain.Add("/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2017_tf_and_skim_unmerged_no_cuts_compare_JJ/TChiHH_mass400_pl1000.root")
-#chain.Add("/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2017_tf_and_skim_unmerged_no_cuts_compare_JJ/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC_Tranche3_v2.root")
+chain.Add("/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_tf_and_skim_unmerged_no_cuts_compare_JJ/QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8-v1.root")
+#chain.Add("/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_tf_and_skim_unmerged_no_cuts_compare_JJ/TChiHH_mass400_pl1000.root")
+#chain.Add("/nfs/dust/cms/group/cms-llp/v4_calo_AOD_2018_tf_and_skim_unmerged_no_cuts_compare_JJ/GluGluH2_H2ToSSTobbbb_MH-1000_MS-150_ctauS-1000_TuneCP5_13TeV-pythia8_PRIVATE-MC_Tranche3_v2.root")
 
 jet = TH1F("jet","", 50, 0, 3.2)
 jet_b = TH1F("jet_b","", 50, 0, 3.2)

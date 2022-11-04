@@ -48,6 +48,15 @@ lumi = {
         "tot" : 0,
     },
 
+    "HighMETHBHE" :#RAW-RECO
+    {
+        "A" : 0,#(13.974463037)*1000,
+        "B" : 0,#(7.057972184)*1000,
+        "C" : 0,#(6.894782080)*1000,
+        "D" : 0,#(31.739219804)*1000,
+        "tot" : 0,
+    },
+
     "JetHT" :
     {
         "A" : 1,#(13.974463037)*1000,
@@ -61,8 +70,8 @@ lumi = {
 
 
 for a in lumi.keys():
-    #print a, lumi[a]
     lumi[a]["tot"] = lumi[a]["A"] + lumi[a]["B"] + lumi[a]["C"] +lumi[a]["D"]
+    print a, lumi[a]["tot"]
 
 #print "WARNING! Princeton LUMI For High MET! "
 #LUMI = 132*1000

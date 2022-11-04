@@ -36,13 +36,23 @@ gStyle.SetOptStat(0)
 
 #### NTUPLE, PLOT DIRECTORIES ####
 
-ERA = "2018"
+ERA = "2016"
+NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+str(ERA)+"_SR_HBHE/"
 NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+str(ERA)+"_SR/"
-#NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+str(ERA)+"_Gen/"
-PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_BeamHalo_studies_updated/"
+NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v5_calo_AOD_"+str(ERA)+"_SR/"
+NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+str(ERA)+"_Gen/"
+#NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+str(ERA)+"_time_smearing_no_cuts/"
+#NTUPLEDIR   = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+str(ERA)+"_SR/"
+
+#PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_BeamHalo_studies_updated/"
+PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_SR_HBHE/"
+PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_SR/"
+#PLOTDIR     = "plots/v5_calo_AOD_"+str(ERA)+"_SR/"
 PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_Gen/"
 
-PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_BeamHalo_AN/"
+#PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_BeamHalo_AN/"
+#PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_BeamHalo_AN_preappr/"
+
 #PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_cosmic_veto/"
 #PLOTDIR     = "plots/v6_calo_AOD_"+str(ERA)+"_BeamHalo_studies/"
 
@@ -62,15 +72,17 @@ data_tag = "HighMET"#+"BH"
 data = [data_tag]
 #back = ["VV","WJetsToQQ","WJetsToLNu","DYJetsToQQ","DYJetsToLL","ZJetsToNuNu","ST","TTbar","QCD"]#
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbar"]
-#back = ["VV","TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]#,"DYJetsToLL"]
 #back = [data_tag]#
 #back = ["JetHTMC"]
 #back = ["QCD"]
 #back=["DYJetsToLL"]#,"TTbarGenMET","WJetsToLNu","ZJetsToNuNu"]
 #back = ["WJetsToLNu"]
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbarGenMET","QCD"]#good order for JetHT
-#back = ["All"]
+
 back = [data_tag+"BH"]
+
+#back = ["VV","TTbarGenMET","WJetsToLNu","QCD","ZJetsToNuNu"]#,"DYJetsToLL"]
+#back = ["All"]
 #back = [data_tag]
 #back = [data_tag+"Copy"]
 #back = [data_tag+"BH"]
@@ -107,15 +119,45 @@ elif ERA=="2016":
 print "Luminosity: ", data[0], LUMI
 
 
-#data = back = []
 sign = []
 #sign = ['SUSY_mh400_pl1000']#,'SUSY_mh300_pl1000','SUSY_mh200_pl1000']#,'Event277096']#,'SUSY_mh200_pl1000','SUSY_mh150_pl1000']
 #These: for gen studies
 #sign += ['SUSY_mh127_ctau500','SUSY_mh300_ctau500','SUSY_mh600_ctau500','SUSY_mh1000_ctau500','SUSY_mh1800_ctau500']
 #sign += ['SUSY_mh127_ctau3000','SUSY_mh300_ctau3000','SUSY_mh600_ctau3000','SUSY_mh1000_ctau3000','SUSY_mh1800_ctau3000']
-sign = ['SUSY_mh400_ctau500','SUSY_mh400_ctau3000','SUSY_mh1800_ctau500','SUSY_mh1800_ctau3000']
+sign = ['SUSY_mh400_ctau500_HH','SUSY_mh400_ctau3000_HH','SUSY_mh1800_ctau500_HH','SUSY_mh1800_ctau3000_HH']
+
+sign = ['SUSY_mh1800_ctau500_HH',]#'SUSY_mh1800_ctau500_HH']
+#back = ['dummy_1800']#,'SUSY_mh1800_ctau500_HH_tag']
+
+sign = ['SUSY_mh400_ctau500_HH','SUSY_mh1000_ctau500_HH']
+sign = ['SUSY_mh1000_ctau500_HH']
+#data = back = []
+#back = ["fake"]
+
+#data = back = []
+#sign = ["HighMETHBHE"]
+
+#sign = [
+#    'SUSY_mh400_ctau500_HH','SUSY_mh400_ctau500_HZ','SUSY_mh400_ctau500_ZZ',
+#    'SUSY_mh400_ctau3000_HH','SUSY_mh400_ctau3000_HZ','SUSY_mh400_ctau3000_ZZ',
+#]
 #sign = ['SUSY_mh1800_ctau3000']
-#back = ['SUSY_mh300_pl1000']
+sign = ['SUSY_mh200_pl1000','SUSY_mh400_pl1000']
+
+sign = ['SUSY_mh400_ctau500_HH','SUSY_mh1800_ctau500_HH','SUSY_mh400_ctau3000_HH','SUSY_mh1800_ctau3000_HH']
+#sign = ['SUSY_mh400_ctau500','SUSY_mh1800_ctau500']
+
+sign = []
+sign = ['SUSY_mh400_ctau500_HH']
+sign = ['SUSY_mh127_ctau500_HH','SUSY_mh150_ctau500_HH','SUSY_mh175_ctau500_HH','SUSY_mh200_ctau500_HH','SUSY_mh300_ctau500_HH','SUSY_mh600_ctau500_HH']
+#sign = ['SUSY_mh127_ctau3000_HH','SUSY_mh150_ctau3000_HH','SUSY_mh175_ctau3000_HH','SUSY_mh200_ctau3000_HH','SUSY_mh300_ctau3000_HH','SUSY_mh600_ctau3000_HH']
+sign = []
+
+data = back = []
+sign = ['SUSY_mh127_ctau500_HH','SUSY_mh150_ctau500_HH','SUSY_mh175_ctau500_HH','SUSY_mh200_ctau500_HH','SUSY_mh300_ctau500_HH','SUSY_mh400_ctau500_HH','SUSY_mh600_ctau500_HH','SUSY_mh1000_ctau500_HH','SUSY_mh1800_ctau500_HH']
+sign = ['SUSY_mh127_ctau500_HH','SUSY_mh200_ctau500_HH','SUSY_mh300_ctau500_HH','SUSY_mh600_ctau500_HH','SUSY_mh1000_ctau500_HH','SUSY_mh1800_ctau500_HH']
+
+
 
 def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
     ### Preliminary Operations ###
@@ -151,8 +193,9 @@ def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
     #weight = "EventWeight*2"
     #weight = "2"
     #weight = "1"
-    weight = "EventWeight*PUReWeight*TriggerWeight"
+    #weight = "EventWeight*PUReWeight*TriggerWeight"
     #weight = "EventWeight*PUWeight"
+    weight = "EventWeight"
     print weight
 
     print "Considered ntuples: ", NTUPLEDIR
@@ -192,7 +235,7 @@ def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
             #hist[s].Scale(1./hist[s].Integral())
             hist[s].SetFillStyle(0)
     
-    if norm:
+    if norm and len(data+back)>0:
         sfnorm = hist[data_tag].Integral()/hist['BkgSum'].Integral()
         for i, s in enumerate(back+['BkgSum']): hist[s].Scale(sfnorm)
         
@@ -248,4 +291,4 @@ def plot(var, cut, cut_s, cut_d="", tree_name="tree",norm=False):
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
 ##plot(options.variable, options.cut, options.cut_s, "skim")
-plot(options.variable, options.cut, options.cut_s, options.cut_d, "tree")
+plot(options.variable, options.cut, options.cut_s, options.cut_d, "tree",norm=True)

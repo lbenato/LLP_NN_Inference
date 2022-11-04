@@ -20,6 +20,7 @@ typedef struct Point_
   float time;
   int wheel, sector, station, nRecHits;
   int clusterID;  // clustered ID
+  int nStationsPerCluster;
 }Point;
 
 class DBSCAN {

@@ -21,23 +21,11 @@ from tensorflow import keras
 #import awkward1 as ak
 #import matplotlib.pyplot as plt
 
-ERA = "2018"
+ERA = "2017"
 
 CHAN = "SUSY"
 LUMI = -1
 
-if ERA=="2016":
-    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2016 import samples
-    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2016 import lumi
-    LUMI = lumi[ lumi.keys()[0]]["tot"]    
-if ERA=="2017":
-    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import samples
-    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2017 import lumi
-    LUMI = lumi[ lumi.keys()[0]]["tot"]    
-if ERA=="2018":
-    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import samples
-    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2018 import lumi
-    LUMI = lumi[ lumi.keys()[0]]["tot"]    
 
 from NNInferenceCMSSW.LLP_NN_Inference.variables import *
 from NNInferenceCMSSW.LLP_NN_Inference.selections import *
@@ -51,9 +39,9 @@ from NNInferenceCMSSW.LLP_NN_Inference.drawUtils import *
 gROOT.SetBatch(True)
 gStyle.SetOptStat(0000)
 
-#SEL = "TtoEM"
+SEL = "TtoEM"
 #SEL = "ZtoMM"
-SEL = "SR"
+#SEL = "SR"
 
 if SEL=="ZtoMM":
     data = ["SingleMuon"]
@@ -68,36 +56,36 @@ if SEL=="SR":
     data = ["HighMET"]#["QCD"]
     back = ["ZJetsToNuNu"]
 sign = [
-    'SUSY_mh127_ctau500',
-    'SUSY_mh150_ctau500',
-    'SUSY_mh175_ctau500',
-    'SUSY_mh200_ctau500',
-    'SUSY_mh250_ctau500',
-    'SUSY_mh300_ctau500',
-    'SUSY_mh400_ctau500',
-    'SUSY_mh600_ctau500',
-    'SUSY_mh800_ctau500',
-    'SUSY_mh1000_ctau500',
-    'SUSY_mh1250_ctau500',
-    'SUSY_mh1500_ctau500',
-    'SUSY_mh1800_ctau500'
+    'SUSY_mh127_ctau500_HH',
+    'SUSY_mh150_ctau500_HH',
+    'SUSY_mh175_ctau500_HH',
+    'SUSY_mh200_ctau500_HH',
+    'SUSY_mh250_ctau500_HH',
+    'SUSY_mh300_ctau500_HH',
+    'SUSY_mh400_ctau500_HH',
+    'SUSY_mh600_ctau500_HH',
+    'SUSY_mh800_ctau500_HH',
+    'SUSY_mh1000_ctau500_HH',
+    'SUSY_mh1250_ctau500_HH',
+    'SUSY_mh1500_ctau500_HH',
+    'SUSY_mh1800_ctau500_HH'
 ]
 
 
 sign += [
-    'SUSY_mh127_ctau3000',
-    'SUSY_mh150_ctau3000',
-    'SUSY_mh175_ctau3000',
-    'SUSY_mh200_ctau3000',
-    'SUSY_mh250_ctau3000',
-    'SUSY_mh300_ctau3000',
-    'SUSY_mh400_ctau3000',
-    'SUSY_mh600_ctau3000',
-    'SUSY_mh800_ctau3000',
-    'SUSY_mh1000_ctau3000',
-    'SUSY_mh1250_ctau3000',
-    'SUSY_mh1500_ctau3000',
-    'SUSY_mh1800_ctau3000'
+    'SUSY_mh127_ctau3000_HH',
+    'SUSY_mh150_ctau3000_HH',
+    'SUSY_mh175_ctau3000_HH',
+    'SUSY_mh200_ctau3000_HH',
+    'SUSY_mh250_ctau3000_HH',
+    'SUSY_mh300_ctau3000_HH',
+    'SUSY_mh400_ctau3000_HH',
+    'SUSY_mh600_ctau3000_HH',
+    'SUSY_mh800_ctau3000_HH',
+    'SUSY_mh1000_ctau3000_HH',
+    'SUSY_mh1250_ctau3000_HH',
+    'SUSY_mh1500_ctau3000_HH',
+    'SUSY_mh1800_ctau3000_HH'
 ]
 
 #Failed 2016:
@@ -154,8 +142,13 @@ def deltaPhi_np( a1, v2):
     M.filled(new)
     return np.array(M)
 
-def time_fit(var,cut,label="",scale=True, do_smear=False):
+def time_fit(var,cut,label="",scale=True, do_smear=False,rebin=1.,do_CB=True,alternative_smear_function="",adjust_sigma_fit_factor=1.):
     list_of_variables = ["EventNumber","LumiNumber","RunNumber","Jets*.pt","Jets*.eta","Jets*.sigprob","HLT*","MT","HT","pt","MinJet*DPhi*","nCHSJetsAcceptanceCalo","nCHSJets_in_HEM*","EventWeight","TriggerWeight","PUWeight","PUReWeight","Jets*.isGenMatchedCaloCorrLLPAccept","Jets*.CSV","Jets*.timeRecHitsEB","is*","JetsNegative*.CSV","JetsNegative*.sigprob","JetsNegative*.timeRecHitsEB"]
+
+
+    if alternative_smear_function!="":
+        print "Doing the smearing also with the alternative function stored in "
+        print OUT+"data_smear_file"+alternative_smear_function+".root"
 
     #uproot: extreeeeemely slow
     '''
@@ -212,7 +205,11 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
 
     for s in back+data:
         print "Doing ", s, " .... "
-        hist[s] = TH1F(s,";"+variable[var]['title'],variable[var]['nbins'], variable[var]['min'],variable[var]['max'])
+        if variable[var]['nbins']!=0:
+            hist[s] = TH1F(s,";"+variable[var]['title'],int(variable[var]['nbins']/rebin), variable[var]['min'],variable[var]['max'])
+        else:
+            hist[s] = TH1F(s,";"+variable[var]['title'],len(variable[var]['bins'])-1, array('f', variable[var]['bins']))
+
         hist[s].Sumw2()
         chain[s] = TChain("tree")
         sigprob_chain[s] = TChain("tree")
@@ -226,6 +223,7 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
                 chain[s].Add(MAIN + ss + ".root")
                 sigprob_chain[s].Add(MAIN + ss + ".root")
         chain[s].Project(s, var, weight+"*("+cut+")")
+        addOverflow(hist[s], True)
         if s in back:
             hist[s].SetMarkerStyle(21)
             hist[s].SetMarkerColor(samples[s]['linecolor'])
@@ -252,14 +250,78 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
         if scale:
             hist[s].Scale(1./hist[s].Integral())
 
+    if "timeRecHitsEB" not in var:
+        print "No time fit, just plotting distribution to understand it"
+
+        can = TCanvas("can","can",900,800)
+
+        can.SetGrid()
+        can.SetRightMargin(0.05)
+
+        leg = TLegend(0.62, 0.7-0.05, 1., 1.-0.05)
+        leg2 = TLegend(0.62, 0.8-0.05, 1., 1.-0.05)
+        for s in back:
+            leg.AddEntry(hist[s],samples[s]['label'],"F")
+            leg2.AddEntry(hist[s],samples[s]['label'],"F")
+            hist[s].GetXaxis().SetTitle(variable[var]['title'])
+            hist[s].Draw("HISTO,sames")
+            hist['BkgSum'] = hist[s].Clone("BkgErr")
+            hist['BkgSum'].SetFillStyle(3003)
+            hist['BkgSum'].SetFillColor(1)
+            hist['BkgSum'].Draw("SAME, E2")
+        
+        for s in data:
+            leg.AddEntry(hist[s],samples[s]['label'],"P")
+            leg2.AddEntry(hist[s],samples[s]['label'],"P")
+            hist[s].GetXaxis().SetTitle(variable[var]['title'])
+            hist[s].Draw("PE,sames")
+            print "Entries in ", s, " : " , hist[s].Integral()
+
+        OUTSTRING = OUT
+        OUTSTRING += "pt_plot" 
+
+        leg.Draw()
+        drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+        #drawAnalysis("LL"+CHAN)
+        drawRegion(SEL)
+        latex = TLatex()
+        latex.SetNDC()
+        latex.SetTextAlign(33)
+        latex.SetTextSize(0.04)
+        latex.SetTextFont(62)
+        #latex.DrawLatex(0.20, 0.96, "CMS")
+        latex.SetTextFont(52)
+        #latex.DrawLatex(0.36, 0.96, "Preliminary")
+        can.Update()
+        can.Print(OUTSTRING+label+'_no_smearing.png')
+        can.Print(OUTSTRING+label+'_no_smearing.pdf')
+        can.SetLogy()
+        can.Update()
+        can.Print(OUTSTRING+label+'_log_no_smearing.png')
+        can.Print(OUTSTRING+label+'_log_no_smearing.pdf')
+        can.Close()
+
+        distr_file = TFile(OUT+"pt_file"+label+".root","RECREATE")
+        distr_file.cd()
+        hist[data[0]].Write("data")
+        hist[back[0]].Write("back")
+        print "Writing "+OUT+"pt_file"+label+".root"
+        distr_file.Close()
+
+        exit()
+
+
+
     print "\n"
     print " --- Fit ---"
     print "\n"
 
     #Fit section
     #CB
-    fit_data = TF1("fit_data","crystalball",-5,5)
-    #fit_data = TF1("fit_data","gaus",-5,5)
+    if do_CB:
+        fit_data = TF1("fit_data","crystalball",-5,5)
+    else:
+        fit_data = TF1("fit_data","gaus",-5,5)
     
     if scale:
         if SEL=="TtoEM" or SEL=="SR":
@@ -316,8 +378,10 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     hist[data[0]].GetListOfFunctions().Remove(hist[data[0]].GetFunction("fit_data"))
 
     #CB
-    fit_back = TF1("fit_back","crystalball",5,5)
-    #fit_back = TF1("fit_back","gaus",5,5)
+    if do_CB:
+        fit_back = TF1("fit_back","crystalball",5,5)
+    else:
+        fit_back = TF1("fit_back","gaus",5,5)
     if scale:
         if SEL=="TtoEM" or SEL=="SR":
             fit_back.SetParameter(0,0.01)
@@ -387,6 +451,10 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     my_data.SetLineStyle(2)
     my_back.SetLineStyle(2)
 
+
+    if not do_CB:
+        label+="_gauss"
+
     data_file = TFile(OUT+"data_smear_file"+label+".root","RECREATE")
     data_file.cd()
     my_back.Write("back_CB")
@@ -394,13 +462,19 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     print "Writing "+OUT+"data_smear_file"+label+".root"
     data_file.Close()
 
+
     can = TCanvas("can","can",900,800)
-    can.cd()
+    can.Divide(1,2)
+    setTopPad(can.GetPad(1), 4)
+    setBotPad(can.GetPad(2), 4)
+
+    can.cd(1)
+    can.GetPad(1).SetGrid(1)
     #can.SetGrid()
     can.SetRightMargin(0.05)
 
-    leg = TLegend(0.65, 0.7, 1., 1.)
-    leg2 = TLegend(0.65, 0.8, 1., 1.)
+    leg = TLegend(0.62, 0.7-0.05, 1., 1.-0.05)
+    leg2 = TLegend(0.62, 0.8-0.05, 1., 1.-0.05)
     for s in back:
         leg.AddEntry(hist[s],samples[s]['label'],"F")
         leg2.AddEntry(hist[s],samples[s]['label'],"F")
@@ -494,13 +568,15 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     print my_back_neg.GetParameter(2)
     '''
 
+
     OUTSTRING = OUT
     OUTSTRING += "jet_time_modelling" 
+
 
     if do_smear==False:
         leg.Draw()
         drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-        drawAnalysis("LL"+CHAN)
+        #drawAnalysis("LL"+CHAN)
         drawRegion(SEL)
         latex = TLatex()
         latex.SetNDC()
@@ -520,11 +596,15 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
         can.Close()
         exit()
 
-
-    smeared = TH1F("smeared",";"+variable[var]['title'],variable[var]['nbins'], variable[var]['min'],variable[var]['max'])
+    smeared = TH1F("smeared",";"+variable[var]['title'],int(variable[var]['nbins']/rebin), variable[var]['min'],variable[var]['max'])
     smeared.Sumw2()
 
+    if alternative_smear_function!="":
+        smeared_alt = TH1F("smeared_alt",";"+variable[var]['title'],int(variable[var]['nbins']/rebin), variable[var]['min'],variable[var]['max'])
+        smeared_alt.Sumw2()
+
     timeSmeared = np.array([])
+    timeSmearedAlt = np.array([])
     EventWeight = np.array([])
 
     nTrackConstituents = np.array([])
@@ -561,9 +641,26 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     smear_cb = my_data.Clone("smear_cb")
     smear_cb.SetParameter(0,my_data.GetParameter(0))
     smear_cb.SetParameter(1,my_data.GetParameter(1)-my_back.GetParameter(1))#0
-    smear_cb.SetParameter(2, math.sqrt( abs(my_data.GetParameter(2)**2 - my_back.GetParameter(2)**2)) )
-    smear_cb.SetParameter(3,my_data.GetParameter(3))
-    smear_cb.SetParameter(4,my_data.GetParameter(4))
+    smear_cb.SetParameter(2, adjust_sigma_fit_factor * math.sqrt( abs(my_data.GetParameter(2)**2 - my_back.GetParameter(2)**2)) )
+    if do_CB:
+        smear_cb.SetParameter(3,my_data.GetParameter(3))
+        smear_cb.SetParameter(4,my_data.GetParameter(4))
+
+    if alternative_smear_function!="":
+        
+        #HERE OPEN THE FILE AND GET THE CB
+        data_file_alt = TFile(OUT+"data_smear_file"+alternative_smear_function+".root","READ")
+        data_file_alt.cd()
+        my_data_alt = data_file_alt.Get("data_CB")
+        my_back_alt = data_file_alt.Get("back_CB")
+        data_file_alt.Close()
+
+        smear_cb_alt = my_data_alt.Clone("smear_cb_alt")
+        smear_cb_alt.SetParameter(0,my_data_alt.GetParameter(0))
+        smear_cb_alt.SetParameter(1,my_data_alt.GetParameter(1)-my_back_alt.GetParameter(1))#0
+        smear_cb_alt.SetParameter(2, math.sqrt( abs(my_data_alt.GetParameter(2)**2 - my_back_alt.GetParameter(2)**2)) )
+        smear_cb_alt.SetParameter(3,my_data_alt.GetParameter(3))
+        smear_cb_alt.SetParameter(4,my_data_alt.GetParameter(4))
     
     #print "smear_cb parameters"
     #print smear_cb.GetParameter(0)
@@ -585,6 +682,7 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
 
             tree_weight = tree.GetWeight()
             tmp_time = []
+            tmp_time_alt = []
             tmp_weight = []
 
             tmp_nTrackConstituents = []
@@ -647,6 +745,8 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
                     #my_data.SetParameter(0,1)
                     #my_data.SetParameter(1,0)
                     tmp_time.append( neg_jets[0].timeRecHitsEB + smear_cb.GetRandom())
+                    if alternative_smear_function!="":
+                        tmp_time_alt.append( neg_jets[0].timeRecHitsEB + smear_cb_alt.GetRandom())
                     
                     tmp_nTrackConstituents.append(neg_jets[0].nTrackConstituents)
                     tmp_nSelectedTracks.append(neg_jets[0].nSelectedTracks)
@@ -687,6 +787,8 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
 
                         tmp_weight.append(tree.EventWeight * tree.PUReWeight * tree_weight)
                         tmp_time.append( neg_jets[n].timeRecHitsEB + smear_cb.GetRandom())
+                        if alternative_smear_function!="":
+                            tmp_time_alt.append( neg_jets[n].timeRecHitsEB + smear_cb_alt.GetRandom())
                         tmp_nTrackConstituents.append(neg_jets[n].nTrackConstituents)
                         tmp_nSelectedTracks.append(neg_jets[n].nSelectedTracks)
                         tmp_timeRecHitsEB.append(neg_jets[n].timeRecHitsEB)
@@ -711,6 +813,7 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
                         tmp_minDeltaRPVTracks.append(neg_jets[n].minDeltaRPVTracks)
                     
             timeSmeared = np.concatenate((timeSmeared, np.array(tmp_time)))
+            timeSmearedAlt = np.concatenate((timeSmearedAlt, np.array(tmp_time_alt)))
             EventWeight = np.concatenate((EventWeight, np.array(tmp_weight)))
             nTrackConstituents = np.concatenate(( nTrackConstituents, tmp_nTrackConstituents ))
             nSelectedTracks = np.concatenate(( nSelectedTracks, tmp_nSelectedTracks))
@@ -787,6 +890,7 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
         minDeltaRAllTracks,
         minDeltaRPVTracks,
     ]
+
     
     X = np.transpose(np.stack((dat_list)))
     X_smear = np.transpose(np.stack((dat_list_smeared)))
@@ -803,10 +907,19 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
         smeared.Scale(1./smeared.Integral())
     smeared.Draw("HISTO,sames")
 
+
+    if alternative_smear_function!="":
+        root_numpy.fill_hist(smeared_alt,timeSmearedAlt,EventWeight)
+        smeared_alt.SetLineColor(801)
+        smeared_alt.SetLineWidth(2)
+        if scale:
+            smeared_alt.Scale(1./smeared_alt.Integral())
+        #smeared_alt.Draw("HISTO,sames")
+
     leg.AddEntry(smeared,"MC smeared","L")
     leg.Draw()
     drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-    drawAnalysis("LL"+CHAN)
+    #drawAnalysis("LL"+CHAN)
     drawRegion(SEL)
     latex = TLatex()
     latex.SetNDC()
@@ -817,6 +930,57 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     latex.SetTextFont(52)
     #latex.DrawLatex(0.36, 0.96, "Preliminary")
     can.Update()
+
+    can.cd(2)
+    can.GetPad(2).SetGrid(1)
+    #Here can 2
+    ro = hist[data[0]].Clone("ro")#TRatioPlot(hist[data[0]],smeared)
+    ro.Divide( hist[ back[0] ]  )
+    ro.GetYaxis().SetTitle("Data / Bkg smeared")
+    setBotStyle(ro) 
+    ro.SetMinimum(0)
+    ro.SetMaximum(4)
+    ro.SetMarkerStyle(25)   
+    ro.SetMarkerColor(800-3)   
+    ro.SetLineColor(800-3)   
+    ro.SetLineWidth(2)   
+    ro.Draw("PE")
+    ro.SetMinimum(0)
+    ro.SetMaximum(4)
+
+    rp = hist[data[0]].Clone("rp")
+    rp.Divide(smeared)
+    rp.SetMinimum(0)
+    rp.SetMaximum(4)
+    rp.GetYaxis().SetTitle("Data / Bkg smeared")
+    setBotStyle(rp) 
+    rp.SetMinimum(0)
+    rp.SetMaximum(4)
+    rp.SetLineColor(418)   
+    rp.SetMarkerColor(418)   
+    rp.SetMarkerStyle(21)   
+    rp.SetLineWidth(2)   
+    rp.Draw("PE,sames")
+
+
+    if alternative_smear_function!="":
+        rp_alt = hist[data[0]].Clone("rp_alt")
+        rp_alt.Divide(smeared_alt)
+        rp_alt.SetMinimum(0)
+        rp_alt.SetMaximum(4)
+        rp_alt.GetYaxis().SetTitle("Data / Bkg smeared")
+        setBotStyle(rp_alt) 
+        rp_alt.SetMinimum(0)
+        rp_alt.SetMaximum(4)
+        rp_alt.SetLineColor(801)   
+        rp_alt.SetMarkerColor(801)   
+        rp_alt.SetMarkerStyle(21)   
+        rp_alt.SetLineWidth(2)   
+        #rp_alt.Draw("PE,sames")
+
+
+
+    can.Update()
     can.Print(OUTSTRING+label+'.png')
     can.Print(OUTSTRING+label+'.pdf')
     can.SetLogy()
@@ -824,6 +988,27 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     can.Print(OUTSTRING+label+'_log.png')
     can.Print(OUTSTRING+label+'_log.pdf')
     can.Close()
+
+
+    back_file = TFile(OUT+"back_smear_file"+label+".root","RECREATE")
+    back_file.cd()
+
+    for s in back:
+        hist[s].Write("back")
+        hist['BkgSum'].Write("back_unc")
+
+    for s in data:
+        hist[s].Write("data")
+
+    smeared.Write("back_smeared")
+    ro.Write("ratio")
+    rp.Write("ratio_smeared")
+    if alternative_smear_function!="":
+        smeared_alt.Write("back_smeared_alt")
+        rp_alt.Write("ratio_smeared_alt")
+    back_file.Close()
+    print "Written: ",OUT+"back_smear_file"+label+".root"
+
 
     can2 = TCanvas("can2","can2",900,800)
     can2.cd()
@@ -858,7 +1043,7 @@ def time_fit(var,cut,label="",scale=True, do_smear=False):
     leg2.Draw()
 
     drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-    drawAnalysis("LL"+CHAN)
+    #drawAnalysis("LL"+CHAN)
     drawRegion(SEL)
 
     latex = TLatex()
@@ -902,7 +1087,6 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
     my_data = data_file.Get("data_CB")
     my_back = data_file.Get("back_CB")
     data_file.Close()
-
 
     for s in sign:
         mc_pass_sigprob[s] = TH1F("mc_pass_sigprob"+s,"",50,0,1)
@@ -1186,7 +1370,7 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
             my_data.Draw("L,sames")
             leg.Draw()
             drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-            drawAnalysis("LL"+CHAN)
+            #drawAnalysis("LL"+CHAN)
             drawRegion(SEL)
 
             latex = TLatex()
@@ -1411,6 +1595,17 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
         results[s]['diff'] = 100*abs(h_nTagsSmeared[s].Integral(2,-1) - h_nTags[s].Integral(2,-1))/(h_nTags[s].Integral(2,-1))
 
 
+    sign_file = TFile(OUT+"sign_smear_file"+added+".root","RECREATE")
+    sign_file.cd()
+    for s in sign:
+        my_sign[s].Write( "sign_CB_"+s.replace("_HH","").replace("_HZ","").replace("_ZZ","") )
+    sign_file.Close()
+    print "Written: ",OUT+"sign_smear_file"+added+".root"
+
+    if do_smear==False:
+        exit()
+
+
     print results
     with open(OUT+"signal_time_smearing_integrals"+added+".yaml","w") as f:
         yaml.dump(results, f)
@@ -1443,7 +1638,7 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
         leg.Draw()
 
         drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-        drawAnalysis("LL"+CHAN)
+        #drawAnalysis("LL"+CHAN)
         drawRegion(SEL)
 
         latex = TLatex()
@@ -1488,7 +1683,7 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
         leg2.Draw()
 
         drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-        drawAnalysis("LL"+CHAN)
+        #drawAnalysis("LL"+CHAN)
         drawRegion(SEL)
 
         latex = TLatex()
@@ -1531,7 +1726,7 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
         leg3.Draw()
 
         drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-        drawAnalysis("LL"+CHAN)
+        #drawAnalysis("LL"+CHAN)
         drawRegion(SEL)
 
         latex = TLatex()
@@ -1547,6 +1742,499 @@ def signal_smearing(var,cut,label="",scale=True, do_smear=True,added=""):
         can3.Print(OUTSTRING+label+'_nTags.png')
         can3.Print(OUTSTRING+label+'_nTags.pdf')        
         can3.Close()
+
+
+def draw_mean_sigma(reference_label,label_list = [],extra_label="",sigma_smear_increase_factors = [1.,1.,1.]):
+
+
+    ref_in_file_string = OUT+"data_smear_file"+reference_label+".root"
+    print "Opening reference pT independent correction file...", ref_in_file_string
+
+    ref_in_file = TFile(ref_in_file_string,"READ")
+    ref_in_file.ls()
+    ref_in_file.cd()
+    ref_back     = ref_in_file.Get("back_CB")
+    ref_data     = ref_in_file.Get("data_CB")
+
+    d_ref_mean_val  = ref_data.GetParameter(1)
+    d_ref_sigma_val = ref_data.GetParameter(2)
+    d_ref_mean_err_val  = ref_data.GetParError(1)
+    d_ref_sigma_err_val = ref_data.GetParError(2)
+
+    b_ref_mean_val  = ref_back.GetParameter(1)
+    b_ref_sigma_val = ref_back.GetParameter(2)
+    b_ref_mean_err_val  = ref_back.GetParError(1)
+    b_ref_sigma_err_val = ref_back.GetParError(2)
+
+    ref_corr_mean_val = ref_data.GetParameter(1) - ref_back.GetParameter(1)
+    ref_corr_sigma_val = math.sqrt( abs( ref_data.GetParameter(2)**2 - ref_back.GetParameter(2)**2 ) )
+    ref_in_file.Close()
+
+
+
+    bins = variable["JetsNegative.pt"]['bins']
+
+    b_means = []
+    b_means_err = []
+    b_sigmas = []
+    b_sigmas_err = []
+
+    b_ref_means = []
+    b_ref_means_err = []
+    b_ref_sigmas = []
+    b_ref_sigmas_err = []
+
+    d_means = []
+    d_means_err = []
+    d_sigmas = []
+    d_sigmas_err = []
+
+    d_ref_means = []
+    d_ref_means_err = []
+    d_ref_sigmas = []
+    d_ref_sigmas_err = []
+
+    corr_mean = []
+    corr_sigma = []
+    ref_corr_mean = []
+    ref_corr_sigma = []
+
+    for i,label in enumerate(label_list):
+        print label
+        print OUT+"data_smear_file"+label+".root"
+
+        in_file = TFile(OUT+"data_smear_file"+label+".root","READ")
+        in_file.cd()
+        #in_file.ls()
+        back     = in_file.Get("back_CB")
+        #back.SetDirectory(0)
+
+        b_means.append(back.GetParameter(1))
+        b_means_err.append(back.GetParError(1))
+        b_sigmas.append(back.GetParameter(2)*sigma_smear_increase_factors[i])
+        b_sigmas_err.append(back.GetParError(2)*sigma_smear_increase_factors[i])
+
+        data     = in_file.Get("data_CB")
+        #data.SetDirectory(0)
+
+        d_means.append(data.GetParameter(1))
+        d_means_err.append(data.GetParError(1))
+        d_sigmas.append(data.GetParameter(2))
+        d_sigmas_err.append(data.GetParError(2))
+
+        corr_mean.append(data.GetParameter(1) - back.GetParameter(1))
+        corr_sigma.append( sigma_smear_increase_factors[i]*math.sqrt( abs( data.GetParameter(2)**2 - back.GetParameter(2)**2 ) )  )
+
+        #Reference values
+        b_ref_means.append(b_ref_mean_val)
+        b_ref_means_err.append(b_ref_mean_err_val)
+        b_ref_sigmas.append(b_ref_sigma_val)
+        b_ref_sigmas_err.append(b_ref_sigma_err_val)
+
+        d_ref_means.append(d_ref_mean_val)
+        d_ref_means_err.append(d_ref_mean_err_val)
+        d_ref_sigmas.append(d_ref_sigma_val)
+        d_ref_sigmas_err.append(d_ref_sigma_err_val)
+        
+        ref_corr_mean.append(ref_corr_mean_val)
+        ref_corr_sigma.append(ref_corr_sigma_val)
+
+        in_file.Close()
+
+    print bins
+    print d_means
+    print b_sigmas
+    bins_down = np.array(bins[0:3])
+    bins_up = np.array(bins[1:4])
+    bins_mean = (bins_up - bins_down)/2 + bins_down
+    bins_width = (bins_mean-bins_down)
+
+    #print "up",bins_up
+    #print "down",bins_down
+    #print "mean",bins_mean
+    #print "mean - down:",bins_mean-bins_down
+    #print "up - mean:", -bins_mean+bins_up
+
+    g_mean_b = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(b_means),bins_width,bins_width,np.array(b_means_err),np.array(b_means_err))
+    g_mean_d = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(d_means),bins_width,bins_width,np.array(d_means_err),np.array(d_means_err))
+
+    g_mean_b_ref = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(b_ref_means),bins_width,bins_width,np.array(b_ref_means_err),np.array(b_ref_means_err))
+    g_mean_d_ref = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(d_ref_means),bins_width,bins_width,np.array(d_ref_means_err),np.array(d_ref_means_err))
+
+    g_mean = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(corr_mean),bins_width,bins_width, np.sqrt( np.power(np.array(b_means_err),2) + np.power( np.array(d_means_err),2)  ),  np.sqrt( np.power(np.array(b_means_err),2) + np.power( np.array(d_means_err),2)  ) )
+    g_mean_ref = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(ref_corr_mean),bins_width,bins_width, np.sqrt( np.power(np.array(b_ref_means_err),2) + np.power( np.array(d_ref_means_err),2)  ),  np.sqrt( np.power(np.array(b_ref_means_err),2) + np.power( np.array(d_ref_means_err),2)  ) )
+
+
+    g_sigma_b = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(b_sigmas),bins_width,bins_width,np.array(b_sigmas_err),np.array(b_sigmas_err))
+    g_sigma_d = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(d_sigmas),bins_width,bins_width,np.array(d_sigmas_err),np.array(d_sigmas_err))
+
+    g_sigma_b_ref = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(b_ref_sigmas),bins_width,bins_width,np.array(b_ref_sigmas_err),np.array(b_ref_sigmas_err))
+    g_sigma_d_ref = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(d_ref_sigmas),bins_width,bins_width,np.array(d_ref_sigmas_err),np.array(d_ref_sigmas_err))
+
+    g_sigma = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(corr_sigma),bins_width,bins_width, np.sqrt( np.power(np.array(b_sigmas_err),2) + np.power( np.array(d_sigmas_err),2)  ),  np.sqrt( np.power(np.array(b_sigmas_err),2) + np.power( np.array(d_sigmas_err),2)  ) )
+    g_sigma_ref = TGraphAsymmErrors(len(bins)-1,np.array(bins_mean),np.array(ref_corr_sigma),bins_width,bins_width, np.sqrt( np.power(np.array(b_ref_sigmas_err),2) + np.power( np.array(d_ref_sigmas_err),2)  ),  np.sqrt( np.power(np.array(b_ref_sigmas_err),2) + np.power( np.array(d_ref_sigmas_err),2)  ) )
+    
+    can = TCanvas("can","can",900,800)
+    can.SetGrid()
+    can.SetRightMargin(0.05)
+
+    g_mean_d_ref.SetTitle("")
+    g_mean_d_ref.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+    g_mean_d_ref.GetXaxis().SetTitleOffset(1.1)
+    g_mean_d_ref.GetXaxis().SetTitleSize(0.04)
+
+    g_mean_d_ref.GetYaxis().SetTitle("Fit parameter (GeV)")
+    g_mean_d_ref.GetYaxis().SetTitleOffset(1.)
+    g_mean_d_ref.GetYaxis().SetTitleSize(0.04)
+
+
+    g_mean_b.SetTitle("")
+    g_mean_b.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+    g_mean_b.GetXaxis().SetTitleOffset(1.1)
+    g_mean_b.GetXaxis().SetTitleSize(0.04)
+
+    g_mean_b.GetYaxis().SetTitle("Fit parameter (GeV)")
+    g_mean_b.GetYaxis().SetTitleOffset(1.)
+    g_mean_b.GetYaxis().SetTitleSize(0.04)
+
+    g_mean_b.SetLineColor(2)
+    g_sigma_b.SetLineColor(2)
+    g_mean_b.SetLineWidth(3)
+    g_sigma_b.SetLineWidth(3)
+    g_sigma_b.SetLineStyle(2)
+    g_mean_b.SetMarkerColor(2)
+    g_sigma_b.SetMarkerColor(2)
+
+
+    g_mean_b_ref.SetLineWidth(0)
+    g_mean_b_ref.SetFillColorAlpha(2,0.5)
+    g_mean_b_ref.SetMarkerStyle(0)
+    g_mean_b_ref.SetMarkerSize(0)
+
+    g_sigma_b_ref.SetLineWidth(0)
+    g_sigma_b_ref.SetFillColorAlpha(2,0.6)
+    g_sigma_b_ref.SetFillStyle(3335)#(3244)#
+    g_sigma_b_ref.SetMarkerStyle(0)
+    g_sigma_b_ref.SetMarkerSize(0)
+
+
+    #g_mean_b.SetFillColorAlpha(2,0.5)
+    #g_sigma_b.SetFillColorAlpha(2,0.5)
+    #g_sigma_b.SetFillStyle(8002)
+
+    g_mean_b.SetMarkerStyle(25)
+    g_sigma_b.SetMarkerStyle(25)
+
+    g_mean_d.SetFillColor(4)
+    g_mean_d.SetLineColor(4)
+    g_sigma_d.SetLineColor(4)
+    g_mean_d.SetMarkerColor(4)
+    g_sigma_d.SetMarkerColor(4)
+    g_mean_d.SetMarkerStyle(20)
+    g_sigma_d.SetMarkerStyle(20)
+    g_mean_d.SetMarkerSize(1.3)
+    g_sigma_d.SetMarkerSize(1.3)
+    g_mean_d.SetLineWidth(3)
+    g_sigma_d.SetLineWidth(3)
+    g_sigma_d.SetLineStyle(2)
+
+    g_mean_d_ref.SetLineWidth(0)
+    g_mean_d_ref.SetFillColorAlpha(4,0.1)
+    g_mean_d_ref.SetMarkerStyle(0)
+    g_mean_d_ref.SetMarkerSize(0)
+
+    g_sigma_d_ref.SetLineWidth(0)
+    g_sigma_d_ref.SetFillColorAlpha(4,0.2)
+    g_sigma_d_ref.SetFillStyle(3335)#(3244)#
+    g_sigma_d_ref.SetMarkerStyle(0)
+    g_sigma_d_ref.SetMarkerSize(0)
+
+
+    g_mean_d_ref.Draw("AE2")
+    g_sigma_d_ref.Draw("E2,sames")
+    g_mean_b_ref.Draw("E2,sames")
+    g_sigma_b_ref.Draw("E2,sames")
+
+    g_mean_b.Draw("PE,sames")
+    g_mean_d.Draw("PE,sames")
+    g_sigma_b.Draw("PE,sames")
+    g_sigma_d.Draw("PE,sames")
+
+    g_mean_d_ref.SetMaximum(1.2)
+    g_mean_d_ref.SetMinimum(-0.5)
+
+    leg = TLegend(0.58, 0.7-0.05, 0.95, 0.9)
+    leg.AddEntry(g_mean_b,"simulation, fit mean","PE")
+    leg.AddEntry(g_sigma_b,"simulation, fit #sigma","PE")
+    leg.AddEntry(g_mean_b_ref,"p_{T} independent fit mean","F")
+    leg.AddEntry(g_sigma_b_ref,"p_{T} independent fit #sigma","F")
+
+    leg.AddEntry(g_mean_d,"data","F")
+    #leg.AddEntry(g_mean_d,"data, fit mean","PE")
+    #leg.AddEntry(g_sigma_d,"data, fit #sigma","PE")
+    #leg.AddEntry(g_mean,"correction to mean","PE")
+    #leg.AddEntry(g_sigma,"correction to #sigma","PE")
+    leg.SetTextSize(0.04)
+    leg.Draw()
+    drawCMS_simple(LUMI, "Supplementary", ERA=ERA, onTop=True)
+    #drawAnalysis("LL"+CHAN)
+    #drawRegion(SEL)
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextAlign(33)
+    latex.SetTextSize(0.04)
+    latex.SetTextFont(62)
+    #latex.DrawLatex(0.20, 0.96, "CMS")
+    latex.SetTextFont(52)
+    #latex.DrawLatex(0.36, 0.96, "Preliminary")
+    can.Update()
+
+    OUTSTRING = OUT
+    OUTSTRING += "jet_time_fit_vs_pt" 
+
+    can.Print(OUTSTRING+extra_label+'_supplementary.png')
+    can.Print(OUTSTRING+extra_label+'_supplementary.pdf')
+    can.Close()
+
+
+    can = TCanvas("can","can",900,800)
+    can.SetGrid()
+    can.SetRightMargin(0.05)
+
+    g_mean_ref.SetTitle("")
+    g_mean.SetTitle("")
+
+    g_mean.SetLineColor(8)
+    g_mean.SetLineWidth(3)
+    g_mean.SetMarkerColor(8)
+    g_mean.SetMarkerStyle(24)
+
+    g_sigma.SetLineColor(8)
+    g_sigma.SetLineWidth(3)
+    g_sigma.SetLineStyle(2)
+    g_sigma.SetMarkerColor(8)
+    g_sigma.SetMarkerStyle(24)
+
+
+    g_mean_ref.SetLineWidth(0)
+    g_mean_ref.SetFillColorAlpha(1,0.1)
+    g_mean_ref.SetMarkerStyle(0)
+    g_mean_ref.SetMarkerSize(0)
+
+    g_sigma_ref.SetLineWidth(0)
+    g_sigma_ref.SetFillColorAlpha(1,0.2)
+    g_sigma_ref.SetFillStyle(3335)#(3244)#
+    g_sigma_ref.SetMarkerStyle(0)
+    g_sigma_ref.SetMarkerSize(0)
+
+    g_mean_ref.SetTitle("")
+    g_mean_ref.GetXaxis().SetTitle("Jet p_{T} (GeV)")
+    g_mean_ref.GetXaxis().SetTitleOffset(1.1)
+    g_mean_ref.GetXaxis().SetTitleSize(0.04)
+
+    g_mean_ref.GetYaxis().SetTitle("Correction to fit parameters")
+    g_mean_ref.GetYaxis().SetTitleOffset(1.)
+    g_mean_ref.GetYaxis().SetTitleSize(0.04)
+
+
+    g_mean_ref.Draw("AE2")
+    g_sigma_ref.Draw("E2,sames")
+    g_mean.Draw("PE,sames")
+    g_sigma.Draw("PE,sames")
+    g_mean_ref.SetMaximum(1)
+    g_mean_ref.SetMinimum(-0.5)
+
+    leg = TLegend(0.32, 0.7-0.05, 0.95, 0.9)
+    leg.AddEntry(g_mean,"correction to mean","PE")
+    leg.AddEntry(g_mean_ref,"p_{T} independent corr. to mean","F")
+    leg.AddEntry(g_sigma,"correction to #sigma","PE")
+    leg.AddEntry(g_sigma_ref,"p_{T} independent corr. to #sigma","F")
+    leg.SetTextSize(0.04)
+    leg.Draw()
+    drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+    #drawAnalysis("LL"+CHAN)
+    #drawRegion(SEL)
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextAlign(33)
+    latex.SetTextSize(0.04)
+    latex.SetTextFont(62)
+    #latex.DrawLatex(0.20, 0.96, "CMS")
+    latex.SetTextFont(52)
+    #latex.DrawLatex(0.36, 0.96, "Preliminary")
+    can.Update()
+
+    OUTSTRING = OUT
+    OUTSTRING += "jet_time_correction_vs_pt" 
+
+    can.Print(OUTSTRING+extra_label+'_supplementary.png')
+    can.Print(OUTSTRING+extra_label+'_supplementary.pdf')
+    can.Close()
+
+
+
+
+
+def draw_supplementary(var,label = "",alternative_smear_function=False,label_in_legend=""):
+
+
+    in_file_string = OUT+"back_smear_file"+label+".root"
+    print "Opening ...", in_file_string
+    if in_file_string==OUT+"back_smear_file.root":
+        print "VERY IMPORTANT! This file has been overwritten"
+        print OUT+"back_smear_file.root"
+        print "PLEASE REDO IT!!"
+        print "Aborting...."
+        exit()
+
+    in_file = TFile(in_file_string,"READ")
+    in_file.cd()
+    in_file.ls()
+    back     = in_file.Get("back")
+    back.SetDirectory(0)
+    back_unc = in_file.Get("back_unc")
+    back_unc.SetDirectory(0)
+    data     = in_file.Get("data")
+    data.SetDirectory(0)
+    smeared  = in_file.Get("back_smeared")
+    smeared.SetDirectory(0)
+
+    ratio         = in_file.Get("ratio")
+    ratio.SetDirectory(0)
+    ratio_smeared = in_file.Get("ratio_smeared")
+    ratio_smeared.SetDirectory(0)
+    if alternative_smear_function:
+        smeared_alt  = in_file.Get("back_smeared_alt")
+        smeared_alt.SetDirectory(0)
+        ratio_smeared_alt = in_file.Get("ratio_smeared_alt")
+        ratio_smeared_alt.SetDirectory(0)
+    in_file.Close()
+
+    #similar canvas for supplementary material
+    can = TCanvas("can","can",900,800)
+    can.Divide(1,2)
+    setTopPad(can.GetPad(1), 4)
+    can.GetPad(1).SetBottomMargin(0.05)
+    can.GetPad(1).SetTopMargin(0.08)
+    setBotPad(can.GetPad(2), 3.8,forcetop=1.)
+
+    can.cd(1)
+    can.GetPad(1).SetGrid(1)
+    #can.SetGrid()
+    can.SetRightMargin(0.05)
+    data.GetXaxis().SetTitle(variable[var]['title'])
+    data.SetMarkerStyle(20)
+
+    s = "TTbar"
+    back.SetMarkerStyle(21)
+    back.SetMarkerColor(samples[s]['linecolor'])
+    back.SetLineColor(samples[s]['linecolor'])
+    back.SetFillColor(samples[s]['linecolor'])
+    back.SetFillColorAlpha(samples[s]['linecolor'],0.5)
+    back.SetLineWidth(2)
+
+    back.GetYaxis().SetTitle("Arbitrary unit")
+    back.GetYaxis().SetTitleOffset(+1.15)
+    back.GetYaxis().SetTitleSize( back.GetYaxis().GetTitleSize()*1.25 )
+    back.GetYaxis().SetLabelSize( back.GetYaxis().GetLabelSize()*1.25 )
+    back.Draw("HISTO,sames")
+    back.GetXaxis().SetTitle("Jet time (ns)")
+    back.GetXaxis().SetTitleOffset(2.)
+    back.GetXaxis().SetLabelOffset(2.)
+    back_unc.Draw("SAME, E2")
+    data.GetXaxis().SetTitle("Jet time (ns)")
+    smeared.SetLineWidth(3)
+    smeared.Draw("HISTO,sames")
+    data.SetMarkerSize(1.2)
+    data.Draw("PE,sames")
+
+    if alternative_smear_function:
+        smeared_alt.SetLineWidth(3)
+        smeared_alt.SetLineColor(2)
+        smeared_alt.Draw("HISTO,sames")
+
+    leg = TLegend(0.58, 0.7-0.05, 0.93, 0.9)
+    if label_in_legend!="":
+        leg.SetHeader(label_in_legend)
+    leg.AddEntry(back,"simulation","F")
+    leg.AddEntry(data,"data","PL")
+    leg.AddEntry(smeared,"simulation smeared","L")
+    if alternative_smear_function:
+        leg.AddEntry(smeared_alt,"p_{T} independent smearing","L")
+    leg.SetTextSize(0.04)
+    leg.Draw()
+    drawCMS_simple(LUMI, "Supplementary", ERA=ERA if alternative_smear_function else "", onTop=True,custom_spacing=0.3)
+    #drawAnalysis("LL"+CHAN)
+    #drawRegion(SEL)
+    latex = TLatex()
+    latex.SetNDC()
+    latex.SetTextAlign(33)
+    latex.SetTextSize(0.04)
+    latex.SetTextFont(62)
+    #latex.DrawLatex(0.20, 0.96, "CMS")
+    latex.SetTextFont(52)
+    #latex.DrawLatex(0.36, 0.96, "Preliminary")
+    can.Update()
+
+
+    can.cd(2)
+    can.GetPad(2).SetGrid(1)
+    #Here can 2
+    setBotStyle(ratio,r=1.4)#1.2 and 4 
+    ratio.GetYaxis().SetTitle("Data / Bkg")
+    ratio.GetXaxis().SetTitle("Jet time (ns)")
+    ratio.GetYaxis().SetTitleOffset(+0.35)
+    ratio.GetXaxis().SetTitleOffset(+1.1)
+    ratio.GetYaxis().SetTitleSize(0.13)
+    ratio.GetYaxis().SetLabelSize(0.13)
+    ratio.GetXaxis().SetTitleSize(0.13)
+    ratio.GetXaxis().SetLabelSize(0.13)
+    ratio.SetMinimum(0)
+    ratio.SetMaximum(4)
+    ratio.SetMarkerSize(1.2)   
+    ratio.SetMarkerStyle(20)   
+    ratio.SetMarkerColor(800-3)   
+    ratio.SetLineColor(800-3)   
+    ratio.SetLineWidth(2)   
+    ratio.Draw("PE")
+    ratio.SetMinimum(0)
+    ratio.SetMaximum(4)
+
+    ratio_smeared.SetMinimum(0)
+    ratio_smeared.SetMaximum(4)
+    #setBotStyle(ratio_smeared,r=1.2) 
+    #ratio_smeared.GetYaxis().SetTitle("Data / Bkg LLL")
+    ratio_smeared.SetMinimum(0)
+    ratio_smeared.SetMaximum(4)
+    ratio_smeared.SetLineColor(418)   
+    ratio_smeared.SetMarkerColor(418)   
+    ratio_smeared.SetMarkerSize(1.2)   
+    ratio_smeared.SetMarkerStyle(21)   
+    ratio_smeared.SetLineWidth(2)   
+    ratio_smeared.Draw("PE,sames")
+
+    if alternative_smear_function:
+        ratio_smeared_alt.GetYaxis().SetTitle("Data / Bkg")
+        ratio_smeared_alt.GetXaxis().SetTitle("Jet time (ns)")
+        ratio_smeared_alt.GetYaxis().SetTitleOffset(+0.35)
+        ratio_smeared_alt.GetXaxis().SetTitleOffset(+1.1)
+        ratio_smeared_alt.GetYaxis().SetTitleSize(0.13)
+        ratio_smeared_alt.GetYaxis().SetLabelSize(0.13)
+        ratio_smeared_alt.SetLineColor(2)   
+        ratio_smeared_alt.SetMarkerColor(2)   
+        ratio_smeared_alt.SetMarkerSize(1.2)   
+        ratio_smeared_alt.SetMarkerStyle(21)   
+        ratio_smeared_alt.SetLineWidth(3)   
+        ratio_smeared_alt.Draw("PE,sames")
+
+    can.Update()
+
+    OUTSTRING = OUT
+    OUTSTRING += "jet_time_modelling" 
+
+    can.Print(OUTSTRING+label+'_supplementary.png')
+    can.Print(OUTSTRING+label+'_supplementary.pdf')
+    can.Close()
 
 
 def draw_syst_unc(added):
@@ -1614,7 +2302,7 @@ def draw_syst_unc(added):
     mg.Draw("APL")
     leg1.Draw()
     drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
-    drawAnalysis("LL"+CHAN)
+    #drawAnalysis("LL"+CHAN)
     drawRegion(SEL)
     #c1.SetLogx()
     c1.Print(OUT+"signal_uncertainty_time_smearing"+added+".pdf")
@@ -1623,18 +2311,173 @@ def draw_syst_unc(added):
  
 lab = "_not_scaled"#"_constant_1"
 lab = ""
+era_label = ""#"_G-H"#""#
+
+if ERA=="2016":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2016 import samples
+    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2016 import lumi
+    LUMI = lumi[ lumi.keys()[0]]["tot"]    
+    LUMI = lumi["MuonEG"]["tot"]    
+    if era_label=="_G-H":
+        LUMI = lumi["MuonEG"]["G"] +lumi["MuonEG"]["H"]
+    elif era_label=="_B-F":
+        LUMI = lumi["MuonEG"]["tot"]-lumi["MuonEG"]["G"]-lumi["MuonEG"]["H"]
+    else:
+        LUMI = lumi["MuonEG"]["tot"]
+
+if ERA=="2017":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import samples
+    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2017 import lumi
+    LUMI = lumi[ lumi.keys()[0]]["tot"]    
+    LUMI = lumi["MuonEG"]["tot"]    
+if ERA=="2018":
+    from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import samples
+    from NNInferenceCMSSW.LLP_NN_Inference.lumi_v5_2018 import lumi
+    LUMI = lumi[ lumi.keys()[0]]["tot"]    
+    LUMI = lumi["MuonEG"]["tot"]    
+
+#draw_supplementary(var="JetsNegative.timeRecHitsEB")
+#exit()
+
 if SEL=="TtoEM":
-    #time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative[0].CSV>0.8",label=lab,scale=True,do_smear=True)
-    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+"_CSV_0p8_all_jets_G-H",scale=True,do_smear=True)#True#"_B-F"
-    #time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "MEt.pt>100 && isTtoEM && JetsNegative[0].CSV>0.5",label=lab+"_CSV_0p5_MET_100",scale=True,do_smear=True)
-    #time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "isTtoEM && JetsNegative[0].CSV>0.5",label=lab+"_CSV_0p5_MET_0",scale=True,do_smear=True)
+
+    #Used for approval plots
+    additional_lab = "_CSV_0p8_all_jets"+era_label
+
+    #new to avoid overwriting
+    additional_lab += "_supplementary"
+
+    #time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+additional_lab,scale=True,do_smear=True)#True#"_B-F"
+    draw_supplementary(var="JetsNegative.timeRecHitsEB",label = additional_lab,alternative_smear_function=False,label_in_legend="")
+
+    exit()
+
+
+    #Livia's studies
+    #pt bins: 30-67.5,67.5-135,>135
+
+    ####Study pt spectrum to choose the bins such that stat is even
+    #additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_rebinned"
+    #time_fit(var="JetsNegative.pt",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+additional_lab,scale=True,do_smear=False)#True#"_B-F"
+
+    '''
+    #overall fit but with gaussian function and same binning
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_inclusive"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=1.)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="")
+    exit()
+    '''
+
+    #two different smearing options for lower pT bin, where we under-smear
+
+    '''
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_2"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=2.)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+
+
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_1p5"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=1.5)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+
+    #try factor 3 as 2 is not enough
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_3"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=3.)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+
+    #try factor 5 as 3 is not enough
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_5"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=5.)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+
+    #try factor 7.5 as 5 is not enough
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_7p5"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=7.5)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+
+    #try factor 10 as 7.5 is not enough
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_10"
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=10.)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+    exit()
+    '''
+
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_30_67p5"
+    #time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>30 && JetsNegative.pt<67.5",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label,adjust_sigma_fit_factor=1.)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    #draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="30 < p_{T} < 67.5 GeV")
+
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_67p5_135"
+    #time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>=67.5 && JetsNegative.pt<135",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    #draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True, label_in_legend="67.5 < p_{T} < 135 GeV")
+    
+
+    additional_lab = "_CSV_0p8_all_jets"+era_label+"_pt_135"
+    #time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5 && JetsNegative.pt>=135",label=lab+additional_lab,scale=True,do_smear=True,rebin=2.,do_CB=False,alternative_smear_function="_CSV_0p8_all_jets"+era_label)#True#"_B-F"
+    additional_lab_smear = additional_lab+"_gauss"
+    #Draw all the smearing functions
+    #draw_supplementary("JetsNegative.timeRecHitsEB",label = additional_lab_smear,alternative_smear_function=True,label_in_legend="p_{T} > 135 GeV")
+
+    #CB, three bins
+    #draw_mean_sigma(["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135","_CSV_0p8_all_jets"+era_label+"_pt_135"])
+    #Gauss, three bins?
+    #draw_mean_sigma(["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss")
+
+    #Compare original gauss smearing with increased one
+    #draw_mean_sigma(reference_label="_CSV_0p8_all_jets"+era_label,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss")
+
+    #Only 2016
+
+    #standard CB
+    ref_lab = "_CSV_0p8_all_jets"+era_label
+
+    #gauss with double binning
+    ref_lab = "_CSV_0p8_all_jets_inclusive_gauss"+era_label
+
+    if ERA=="2016":
+        draw_mean_sigma(reference_label=ref_lab,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_2_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss_sigma_smear_increase_2",sigma_smear_increase_factors=[2.,1.,1.])
+        draw_mean_sigma(reference_label=ref_lab,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_1p5_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss_sigma_smear_increase_1p5",sigma_smear_increase_factors=[1.5,1.,1.])
+    if ERA=="2017":
+        draw_mean_sigma(reference_label=ref_lab,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_5_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss_sigma_smear_increase_5",sigma_smear_increase_factors=[5.,1.,1.])
+    if ERA=="2018":
+        draw_mean_sigma(reference_label=ref_lab,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_5_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss_sigma_smear_increase_5",sigma_smear_increase_factors=[5.,1.,1.])    
+        draw_mean_sigma(reference_label=ref_lab,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_3_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss_sigma_smear_increase_3",sigma_smear_increase_factors=[3.,1.,1.])    
+        draw_mean_sigma(reference_label=ref_lab,label_list = ["_CSV_0p8_all_jets"+era_label+"_pt_30_67p5_sigma_smear_increase_2_gauss","_CSV_0p8_all_jets"+era_label+"_pt_67p5_135_gauss","_CSV_0p8_all_jets"+era_label+"_pt_135_gauss"],extra_label="_gauss_sigma_smear_increase_2",sigma_smear_increase_factors=[2.,1.,1.])    
+    exit()
+
+
+    ##time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative[0].CSV>0.8",label=lab,scale=True,do_smear=True)
+    additional_lab = "_CSV_0p8_all_jets"+era_label
+    time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+additional_lab,scale=True,do_smear=True)#True#"_B-F"
+
+    ##time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "MEt.pt>100 && isTtoEM && JetsNegative[0].CSV>0.5",label=lab+"_CSV_0p5_MET_100",scale=True,do_smear=True)
+    ##time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "isTtoEM && JetsNegative[0].CSV>0.5",label=lab+"_CSV_0p5_MET_0",scale=True,do_smear=True)
+
 if SEL=="SR":
     #time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "isSR",label=lab,scale=True,do_smear=False)
     #time_fit(var="JetsNegative.timeRecHitsEB",cut = "isSR && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+"_all_jets",scale=True,do_smear=False)
     added = ""
     #added="_B-F"
-    signal_smearing(var="JetsNegative.timeRecHitsEB",cut = "isSR && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+"_all_jets"+added,added=added,scale=True,do_smear=True)
-    draw_syst_unc(added)
+    signal_smearing(var="JetsNegative.timeRecHitsEB",cut = "isSR && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+"_all_jets"+added,added=added,scale=True,do_smear=False)
+    #draw_syst_unc(added)
+
 if SEL=="ZtoMM":
     time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "isZtoMM && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab,scale=True,do_smear=False)
     ##time_fit(var="JetsNegative[0].timeRecHitsEB",cut = "MEt.pt>100",label=lab+"_MET_100",scale=True,do_smear=False)

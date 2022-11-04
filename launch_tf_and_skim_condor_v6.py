@@ -12,11 +12,11 @@ import root_numpy
 run_condor = True
 
 # # # # # #
-# Run era # 
+# Run era #
 # # # # # #
-RUN_ERA = 2016#6#7#8
+RUN_ERA = 2018#6#7#8
 
-doRegion = "doGen"#"doSR"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
+doRegion = "doSR"#"doSR"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
 resubm_label = ""
 #resubm_label = "_resubmission_4"
 
@@ -24,23 +24,31 @@ resubm_label = ""
 if resubm_label=="_resubmission_0" or resubm_label=="":
     if RUN_ERA == 2018:
         INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_HEM/")% str(RUN_ERA)
-        #JERDown
-        #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_HEM_JERDown/")% str(RUN_ERA)
+        #JERUp
+        #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_HEM_JERUp/")% str(RUN_ERA)
         ##INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_15November2021_slimmedJets_HEM/")% str(RUN_ERA)
     else:
         INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021/")% str(RUN_ERA)
-        #JERDown
-        #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_JERDown/")% str(RUN_ERA)
+        #JERUp
+        #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_JERUp/")% str(RUN_ERA)
 else:
     INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v5_calo_AOD_%s_07October2021"+resubm_label+"/")% str(RUN_ERA)
 
 
+OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR/")%(RUN_ERA)
+OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared_no_cuts_debug/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_no_cosmicOneLeg/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_signal_smearing_test/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_tagger_v3_pt_flat/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_positive_jets_0p7/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_BeamHalo/")%(RUN_ERA)
-#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_no_photonEFrac_cut/")%(RUN_ERA)
-#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_JERDown/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_no_photonEFrac_eleEFrac_cut/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_syst_unc_JERUp/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_syst_unc_central_values/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_bin_1_2/")%(RUN_ERA)
-OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_Gen_HZ/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_Gen_HZ/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_xcheck_slimmedJets/")%(RUN_ERA)
 
 if not(os.path.exists(OUTPUTDIR)):
@@ -104,6 +112,20 @@ sign = [
         #2017:
         #'SUSY_mh400_pl1000', 'SUSY_mh300_pl1000', 'SUSY_mh250_pl1000', 'SUSY_mh200_pl1000', 'SUSY_mh175_pl1000', 'SUSY_mh150_pl1000', 'SUSY_mh127_pl1000',
         #'SUSY_central',
+        'SUSY_mh127_ctau500', 'SUSY_mh127_ctau3000',
+        'SUSY_mh150_ctau500', 'SUSY_mh150_ctau3000',
+        'SUSY_mh175_ctau500', 'SUSY_mh175_ctau3000',
+        'SUSY_mh200_ctau500', 'SUSY_mh200_ctau3000',
+        'SUSY_mh250_ctau500', 'SUSY_mh250_ctau3000',
+        'SUSY_mh300_ctau500', 'SUSY_mh300_ctau3000',
+        'SUSY_mh400_ctau500', 'SUSY_mh400_ctau3000',
+        'SUSY_mh600_ctau500', 'SUSY_mh600_ctau3000',
+        'SUSY_mh800_ctau500', 'SUSY_mh800_ctau3000',
+        'SUSY_mh1000_ctau500','SUSY_mh1000_ctau3000',
+        'SUSY_mh1250_ctau500','SUSY_mh1250_ctau3000',
+        'SUSY_mh1500_ctau500','SUSY_mh1500_ctau3000',
+        'SUSY_mh1800_ctau500','SUSY_mh1800_ctau3000',
+
         'SUSY_mh127_ctau500_HZ', 'SUSY_mh127_ctau3000_HZ',
         'SUSY_mh150_ctau500_HZ', 'SUSY_mh150_ctau3000_HZ',
         'SUSY_mh175_ctau500_HZ', 'SUSY_mh175_ctau3000_HZ',
@@ -117,7 +139,24 @@ sign = [
         'SUSY_mh1250_ctau500_HZ','SUSY_mh1250_ctau3000_HZ',
         'SUSY_mh1500_ctau500_HZ','SUSY_mh1500_ctau3000_HZ',
         'SUSY_mh1800_ctau500_HZ','SUSY_mh1800_ctau3000_HZ',
+
+        'SUSY_mh127_ctau500_ZZ', 'SUSY_mh127_ctau3000_ZZ',
+        'SUSY_mh150_ctau500_ZZ', 'SUSY_mh150_ctau3000_ZZ',
+        'SUSY_mh175_ctau500_ZZ', 'SUSY_mh175_ctau3000_ZZ',
+        'SUSY_mh200_ctau500_ZZ', 'SUSY_mh200_ctau3000_ZZ',
+        'SUSY_mh250_ctau500_ZZ', 'SUSY_mh250_ctau3000_ZZ',
+        'SUSY_mh300_ctau500_ZZ', 'SUSY_mh300_ctau3000_ZZ',
+        'SUSY_mh400_ctau500_ZZ', 'SUSY_mh400_ctau3000_ZZ',
+        'SUSY_mh600_ctau500_ZZ', 'SUSY_mh600_ctau3000_ZZ',
+        'SUSY_mh800_ctau500_ZZ', 'SUSY_mh800_ctau3000_ZZ',
+        'SUSY_mh1000_ctau500_ZZ','SUSY_mh1000_ctau3000_ZZ',
+        'SUSY_mh1250_ctau500_ZZ','SUSY_mh1250_ctau3000_ZZ',
+        'SUSY_mh1500_ctau500_ZZ','SUSY_mh1500_ctau3000_ZZ',
+        'SUSY_mh1800_ctau500_ZZ','SUSY_mh1800_ctau3000_ZZ',
+
         #'SUSY_mh400_prompt', 'SUSY_mh300_prompt', 'SUSY_mh200_prompt',
+        #'splitSUSY_M2400_100_ctau0p1','splitSUSY_M2400_100_ctau1p0','splitSUSY_M2400_100_ctau10p0','splitSUSY_M2400_100_ctau100p0','splitSUSY_M2400_100_ctau1000p0','splitSUSY_M2400_100_ctau10000p0','splitSUSY_M2400_100_ctau100000p0',
+        #'SUSY_mh1800_ctau500',
         #'ggH_MH125_MS25_ctau500',  'ggH_MH125_MS25_ctau1000',  'ggH_MH125_MS25_ctau2000',  'ggH_MH125_MS25_ctau5000',  'ggH_MH125_MS25_ctau10000', 
         #'ggH_MH125_MS55_ctau500',  'ggH_MH125_MS55_ctau1000',  'ggH_MH125_MS55_ctau2000',  'ggH_MH125_MS55_ctau5000',  'ggH_MH125_MS55_ctau10000', 
         #'ggH_MH200_MS50_ctau500',  'ggH_MH200_MS50_ctau1000',  'ggH_MH200_MS50_ctau2000',  'ggH_MH200_MS50_ctau5000',  'ggH_MH200_MS50_ctau10000', 
@@ -134,7 +173,9 @@ sign = [
 	#'ggH_MH2000_MS600_ctau500','ggH_MH2000_MS600_ctau1000','ggH_MH2000_MS600_ctau2000','ggH_MH2000_MS600_ctau5000','ggH_MH2000_MS600_ctau10000',
         ]
 
-sample_list = sign#data#sign#data#sign#data#sign+data#data#sign#data#sign#data#sign#data#sign#back#sign#data#sign#data#back#sign#data#back#sign#data#sign#back#data#back#sign#sign#data#back#sign#data#back#data#data+back
+sign = ['SUSY_mh400_ctau500','SUSY_mh400_ctau3000',]
+
+sample_list = sign#data#sign#data#sign#data#data#sign#data#sign#data#sign+data#data#sign#data#sign#data#sign#data#sign#back#sign#data#sign#data#back#sign#data#back#sign#data#sign#back#data#back#sign#sign#data#back#sign#data#back#data#data+back
 
 dicty = {}
 #for s in sign:
@@ -144,6 +185,8 @@ for s in sample_list:
         print ss
         print requests[ss]
         s1 = requests[ss][1:].split('/')[0]
+        if 'splitSUSY_M2400_100' in ss:
+            s1 = "CRAB_UserFiles"
         print s1
         dicty[ss] = s1+'/crab_'+ss+'/'
         if s=="DYJetsToLL" and RUN_ERA==2018:
@@ -152,17 +195,11 @@ for s in sample_list:
         if "JER" in INPUTDIR:
             dicty[ss] = s1+'/crab_'+ss+'_HH/'
 
-
-#print dicty_o
-#print "new:"
-#print dicty
-#exit()
-
 if run_condor:
     print "Run condor!"
     NCPUS   = 1
-    MEMORY  = 4000#5000#2000 too small?#10000#tried 10 GB for a job killed by condor automatically
-    RUNTIME = 3600*12#86400
+    MEMORY  = 512#4000#5000#2000 too small?#10000#tried 10 GB for a job killed by condor automatically
+    RUNTIME = 3600#*12#86400
     root_files_per_job = 100#40#20#40#
     
     sample_to_loop = dicty.keys()
@@ -262,6 +299,10 @@ if run_condor:
             isSignal = True
             isData = False
             mc_PU_file+=('PileupReweight_ZJetsToNuNu_HT-100ToInf_13TeV-madgraph_%s.root')%(pu_tag)
+        if ('splitSUSY' in s):
+            isSignal = True
+            isData = False
+            mc_PU_file+=('PileupReweight_ZJetsToNuNu_HT-100ToInf_13TeV-madgraph_%s.root')%(pu_tag)
         if ('GluGluH2_H2ToSSTobbbb' in s):
             isSignal = True
             isData = False
@@ -279,6 +320,13 @@ if run_condor:
             isData = False
             mc_PU_file+=('PileupReweight_ZJetsToNuNu_HT-100ToInf_13TeV-madgraph_%s.root')%(pu_tag)
 
+
+        #Time smearing data file
+        data_smearing_file = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_"+str(RUN_ERA)+"_TtoEM_v5_ntuples_validate_timeRecHits/data_smear_file_CSV_0p8_all_jets.root"
+        #Time smearing signal file
+        signal_smearing_file = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_"+str(RUN_ERA)+"_SR_v5_ntuples_validate_timeRecHits/sign_smear_file.root"
+        #Name of the corresponding crystal ball
+        signal_CB_string = "sign_CB_"+s.replace("_HH","").replace("_HZ","").replace("_ZZ","")
 
         if isSignal:
             sign_str = "true"
@@ -331,8 +379,9 @@ if run_condor:
             if not(os.path.exists(OUT)):
                 os.mkdir(OUT)
 
-            cond_name = "skim_"+str(RUN_ERA)+"_v6_"+doRegion+"Gen"#"_syst_unc_JERDown"#"_nophoton"#+"_BeamHalo"##+"_bin_1_2"#+"_test"#
-            COND_DIR = '/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/condor_'+cond_name+resubm_label
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_smear"+doRegion#+"_positive0p7"#"_syst_unc_JERUp"##+"Gen"#+"_nophoton"#+"_BeamHalo"##+"_bin_1_2"#+"_test"#
+            #COND_DIR = '/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/condor_'+cond_name+resubm_label
+            COND_DIR = '/nfs/dust/cms/user/lbenato/condor_'+cond_name+resubm_label
             if not(os.path.exists(COND_DIR)):
                 os.mkdir(COND_DIR)
 
@@ -380,8 +429,26 @@ if run_condor:
                         #print b, root_files[b]
                         fout.write('echo "Processing '+ root_files[b]  +' . . ." \n')
                         #HEM
-                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
-                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        '''
+                        #We are not ready for this
+                        if isSignal:
+                            fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                            fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        else:
+                            fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                            fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        '''
+
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_tagger_v3_no_time ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_tagger_v3_no_time ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+
+
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_positive_jets_0p7 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_positive_jets_0p7 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
 
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')

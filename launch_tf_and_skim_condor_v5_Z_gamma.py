@@ -14,11 +14,11 @@ run_condor = True
 # # # # # #
 # Run era # 
 # # # # # #
-RUN_ERA = 2017#6#7#8
+RUN_ERA = 2016#6#7#8
 
-doRegion = "doZtoMMPho"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
+doRegion = "doZtoEEPho"#"doZtoMMPho"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
 resubm_label = ""
-resubm_label = "_resubmission_5"
+resubm_label = "_resubmission_3"
 ##
 
 #Remember: all v5 MC don't have correct JER smearing, only v6
@@ -38,7 +38,7 @@ else:
     INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v5_calo_AOD_%s_31December2020"+resubm_label+"/")% str(RUN_ERA)
 
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v5_calo_AOD_August_2021/v5_calo_AOD_%s_SR_xcheck_tf_and_skim_condor_v5_updated"+resubm_label+"/")%(RUN_ERA)
-OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_ZtoMMPho"+resubm_label+"_v5_ntuples/")%(RUN_ERA)
+OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_ZtoEEPho"+resubm_label+"_v5_ntuples_updated/")%(RUN_ERA)
 
 if not(os.path.exists(OUTPUTDIR)):
     os.mkdir(OUTPUTDIR)
@@ -75,20 +75,22 @@ dicty_o = defaultdict()
 
 #data = ["EGamma"]
 data = ["SingleMuon"]
-#data = ["SingleElectron"]
+data = ["SingleElectron"]
+data = ["SingleElectronGH"]
 #data = ["SinglePhoton"]
 #data = ["MuonEG"]
 #data = ["MET"]
 #data = ["HighMET"]
 #data = ["JetHT"]
 #back = ["VV","WJetsToLNu","ZJetsToNuNu","TTbarGenMET","QCD"]
+#back = ["WJetsToLNu","TTbarGenMET"]#,"TTbar"]
 #back = ["TTbar"]
 back = ["DYJetsToLL"]
 #back = ["TTbarGenMET"]
 #back = ["QCD"]
 #back = ["ZJetsToNuNu"]
-#back = ["VV"]#["TTbar"]#"VV",
-#back = ["WJetsToLNu"]#done
+#back = ["WJetsToLNu"]#,"TTbarGenMET"]#"VV",
+#back = ["TTbar"]#done
 
 
 sign = [
@@ -118,7 +120,7 @@ sign = [
 	#'ggH_MH2000_MS600_ctau500','ggH_MH2000_MS600_ctau1000','ggH_MH2000_MS600_ctau2000','ggH_MH2000_MS600_ctau5000','ggH_MH2000_MS600_ctau10000',
         ]
 
-sample_list = data#back#data#back# data#sign#data#sign#back#sign#data#sign#data#back#sign#data#back#sign#data#sign#back#data#back#sign#sign#data#back#sign#data#back#data#data+back
+sample_list = data#sign#data#sign#back#sign#data#sign#data#back#sign#data#back#sign#data#sign#back#data#back#sign#sign#data#back#sign#data#back#data#data+back
 
 dicty = {}
 #for s in sign:
@@ -359,8 +361,12 @@ if run_condor:
                         #print b, root_files[b]
                         fout.write('echo "Processing '+ root_files[b]  +' . . ." \n')
                         #HEM
-                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v5_Z_gamma ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
-                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v5_Z_gamma ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v5_Z_gamma_updated ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v5_Z_gamma_updated ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        ##fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v5_electron ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        ##fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v5_electron ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v5_Z_gamma ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v5_Z_gamma ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
                     fout.write('echo \n')
                 os.system('chmod 755 job_skim_'+str(j_num)+'.sh')
 

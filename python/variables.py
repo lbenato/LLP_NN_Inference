@@ -121,9 +121,9 @@ var_template = {
     },
     "nCHSJetsAcceptanceCalo": {
       "title" : "number of CHS jets in acceptance",
-      "nbins" : 50-20-20,
+      "nbins" : 50-30,
       "min" : -0.5,
-      "max" : 49.5-20-20,
+      "max" : 49.5-30,
       "log" : True,
     },
     "nMatchedCHSJets": {
@@ -207,9 +207,10 @@ var_template = {
     # HT and MinDPhi
     "HT": {
       "title" : "H_{T} (GeV)",
-      "nbins" : 25,#45,
+      "nbins" : 50,#0,#50,
+      #"bins" : [0,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,2000,2100,2200,2350,2500,3000,4000,5000,10000],
       "min" : 0,#100,
-      "max" : 1000,#2500,
+      "max" : 3000,#2500,
       "log" : True,
     },
     "ggHJetMetDPhi": {
@@ -290,7 +291,7 @@ var_template = {
       "title" : "min #Delta #varphi jets",
       "nbins" : 50,#45,
       "min" : 0,#100,
-      "max" : 10.,#,3.1415,#3.2,#2500,
+      "max" : 1,#3.1415,#3.2,#2500,
       "log" : True,
     },
 
@@ -490,6 +491,14 @@ var_template = {
     },
 
     #Jets variables
+    "Jets.isGenMatchedCaloCorrLLPAccept": {
+      "title" : "AK4 jets gen matched",
+      "nbins" : 2,
+      "min" : -0.5,
+      "max" : 1.5,
+      "log" : True,
+    },
+
     "Jets[[N]].sigprob": {
       "title" : "AK4 jet [[N]] DNN score",
       "nbins" : 50,#40
@@ -631,6 +640,20 @@ var_template = {
       "max" : 0.5,#3.,
       "log" : True,
     },
+    "JetsNegative.alphaMax": {
+      "title" : "jets #alpha_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "JetsNegative.betaMax": {
+      "title" : "jet  #beta_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
     "Jets[[N]].betaMax": {
       "title" : "jet[[N]]  #beta_{max}",
       "nbins" : 50,
@@ -639,6 +662,13 @@ var_template = {
       "log" : True,
     },
     "Jets.gammaMax": {
+      "title" : "jet  #gamma_{max}",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.2,#3.,
+      "log" : True,
+    },
+    "JetsNegative.gammaMax": {
       "title" : "jet  #gamma_{max}",
       "nbins" : 50,
       "min" : 0.,
@@ -659,6 +689,13 @@ var_template = {
       "max" : 0.5,#3.,
       "log" : True,
     },
+    "JetsNegative.gammaMaxEM": {
+      "title" : "jet  #gamma_{max} EM",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
     "Jets[[N]].gammaMaxEM": {
       "title" : "jet[[N]]  #gamma_{max} EM",
       "nbins" : 50,
@@ -667,6 +704,13 @@ var_template = {
       "log" : True,
     },
     "Jets.gammaMaxHadronic": {
+      "title" : "jet  #gamma_{max} hadronic",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#3.,
+      "log" : True,
+    },
+    "JetsNegative.gammaMaxHadronic": {
       "title" : "jet  #gamma_{max} hadronic",
       "nbins" : 50,
       "min" : 0.,
@@ -687,6 +731,13 @@ var_template = {
       "max" : 0.2,#2.,
       "log" : True,
     },       
+    "JetsNegative.gammaMaxET": {
+      "title" : "jet  gammaMaxET",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.2,#2.,
+      "log" : True,
+    },       
     "Jets[[N]].gammaMaxET": {
       "title" : "jet[[N]]  gammaMaxET",
       "nbins" : 50,
@@ -695,6 +746,13 @@ var_template = {
       "log" : True,
     },       
     "Jets.minDeltaRPVTracks": {
+      "title" : "jet  minDeltaRPVTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 1.,
+      "log" : True,
+    },
+    "JetsNegative.minDeltaRPVTracks": {
       "title" : "jet  minDeltaRPVTracks",
       "nbins" : 50,
       "min" : 0.,
@@ -715,6 +773,13 @@ var_template = {
       "max" : 0.5,#1.,
       "log" : True,
     },
+    "JetsNegative.minDeltaRAllTracks": {
+      "title" : "jet  minDeltaRAllTracks",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 0.5,#1.,
+      "log" : True,
+    },
     "Jets[[N]].minDeltaRAllTracks": {
       "title" : "jet[[N]]  minDeltaRAllTracks",
       "nbins" : 50,
@@ -723,6 +788,13 @@ var_template = {
       "log" : True,
     },
     "Jets.ptAllPVTracks": {
+      "title" : "tracks p_{T} in PVs in AK4 jet ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 50.,#500.,
+      "log" : True,
+    },
+    "JetsNegative.ptAllPVTracks": {
       "title" : "tracks p_{T} in PVs in AK4 jet ",
       "nbins" : 50,
       "min" : 0.,
@@ -743,6 +815,13 @@ var_template = {
       "max" : 200.,#500.,
       "log" : True,
     },
+    "JetsNegative.ptAllTracks": {
+      "title" : "all tracks p_{T} in AK4 jet ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 200.,#500.,
+      "log" : True,
+    },
     "Jets[[N]].ptAllTracks": {
       "title" : "all tracks p_{T} in AK4 jet[[N]] ",
       "nbins" : 50,
@@ -750,6 +829,31 @@ var_template = {
       "max" : 200.,#500.,
       "log" : True,
     },
+    "JetsNegative[[N]].ptAllTracks": {
+      "title" : "all tracks p_{T} in AK4 jet[[N]] ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 200.,#500.,
+      "log" : True,
+    },
+
+    "max(Jets[[N]].ptAllTracks - Electrons[[N]].pt,0)": {
+      "title" : "manipulated all tracks p_{T} in AK4 jet[[N]] ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 200.,#500.,
+      "log" : True,
+    },
+
+    "max(JetsNegative[[N]].ptAllTracks - Electrons[[N]].pt,0)": {
+      "title" : "manipulated all tracks p_{T} in AK4 jet[[N]] ",
+      "nbins" : 50,
+      "min" : 0.,
+      "max" : 200.,#500.,
+      "log" : True,
+    },
+
+
     
     "Jets.nPixelHitsMedian": {
       "title" : "jets nPixelHitsMedian",
@@ -837,23 +941,39 @@ var_template = {
       "title" : "jets ECAL energy/HCAL energy",
       "nbins" : 50,#50
       "min" : 0,
-      "max" : 2,#10
+      "max" : 5,#10
       "log" : True,
     },
     "Jets.hcalE": {
       "title" : "jets HCAL energy",
       "nbins" : 50,
       "min" : 0,
-      "max" : 200,#500,#2500
+      "max" : 1000,#500,#2500
       "log" : True,
     },
     "Jets.ecalE": {
       "title" : "jets ECAL energy",
       "nbins" : 50,
       "min" : 0,
-      "max" : 100,#200,#2500
+      "max" : 500,#200,#2500
       "log" : True,
     },
+
+    "JetsNegative.hcalE": {
+      "title" : "jets HCAL energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1000,#500,#2500
+      "log" : True,
+    },
+    "JetsNegative.ecalE": {
+      "title" : "jets ECAL energy",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 500,#200,#2500
+      "log" : True,
+    },
+
     "(-Jets.ecalE + Jets.hcalE)/(Jets.hcalE + Jets.ecalE)": {
       "title" : "jets HCAL/ECAL imbalance",
       "nbins" : 50,
@@ -934,12 +1054,19 @@ var_template = {
       "max" : 99.5,
       "log" : True,
     },
+    "JetsNegative.nConstituents": {
+      "title" : "number of constituents per jet",
+      "nbins" : 100,
+      "min" : -0.5,
+      "max" : 99.5,
+      "log" : True,
+    },
     "Jets[[N]].nTrackConstituents": {
       "title" : "jet[[N]]  number of jet constituents with tracks",
       #"title" : "Leading jet: n. of constituents with tracks",
-      "nbins" : 50-20+20-20,
+      "nbins" : 50+50,
       "min" : -0.5,
-      "max" : 49.5-20+20-20,
+      "max" : 49.5+50,
       "log" : True,
     },
     "Jets.nSelectedTracks": {
@@ -959,11 +1086,27 @@ var_template = {
       "log" : True,
     },
     "Jets.nTrackConstituents": {
-      "title" : "number of jet constituents with tracks",
+      "title" : "number of tracks per jet",
       #"title" : "Leading jet: n. of constituents with tracks",
-      "nbins" : 50-20+20,
-      "min" : -0.5,
-      "max" : 49.5-20+20,
+      "nbins" : 30,#100,#30,#50+50,
+      "min" : 0,#-0.5,
+      "max" : 30,#100,#99.5,#49.5+10,
+      "log" : True,
+    },
+    "Jets.nTracksPVMax": {
+      "title" : "number of tracks associated to a PV per jet",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 15,#100,#30,#50+50,
+      "min" : 0,#-0.5,
+      "max" : 15,#100,#99.5,#49.5+10,
+      "log" : True,
+    },
+    "JetsNegative.nTrackConstituents": {
+      "title" : "number of tracks per jet",
+      #"title" : "Leading jet: n. of constituents with tracks",
+      "nbins" : 100,#30,#50+50,
+      "min" : 0,#-0.5,
+      "max" : 100,#99.5,#49.5+10,
       "log" : True,
     },
     "(Jets[[N]].nTrackConstituents)/(Jets[[N]].nConstituents)": {
@@ -1024,6 +1167,13 @@ var_template = {
       "max" : 1,
       "log" : True,
     },
+    "JetsNegative.cHadEFrac": {
+      "title" : "jets charged hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
     "Jets[[N]].nHadEFrac": {
       "title" : "jet [[N]] neutral hadron energy fraction",
       "nbins" : 50,
@@ -1031,7 +1181,21 @@ var_template = {
       "max" : 1,
       "log" : True,
     },
+    "JetsNegative[[N]].nHadEFrac": {
+      "title" : "jet [[N]] neutral hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
     "Jets.nHadEFrac": {
+      "title" : "jets neutral hadron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "JetsNegative.nHadEFrac": {
       "title" : "jets neutral hadron energy fraction",
       "nbins" : 50,
       "min" : 0,
@@ -1059,7 +1223,21 @@ var_template = {
       "max" : 1,#0.1
       "log" : True,
     },
+    "JetsNegative.eleEFrac": {
+      "title" : "jets electron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,#0.1
+      "log" : True,
+    },
     "Jets[[N]].eleEFrac": {
+      "title" : "jet [[N]] electron energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,#0.1
+      "log" : True,
+    },
+    "JetsNegative[[N]].eleEFrac": {
       "title" : "jet [[N]] electron energy fraction",
       "nbins" : 50,
       "min" : 0,
@@ -1073,8 +1251,47 @@ var_template = {
       "max" : 1,
       "log" : True,
     },
+    "JetsNegative[[N]].photonEFrac": {
+      "title" : "jet [[N]] photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+
+    "Jets[[N]].photonEFrac + Jets[[N]].eleEFrac": {
+      "title" : "manipulated jet [[N]] photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+
+    "JetsNegative[[N]].photonEFrac + JetsNegative[[N]].eleEFrac": {
+      "title" : "manipulated jet [[N]] photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+
     "Jets.photonEFrac": {
       "title" : "jets photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+    "JetsNegative.photonEFrac": {
+      "title" : "jets photon energy fraction",
+      "nbins" : 50,
+      "min" : 0,
+      "max" : 1,
+      "log" : True,
+    },
+
+    "Jets.photonEFrac + Jets.nHadEFrac": {
+      "title" : "jets photon +neutral hadron energy fraction",
       "nbins" : 50,
       "min" : 0,
       "max" : 1,
@@ -1607,9 +1824,9 @@ var_template = {
     #EB rec hits
     "Jets.nRecHitsEB": {
         "title" : "AK4 jets: ECAL barr. rec hits multiplicity",
-        "nbins" : 41,#101-50,#21,#
+        "nbins" : 41+60,#101-50,#21,#
         "min" : 0-0.5,
-        "max" : 40.5,#102-0.5,#20.5,#
+        "max" : 40.5+60,#102-0.5,#20.5,#
         "log" : True,
     },
     "Jets.energyRecHitsEB": {
@@ -1629,9 +1846,10 @@ var_template = {
 
     "JetsNegative.pt": {
       "title" : "jets p_{T} (GeV)",
-      "nbins" : 50,#40
+      "nbins" : 0,#20,#50,#40
+        "bins" : [30,67.5,135,500],
       "min" : 0,
-      "max" : 500,#1000,
+      "max" : 400,#500,#1000,
       "log" : True,
     },
     "JetsNegative.eta": {
@@ -1721,6 +1939,13 @@ var_template = {
         "max" : 1,
         "log" : True,
     },
+    "JetsNegative[[N]].eFracRecHitsEB": {
+        "title" : "eFracRecHitsEB jet [N]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 1,
+        "log" : True,
+    },
 
     "Jets.energyRecHitsEB/Jets.energy": {
         "title" : "energyRecHitsEB/energy AK4 jets",
@@ -1763,7 +1988,7 @@ var_template = {
         "title" : "AK4 jets: ECAL barr. rec hits time (ns)",
         "nbins" : 50,
         "min" : -1,
-        "max" : 10,
+        "max" : 15,
         "log" : True,
     },
     "Jets.timeRMSRecHitsEB": {
@@ -1838,6 +2063,13 @@ var_template = {
         "log" : True,
     },
     "Jets[[N]].ptDEB": {
+        "title" : "ptDEB jet [N]",
+        "nbins" : 50,
+        "min" : 0,
+        "max" : 2.,
+        "log" : True,
+    },
+    "JetsNegative[[N]].ptDEB": {
         "title" : "ptDEB jet [N]",
         "nbins" : 50,
         "min" : 0,
@@ -2049,10 +2281,10 @@ var_template = {
         "log" : True,
     },
     "Jets.radiusLLP": {
-        "title" : "radiusLLP jets",
+        "title" : "LLP travel distance (cm)",
         "nbins" : 50,
-        "min" : 30,
-        "max" : 300,
+        "min" : 0,#30,
+        "max" : 300,#300,
         "log" : True,
     },
     "Jets.radiusLLPCaloCorr": {
@@ -2246,8 +2478,8 @@ var_template = {
       "title" : "MET + l transverse mass (GeV)",
       "nbins" : 51,
       "min" : 0,
-      "max" : 102,
-      "log" : False,
+      "max" : 500,
+      "log" : True,
     },
     "Z_mass": {
       "title" : "Z->ll mass (GeV)",
@@ -3469,10 +3701,18 @@ var_template = {
     },
 
     "dt_ecal_dist": {
-        "title" : "Distance(cosmic 3D line fit,ECAL rec hits #in tagged jets) (m)",
+      "title" : "Distance(cosmic 3D line fit,ECAL rec hits #in tagged jets) (m)",
       "nbins" : 25,#25
       "min" : 0.,
-      "max" : 5,#2.5
+      "max" : 10,#5,#2.5
+      "log" : True,
+    },
+
+    "dt_ecal_no_tag_dist": {
+      "title" : "Distance(cosmic 3D line fit,ECAL rec hits #in all jets) (m)",
+      "nbins" : 25,#25
+      "min" : 0.,
+      "max" : 10,#5,#2.5
       "log" : True,
     },
 
@@ -3750,6 +3990,27 @@ var_template = {
       "max" : 5.5,
       "log" : True,
     },
+    "nElectronsPassing": {
+      "title" : "number of tight electrons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    "nPhotons": {
+      "title" : "number of loose photons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
+    "nPhotonsPassing": {
+      "title" : "number of tight photons",
+      "nbins" : 6,
+      "min" : -0.5,
+      "max" : 5.5,
+      "log" : True,
+    },
     "nTaus": {
       "title" : "number of loose taus",
       "nbins" : 6,
@@ -3814,9 +4075,9 @@ var_template = {
     # MET
     "MEt.pt": {
       "title" : "E_{T}^{miss} (GeV)",
-      "nbins" : 50,
-      "min" : 0,#200,#0,#200,
-      "max" : 2000,#1200,#2000,#0,#2200,
+      "nbins" : 30,#20,#50,
+      "min" : 240,#250,#200,#0,#200,
+      "max" : 440,#2250,#1000,#1200,#2000,#0,#2200,
       "log" : True,
     },
     "MEt.ptGen": {
@@ -3888,7 +4149,7 @@ var_template = {
       "title" : "gen LLP transverse decay length (cm)",
       #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
       "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
-        "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,400,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000,1000000],#HeavyHiggs
+      "bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,400,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000,1000000],#HeavyHiggs
       #"bins" : [0.1,0.5,1,2,5,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,225,250,300,325,350,375,400,450,500,600,700,800,900,1000,1250,1500,2000,3000,5000,7000,10000],#HeavyHiggs
       "nbins" : 0,#100,
       "min" : 0.000001,
@@ -3896,6 +4157,24 @@ var_template = {
       "log" : True,
       "logx" : True,
     },
+
+    "GenLLPs.travelRadius": {
+      "title" : "gen LLP transverse decay length (cm)",
+        #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000]      
+        #SUSY ctau 500"
+        #"bins" : [0,10,50,100,150,200,250,300,350,400,450,500,550,600,700,800,900,1000,2000],
+        #SUSY ctau 3000"
+        "bins" : [0,10,50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1600,1700,1800,1900.,2000,2125,2250,2500,3000,5000],
+      #"bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000],#HeavyHiggs
+      #"bins" : [0.1,0.5,1,2,5,10,25,50,100,200,300,400,500,700,1000,2000,3000,5000,7000,10000,20000,50000,100000,1000000],#HeavyHiggs
+      #"bins" : [0.1,0.5,1,2,5,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,225,250,300,325,350,375,400,450,500,600,700,800,900,1000,1250,1500,2000,3000,5000,7000,10000],#HeavyHiggs
+      "nbins" : 0,#100,
+      "min" : 0.000001,
+      "max" : 1000,
+      "log" : True,
+      "logx" : True,
+    },
+
     "GenBquarks[[N]].radius2D": {
       "title" : "gen b-quark transverse decay length (cm)",
       #"bins" : [0,0.0001,0.001,0.01,0.1,0.5,1,2,5,10,25,50,100,200,300,500,700,1000,2000,3000,5000,7000,10000,20000,50000],
@@ -3918,6 +4197,13 @@ var_template = {
       "nbins" : 40,
       "min" : 0,
       "max" : 3.,
+      "log" : True,
+    },
+    "GenLLPs[[N]].beta": {
+      "title" : "gen long lived particle Lorentz #beta",
+      "nbins" : 50,
+      "min" : 0.5,
+      "max" : 1,
       "log" : True,
     },
     "GenHiggs[[N]].dRdaughters": {
@@ -3952,7 +4238,7 @@ var_template = {
       "title" : "gen Higgs p_{T} (GeV)",
       "nbins" : 50,
       "min" : 0,
-      "max" : 500,
+      "max" : 1000,
       "log" : True,
     },
     "GenHiggs[[N]].mass": {
@@ -4767,6 +5053,32 @@ var_template = {
       "max" : 5.,
       "log" : True,
     },
+
+    "Electrons.pt": {
+      "title" : "electrons p_{T} (GeV)",
+      "nbins" : 0,#50,
+      "bins" : [0,50,70,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,500,550,600,700,800,1000,1250,1500,2000,3000],
+      "min" : 0,
+      "max" : 500,#1000,
+      "log" : True,
+    },
+    "Electrons.eta": {
+      "title" : "electrons #eta",
+      "nbins" : 50,#25,
+      "min" : -2.5,#-1.4,#-5.2,#-3,
+      "max" : 2.5,#1.4,#5.2,#3,
+      "log" : True,
+    },
+
+    "Electrons[[N]].pt": {
+      "title" : "electron [[N]] p_{T} (GeV)",
+      "nbins" : 50,#40
+      "min" : 0,
+      "max" : 1000,#1000,
+      "log" : True,
+    },
+
+
 }
 
 
