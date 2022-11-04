@@ -21,7 +21,7 @@ import tensorflow as tf
 from tensorflow import keras
 from prettytable import PrettyTable
 
-ERA = "2017"
+ERA = "2018"
 
 if ERA=="2018":
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2018 import samples, sample
@@ -84,7 +84,7 @@ data = [
     #'SUSY_mh600_ctau3000_HH',
     #'SUSY_mh800_ctau500_HH', 
     #'SUSY_mh800_ctau3000_HH',
-    'SUSY_mh1000_ctau500_HH',
+    #'SUSY_mh1000_ctau500_HH',
     #'SUSY_mh1000_ctau3000_HH',
     #'SUSY_mh1250_ctau500_HH',
     #'SUSY_mh1250_ctau3000_HH',
@@ -1504,7 +1504,15 @@ def smear_correlation(label,do_eta=False):
         eff[d]['gen'] = gen_events
         print new_list
 
+        #Time histograms
+        h = TH1F("h","h",100,-10,10)
+        h.Sumw2()
+        h_s = TH1F("h_s","h_s",100,-10,10)
+        h_s.Sumw2()
+        h_s_c = TH1F("h_s_c","h_s_c",100,-10,10)
+        h_s_c.Sumw2()
 
+        
 
 
         gen = uproot.iterate(new_list,"tree",list_of_variables)
@@ -1713,10 +1721,10 @@ def smear_correlation(label,do_eta=False):
                 if neg_jets[n].eta>=1:
                     continue
 
-                #if ERA=="2017":
-                #    if neg_jets[n].phi>=2.7: continue
-                #if ERA=="2018":
-                #    if neg_jets[n].phi>=0.4 and neg_jets[n].phi<0.9: continue
+                if ERA=="2017":
+                    if neg_jets[n].phi>=2.7: continue
+                if ERA=="2018":
+                    if neg_jets[n].phi>=0.4 and neg_jets[n].phi<0.9: continue
                 
                 jet_counter+=1
 
@@ -1750,9 +1758,13 @@ def smear_correlation(label,do_eta=False):
                 v_tmp_minDeltaRPVTracks = []
                 v_tmp_EventWeight = []
                 
-                print "Only for unsmeared ntuples!!! Use EB!!!"
+                #print "Only for unsmeared ntuples!!! Use EB!!!"
                 time_rnd_smear_corr = neg_jets[n].timeRecHitsEB + global_smear_vec[glob_counter]
                 time_rnd_smear = neg_jets[n].timeRecHitsEB + jet_smear_vec[jet_counter]
+
+                h.Fill(neg_jets[n].timeRecHitsEB)
+                h_s.Fill(time_rnd_smear)
+                h_s_c.Fill(time_rnd_smear_corr)
 
                 #print "global/jet smearer ", global_smear_vec[glob_counter], " / " , jet_smear_vec[jet_counter]
                 #print "time_rnd_corr ", time_rnd_smear_corr
@@ -1761,7 +1773,7 @@ def smear_correlation(label,do_eta=False):
                 v_tmp_nTrackConstituents.append(neg_jets[n].nTrackConstituents)
                 v_tmp_nSelectedTracks.append(neg_jets[n].nSelectedTracks)
 
-                print "Only for unsmeared ntuples!!! Use EB!!!"
+                #print "Only for unsmeared ntuples!!! Use EB!!!"
                 v_tmp_timeRecHitsHB.append(neg_jets[n].timeRecHitsEB)
                 v_tmp_timeSmearedCorr.append(time_rnd_smear_corr)
                 v_tmp_timeSmeared.append(time_rnd_smear)
@@ -1923,6 +1935,15 @@ def smear_correlation(label,do_eta=False):
         eff[d]['b0SmearedCorr'] = bin0SmearedCorr
         eff[d]['b1SmearedCorr'] = bin1SmearedCorr
         eff[d]['b2SmearedCorr'] = bin2SmearedCorr
+
+        outfile = TFile(OUT+d+"_time_smearing.root","RECREATE")
+        outfile.cd()
+        h.Write()
+        h_s.Write()
+        h_s_c.Write()
+        outfile.Close()
+        print "Please check ", OUT+d+"_time_smearing.root"
+
 
 
     print eff
