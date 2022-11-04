@@ -1,0 +1,146 @@
+!!python/object/apply:collections.defaultdict
+args:
+- !!python/name:__builtin__.dict ''
+dictitems:
+  SUSY_mh1000_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - &id001 !!python/object/apply:numpy.dtype
+      args:
+      - f8
+      - 0
+      - 1
+      state: !!python/tuple
+      - 3
+      - <
+      - null
+      - null
+      - null
+      - -1
+      - -1
+      - 0
+    - !!binary |
+      y4oOemKUNkA=
+  SUSY_mh1000_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      5r6TX7/kNkA=
+  SUSY_mh1250_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      M0jpi7SANkA=
+  SUSY_mh1250_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      KOHxQ+evNkA=
+  SUSY_mh127_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      VzhSJUCzM0A=
+  SUSY_mh127_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      Q/A3okDVM0A=
+  SUSY_mh1500_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      D+5I9sdVNkA=
+  SUSY_mh1500_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      65kMCE58NkA=
+  SUSY_mh150_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      tnEYrNxANEA=
+  SUSY_mh150_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      aqjtOJLdM0A=
+  SUSY_mh175_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      laMvtrwWNEA=
+  SUSY_mh175_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      Lu1LzadyNEA=
+  SUSY_mh1800_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      piJDZqJvNkA=
+  SUSY_mh1800_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      yKmDEmpBNkA=
+  SUSY_mh200_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      o6G8hW+fM0A=
+  SUSY_mh200_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      WTKJ13B9NUA=
+  SUSY_mh250_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      PUKtcgUcNEA=
+  SUSY_mh250_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      tCHJXYK1NEA=
+  SUSY_mh300_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      XSJ5ic85NEA=
+  SUSY_mh300_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      eJ8HQgKZNUA=
+  SUSY_mh400_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      xAWPT14uNUA=
+  SUSY_mh400_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!python/str "'\u02B1\e+\06@"
+  SUSY_mh600_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      Ue3K/PgnNkA=
+  SUSY_mh600_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      ucwdDyTRNkA=
+  SUSY_mh800_ctau3000:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      oWdGwiC8NkA=
+  SUSY_mh800_ctau500:
+    DNN_2016_G-H: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      gRx8HqjINkA=

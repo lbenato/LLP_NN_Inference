@@ -1,0 +1,147 @@
+!!python/object/apply:collections.defaultdict
+args:
+- !!python/name:__builtin__.dict ''
+dictitems:
+  SUSY_mh1000_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - &id001 !!python/object/apply:numpy.dtype
+      args:
+      - f8
+      - 0
+      - 1
+      state: !!python/tuple
+      - 3
+      - <
+      - null
+      - null
+      - null
+      - -1
+      - -1
+      - 0
+    - !!binary |
+      Oh1+IbbSO0A=
+  SUSY_mh1000_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      3+F22t1DPEA=
+  SUSY_mh1250_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      0b1B8lsLPEA=
+  SUSY_mh1250_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      z+W6TCRIPEA=
+  SUSY_mh127_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      pISakJruOUA=
+  SUSY_mh127_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      apPwt5WsOUA=
+  SUSY_mh1500_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      tawDOQGrO0A=
+  SUSY_mh1500_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      S+Ou07vfO0A=
+  SUSY_mh150_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      qdWkeffZOEA=
+  SUSY_mh150_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      gf3wbVCaOUA=
+  SUSY_mh175_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      zfjV3QsqOUA=
+  SUSY_mh175_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      hxwd8ut+OEA=
+  SUSY_mh1800_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      bRGOhp6IO0A=
+  SUSY_mh1800_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      BqAwfBdSO0A=
+  SUSY_mh200_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      zljtHw0HOkA=
+  SUSY_mh200_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      wl0YVTevOEA=
+  SUSY_mh250_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      4dHX9oAdOUA=
+  SUSY_mh250_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      vyj5uRuyOkA=
+  SUSY_mh300_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      zGIa/wFROkA=
+  SUSY_mh300_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      XbAAzrHbOUA=
+  SUSY_mh400_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      QjKI83kJO0A=
+  SUSY_mh400_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      isDG0is8O0A=
+  SUSY_mh600_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      2738PYk+O0A=
+  SUSY_mh600_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      lT/lCAKgO0A=
+  SUSY_mh800_ctau3000:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      mdb2xoHDO0A=
+  SUSY_mh800_ctau500:
+    DNN_2016_B-F: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      3gOifOyBPEA=

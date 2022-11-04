@@ -1,0 +1,146 @@
+!!python/object/apply:collections.defaultdict
+args:
+- !!python/name:__builtin__.dict ''
+dictitems:
+  SUSY_mh1000_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - &id001 !!python/object/apply:numpy.dtype
+      args:
+      - f8
+      - 0
+      - 1
+      state: !!python/tuple
+      - 3
+      - <
+      - null
+      - null
+      - null
+      - -1
+      - -1
+      - 0
+    - !!binary |
+      7TOd5TmeKEA=
+  SUSY_mh1000_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      k897OL7QKEA=
+  SUSY_mh1250_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      2kaukwNjKEA=
+  SUSY_mh1250_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      sCEYchtAKEA=
+  SUSY_mh127_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      6McqH52TJUA=
+  SUSY_mh127_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      +bZzr3Q4JEA=
+  SUSY_mh1500_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      f6nsqI3pJ0A=
+  SUSY_mh1500_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      FtPJljhVKEA=
+  SUSY_mh150_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      teJkb93tJUA=
+  SUSY_mh150_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - "Jo_\x7F%C%@"
+  SUSY_mh175_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      N/nD/15jJkA=
+  SUSY_mh175_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      xPS+X58gJ0A=
+  SUSY_mh1800_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      0Cbq54ifJ0A=
+  SUSY_mh1800_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      4Gso5XP1J0A=
+  SUSY_mh200_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      fYNZYUsHJEA=
+  SUSY_mh200_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      MClSWf3FJkA=
+  SUSY_mh250_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      3QsD7GWwJ0A=
+  SUSY_mh250_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      mNwK4HcLJkA=
+  SUSY_mh300_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      q/sZ5x8UJUA=
+  SUSY_mh300_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      VWZpj2qvJ0A=
+  SUSY_mh400_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      fmnKzH4LJkA=
+  SUSY_mh400_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      PeTz+FhsJ0A=
+  SUSY_mh600_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      jVWJe3tlKEA=
+  SUSY_mh600_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      jUQvKg4yKEA=
+  SUSY_mh800_ctau3000:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      Gl14kLXvJ0A=
+  SUSY_mh800_ctau500:
+    DNN_2018: !!python/object/apply:numpy.core.multiarray.scalar
+    - *id001
+    - !!binary |
+      ZCGhbNfIKEA=

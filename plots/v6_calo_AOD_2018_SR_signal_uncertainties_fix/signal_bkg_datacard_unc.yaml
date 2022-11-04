@@ -1,0 +1,25 @@
+bkg_composition: !!python/object/apply:numpy.core.multiarray.scalar
+- &id001 !!python/object/apply:numpy.dtype
+  args:
+  - f8
+  - 0
+  - 1
+  state: !!python/tuple
+  - 3
+  - <
+  - null
+  - null
+  - null
+  - -1
+  - -1
+  - 0
+- !!binary |
+  y4PtVL0eSEA=
+bkg_method: !!python/object/apply:numpy.core.multiarray.scalar
+- *id001
+- !!binary |
+  CLQVFPpH8z8=
+bkg_stat_2018: !!python/object/apply:numpy.core.multiarray.scalar
+- *id001
+- !!binary |
+  LZaZj/CJLkA=
