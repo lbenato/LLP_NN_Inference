@@ -39,6 +39,9 @@ cd $CMSSW_BASE/src
 ../bin/slc7_amd64_gcc820/tf_test
 ```
 
+### In case of issues with remote URL
+https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#switching-remote-urls-from-ssh-to-https
+
 ## Original repo: Marcel Rieger
 
 ## TensorFlow interface examples in CMSSW
