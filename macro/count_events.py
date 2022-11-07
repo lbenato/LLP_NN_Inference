@@ -66,32 +66,32 @@ data = [
     #"SUSY_mh300_pl1000",
     #"SUSY_mh400_pl1000",
     ##central
-    #'SUSY_mh127_ctau500_HH', 
-    #'SUSY_mh127_ctau3000_HH',
-    #'SUSY_mh150_ctau500_HH', 
-    #'SUSY_mh150_ctau3000_HH',
-    #'SUSY_mh175_ctau500_HH', 
-    #'SUSY_mh175_ctau3000_HH',
+    'SUSY_mh127_ctau500_HH', 
+    'SUSY_mh127_ctau3000_HH',
+    'SUSY_mh150_ctau500_HH', 
+    'SUSY_mh150_ctau3000_HH',
+    'SUSY_mh175_ctau500_HH', 
+    'SUSY_mh175_ctau3000_HH',
     'SUSY_mh200_ctau500_HH', 
-    #'SUSY_mh200_ctau3000_HH',
-    #'SUSY_mh250_ctau500_HH', 
-    #'SUSY_mh250_ctau3000_HH',
-    #'SUSY_mh300_ctau500_HH', 
-    #'SUSY_mh300_ctau3000_HH',
-    #'SUSY_mh400_ctau500_HH', 
-    #'SUSY_mh400_ctau3000_HH',
-    #'SUSY_mh600_ctau500_HH', 
-    #'SUSY_mh600_ctau3000_HH',
-    #'SUSY_mh800_ctau500_HH', 
-    #'SUSY_mh800_ctau3000_HH',
-    #'SUSY_mh1000_ctau500_HH',
-    #'SUSY_mh1000_ctau3000_HH',
-    #'SUSY_mh1250_ctau500_HH',
-    #'SUSY_mh1250_ctau3000_HH',
-    #'SUSY_mh1500_ctau500_HH',
-    #'SUSY_mh1500_ctau3000_HH',
-    #'SUSY_mh1800_ctau500_HH',
-    #'SUSY_mh1800_ctau3000_HH',
+    'SUSY_mh200_ctau3000_HH',
+    'SUSY_mh250_ctau500_HH', 
+    'SUSY_mh250_ctau3000_HH',
+    'SUSY_mh300_ctau500_HH', 
+    'SUSY_mh300_ctau3000_HH',
+    'SUSY_mh400_ctau500_HH', 
+    'SUSY_mh400_ctau3000_HH',
+    'SUSY_mh600_ctau500_HH', 
+    'SUSY_mh600_ctau3000_HH',
+    'SUSY_mh800_ctau500_HH', 
+    'SUSY_mh800_ctau3000_HH',
+    'SUSY_mh1000_ctau500_HH',
+    'SUSY_mh1000_ctau3000_HH',
+    'SUSY_mh1250_ctau500_HH',
+    'SUSY_mh1250_ctau3000_HH',
+    'SUSY_mh1500_ctau500_HH',
+    'SUSY_mh1500_ctau3000_HH',
+    'SUSY_mh1800_ctau500_HH',
+    'SUSY_mh1800_ctau3000_HH',
     #"HighMET",
     #"HighMETBH",
     #"SingleMuon"
@@ -1505,12 +1505,19 @@ def smear_correlation(label,do_eta=False):
         print new_list
 
         #Time histograms
-        h = TH1F("h","h",100,-10,10)
+        h = TH1F("h","h",150,-5,10)
         h.Sumw2()
-        h_s = TH1F("h_s","h_s",100,-10,10)
+        h_s = TH1F("h_s","h_s",150,-5,10)
         h_s.Sumw2()
-        h_s_c = TH1F("h_s_c","h_s_c",100,-10,10)
+        h_s_c = TH1F("h_s_c","h_s_c",150,-5,10)
         h_s_c.Sumw2()
+
+        h2 = TH1F("h2","h2",150,-5,10)
+        h2.Sumw2()
+        h2_s = TH1F("h2_s","h2_s",150,-5,10)
+        h2_s.Sumw2()
+        h2_s_c = TH1F("h2_s_c","h2_s_c",150,-5,10)
+        h2_s_c.Sumw2()
 
         
 
@@ -1892,10 +1899,13 @@ def smear_correlation(label,do_eta=False):
 
                 if v_tmp_timeRecHitsHB[0]>-1 and v_tmp_probs[:,1][0]>0.996:
                     tmp_n_tag += 1
+                    h2.Fill(v_tmp_timeRecHitsHB[0])
                 if time_rnd_smear>-1 and v_tmp_probs_smear[:,1][0]>0.996:
                     tmp_n_tag_smeared+=1
+                    h2_s.Fill(time_rnd_smear)
                 if time_rnd_smear_corr>-1 and v_tmp_probs_smear_corr[:,1][0]>0.996:
                     tmp_n_tag_smeared_corr+=1
+                    h2_s_c.Fill(time_rnd_smear_corr)
 
             nTag.append(tmp_n_tag)
             nTagSmeared.append(tmp_n_tag_smeared)
@@ -1941,28 +1951,42 @@ def smear_correlation(label,do_eta=False):
         h.Write()
         h_s.Write()
         h_s_c.Write()
+        h2.Write()
+        h2_s.Write()
+        h2_s_c.Write()
         outfile.Close()
         print "Please check ", OUT+d+"_time_smearing.root"
 
+        h.Delete()
+        h_s.Delete()
+        h_s_c.Delete()
+        h2.Delete()
+        h2_s.Delete()
+        h2_s_c.Delete()
+
+        with open(OUT+"Dict_"+d+label+".yaml","w") as f:
+            yaml.dump(eff[d], f)
+            f.close()
+            print "Info: dictionary written in file "+MAIN+"Dict_"+d+label+".yaml"
 
 
-    print eff
-    with open(OUT+"Dict"+label+".yaml","w") as f:
-        yaml.dump(eff, f)
-        f.close()
-        print "Info: dictionary written in file "+MAIN+"Dict"+label+".yaml"
+    #print eff
+    #with open(OUT+"Dict"+label+".yaml","w") as f:
+    #    yaml.dump(eff, f)
+    #    f.close()
+    #    print "Info: dictionary written in file "+MAIN+"Dict"+label+".yaml"
 
 
 
 def print_smear_correlation(label):
 
-    with open(OUT+"Dict"+label+".yaml","r") as f:
-        print "\n"
-        eff = yaml.load(f, Loader=yaml.Loader)
-        f.close()
+    #with open(OUT+"Dict"+label+".yaml","r") as f:
+    #    print "\n"
+    #    eff = yaml.load(f, Loader=yaml.Loader)
+    #    f.close()
 
 
-    print "Reading the following dictionary: ", OUT+"Dict"+label+".yaml"
+    #print "Reading the following dictionary: ", OUT+"Dict"+label+".yaml"
 
     mass = []#np.array([])
     ctau = []#np.array([])
@@ -1972,7 +1996,16 @@ def print_smear_correlation(label):
     eff_bin2_smear_corr = defaultdict(dict)
     ratio = defaultdict(dict)
 
+    eff = defaultdict(dict)
+
+
     for d in data:
+        print "Reading the following dictionary: ", OUT+"Dict_"+d+".yaml"
+        with open(OUT+"Dict_"+d+label+".yaml","r") as f:
+            print "\n"
+            tmp_eff = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        eff[d] = tmp_eff
         mass.append(eff[d]['m'])
         ctau.append(eff[d]['c'])
 
@@ -1992,6 +2025,15 @@ def print_smear_correlation(label):
         for c in ctau:
             for d in data:
                 if "mh"+str(m)+"_ctau"+str(c) in d:
+
+                    #print "Reading the following dictionary: ", OUT+"Dict_"+d+".yaml"
+                    #with open(OUT+"Dict_"+d+label+".yaml","r") as f:
+                    #    print "\n"
+                    #    eff = yaml.load(f, Loader=yaml.Loader)
+                    #f.close()
+
+                    #row = [m,c, eff['b2'],eff['b2Smeared'],eff['b2SmearedCorr'],   round( 100*(eff['b2Smeared']-eff['b2SmearedCorr'])/ ((eff['b2Smeared'] + eff['b2SmearedCorr'])*0.5) , 2 ), round( 100*(eff['b2Smeared']-eff['b2'])/ ((eff['b2'] + eff['b2Smeared'])*0.5) , 2 ), round( 100*(eff['b2SmearedCorr']-eff['b2'])/ ((eff['b2'] + eff['b2SmearedCorr'])*0.5) , 2 ) ]
+
                     row = [m,c, eff[d]['b2'],eff[d]['b2Smeared'],eff[d]['b2SmearedCorr'],   round( 100*(eff[d]['b2Smeared']-eff[d]['b2SmearedCorr'])/ ((eff[d]['b2Smeared'] + eff[d]['b2SmearedCorr'])*0.5) , 2 ), round( 100*(eff[d]['b2Smeared']-eff[d]['b2'])/ ((eff[d]['b2'] + eff[d]['b2Smeared'])*0.5) , 2 ), round( 100*(eff[d]['b2SmearedCorr']-eff[d]['b2'])/ ((eff[d]['b2'] + eff[d]['b2SmearedCorr'])*0.5) , 2 ) ]
                     table.add_row(row)
 

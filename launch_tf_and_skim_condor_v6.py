@@ -14,9 +14,9 @@ run_condor = True
 # # # # # #
 # Run era #
 # # # # # #
-RUN_ERA = 2018#6#7#8
+RUN_ERA = 2016#6#7#8
 
-doRegion = "doSR"#"doSR"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
+doRegion = "doGen"#"doSR"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
 resubm_label = ""
 #resubm_label = "_resubmission_4"
 
@@ -47,6 +47,7 @@ OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_sme
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_syst_unc_JERUp/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_syst_unc_central_values/")%(RUN_ERA)
+OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_no_cuts_syst_unc_central_values/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_bin_1_2/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_Gen_HZ/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_xcheck_slimmedJets/")%(RUN_ERA)
@@ -126,33 +127,33 @@ sign = [
         'SUSY_mh1500_ctau500','SUSY_mh1500_ctau3000',
         'SUSY_mh1800_ctau500','SUSY_mh1800_ctau3000',
 
-        'SUSY_mh127_ctau500_HZ', 'SUSY_mh127_ctau3000_HZ',
-        'SUSY_mh150_ctau500_HZ', 'SUSY_mh150_ctau3000_HZ',
-        'SUSY_mh175_ctau500_HZ', 'SUSY_mh175_ctau3000_HZ',
-        'SUSY_mh200_ctau500_HZ', 'SUSY_mh200_ctau3000_HZ',
-        'SUSY_mh250_ctau500_HZ', 'SUSY_mh250_ctau3000_HZ',
-        'SUSY_mh300_ctau500_HZ', 'SUSY_mh300_ctau3000_HZ',
-        'SUSY_mh400_ctau500_HZ', 'SUSY_mh400_ctau3000_HZ',
-        'SUSY_mh600_ctau500_HZ', 'SUSY_mh600_ctau3000_HZ',
-        'SUSY_mh800_ctau500_HZ', 'SUSY_mh800_ctau3000_HZ',
-        'SUSY_mh1000_ctau500_HZ','SUSY_mh1000_ctau3000_HZ',
-        'SUSY_mh1250_ctau500_HZ','SUSY_mh1250_ctau3000_HZ',
-        'SUSY_mh1500_ctau500_HZ','SUSY_mh1500_ctau3000_HZ',
-        'SUSY_mh1800_ctau500_HZ','SUSY_mh1800_ctau3000_HZ',
+        #'SUSY_mh127_ctau500_HZ', 'SUSY_mh127_ctau3000_HZ',
+        #'SUSY_mh150_ctau500_HZ', 'SUSY_mh150_ctau3000_HZ',
+        #'SUSY_mh175_ctau500_HZ', 'SUSY_mh175_ctau3000_HZ',
+        #'SUSY_mh200_ctau500_HZ', 'SUSY_mh200_ctau3000_HZ',
+        #'SUSY_mh250_ctau500_HZ', 'SUSY_mh250_ctau3000_HZ',
+        #'SUSY_mh300_ctau500_HZ', 'SUSY_mh300_ctau3000_HZ',
+        #'SUSY_mh400_ctau500_HZ', 'SUSY_mh400_ctau3000_HZ',
+        #'SUSY_mh600_ctau500_HZ', 'SUSY_mh600_ctau3000_HZ',
+        #'SUSY_mh800_ctau500_HZ', 'SUSY_mh800_ctau3000_HZ',
+        #'SUSY_mh1000_ctau500_HZ','SUSY_mh1000_ctau3000_HZ',
+        #'SUSY_mh1250_ctau500_HZ','SUSY_mh1250_ctau3000_HZ',
+        #'SUSY_mh1500_ctau500_HZ','SUSY_mh1500_ctau3000_HZ',
+        #'SUSY_mh1800_ctau500_HZ','SUSY_mh1800_ctau3000_HZ',
 
-        'SUSY_mh127_ctau500_ZZ', 'SUSY_mh127_ctau3000_ZZ',
-        'SUSY_mh150_ctau500_ZZ', 'SUSY_mh150_ctau3000_ZZ',
-        'SUSY_mh175_ctau500_ZZ', 'SUSY_mh175_ctau3000_ZZ',
-        'SUSY_mh200_ctau500_ZZ', 'SUSY_mh200_ctau3000_ZZ',
-        'SUSY_mh250_ctau500_ZZ', 'SUSY_mh250_ctau3000_ZZ',
-        'SUSY_mh300_ctau500_ZZ', 'SUSY_mh300_ctau3000_ZZ',
-        'SUSY_mh400_ctau500_ZZ', 'SUSY_mh400_ctau3000_ZZ',
-        'SUSY_mh600_ctau500_ZZ', 'SUSY_mh600_ctau3000_ZZ',
-        'SUSY_mh800_ctau500_ZZ', 'SUSY_mh800_ctau3000_ZZ',
-        'SUSY_mh1000_ctau500_ZZ','SUSY_mh1000_ctau3000_ZZ',
-        'SUSY_mh1250_ctau500_ZZ','SUSY_mh1250_ctau3000_ZZ',
-        'SUSY_mh1500_ctau500_ZZ','SUSY_mh1500_ctau3000_ZZ',
-        'SUSY_mh1800_ctau500_ZZ','SUSY_mh1800_ctau3000_ZZ',
+        #'SUSY_mh127_ctau500_ZZ', 'SUSY_mh127_ctau3000_ZZ',
+        #'SUSY_mh150_ctau500_ZZ', 'SUSY_mh150_ctau3000_ZZ',
+        #'SUSY_mh175_ctau500_ZZ', 'SUSY_mh175_ctau3000_ZZ',
+        #'SUSY_mh200_ctau500_ZZ', 'SUSY_mh200_ctau3000_ZZ',
+        #'SUSY_mh250_ctau500_ZZ', 'SUSY_mh250_ctau3000_ZZ',
+        #'SUSY_mh300_ctau500_ZZ', 'SUSY_mh300_ctau3000_ZZ',
+        #'SUSY_mh400_ctau500_ZZ', 'SUSY_mh400_ctau3000_ZZ',
+        #'SUSY_mh600_ctau500_ZZ', 'SUSY_mh600_ctau3000_ZZ',
+        #'SUSY_mh800_ctau500_ZZ', 'SUSY_mh800_ctau3000_ZZ',
+        #'SUSY_mh1000_ctau500_ZZ','SUSY_mh1000_ctau3000_ZZ',
+        #'SUSY_mh1250_ctau500_ZZ','SUSY_mh1250_ctau3000_ZZ',
+        #'SUSY_mh1500_ctau500_ZZ','SUSY_mh1500_ctau3000_ZZ',
+        #'SUSY_mh1800_ctau500_ZZ','SUSY_mh1800_ctau3000_ZZ',
 
         #'SUSY_mh400_prompt', 'SUSY_mh300_prompt', 'SUSY_mh200_prompt',
         #'splitSUSY_M2400_100_ctau0p1','splitSUSY_M2400_100_ctau1p0','splitSUSY_M2400_100_ctau10p0','splitSUSY_M2400_100_ctau100p0','splitSUSY_M2400_100_ctau1000p0','splitSUSY_M2400_100_ctau10000p0','splitSUSY_M2400_100_ctau100000p0',
@@ -173,7 +174,7 @@ sign = [
 	#'ggH_MH2000_MS600_ctau500','ggH_MH2000_MS600_ctau1000','ggH_MH2000_MS600_ctau2000','ggH_MH2000_MS600_ctau5000','ggH_MH2000_MS600_ctau10000',
         ]
 
-sign = ['SUSY_mh400_ctau500','SUSY_mh400_ctau3000',]
+#sign = ['SUSY_mh400_ctau500','SUSY_mh400_ctau3000',]
 
 sample_list = sign#data#sign#data#sign#data#data#sign#data#sign#data#sign+data#data#sign#data#sign#data#sign#data#sign#back#sign#data#sign#data#back#sign#data#back#sign#data#sign#back#data#back#sign#sign#data#back#sign#data#back#data#data+back
 
@@ -380,6 +381,7 @@ if run_condor:
                 os.mkdir(OUT)
 
             cond_name = "skim_"+str(RUN_ERA)+"_v6_smear"+doRegion#+"_positive0p7"#"_syst_unc_JERUp"##+"Gen"#+"_nophoton"#+"_BeamHalo"##+"_bin_1_2"#+"_test"#
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_syst_unc"+doRegion
             #COND_DIR = '/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/condor_'+cond_name+resubm_label
             COND_DIR = '/nfs/dust/cms/user/lbenato/condor_'+cond_name+resubm_label
             if not(os.path.exists(COND_DIR)):
@@ -431,8 +433,8 @@ if run_condor:
                         #HEM
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
-                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
-                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
                         '''
                         #We are not ready for this
                         if isSignal:
@@ -450,8 +452,8 @@ if run_condor:
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_positive_jets_0p7 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_positive_jets_0p7 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
 
-                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
-                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
 
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_no_photonEFrac_cut ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_no_photonEFrac_cut ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
