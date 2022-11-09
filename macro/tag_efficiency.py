@@ -12266,6 +12266,7 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
 
     #sorted masses and ctau, now we need limits
     for m in masses:
+        theory_name = "SUSY_mh"+str(m)+"_ctau500"
         for ct in np.sort(loop_ct):
 
             sigma_2_down[m][ct] = 0.
@@ -12274,12 +12275,16 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
             sigma_1_up[m][ct]   = 0.
             sigma_2_up[m][ct]   = 0.
             obs[m][ct]          = 0.
+            #theory[m][ct]       = 0.
+
+            theory[m][ct]       = 1000.*sample[ samples[theory_name]['files'][0] ]['xsec']
 
             card_name = RESULTS + "/SUSY_mh"+str(m)+"_ctau"+str(ct)+".txt"
             if not os.path.isfile(card_name):
                 continue
             card = open( card_name, 'r')
             val = card.read().splitlines()
+
             if len(val) == 0:
                 continue
             if len(val) != 6 and not blind:
@@ -12332,8 +12337,6 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
                     mean_val[m][ct]     = float(val[3])
                     sigma_1_up[m][ct]   = float(val[4])
                     sigma_2_up[m][ct]   = float(val[5])
-            if "splitSUSY" not in sign[0]:
-                theory[m][ct]       = 1000.*sample[ samples[s]['files'][0] ]['xsec']
 
 
     x = array('d',[])
@@ -12347,9 +12350,12 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
     #in meters
     min_bin_y = np.log10(loop_ct[0]/1000.)-0.5
     max_bin_y = np.log10(loop_ct[-1]/1000.)+0.5
+
+
     #min_bin_y = np.log10(loop_ct[0])
     #max_bin_y = np.log10(loop_ct[-1])+1000
     h = TH2D("h","h", n_bins_x,min_bin_x,max_bin_x,n_bins_y,min_bin_y,max_bin_y)
+
     max_lim = 0
     for m in masses:
         valid_ctau = []
@@ -12365,6 +12371,7 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
                 #valid_ctau.append(np.log10(ct))
                 list_limits_each_mass.append(mean_val[m][ct])
                 max_lim = max(max_lim,mean_val[m][ct])
+
 
         x += array('d', [math.log10(float(m))]*len(valid_ctau))
         y += array('d', valid_ctau)
@@ -12442,11 +12449,15 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
     c1.Print(OUTSTRING+".pdf")
     c1.Close()
 
+
     if not blind:
 
         x = array('d',[])
         y = array('d',[])
         z = array('d',[])
+        xt = array('d',[])
+        yt = array('d',[])
+        zt = array('d',[])
                 
         n_bins_x = 100
         min_bin_x = np.log10(125)#(masses[0])
@@ -12455,13 +12466,37 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
         #in meters
         min_bin_y = np.log10(loop_ct[0]/1000.)-0.5
         max_bin_y = np.log10(loop_ct[-1]/1000.)+0.5
-        #min_bin_y = np.log10(loop_ct[0])
-        #max_bin_y = np.log10(loop_ct[-1])+1000
+
+        #Add theory border points
+        #need to fill the entire plane up to the borders with theory values to avoid extrapolations
+        min_bin_y_lin = 1000*(10**(min_bin_y) )
+        max_bin_y_lin = 1000*(10**(max_bin_y) ) - 10 #avoid rejection because of overflow
+        loop_ct_th = [min_bin_y_lin]
+        for ct in loop_ct:
+            loop_ct_th.append(ct)
+        loop_ct_th.append(max_bin_y_lin)
+        loop_ct_th = np.array(loop_ct_th)
+
+
+        for m in masses:
+            theory_name = "SUSY_mh"+str(m)+"_ctau500"
+            for ct in [min_bin_y_lin,max_bin_y_lin]:
+                theory[m][ct]       = 1000.*sample[ samples[theory_name]['files'][0] ]['xsec']
+            print m, theory[m]
+
+
         h = TH2D("h","h", n_bins_x,min_bin_x,max_bin_x,n_bins_y,min_bin_y,max_bin_y)
+        ht = TH2D("ht","ht", n_bins_x,min_bin_x,max_bin_x,n_bins_y,min_bin_y,max_bin_y)
+
         max_lim = 0
+
+        th_limits_array = []
         for m in masses:
             valid_ctau = []
+            all_ctau = []
             list_limits_each_mass = []
+            list_limits_each_mass_th = []
+            th_limits_array.append(theory[m][500])
             for ct in loop_ct:
                 if obs[m][ct]==0:
                     print "no limits for: ", m, ct
@@ -12474,11 +12509,31 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
                     list_limits_each_mass.append(obs[m][ct])
                     max_lim = max(max_lim,obs[m][ct])
 
+            for ct_th in loop_ct_th:
+                #print "check!!"
+                #print "HERE also add the upper-lower values"
+                all_ctau.append(np.log10(ct_th/1000.))
+                ht.Fill(np.log10(m),np.log10(ct_th/1000.),theory[m][ct_th])
+                list_limits_each_mass_th.append(theory[m][ct_th])
+
+            #print "th limits for ", m," : ", list_limits_each_mass_th
+            #print "all_ctau ", all_ctau
+
             x += array('d', [math.log10(float(m))]*len(valid_ctau))
             y += array('d', valid_ctau)
             z += array('d', np.log10(list_limits_each_mass))
+            
+            #print "mass: ", m
+            #print "valid ct: ", valid_ctau
+            #print "all ct: ", all_ctau
+            #print "list_limits_each_mass_th: ", list_limits_each_mass_th
+            #print "np.log10 list_limits_each_mass_th: ", np.log10(list_limits_each_mass_th)
 
-        
+            xt += array('d', [math.log10(float(m))]*len(all_ctau))
+            yt += array('d', all_ctau)
+            zt += array('d', np.log10(list_limits_each_mass_th))
+
+
 
         #Original
         #c1 = TCanvas("c1", "Exclusion Limits", 800, 600)
@@ -12497,6 +12552,15 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
         h = interpolate2D(x,y,z, h, 0.02,0.1, inter = 'rbf', norm = 'euclidean')
         h = log_scale_conversion(h)
 
+        #ht = interpolate2D(xt,yt,zt, ht, 0.02,0.1, inter = 'rbf', norm = 'euclidean')
+        #x,y,z,hist,epsilon=0.2,smooth=0,norm = 'euclidean', inter = 'linear'
+
+        #Looks cosmetically okay but the vertical lines are shifted w.r.t. mass values
+        #ht = interpolate2D(xt,yt,zt, ht, 100,0.00001, inter = 'rbf', norm = 'euclidean')
+        #This gets the vertical lines at the right point, same spacing as the other 2D plot
+        ht = interpolate2D(xt,yt,zt, ht, 0.02,0.1, inter = 'rbf', norm = 'euclidean')
+        ht = log_scale_conversion(ht)
+
         h.SetMinimum(0.1)
         #h.SetMaximum(3e6)
         h.SetMaximum(1000)
@@ -12505,9 +12569,72 @@ def plot_limits_2D(out_dir,sign,comb_fold_label="",combination=False,eta=False,p
         h.GetYaxis().SetTitle("c #tau_{"+particle+"} (m)")
         h.GetYaxis().SetTitleOffset(1.6)
         h.GetZaxis().SetTitle("95% CL limits on #sigma("+particle+particle+") (fb)")
-        h.Draw("COLZ")
 
- 
+        #ht.GetXaxis().SetTitle("m_{"+particle+"} (GeV)")
+        #ht.GetYaxis().SetTitle("c #tau_{"+particle+"} (m)")
+        #ht.GetYaxis().SetTitleOffset(1.6)
+        #ht.GetZaxis().SetTitle("95% CL limits on #sigma("+particle+particle+") (fb)")
+
+        h.Draw("COLZ")
+        #ht.Draw("cont3 same")
+        #ht.DrawCopy("cont3 same")
+        hr = ht.Clone("hr")
+        hr.Divide(h)
+        contours = array('d', [1.0])
+        hr.SetContour(1,contours)
+        hr.SetLineColor(1)#new
+        hr.SetLineWidth(4)#new
+        hr.SetLineStyle(2)#new
+        hr.SetFillColorAlpha(1,0.15)
+        hr.SetFillStyle(3444)
+        #For plotting
+        #hr.Draw("CONT3 same")#new
+        hr.Draw("CONT3 same")#CONT creates a filled area
+        #hr_l = hr.Clone("hr_l")
+        #hr_l.Draw("CONT3 same")#just the line
+
+        #For saving contour, but the values of the graph seems wrong
+        #hr.Draw("CONT LIST same")#new
+
+        ###Theory limits: vertical lines
+        #contours = array('d', list(reversed(th_limits_array)))
+        #ht.SetContour(len(th_limits_array),contours)
+        #ht.SetLineColor(8)#new
+        #ht.SetLineWidth(2)#new
+        #ht.SetLineStyle(2)#new
+        #ht.Draw("CONT3 same")#new
+
+        c1.Update()
+        #h.Draw("COLZ")
+        #hr.Draw("CONT3 sames")#new
+        
+        ### Attempt to transform contour to TGraph, not really working...
+        #This plots nothing....
+        #conts = gROOT.GetListOfSpecials().FindObject("contours")
+        #TotalConts = conts.GetSize()
+        #print "TotalConts: ", TotalConts
+        #contLevel = conts.At(0)
+        #curv = contLevel.First()
+        #gc = curv.Clone("gc")
+        #print gc.Print()
+        #gc.SetLineColor(2)#new
+        #gc.SetLineWidth(4)#new
+        #gc.SetFillColor(1)#new
+        #gc.Draw("C")
+        #c1.Update()
+
+        '''
+        this actually works!
+        h.DrawCopy("COLZ")#new
+        contours = array('d',[1.,10.])
+        h.SetContour(2,contours)
+        #h.Draw("CONTZ LIST")
+        h.Draw("CONT3 same")#new
+        h.SetLineColor(1)#new
+        h.SetLineWidth(2)#new
+        #ht.Draw("colz,text")
+        c1.Update()#new
+        '''
         h.GetXaxis().SetNoExponent(True)
         h.GetXaxis().SetMoreLogLabels(True)
         h.GetXaxis().SetTitleSize(0.048)
@@ -13872,7 +13999,7 @@ for br_h in [50]:
         toys=TOYS
     )
     #OUTCOMBI
-    '''
+
     plot_limits_vs_mass(
         limit_plot_dir,
         sign,
@@ -13903,6 +14030,7 @@ for br_h in [50]:
         blind=BLIND,
         toys=TOYS
     )
+    '''
 
     plot_limits_2D(
         limit_plot_dir,
