@@ -1467,7 +1467,7 @@ def count_jet_negative(label,do_eta=False):
 
 
 
-def smear_correlation(label,do_eta=False):
+def smear_correlation(label,do_eta=False,dnn_score=0.996):
 
     eff = defaultdict(dict)
     for d in data:
@@ -1575,10 +1575,10 @@ def smear_correlation(label,do_eta=False):
             #Smeared!
             sigprob = arrays["JetsNegative.sigprob"][cut_jets][cut_mask]
 
-            print sigprob
+            #print sigprob
 
-            tag_mask = (sigprob > 0.996)
-            print tag_mask[tag_mask]
+            tag_mask = (sigprob > dnn_score)
+            #print tag_mask[tag_mask]
 
             bin2_m = (sigprob[tag_mask].counts>1)
             bin2 = np.multiply(bin2_m,1.)
@@ -1692,6 +1692,7 @@ def smear_correlation(label,do_eta=False):
         nTag = []
         nTagSmeared = []
         nTagSmearedCorr = []
+        Weight = []
 
         #need some zero padding to be able to count stuff again..
 
@@ -1700,13 +1701,15 @@ def smear_correlation(label,do_eta=False):
         #uproot is a nightmare, do it in slow old fashioned python
         tmp_file = TFile(MAIN+l+".root","READ")
         tree = tmp_file.Get("tree")
+        tree_weight = tree.GetWeight()
 
         glob_counter = 0 
         jet_counter = gen_events
 
         for e in range(0,tree.GetEntries()):
             tree.GetEntry(e)
-            #print "----------------------------"
+            #print "\n"
+            #table = PrettyTable(['Jet pt','smear unc.','smear corr.','Jet time','Jet time uncorr.','Jet time corr.','DNN','DNN uncorr.','DNN corr.'])
             neg_jets = getattr(tree,"JetsNegative")
             met = getattr(tree,"MEt")
 
@@ -1718,9 +1721,13 @@ def smear_correlation(label,do_eta=False):
             if tree.MinJetMetDPhi<=0.5:
                 continue
 
+            if met.pt<=200:
+                continue
+
             tmp_n_tag = 0
             tmp_n_tag_smeared = 0
             tmp_n_tag_smeared_corr = 0
+
 
             for n in range(neg_jets.size()):
                 if neg_jets[n].eta<=-1:
@@ -1766,6 +1773,7 @@ def smear_correlation(label,do_eta=False):
                 v_tmp_EventWeight = []
                 
                 #print "Only for unsmeared ntuples!!! Use EB!!!"
+
                 time_rnd_smear_corr = neg_jets[n].timeRecHitsEB + global_smear_vec[glob_counter]
                 time_rnd_smear = neg_jets[n].timeRecHitsEB + jet_smear_vec[jet_counter]
 
@@ -1894,40 +1902,92 @@ def smear_correlation(label,do_eta=False):
                 v_tmp_probs_smear = model.predict(v_tmp_X_smear)
                 v_tmp_probs_smear_corr = model.predict(v_tmp_X_smear_corr)
 
+                #row = [round(neg_jets[n].pt,2),round(jet_smear_vec[jet_counter],4),round(global_smear_vec[glob_counter],4),round(neg_jets[n].timeRecHitsEB,4),round(time_rnd_smear,4),round(time_rnd_smear_corr,4),round(v_tmp_probs[:,1][0],4),round(v_tmp_probs_smear[:,1][0],4),round(v_tmp_probs_smear_corr[:,1][0],4)]
+                #table.add_row(row)
+
                 #print v_tmp_probs_smear[:,1][0]
                 #print v_tmp_sigprob
 
-                if v_tmp_timeRecHitsHB[0]>-1 and v_tmp_probs[:,1][0]>0.996:
+                if v_tmp_timeRecHitsHB[0]>-1 and v_tmp_probs[:,1][0]>dnn_score:
                     tmp_n_tag += 1
                     h2.Fill(v_tmp_timeRecHitsHB[0])
-                if time_rnd_smear>-1 and v_tmp_probs_smear[:,1][0]>0.996:
+                if time_rnd_smear>-1 and v_tmp_probs_smear[:,1][0]>dnn_score:
                     tmp_n_tag_smeared+=1
                     h2_s.Fill(time_rnd_smear)
-                if time_rnd_smear_corr>-1 and v_tmp_probs_smear_corr[:,1][0]>0.996:
+                if time_rnd_smear_corr>-1 and v_tmp_probs_smear_corr[:,1][0]>dnn_score:
                     tmp_n_tag_smeared_corr+=1
                     h2_s_c.Fill(time_rnd_smear_corr)
 
+            #multiply by event weight
             nTag.append(tmp_n_tag)
             nTagSmeared.append(tmp_n_tag_smeared)
             nTagSmearedCorr.append(tmp_n_tag_smeared_corr)
 
+            ev_weight = tree.EventWeight * tree_weight * tree.TriggerWeight * tree.PUReWeight
+            Weight.append(ev_weight)
+
             glob_counter+=1
+
+            #print(table)
 
         nTag = np.array(nTag)
         nTagSmeared = np.array(nTagSmeared)
         nTagSmearedCorr = np.array(nTagSmearedCorr)
+        Weight = np.array(Weight)
 
-        bin2 = (nTag>1).sum()
-        bin1 = (nTag==1).sum()
-        bin0 = (nTag==0).sum()
+        m_b2 = (nTag>1)
+        m_b1 = (nTag==1)
+        m_b0 = (nTag==0)
+        #print (nTag[m_b2]*Weight[m_b2]).sum()
 
-        bin2Smeared = (nTagSmeared>1).sum()
-        bin1Smeared = (nTagSmeared==1).sum()
-        bin0Smeared = (nTagSmeared==0).sum()
+        bin2 = (nTag[m_b2]*Weight[m_b2]).sum()
+        bin1 = (nTag[m_b1]*Weight[m_b1]).sum()
+        bin0 = (nTag[m_b0]*Weight[m_b0]).sum()
 
-        bin2SmearedCorr = (nTagSmearedCorr>1).sum()
-        bin1SmearedCorr = (nTagSmearedCorr==1).sum()
-        bin0SmearedCorr = (nTagSmearedCorr==0).sum()
+        bin2_stat_unc = np.sqrt( sum(x*x for x in (nTag[m_b2]*Weight[m_b2]) ) ).sum()
+        bin1_stat_unc = np.sqrt( sum(x*x for x in (nTag[m_b1]*Weight[m_b1]) ) ).sum()
+        bin0_stat_unc = np.sqrt( sum(x*x for x in (nTag[m_b0]*Weight[m_b0]) ) ).sum()
+
+
+        #No weight
+        #bin2 = (nTag>1).sum()
+        #bin1 = (nTag==1).sum()
+        #bin0 = (nTag==0).sum()
+
+        m_b2Smeared = (nTagSmeared>1)
+        m_b1Smeared = (nTagSmeared==1)
+        m_b0Smeared = (nTagSmeared==0)
+
+        bin2Smeared = (nTagSmeared[m_b2Smeared]*Weight[m_b2Smeared]).sum()
+        bin1Smeared = (nTagSmeared[m_b1Smeared]*Weight[m_b1Smeared]).sum()
+        bin0Smeared = (nTagSmeared[m_b0Smeared]*Weight[m_b0Smeared]).sum()
+
+        bin2Smeared_stat_unc = np.sqrt( sum(x*x for x in (nTagSmeared[m_b2Smeared]*Weight[m_b2Smeared]) ) ).sum()
+        bin1Smeared_stat_unc = np.sqrt( sum(x*x for x in (nTagSmeared[m_b1Smeared]*Weight[m_b1Smeared]) ) ).sum()
+        bin0Smeared_stat_unc = np.sqrt( sum(x*x for x in (nTagSmeared[m_b0Smeared]*Weight[m_b0Smeared]) ) ).sum()
+
+        #No weight
+        #bin2Smeared = (nTagSmeared>1).sum()
+        #bin1Smeared = (nTagSmeared==1).sum()
+        #bin0Smeared = (nTagSmeared==0).sum()
+
+
+        m_b2SmearedCorr = (nTagSmearedCorr>1)
+        m_b1SmearedCorr = (nTagSmearedCorr==1)
+        m_b0SmearedCorr = (nTagSmearedCorr==0)
+
+        bin2SmearedCorr = (nTagSmearedCorr[m_b2SmearedCorr]*Weight[m_b2SmearedCorr]).sum()
+        bin1SmearedCorr = (nTagSmearedCorr[m_b1SmearedCorr]*Weight[m_b1SmearedCorr]).sum()
+        bin0SmearedCorr = (nTagSmearedCorr[m_b0SmearedCorr]*Weight[m_b0SmearedCorr]).sum()
+
+        bin2SmearedCorr_stat_unc = np.sqrt( sum(x*x for x in (nTagSmearedCorr[m_b2SmearedCorr]*Weight[m_b2SmearedCorr]) ) ).sum()
+        bin1SmearedCorr_stat_unc = np.sqrt( sum(x*x for x in (nTagSmearedCorr[m_b1SmearedCorr]*Weight[m_b1SmearedCorr]) ) ).sum()
+        bin0SmearedCorr_stat_unc = np.sqrt( sum(x*x for x in (nTagSmearedCorr[m_b0SmearedCorr]*Weight[m_b0SmearedCorr]) ) ).sum()
+
+        #No weight
+        #bin2SmearedCorr = (nTagSmearedCorr>1).sum()
+        #bin1SmearedCorr = (nTagSmearedCorr==1).sum()
+        #bin0SmearedCorr = (nTagSmearedCorr==0).sum()
 
         print bin0, bin1, bin2, bin0 + bin1 + bin2 
         print bin0Smeared, bin1Smeared, bin2Smeared, bin0Smeared + bin1Smeared + bin2Smeared
@@ -1937,14 +1997,23 @@ def smear_correlation(label,do_eta=False):
         eff[d]['b0'] = bin0
         eff[d]['b1'] = bin1
         eff[d]['b2'] = bin2
+        eff[d]['b0_stat_unc'] = bin0_stat_unc
+        eff[d]['b1_stat_unc'] = bin1_stat_unc
+        eff[d]['b2_stat_unc'] = bin2_stat_unc
 
         eff[d]['b0Smeared'] = bin0Smeared
         eff[d]['b1Smeared'] = bin1Smeared
         eff[d]['b2Smeared'] = bin2Smeared
+        eff[d]['b0Smeared_stat_unc'] = bin0Smeared_stat_unc
+        eff[d]['b1Smeared_stat_unc'] = bin1Smeared_stat_unc
+        eff[d]['b2Smeared_stat_unc'] = bin2Smeared_stat_unc
 
         eff[d]['b0SmearedCorr'] = bin0SmearedCorr
         eff[d]['b1SmearedCorr'] = bin1SmearedCorr
         eff[d]['b2SmearedCorr'] = bin2SmearedCorr
+        eff[d]['b0SmearedCorr_stat_unc'] = bin0SmearedCorr_stat_unc
+        eff[d]['b1SmearedCorr_stat_unc'] = bin1SmearedCorr_stat_unc
+        eff[d]['b2SmearedCorr_stat_unc'] = bin2SmearedCorr_stat_unc
 
         outfile = TFile(OUT+d+"_time_smearing.root","RECREATE")
         outfile.cd()
@@ -2000,7 +2069,7 @@ def print_smear_correlation(label):
 
 
     for d in data:
-        print "Reading the following dictionary: ", OUT+"Dict_"+d+".yaml"
+        print "Reading the following dictionary: ", OUT+"Dict_"+d+label+".yaml"
         with open(OUT+"Dict_"+d+label+".yaml","r") as f:
             print "\n"
             tmp_eff = yaml.load(f, Loader=yaml.Loader)
@@ -2017,7 +2086,16 @@ def print_smear_correlation(label):
 
 
 
-    table = PrettyTable(['m', 'ct','bin 2','bin 2 uncorr.','bin 2 corr.', 'diff. corr-uncorr (\%)', 'diff. corr-unsmeared (\%)', 'diff. uncorr-unsmeared (\%)'])
+    table = PrettyTable([
+        'm', 
+        'ct',
+        'bin 2',
+        'bin 2 uncorrel.',
+        'bin 2 correl.', 
+        'diff. corr-uncorr', 
+        'uncorr-unsmeared',
+        'corr-unsmeared', 
+    ])
     #table.add(['','','','','','corr-uncorr (\%)', 'corr-unsmeared (\%)', 'uncorr-unsmeared (\%)'])
     for m in mass:
         row = []
@@ -2034,12 +2112,20 @@ def print_smear_correlation(label):
 
                     #row = [m,c, eff['b2'],eff['b2Smeared'],eff['b2SmearedCorr'],   round( 100*(eff['b2Smeared']-eff['b2SmearedCorr'])/ ((eff['b2Smeared'] + eff['b2SmearedCorr'])*0.5) , 2 ), round( 100*(eff['b2Smeared']-eff['b2'])/ ((eff['b2'] + eff['b2Smeared'])*0.5) , 2 ), round( 100*(eff['b2SmearedCorr']-eff['b2'])/ ((eff['b2'] + eff['b2SmearedCorr'])*0.5) , 2 ) ]
 
-                    row = [m,c, eff[d]['b2'],eff[d]['b2Smeared'],eff[d]['b2SmearedCorr'],   round( 100*(eff[d]['b2Smeared']-eff[d]['b2SmearedCorr'])/ ((eff[d]['b2Smeared'] + eff[d]['b2SmearedCorr'])*0.5) , 2 ), round( 100*(eff[d]['b2Smeared']-eff[d]['b2'])/ ((eff[d]['b2'] + eff[d]['b2Smeared'])*0.5) , 2 ), round( 100*(eff[d]['b2SmearedCorr']-eff[d]['b2'])/ ((eff[d]['b2'] + eff[d]['b2SmearedCorr'])*0.5) , 2 ) ]
+                    row = [m,
+                           c, 
+                           str(round(eff[d]['b2'],2)) + " +- " + str(round(eff[d]['b2_stat_unc'],2) ) + " ("+ str(round( 100*eff[d]['b2_stat_unc']/eff[d]['b2'], 2)) +"%)", 
+                           str(round(eff[d]['b2Smeared'],2))  + " +- " + str(round(eff[d]['b2Smeared_stat_unc'],2)  ) + " ("+ str(round( 100*eff[d]['b2Smeared_stat_unc']/eff[d]['b2Smeared'], 2)) +"%)", 
+                           str(round(eff[d]['b2SmearedCorr'],2))  + " +- " + str(round(eff[d]['b2SmearedCorr_stat_unc'],2) ) + " ("+ str(round( 100*eff[d]['b2SmearedCorr_stat_unc']/eff[d]['b2SmearedCorr'], 2)) +"%)",   
+                           str(round( 100*(eff[d]['b2Smeared']-eff[d]['b2SmearedCorr'])/ ((eff[d]['b2Smeared'] + eff[d]['b2SmearedCorr'])*0.5) , 2 ))+"%", 
+                           str(round( 100*(eff[d]['b2Smeared']-eff[d]['b2'])/ ((eff[d]['b2'] + eff[d]['b2Smeared'])*0.5) , 2 ))+"%", 
+                           str(round( 100*(eff[d]['b2SmearedCorr']-eff[d]['b2'])/ ((eff[d]['b2'] + eff[d]['b2SmearedCorr'])*0.5) , 2 ))+"%" 
+                    ]
                     table.add_row(row)
 
     print(table)
-    exit()
 
+    '''
     print "$c \\tau$ (m) & $m_{\chi}$ (GeV) & difference corr-uncorr (\%)"+"\\"+"\\"
     for m in mass:
         string = ""
@@ -2051,6 +2137,8 @@ def print_smear_correlation(label):
                     if nt==0: string += " & "
             nt+=1
         print string +"\\"+"\\"
+    '''
+
 
     '''
     for s in data:
@@ -2987,13 +3075,19 @@ def print_todd_tables(era,label=""):
 
 ###
 # count events in SR with correlated time smearing (1 random number per event) and uncorrelated time smearing (1 random number per jet)
+
 label ="_time_smeared_from_v6_SR_no_time_smearing"
 
 #Keep this as a reference!!
 #label ="time_smeared_uncorrelated"
 
-smear_correlation(label,do_eta=True)
+#smear_correlation(label,do_eta=True)
 print_smear_correlation(label)
+
+label ="_time_smeared_from_v6_SR_no_time_smearing_wp0p7"
+#smear_correlation(label,do_eta=True,dnn_score=0.7)
+print_smear_correlation(label)
+
 exit()
 ###
 
