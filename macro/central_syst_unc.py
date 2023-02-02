@@ -21,7 +21,7 @@ from tensorflow import keras
 #import awkward1 as ak
 #import matplotlib.pyplot as plt
 
-ERA = "2018"
+ERA = "2016"
 
 CHAN = "SUSY"
 LUMI = -1
@@ -101,15 +101,25 @@ sign += [
 ]
 
 #sign = ['SUSY_mh800_ctau3000','SUSY_mh1800_ctau3000']
-#sign = ['SUSY_mh400_ctau500_HH']
+#sign = ['SUSY_mh127_ctau500_HH','SUSY_mh150_ctau500_HH','SUSY_mh400_ctau500_HH']
 
 #General main
+#Approval version:
 #MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc/"
 MAIN = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_central_values/"
 MAIN_central = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_central_values/"
 MAIN_JERUp = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_JERUp/"
 MAIN_JERDown = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_JERDown/"
+
+#These are too slow
+#MAIN_CWR_no_cuts = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_no_cuts_syst_unc_central_values/"
+#MAIN_CWR_SR      = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_SR_syst_unc_central_values/"
+MAIN_CWR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_"+ERA+"_PDF_QCD_syst_unc/"
+
+#Approval version:
 OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_"+ERA+"_"+SEL+"_signal_uncertainties_fix/"
+#CWR:
+OUT = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/plots/v6_calo_AOD_"+ERA+"_"+SEL+"_signal_uncertainties_CWR/"
 SF = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/data_MC_SF_DNN_"+ERA+"/"
 
 def deltaPhi_np( a1, v2):
@@ -533,6 +543,627 @@ def sign_unc_PDF(label="",scale=True, do_smear=True,added=""):
         f.close()
     print "Written in ", OUT+"signal_PDF_unc"+label+".yaml"
 
+
+
+def test_sign_unc_PDF_CWR(label="",scale=True, do_smear=True,added=""):
+
+    prj_weight = "EventWeight*PUReWeight*TriggerWeight"
+    results = defaultdict(dict)
+
+    #MAIN_CWR_SR: SR cuts
+    #MAIN_CWR_no_cuts: no cuts
+
+    for s in sign:
+        #event-wise variables
+        bin_2 = defaultdict(dict)
+        bin_1 = defaultdict(dict)
+        all_events = defaultdict(dict)
+        y1 = defaultdict(dict)
+        y2 = defaultdict(dict)
+        y = defaultdict(dict)
+
+        for n in range(103):
+            bin_2[n] = []
+            bin_1[n] = []
+            all_events[n] = []
+
+        
+        print "Ntuples SR: ", MAIN_CWR_SR
+        print "Ntuples no cuts: ", MAIN_CWR_no_cuts
+        for j, ss in enumerate(samples[s]['files']):
+            print "\n"
+            print "Performing computation for ", ss
+
+            print "\n"
+            print "SR:"
+
+            tmp_file_SR = TFile(MAIN_CWR_SR+ss+".root","READ")
+            tree_SR = tmp_file_SR.Get("tree")
+            tree_weight_SR = tree_SR.GetWeight()
+            n_pathological_SR = 0
+            
+            
+            for e in range(0,tree_SR.GetEntries()):
+                tree_SR.GetEntry(e)
+                jets = getattr(tree_SR,"Jets")
+                #met = getattr(tree,"MEt")
+                #QCDWeights = getattr(tree,"QCDWeights")
+
+                #Event level selections
+                if tree_SR.MinJetMetDPhi<=0.5:
+                    continue
+
+                #print "---------"
+                #print "event ", e
+                #print "n weights: ", tree_SR.PDFWeights.size()
+                weights_vec_SR = {}
+                weight_1_SR = 1.
+                max_w_SR = 0.
+                for n in range(tree_SR.PDFWeights.size()):
+                    #print "PDFWeight[",n,"] ", tree_SR.PDFWeights[n]
+                    weights_vec_SR[n] = tree_SR.PDFWeights[n]
+                    weight_0_SR = tree_SR.PDFWeights[0]
+                    max_w_SR = max(max_w_SR,abs(weights_vec_SR[n]))
+                if max_w_SR>50:
+                    n_pathological_SR+=1
+                    print "Likely pathological PDF weights in SR at event ", e
+                    print "max_w_SR: ", max_w_SR
+                    print "Event n. %d:%d:%d" % (tree_SR.RunNumber,tree_SR.LumiNumber,tree_SR.EventNumber)
+                    continue
+                #print "max_w_SR: ", max_w_SR
+
+                #Normalization Step
+                for n in weights_vec_SR.keys():
+                    if n==0:
+                        weights_vec_SR[n] = weights_vec_SR[n]/weight_0_SR
+                    
+                nTagJets = 0
+                for n in range(jets.size()):
+                    if jets[n].eta<=-1:
+                        continue
+                    if jets[n].eta>=1:
+                        continue
+                    if ERA=="2017":
+                        if jets[n].phi>=2.7: continue
+                    if ERA=="2018":
+                        if jets[n].phi>=0.4 and jets[n].phi<0.9: continue
+
+                    if jets[n].sigprob>0.996:
+                        nTagJets+=1
+                        
+                #event-wise variables
+                #print "nTagJets: ", nTagJets
+                #print "shift_w: ", shift_w
+                ev_weight_SR = tree_SR.EventWeight * tree_weight_SR * tree_SR.TriggerWeight * tree_SR.PUReWeight
+                for n in weights_vec_SR.keys():
+                    if nTagJets==1:
+                        bin_1[n].append(ev_weight_SR*weights_vec_SR[n])
+                    if nTagJets>1:
+                        bin_2[n].append(ev_weight_SR*weights_vec_SR[n])
+
+                '''
+                if nTagJets>1:
+                    print "----------------------"
+                    for n in weights_vec.keys():
+                        if abs(weights_vec[n])>50:
+                            print "In bin 2:"
+                            print "   PDFWeight[",n,"] ",weights_vec[n]
+                '''
+
+
+
+            print "\n"
+            print "no cuts:"
+
+            tmp_file_no_cuts = TFile(MAIN_CWR_no_cuts+ss+".root","READ")
+            tree_no_cuts = tmp_file_no_cuts.Get("tree")
+            tree_weight_no_cuts = tree_no_cuts.GetWeight()
+            n_pathological_no_cuts = 0
+            
+            
+            for e in range(0,tree_no_cuts.GetEntries()):
+                tree_no_cuts.GetEntry(e)
+
+                #print "---------"
+                #print "event ", e
+                #print "n weights: ", tree_no_cuts.PDFWeights.size()
+                weights_vec_no_cuts = {}
+                weight_1_no_cuts = 1.
+                max_w_no_cuts = 0.
+                for n in range(tree_no_cuts.PDFWeights.size()):
+                    #print "PDFWeight[",n,"] ", tree_no_cuts.PDFWeights[n]
+                    weights_vec_no_cuts[n] = tree_no_cuts.PDFWeights[n]
+                    weight_0_no_cuts = tree_no_cuts.PDFWeights[0]
+                    max_w_no_cuts = max(max_w_no_cuts,abs(weights_vec_no_cuts[n]))
+                if max_w_no_cuts>50:
+                    n_pathological_no_cuts+=1
+                    print "Likely pathological PDF weights in no_cuts at event ", e
+                    print "max_w_no_cuts: ", max_w_no_cuts
+                    print "Event n. %d:%d:%d" % (tree_no_cuts.RunNumber,tree_no_cuts.LumiNumber,tree_no_cuts.EventNumber)
+                    continue
+                #print "max_w_no_cuts: ", max_w_no_cuts
+
+                #Normalization Step
+                for n in weights_vec_no_cuts.keys():
+                    if n==0:
+                        weights_vec_no_cuts[n] = weights_vec_no_cuts[n]/weight_0_no_cuts
+                    
+                #event-wise variables
+                ev_weight_no_cuts = tree_no_cuts.EventWeight * tree_weight_no_cuts * tree_no_cuts.TriggerWeight * tree_no_cuts.PUReWeight
+                for n in weights_vec_no_cuts.keys():
+                    all_events[n].append(ev_weight_no_cuts*weights_vec_no_cuts[n])
+
+
+        #Here calculate differences with and without SFs; check also in all eta range
+        #print "bin_2"
+        #print bin_1
+        #print bin_2
+        #print "bin_2_shift"
+        #print bin_2_shift
+        #y1 = np.sum(np.array(bin_1))
+        #y1_up = np.sum(np.array(bin_1_up))
+        #y1_down = np.sum(np.array(bin_1_down))
+        for n in weights_vec_SR.keys():
+            y1[n] = np.sum(np.array(bin_1[n]))
+            y2[n] = np.sum(np.array(bin_2[n]))
+            #print "Weight ", n, " bin_2"
+            #print bin_2[n]
+            #print "Weight ", n, " yields"
+            #print y1[n]
+            #print y2[n]
+
+        for n in weights_vec_no_cuts.keys():
+            y[n] = np.sum(np.array(all_events[n]))
+
+        y1_up   = max( abs(y1[n] - y1[0]) for n in weights_vec_SR.keys() )
+        y1_down = min( abs(y1[n] - y1[0]) for n in weights_vec_SR.keys() )
+        y2_up   = max( abs(y2[n] - y2[0]) for n in weights_vec_SR.keys() )
+        y2_down = min( abs(y2[n] - y2[0]) for n in weights_vec_SR.keys() )
+        y_up    = max( abs(y[n] - y[0]) for n in weights_vec_no_cuts.keys() )
+        y_down  = min( abs(y[n] - y[0]) for n in weights_vec_no_cuts.keys() )
+
+        max_y2 = max(y2[n] for n in weights_vec_SR.keys())
+        min_y2 = min(y2[n] for n in weights_vec_SR.keys())
+
+        max_y  = max(y[n] for n in weights_vec_no_cuts.keys())
+        min_y  = min(y[n] for n in weights_vec_no_cuts.keys())
+
+        print "---------------------------------------------------------------------"
+        print "   max_y2 : ", max_y2, " ; min_y2: ", min_y2
+        print "   y2 nominal: ", y2[0], " ; y2 max: ", y2_up, " ; perc. ", 100*abs(y2_up)/y2[0]
+        print "   y2 nominal: ", y2[0], " ; y2 min: ", y2_down, " ; perc. ", 100*abs(y2_down)/y2[0]
+        print "   y1 nominal: ", y1[0], " ; y1 max: ", y1_up, " ; perc. ", 100*abs(y1_up)/y1[0]
+        print "   y1 nominal: ", y1[0], " ; y1 min: ", y1_down, " ; perc. ", 100*abs(y1_down)/y1[0]
+        if n_pathological_SR>0:
+            print "Identified",n_pathological_SR,"events in SR with pathological PDF weights"
+        print "---------------------------------------------------------------------"
+        print "   max_y : ", max_y, " ; min_y: ", min_y
+        print "   y nominal: ", y[0], " ; y max: ", y_up, " ; perc. ", 100*abs(y_up)/y[0]
+        print "   y nominal: ", y[0], " ; y min: ", y_down, " ; perc. ", 100*abs(y_down)/y[0]
+        if n_pathological_no_cuts>0:
+            print "Identified",n_pathological_no_cuts,"events no_cuts with pathological PDF weights"
+        print "---------------------------------------------------------------------"
+
+        results[s]['y2'] = y2[0]
+        results[s]['y2_up'] = y2_up
+        results[s]['diff_y2_up'] = 100*abs(y2_up)/y2[0]
+        results[s]['y2_down'] = y2_down
+        results[s]['diff_y2_down'] = 100*abs(y2_down)/y2[0]
+
+        results[s]['y1'] = y1[0]
+        results[s]['y1_up'] = y1_up
+        results[s]['diff_y1_up'] = 100*abs(y1_up)/y1[0]
+        results[s]['y1_down'] = y1_down
+        results[s]['diff_y1_down'] = 100*abs(y1_down)/y1[0]
+
+        results[s]['y'] = y[0]
+        results[s]['y_up'] = y_up
+        results[s]['diff_y_up'] = 100*abs(y_up)/y[0]
+        results[s]['y_down'] = y_down
+        results[s]['diff_y_down'] = 100*abs(y_down)/y[0]
+        #....
+        #fill results
+
+        #print results
+        with open(OUT+s+"_signal_PDF_unc"+label+".yaml","w") as f:
+            yaml.dump(results, f)
+            f.close()
+        print "Written in ", OUT+s+"_signal_PDF_unc"+label+".yaml"
+
+
+
+def sign_unc_PDF_CWR(label="",scale=True, do_smear=True,added=""):
+
+    results = defaultdict(dict)
+
+    for s in sign:
+        #event-wise variables
+        bin_2 = defaultdict(dict)
+        bin_1 = defaultdict(dict)
+        all_events = defaultdict(dict)
+        y1 = defaultdict(dict)
+        y2 = defaultdict(dict)
+        y = defaultdict(dict)
+        r = defaultdict(dict)
+
+        for n in range(103):
+            bin_2[n] = []
+            bin_1[n] = []
+            all_events[n] = []
+
+        
+        print "Ntuples: ", MAIN_CWR
+
+        for j, ss in enumerate(samples[s]['files']):
+            print "\n"
+            print "Performing computation for ", ss
+
+            tmp_file = TFile(MAIN_CWR+ss+".root","READ")
+            tree = tmp_file.Get("tree")
+            tree_weight = tree.GetWeight()
+            n_pathological = 0
+            n_pathological_SR = 0
+
+            for e in range(0,tree.GetEntries()):
+                tree.GetEntry(e)
+
+                if e%1000 == 0:
+                    print "Event n. ", e, "/", tree.GetEntries()
+
+                #if tree.isSR_bin2:
+                #    print "---------"
+                #    print "event ", e
+                #    print "is SR ", tree.isSR_bin2
+                #    print "n weights: ", tree.PDFWeights.size()
+                #    print "n weights SR: ", tree.PDFWeightsSR.size()
+
+                weights_vec_no_cuts = {}
+                weight_1_no_cuts = 1.
+                max_w_no_cuts = 0.
+
+                weights_vec_SR = {}
+                weight_1_SR = 1.
+                max_w_SR = 0.
+
+
+                for n in range(tree.PDFWeights.size()):
+                    weights_vec_no_cuts[n] = tree.PDFWeights[n]
+                    weight_0_no_cuts = tree.PDFWeights[0]
+                    max_w_no_cuts = max(max_w_no_cuts,abs(weights_vec_no_cuts[n]))
+
+                if max_w_no_cuts>50:
+                    n_pathological+=1
+                    print "Likely pathological PDF weights in no_cuts at event ", e
+                    print "max_w_no_cuts: ", max_w_no_cuts
+                    print "Event n. %d:%d:%d" % (tree.RunNumber,tree.LumiNumber,tree.EventNumber)
+                    continue
+
+                for m in range(tree.PDFWeightsSR.size()):
+                    weights_vec_SR[m] = tree.PDFWeightsSR[m]
+                    weight_0_SR = tree.PDFWeightsSR[0]
+                    max_w_SR = max(max_w_SR,abs(weights_vec_SR[m]))
+
+                if max_w_SR>50:
+                    n_pathological_SR+=1
+                    print "Likely pathological PDF weights in SR at event ", e
+                    print "max_w_SR: ", max_w_SR
+                    print "Event n. %d:%d:%d" % (tree.RunNumber,tree.LumiNumber,tree.EventNumber)
+                    #no need of continue statement here
+
+                #if tree.isSR_bin2:
+                #    print "weights_vec_SR"
+                #    print weights_vec_SR
+
+                #Normalization Step
+                for n in weights_vec_no_cuts.keys():
+                    if n==0:
+                        weights_vec_no_cuts[n] = weights_vec_no_cuts[n]/weight_0_no_cuts
+
+                for m in weights_vec_SR.keys():
+                    if m==0:
+                        weights_vec_SR[m] = weights_vec_SR[m]/weight_0_SR
+                    
+                #event-wise variables
+                ev_weight_no_cuts = tree.EventWeight * tree_weight * tree.PUReWeight#* tree.TriggerWeight 
+                ev_weight_SR = tree.EventWeight * tree_weight * tree.PUReWeight * tree.TriggerWeight if tree.isSR_bin2 else 0
+                for n in weights_vec_no_cuts.keys():
+                    all_events[n].append(ev_weight_no_cuts*weights_vec_no_cuts[n])
+
+                for m in weights_vec_SR.keys():
+                    bin_2[m].append(ev_weight_SR*weights_vec_SR[m])
+
+
+        #print "all_events"
+        #print len(all_events)
+        ##print all_events
+        #print "bin_2"
+        ##print len(bin_2)
+        #print bin_2
+
+        for m in bin_2.keys():
+            y2[m] = np.sum(np.array(bin_2[m]))
+
+        for n in all_events.keys():
+            y[n] = np.sum(np.array(all_events[n]))
+
+        for m in bin_2.keys():
+            r[m] = y2[m]/y[m]
+
+        #print "y"
+        #print len(y)
+        #print y[0]
+
+        #print "y2"
+        #print len(y2)
+        #print y2[0]
+        
+        r_up   = max( abs(r[n] - r[0]) for n in bin_2.keys() )
+        r_down = min( abs(r[n] - r[0]) for n in bin_2.keys() )
+
+        y2_up   = max( abs(y2[n] - y2[0]) for n in bin_2.keys() )
+        y2_down = min( abs(y2[n] - y2[0]) for n in bin_2.keys() )
+        y_up    = max( abs(y[n] - y[0]) for n in all_events.keys() )
+        y_down  = min( abs(y[n] - y[0]) for n in all_events.keys() )
+
+        max_y2 = max(y2[n] for n in bin_2.keys())
+        min_y2 = min(y2[n] for n in bin_2.keys())
+
+        max_y  = max(y[n] for n in all_events.keys())
+        min_y  = min(y[n] for n in all_events.keys())
+
+        max_r  = max(r[n] for n in all_events.keys())
+        min_r  = min(r[n] for n in all_events.keys())
+
+        print "---------------------------------------------------------------------"
+        print "   max_y2 : ", max_y2, " ; min_y2: ", min_y2
+        print "   y2 nominal: ", y2[0], " ; y2 max var: ", y2_up, " ; perc. ", 100*abs(y2_up)/y2[0]
+        print "   y2 nominal: ", y2[0], " ; y2 min var: ", y2_down, " ; perc. ", 100*abs(y2_down)/y2[0]
+        if n_pathological_SR>0:
+            print "Identified",n_pathological_SR,"events in SR with pathological PDF weights"
+        print "---------------------------------------------------------------------"
+        print "   max_y : ", max_y, " ; min_y: ", min_y
+        print "   y nominal: ", y[0], " ; y max var: ", y_up, " ; perc. ", 100*abs(y_up)/y[0]
+        print "   y nominal: ", y[0], " ; y min var: ", y_down, " ; perc. ", 100*abs(y_down)/y[0]
+        if n_pathological>0:
+            print "Identified",n_pathological,"events no_cuts with pathological PDF weights"
+        print "---------------------------------------------------------------------"
+        print "   max_r : ", max_r, " ; min_r: ", min_r
+        print "   r nominal: ", r[0], " ; r max var: ", r_up, " ; perc. ", 100*abs(r_up)/r[0]
+        print "   r nominal: ", r[0], " ; r min var: ", r_down, " ; perc. ", 100*abs(r_down)/r[0]
+        if n_pathological>0:
+            print "Identified",n_pathological,"events no_cuts with pathological PDF weights"
+        print "---------------------------------------------------------------------"
+
+
+
+        results[s]['y2'] = y2[0]
+        results[s]['y2_up'] = y2_up
+        results[s]['diff_y2_up'] = 100*abs(y2_up)/y2[0]
+        results[s]['y2_down'] = y2_down
+        results[s]['diff_y2_down'] = 100*abs(y2_down)/y2[0]
+
+
+        results[s]['y'] = y[0]
+        results[s]['y_up'] = y_up
+        results[s]['diff_y_up'] = 100*abs(y_up)/y[0]
+        results[s]['y_down'] = y_down
+        results[s]['diff_y_down'] = 100*abs(y_down)/y[0]
+
+
+        results[s]['r'] = r[0]
+        results[s]['r_up'] = r_up
+        results[s]['diff_r_up'] = 100*abs(r_up)/r[0]
+        results[s]['r_down'] = r_down
+        results[s]['diff_r_down'] = 100*abs(r_down)/r[0]
+
+
+        #....
+        #fill results
+
+        #print results per sample
+        with open(OUT+s+"_signal_PDF_unc"+label+".yaml","w") as f:
+            yaml.dump(results[s], f)
+            f.close()
+        print "Written in ", OUT+s+"_signal_PDF_unc"+label+".yaml"
+
+
+    #print results
+    with open(OUT+"signal_PDF_unc"+label+".yaml","w") as f:
+        yaml.dump(results, f)
+        f.close()
+    print "Written in ", OUT+"signal_PDF_unc"+label+".yaml"
+
+
+def sign_unc_QCD_scales_CWR(label="",scale=True, do_smear=True,added=""):
+
+    results = defaultdict(dict)
+
+    for s in sign:
+        #event-wise variables
+        bin_2 = defaultdict(dict)
+        bin_1 = defaultdict(dict)
+        all_events = defaultdict(dict)
+        y1 = defaultdict(dict)
+        y2 = defaultdict(dict)
+        y = defaultdict(dict)
+        r = defaultdict(dict)
+
+        for n in [0,2,3,4,5,7,9]:
+            bin_2[n] = []
+            bin_1[n] = []
+            all_events[n] = []
+
+        
+        print "Ntuples: ", MAIN_CWR
+
+        for j, ss in enumerate(samples[s]['files']):
+            print "\n"
+            print "Performing computation for ", ss
+
+            tmp_file = TFile(MAIN_CWR+ss+".root","READ")
+            tree = tmp_file.Get("tree")
+            tree_weight = tree.GetWeight()
+            n_pathological = 0
+            n_pathological_SR = 0
+
+            for e in range(0,tree.GetEntries()):
+                tree.GetEntry(e)
+
+                if e%100 == 0:
+                    print "Event n. ", e, "/", tree.GetEntries()
+
+                weights_vec_no_cuts = {}
+                weight_1_no_cuts = 1.
+                max_w_no_cuts = 0.
+
+                weights_vec_SR = {}
+                weight_1_SR = 1.
+                max_w_SR = 0.
+
+
+                for n in range(tree.QCDWeights.size()):
+                    if n!=6 and n!=8 and n!=1:
+                        weights_vec_no_cuts[n] = tree.QCDWeights[n]
+                        max_w_no_cuts = max(max_w_no_cuts,abs(weights_vec_no_cuts[n]))
+                    weight_1_no_cuts = tree.QCDWeights[1]
+
+                if max_w_no_cuts>50:
+                    n_pathological+=1
+                    print "Likely pathological QCD weights in no_cuts at event ", e
+                    print "max_w_no_cuts: ", max_w_no_cuts
+                    print "Event n. %d:%d:%d" % (tree.RunNumber,tree.LumiNumber,tree.EventNumber)
+                    continue
+
+                for m in range(tree.QCDWeightsSR.size()):
+                    if m!=6 and m!=8 and m!=1:
+                        weights_vec_SR[m] = tree.QCDWeightsSR[m]
+                        max_w_SR = max(max_w_SR,abs(weights_vec_SR[m]))
+                    weight_1_SR = tree.QCDWeightsSR[1]
+
+                if max_w_SR>50:
+                    n_pathological_SR+=1
+                    print "Likely pathological QCD weights in SR at event ", e
+                    print "max_w_SR: ", max_w_SR
+                    print "Event n. %d:%d:%d" % (tree.RunNumber,tree.LumiNumber,tree.EventNumber)
+                    #no need of continue statement here
+
+
+                #Normalization Step
+                #for n in weights_vec_no_cuts.keys():
+                #    if n==0:
+                #        weights_vec_no_cuts[n] = weights_vec_no_cuts[n]/weight_0_no_cuts
+
+                #for m in weights_vec_SR.keys():
+                #    if m==0:
+                #        weights_vec_SR[m] = weights_vec_SR[m]/weight_0_SR
+                    
+                #event-wise variables
+                ev_weight_no_cuts = tree.EventWeight * tree_weight * tree.PUReWeight#* tree.TriggerWeight 
+                ev_weight_SR = tree.EventWeight * tree_weight * tree.PUReWeight * tree.TriggerWeight if tree.isSR_bin2 else 0
+                for n in weights_vec_no_cuts.keys():
+                    all_events[n].append(ev_weight_no_cuts*weights_vec_no_cuts[n])
+
+                for m in weights_vec_SR.keys():
+                    bin_2[m].append(ev_weight_SR*weights_vec_SR[m])
+
+
+        #print "all_events"
+        #print len(all_events)
+        ##print all_events
+        #print "bin_2"
+        ##print len(bin_2)
+        #print bin_2
+
+        for m in bin_2.keys():
+            y2[m] = np.sum(np.array(bin_2[m]))
+
+        for n in all_events.keys():
+            y[n] = np.sum(np.array(all_events[n]))
+
+        for m in bin_2.keys():
+            r[m] = y2[m]/y[m]
+
+        #print "y"
+        #print len(y)
+        #print y[0]
+
+        #print "y2"
+        #print len(y2)
+        #print y2[0]
+        
+        r_up   = max( abs(r[n] - r[0]) for n in bin_2.keys() )
+        r_down = min( abs(r[n] - r[0]) for n in bin_2.keys() )
+
+        y2_up   = max( abs(y2[n] - y2[0]) for n in bin_2.keys() )
+        y2_down = min( abs(y2[n] - y2[0]) for n in bin_2.keys() )
+        y_up    = max( abs(y[n] - y[0]) for n in all_events.keys() )
+        y_down  = min( abs(y[n] - y[0]) for n in all_events.keys() )
+
+        max_y2 = max(y2[n] for n in bin_2.keys())
+        min_y2 = min(y2[n] for n in bin_2.keys())
+
+        max_y  = max(y[n] for n in all_events.keys())
+        min_y  = min(y[n] for n in all_events.keys())
+
+        max_r  = max(r[n] for n in all_events.keys())
+        min_r  = min(r[n] for n in all_events.keys())
+
+        print "---------------------------------------------------------------------"
+        print "   max_y2 : ", max_y2, " ; min_y2: ", min_y2
+        print "   y2 nominal: ", y2[0], " ; y2 max var: ", y2_up, " ; perc. ", 100*abs(y2_up)/y2[0]
+        print "   y2 nominal: ", y2[0], " ; y2 min var: ", y2_down, " ; perc. ", 100*abs(y2_down)/y2[0]
+        if n_pathological_SR>0:
+            print "Identified",n_pathological_SR,"events in SR with pathological QCD weights"
+        print "---------------------------------------------------------------------"
+        print "   max_y : ", max_y, " ; min_y: ", min_y
+        print "   y nominal: ", y[0], " ; y max var: ", y_up, " ; perc. ", 100*abs(y_up)/y[0]
+        print "   y nominal: ", y[0], " ; y min var: ", y_down, " ; perc. ", 100*abs(y_down)/y[0]
+        if n_pathological>0:
+            print "Identified",n_pathological,"events no_cuts with pathological QCD weights"
+        print "---------------------------------------------------------------------"
+        print "   max_r : ", max_r, " ; min_r: ", min_r
+        print "   r nominal: ", r[0], " ; r max var: ", r_up, " ; perc. ", 100*abs(r_up)/r[0]
+        print "   r nominal: ", r[0], " ; r min var: ", r_down, " ; perc. ", 100*abs(r_down)/r[0]
+        if n_pathological>0:
+            print "Identified",n_pathological,"events no_cuts with pathological QCD weights"
+        print "---------------------------------------------------------------------"
+
+
+        results[s]['y2'] = y2[0]
+        results[s]['y2_up'] = y2_up
+        results[s]['diff_y2_up'] = 100*abs(y2_up)/y2[0]
+        results[s]['y2_down'] = y2_down
+        results[s]['diff_y2_down'] = 100*abs(y2_down)/y2[0]
+
+
+        results[s]['y'] = y[0]
+        results[s]['y_up'] = y_up
+        results[s]['diff_y_up'] = 100*abs(y_up)/y[0]
+        results[s]['y_down'] = y_down
+        results[s]['diff_y_down'] = 100*abs(y_down)/y[0]
+
+
+        results[s]['r'] = r[0]
+        results[s]['r_up'] = r_up
+        results[s]['diff_r_up'] = 100*abs(r_up)/r[0]
+        results[s]['r_down'] = r_down
+        results[s]['diff_r_down'] = 100*abs(r_down)/r[0]
+
+
+        #....
+        #fill results
+
+        #print results per sample
+        with open(OUT+s+"_signal_QCD_scales_unc"+label+".yaml","w") as f:
+            yaml.dump(results[s], f)
+            f.close()
+        print "Written in ", OUT+s+"_signal_QCD_scales_unc"+label+".yaml"
+
+    #print results
+    with open(OUT+"signal_QCD_scales_unc"+label+".yaml","w") as f:
+        yaml.dump(results, f)
+        f.close()
+    print "Written in ", OUT+"signal_QCD_scales_unc"+label+".yaml"
 
 def sign_unc_jet(label="",scale=True, do_smear=True,added=""):
 
@@ -1025,6 +1656,104 @@ def draw_syst_unc_envelope(unc_type,added):
     print "Written in ", OUT+"signal_"+unc_type+"_datacard_unc"+added+".yaml"
 
 
+
+def draw_syst_unc_envelope_CWR(unc_type,added):
+    print "Drawing uncertainty vs mass"
+    with open(OUT+"signal_"+unc_type+"_unc"+added+".yaml","r") as f:
+        results = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+    samp = results.keys()
+    masses = []
+    ctaus = []
+    for s in samp:
+        masses.append(samples[s]['mass'])
+        ctaus.append(samples[s]['ctau'])
+    masses = np.unique(np.sort(np.array(masses)))
+    ctaus = np.unique(np.sort(np.array(ctaus)))
+    print masses
+    print ctaus
+
+    mg = TMultiGraph()
+    leg1 = TLegend(0.6, 0.2+0.3, 0.9, 0.5+0.3)
+    #leg1 = TLegend(0.15+0.5, 0.6+0.2, 0.3+0.5, 0.9)
+    colors = [2,418,801,856,602,920,881]
+    diff_up = {}
+    diff_down = {}
+    count_c = 0
+    print "$c \\tau$ (m) & $m_{\chi}$ (GeV) & uncertainty (\%)"+"\\"+"\\"
+    for m in masses:
+        string = ""
+        nt = 0
+        for c in ctaus:
+            for s in samp:
+                #print "results[",s,"]['diff_r_up'], results[",s,"]['r']"
+                #print results[s]['diff_r_up'], results[s]['r']
+                if "mh"+str(m)+"_ctau"+str(c) in s:
+                    string += str(c/1000.) + " & " + str(m)+" & "+str("%.2f" % (results[s]['diff_r_up']))
+                    if nt==0: string += " & "
+            nt+=1
+        print string +"\\"+"\\"
+
+    for c in ctaus:
+        diff_up[c] = TGraph()
+        n = 0
+        for m in masses:
+            for s in samp:
+                if "mh"+str(m)+"_ctau"+str(c) in s:
+                    diff_up[c].SetPoint(n,m,results[s]['diff_r_up'])
+                    n+=1
+        diff_up[c].SetMarkerStyle(24)
+        diff_up[c].SetMarkerColor(colors[count_c])
+        diff_up[c].SetLineColor(colors[count_c])
+        diff_up[c].SetLineWidth(2)
+        diff_up[c].GetXaxis().SetTitle("m_{#chi} (GeV)")
+        diff_up[c].GetYaxis().SetTitle("Uncertainty (%)")
+        diff_up[c].GetYaxis().SetTitleSize(0.05)
+        diff_up[c].SetMinimum(0)
+        diff_up[c].SetMaximum(2)
+        if unc_type=="PDF":
+            leg1.AddEntry(diff_up[c],"c_{#tau} = "+str(c/1000.)+" m; PDF envelope","PL")
+        if unc_type=="QCD_scales":
+            leg1.AddEntry(diff_up[c],"c_{#tau} = "+str(c/1000.)+" m; QCD scales envelope","PL")
+        mg.Add(diff_up[c])
+        count_c+=1
+
+    c1 = TCanvas("c1", "c1", 800, 600)
+    c1.SetGrid()
+    c1.SetTopMargin(0.06)
+    c1.SetBottomMargin(0.12)
+    c1.SetRightMargin(0.05)
+    c1.SetLeftMargin(0.12)
+    c1.SetTicks(1, 1)
+    mg.GetXaxis().SetTitle("m_{#chi} (GeV)")
+    mg.GetYaxis().SetTitle("Uncertainty (%)")
+    mg.GetXaxis().SetTitleSize(0.05)
+    mg.GetYaxis().SetTitleSize(0.05)
+    mg.SetMinimum(0.)
+    mg.SetMaximum(2.)
+    mg.Draw("APL")
+    leg1.Draw()
+    drawCMS_simple(LUMI, "Preliminary", ERA=ERA, onTop=True)
+    #drawAnalysis("LL"+CHAN)
+    drawRegion(SEL)
+    #c1.SetLogx()
+    c1.Print(OUT+"signal_"+unc_type+"_uncertainty"+added+".pdf")
+    c1.Print(OUT+"signal_"+unc_type+"_uncertainty"+added+".png")
+    c1.Close()
+
+    #Write datacards dictionary
+    uncertainties = defaultdict(dict)
+    for s in sign:
+        #s = s.replace("_HH","")
+        s_out = s.replace("_HH","")
+        uncertainties[s_out][unc_type] = max(results[s]['diff_r_up'],results[s]['diff_r_down'])
+
+    with open(OUT+"signal_"+unc_type+"_datacard_unc"+added+".yaml","w") as f:
+        yaml.dump(uncertainties, f)
+        f.close()
+    print "Written in ", OUT+"signal_"+unc_type+"_datacard_unc"+added+".yaml"
+
+
 def draw_syst_unc_jet(added):
     print "Drawing uncertainty vs mass"
     with open(OUT+"signal_jet_unc"+added+".yaml","r") as f:
@@ -1283,29 +2012,43 @@ lab = "_not_scaled"#"_constant_1"
 lab = ""
 added = ""
 if ERA=="2016":
-    added="_G-H"
-    #added="_B-F"
+    #added="_G-H"
+    added="_B-F"
+
+
+# PDF
+#added+="_test"
+#sign_unc_PDF_CWR(label=added)
+draw_syst_unc_envelope_CWR("PDF",added)
+
+#QCD
+#added+="_test"
+#sign_unc_QCD_scales_CWR(label=added)
+draw_syst_unc_envelope_CWR("QCD_scales",added)
+exit()
 
 # DNN
-sign_unc_DNN(label=added)
+#sign_unc_DNN(label=added)
 
 # Tau
-sign_unc_tau(label=added)
+#sign_unc_tau(label=added)
 
 # Lumi
-sign_unc_lumi(label=added)
+#sign_unc_lumi(label=added)
 
 # JER JEC
 #sign_unc_jet(label=added)#+"_debug")
 draw_syst_unc_jet(added)
 
-# PDF
-#sign_unc_PDF(label=added)
-draw_syst_unc_envelope("PDF",added)
+### PDF
+##Old: absolute correction, does not take acceptance into account.
+##sign_unc_PDF(label=added)
+#draw_syst_unc_envelope("PDF",added)
 
-# QCD scales
-#sign_unc_QCD_scales(label=added)
-draw_syst_unc_envelope("QCD_scales",added)
+### QCD scales
+##Old: absolute correction, does not take acceptance into account.
+##sign_unc_QCD_scales(label=added)
+##draw_syst_unc_envelope("QCD_scales",added)
 
 # Pile-Up
 #sign_unc_PU(label=added+"_test")
