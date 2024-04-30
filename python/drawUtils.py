@@ -8,7 +8,7 @@ from ROOT import ROOT, gROOT, gStyle, gRandom, TSystemDirectory, gPad
 from ROOT import TFile, TChain, TTree, TCut, TH1, TH1F, TH1D, TH2F, THStack, TGraph, TGraphAsymmErrors
 from ROOT import TStyle, TCanvas, TPad
 from ROOT import TLegend, TLatex, TText, TLine, TBox, TGaxis, TAxis
-from decimal import Decimal, ROUND_UP
+from decimal import Decimal, ROUND_UP, ROUND_HALF_UP
 
 #### IMPORT SAMPLES AND VARIABLES DICTIONARIES ####
 
@@ -524,7 +524,8 @@ def drawCMS(samples, LUMI, text, ERA="", onTop=False, left_marg_CMS=0.15,data_ob
     if ERA!="":
         era_str = ", "+ERA
     if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
-        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP) ,era_str ) )
+        lumi_digit = Decimal( str(LUMI/1000.) ).quantize(Decimal('1.0'), rounding=ROUND_HALF_UP) if LUMI/1000.<100. else Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP)
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( lumi_digit,era_str ) )
     elif type(LUMI) is str:
         latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
     if not onTop:
@@ -583,7 +584,8 @@ def drawCMS_supplementary(LUMI, text, ERA="", onTop=False, top_margin=0.84,left_
     if ERA!="":
         era_str = ", "+ERA
     if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
-        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP) ,era_str ) )
+        lumi_digit = Decimal( str(LUMI/1000.) ).quantize(Decimal('1.0'), rounding=ROUND_HALF_UP) if LUMI/1000.<100. else Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP)
+        latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( lumi_digit, era_str ) )
     elif type(LUMI) is str:
         latex.DrawLatex(0.95, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
     #latex.SetTextAlign(11)
@@ -594,7 +596,7 @@ def drawCMS_supplementary(LUMI, text, ERA="", onTop=False, top_margin=0.84,left_
     latex.SetTextFont(52)
     latex.DrawLatex(left_marg_CMS+0.25*text_size/0.045, top_margin, text)
 
-def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_LUMI=0.95,text_size=0.045,cms_text_size=0.06,lumi_text_size=0.04,custom_spacing=0):
+def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_LUMI=0.95,text_size=0.045,cms_text_size=0.06,lumi_text_size=0.04,custom_spacing=0,draw_s_only=False, top_marg_cms = 0.98, top_marg_lumi = 0.985):
     latex = TLatex()
     latex.SetNDC()
     latex.SetTextSize(lumi_text_size)
@@ -605,14 +607,17 @@ def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_
     if ERA!="":
         era_str = ", "+ERA
     if (type(LUMI) is float or type(LUMI) is int) and float(LUMI) > 0:
-        latex.DrawLatex(left_marg_LUMI, 0.985, ("%s fb^{-1}  (13 TeV%s)") % ( Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP) ,era_str ) )#( round(float(LUMI)/1000.,0),era_str) )
+        lumi_digit = Decimal( str(LUMI/1000.) ).quantize(Decimal('1.0'), rounding=ROUND_HALF_UP) if LUMI/1000.<100. else Decimal( str(LUMI/1000.) ).quantize(Decimal('1.'), rounding=ROUND_UP)
+        latex.DrawLatex(left_marg_LUMI, top_marg_lumi, ("%s fb^{-1}  (13 TeV%s)") % ( lumi_digit ,era_str ) )#( round(float(LUMI)/1000.,0),era_str) )
     elif type(LUMI) is str:
-        latex.DrawLatex(left_marg_LUMI, 0.985, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
+        latex.DrawLatex(left_marg_LUMI, top_marg_lumi, ("%s fb^{-1}  (13 TeV%s)" % (LUMI,era_str)) )
+    if draw_s_only:
+        latex.DrawLatex(left_marg_LUMI, top_marg_lumi, "#sqrt{s} = 13 TeV")
     if not onTop: latex.SetTextAlign(11)
     latex.SetTextFont(62)
     #latex.SetTextSize(0.05 if len(text)>0 else 0.06)
     latex.SetTextSize(cms_text_size)
-    latex.DrawLatex(left_marg_CMS, 0.98, "CMS")
+    latex.DrawLatex(left_marg_CMS, top_marg_cms, "CMS")
     latex.SetTextFont(52)#times 12.5
     spacing = left_marg_CMS+0.3*(cms_text_size/0.06)
     if len(text)>11:
@@ -621,7 +626,7 @@ def drawCMS_simple(LUMI, text, ERA="",onTop=False, left_marg_CMS=0.20,left_marg_
     print len(text)
     if custom_spacing!=0:
         spacing = left_marg_CMS+custom_spacing
-    latex.DrawLatex(spacing, 0.98, text)
+    latex.DrawLatex(spacing, top_marg_cms, text)
 
 def drawAnalysis(s, center=False):
     analyses = {

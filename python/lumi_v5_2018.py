@@ -71,7 +71,7 @@ lumi = {
 
 for a in lumi.keys():
     lumi[a]["tot"] = lumi[a]["A"] + lumi[a]["B"] + lumi[a]["C"] +lumi[a]["D"]
-    print a, lumi[a]["tot"]
+    print(a, lumi[a]["tot"])
 
 #print "WARNING! Princeton LUMI For High MET! "
 #LUMI = 132*1000
