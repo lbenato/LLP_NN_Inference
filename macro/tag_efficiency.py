@@ -7842,18 +7842,19 @@ def write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_re
                     weight_down_ele = np.multiply(dnnweight_down_ele,np.multiply(eventweight,np.multiply(pureweight,trgweight)))*tree_weight_dict[pr][ss]*signalMultFactor_adjusted*signalBRfactor
                     weight_down_pho = np.multiply(dnnweight_down_pho,np.multiply(eventweight,np.multiply(pureweight,trgweight)))*tree_weight_dict[pr][ss]*signalMultFactor_adjusted*signalBRfactor
                     #Here: gen level stuff
+                    #BUGFIX 30.04.2024
                     if "Stealth" in sign[0]:
                         genRadius = arrays["GenHiggs.travelRadius"][cut_mask][cut_mask_time_any][bin2_m]
-                        genX = arrays["GenHiggs.travelX"][cut_mask][cut_mask_time_any][bin2_m]
-                        genY = arrays["GenHiggs.travelY"][cut_mask][cut_mask_time_any][bin2_m]
-                        genZ = arrays["GenHiggs.travelZ"][cut_mask][cut_mask_time_any][bin2_m]
+                        genX = arrays["GenHiggs.travelX"][cut_mask][cut_mask_time_any][bin2_m] - arrays["GenHiggs.vx"][cut_mask][cut_mask_time_any][bin2_m]
+                        genY = arrays["GenHiggs.travelY"][cut_mask][cut_mask_time_any][bin2_m] - arrays["GenHiggs.vy"][cut_mask][cut_mask_time_any][bin2_m]
+                        genZ = arrays["GenHiggs.travelZ"][cut_mask][cut_mask_time_any][bin2_m] - arrays["GenHiggs.vz"][cut_mask][cut_mask_time_any][bin2_m]
                         genTime = arrays["GenHiggs.travelTime"][cut_mask][cut_mask_time_any][bin2_m]
                         genBeta = arrays["GenHiggs.beta"][cut_mask][cut_mask_time_any][bin2_m]
                     else:
                         genRadius = arrays["GenLLPs.travelRadius"][cut_mask][cut_mask_time_any][bin2_m]
-                        genX = arrays["GenLLPs.travelX"][cut_mask][cut_mask_time_any][bin2_m]
-                        genY = arrays["GenLLPs.travelY"][cut_mask][cut_mask_time_any][bin2_m]
-                        genZ = arrays["GenLLPs.travelZ"][cut_mask][cut_mask_time_any][bin2_m]
+                        genX = arrays["GenLLPs.travelX"][cut_mask][cut_mask_time_any][bin2_m] - arrays["GenLLPs.vx"][cut_mask][cut_mask_time_any][bin2_m]
+                        genY = arrays["GenLLPs.travelY"][cut_mask][cut_mask_time_any][bin2_m] - arrays["GenLLPs.vy"][cut_mask][cut_mask_time_any][bin2_m]
+                        genZ = arrays["GenLLPs.travelZ"][cut_mask][cut_mask_time_any][bin2_m] - arrays["GenLLPs.vz"][cut_mask][cut_mask_time_any][bin2_m]
                         genTime = arrays["GenLLPs.travelTime"][cut_mask][cut_mask_time_any][bin2_m]
                         genBeta = arrays["GenLLPs.beta"][cut_mask][cut_mask_time_any][bin2_m]
                     genGamma = np.divide(1.,np.sqrt(1-np.multiply(genBeta,genBeta)))
@@ -8999,9 +9000,9 @@ def test_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,extr_reg
 
                     #Here: gen level stuff
                     genRadius = arrays["GenLLPs.travelRadius"][cut_mask][bin2_m]
-                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m]
-                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m]
-                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m]
+                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m] - arrays["GenLLPs.vx"][cut_mask][bin2_m]
+                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m] - arrays["GenLLPs.vy"][cut_mask][bin2_m]
+                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m] - arrays["GenLLPs.vz"][cut_mask][bin2_m]
                     genTime = arrays["GenLLPs.travelTime"][cut_mask][bin2_m]
                     genBeta = arrays["GenLLPs.beta"][cut_mask][bin2_m]
                     genGamma = np.divide(1.,np.sqrt(1-np.multiply(genBeta,genBeta)))
@@ -9326,9 +9327,9 @@ def no_smearing_test_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sam
 
                     #Here: gen level stuff
                     genRadius = arrays["GenLLPs.travelRadius"][cut_mask][bin2_m]
-                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m]
-                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m]
-                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m]
+                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m] - arrays["GenLLPs.vx"][cut_mask][bin2_m]
+                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m] - arrays["GenLLPs.vy"][cut_mask][bin2_m]
+                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m] - arrays["GenLLPs.vz"][cut_mask][bin2_m]
                     genTime = arrays["GenLLPs.travelTime"][cut_mask][bin2_m]
                     genBeta = arrays["GenLLPs.beta"][cut_mask][bin2_m]
                     genGamma = np.divide(1.,np.sqrt(1-np.multiply(genBeta,genBeta)))
@@ -9787,9 +9788,9 @@ def temp_write_datacards(tree_weight_dict,sign,main_pred_reg,main_pred_sample,ex
                     weight = np.multiply(eventweight,np.multiply(pureweight,trgweight))*tree_weight_dict[pr][ss]*signalMultFactor
                     #Here: gen level stuff
                     genRadius = arrays["GenLLPs.travelRadius"][cut_mask][bin2_m]
-                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m]
-                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m]
-                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m]
+                    genX = arrays["GenLLPs.travelX"][cut_mask][bin2_m] - arrays["GenLLPs.vx"][cut_mask][bin2_m]
+                    genY = arrays["GenLLPs.travelY"][cut_mask][bin2_m] - arrays["GenLLPs.vy"][cut_mask][bin2_m]
+                    genZ = arrays["GenLLPs.travelZ"][cut_mask][bin2_m] - arrays["GenLLPs.vz"][cut_mask][bin2_m]
                     genTime = arrays["GenLLPs.travelTime"][cut_mask][bin2_m]
                     genBeta = arrays["GenLLPs.beta"][cut_mask][bin2_m]
                     genGamma = np.divide(1.,np.sqrt(1-np.multiply(genBeta,genBeta)))
