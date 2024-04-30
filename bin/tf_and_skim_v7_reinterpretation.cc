@@ -287,32 +287,6 @@ int main(int argc, char **argv) {
     if(strcmp(argv[9], "doGen")==0) doGen=true;
     bool doSR(false);
     if(strcmp(argv[9], "doSR")==0) doSR=true;
-    bool doMR(false);
-    if(strcmp(argv[9], "doMR")==0) doMR=true;
-    bool doMRPho(false);
-    if(strcmp(argv[9], "doMRPho")==0) doMRPho=true;
-    bool doZtoMM(false);
-    if(strcmp(argv[9], "doZtoMM")==0) doZtoMM=true;
-    bool doZtoEE(false);
-    if(strcmp(argv[9], "doZtoEE")==0) doZtoEE=true;
-    bool doTtoEM(false);
-    if(strcmp(argv[9], "doTtoEM")==0) doTtoEM=true;
-    bool doWtoEN(false);
-    if(strcmp(argv[9], "doWtoEN")==0) doWtoEN=true;
-    bool doWtoMN(false);
-    if(strcmp(argv[9], "doWtoMN")==0) doWtoMN=true;
-    bool doEN(false);
-    if(strcmp(argv[9], "doEN")==0) doEN=true;
-    bool doMN(false);
-    if(strcmp(argv[9], "doMN")==0) doMN=true;
-    bool doPho(false);
-    if(strcmp(argv[9], "doPho")==0) doPho=true;
-    bool doJetHT(false);
-    if(strcmp(argv[9], "doJetHT")==0) doJetHT=true;
-    bool doJetMET(false);
-    if(strcmp(argv[9], "doJetMET")==0) doJetMET=true;
-    bool doDiJetMET(false);
-    if(strcmp(argv[9], "doDiJetMET")==0) doDiJetMET=true;
 
     bool isVerbose(false);
     bool printFit(false);
@@ -330,10 +304,6 @@ int main(int argc, char **argv) {
     //std::cout << "Data PU down file: " << argv[7] << std::endl;
     if(doGen) std::cout << "Gen studies, no selections" << std::endl;
     if(doSR) std::cout << "SR selections" << std::endl;
-    if(doMR) std::cout << "MR selections" << std::endl;
-    if(doMRPho) std::cout << "MR + 1 photon selections" << std::endl;
-    if(doZtoMM) std::cout << "ZtoMM selections" << std::endl;
-    if(doZtoEE) std::cout << "ZtoEE selections" << std::endl;
 
 
     auto start = std::chrono::system_clock::now();//time!     
@@ -466,47 +436,6 @@ int main(int argc, char **argv) {
     //}
 
 
-    //PU reweighting
-    //TFile *mcPUFile = TFile::Open(mcPUFilename.data(),"READ"); if (!mcPUFile) return 0;
-    //TFile *dataFile = TFile::Open(dataFilename.data(),"READ"); if (!dataFile) return 0;
-    //TFile *dataFileUp = TFile::Open(dataFilenameUp.data(),"READ"); if (!dataFileUp) return 0;
-    //TFile *dataFileDown = TFile::Open(dataFilenameDown.data(),"READ"); if (!dataFileDown) return 0;
-
-    //TH1F  *pileup_mc = (TH1F*)mcPUFile->Get("pileup");
-    //TH1F  *pileup_mc_copy = (TH1F*)pileup_mc->Clone("pileup_mc");
-    //pileup_mc_copy->SetLineColor(8);
-    //pileup_mc_copy->SetLineWidth(2);
-    //pileup_mc_copy->SetLineStyle(2);
-
-    //TH1F  *pileup_data = (TH1F*)dataFile->Get("pileup");
-    //TH1F  *pileup_data_copy = (TH1F*)pileup_data->Clone("pileup_data");
-    //pileup_data_copy->SetLineColor(1);
-    //pileup_data_copy->SetLineWidth(2);
-    //pileup_data_copy->SetLineStyle(1);
-
-    //TH1F  *pileup_data_up = (TH1F*)dataFileUp->Get("pileup");
-    //TH1F  *pileup_data_up_copy = (TH1F*)pileup_data_up->Clone("pileup_data_up");
-    //pileup_data_up_copy->SetLineColor(2);
-    //pileup_data_up_copy->SetLineWidth(2);
-    //pileup_data_up_copy->SetLineStyle(2);
-
-    //TH1F  *pileup_data_down = (TH1F*)dataFileDown->Get("pileup");
-    //TH1F  *pileup_data_down_copy = (TH1F*)pileup_data_down->Clone("pileup_data_down");
-    //pileup_data_down_copy->SetLineColor(4);
-    //pileup_data_down_copy->SetLineWidth(2);
-    //pileup_data_down_copy->SetLineStyle(2);
-    //Hist normalization
-    //NormalizeHist(pileup_mc_copy);
-    //NormalizeHist(pileup_data_copy);
-    //NormalizeHist(pileup_data_up_copy);
-    //NormalizeHist(pileup_data_down_copy);
-
-    //Hist normalization
-    //NormalizeHist(pileup_mc);
-    //NormalizeHist(pileup_data);
-    //NormalizeHist(pileup_data_up);
-    //NormalizeHist(pileup_data_down);
-
     // Input variables
     Long64_t EventNumber;
     Long64_t RunNumber;
@@ -514,69 +443,11 @@ int main(int argc, char **argv) {
     float    EventWeight;
     float    PUWeight;
     bool   isMC;
-    bool   isVBF;
     int    MeanNumInteractions;
     bool   HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v(false);
     bool   HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v(false);
-    //Mu CR
-    bool   HLT_IsoMu24_v(false);
-    bool   HLT_IsoMu27_v(false);
-    bool   HLT_IsoMu24_eta2p1_v(false);//partially prescaled in 2018
-    //Ele CR
-    bool   HLT_Ele32_WPTight_Gsf_v(false);
-    bool   HLT_Ele32_eta2p1_WPLoose_Gsf_v(false);//not available in 2018
-    bool   HLT_Ele35_WPTight_Gsf_v(false);
-    //E-MU CR
-    bool   HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v(false);//not available in 2018
-    bool   HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v(false);//not available in 2018
-    bool   HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v(false);
-    bool   HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v(false);
-    bool   HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
-    bool   HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
-    bool   HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
-    bool   HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v(false);//not available in 2018
-    bool   HLT_Mu27_Ele37_CaloIdL_MW_v(false);
-    bool   HLT_Mu37_Ele27_CaloIdL_MW_v(false);
-    //Photon CR
-    bool   HLT_Photon22_v(false);//not available in 2018
-    bool   HLT_Photon30_v(false);//not available in 2018
-    bool   HLT_Photon33_v(false);
-    bool   HLT_Photon36_v(false);//not available in 2018
-    bool   HLT_Photon50_v(false);
-    bool   HLT_Photon75_v(false);
-    bool   HLT_Photon90_v(false);
-    bool   HLT_Photon120_v(false);
-    bool   HLT_Photon125_v(false);//not available in 2018
-    bool   HLT_Photon150_v(false);
-    bool   HLT_Photon175_v(false);
-    bool   HLT_Photon200_v(false);//unprescaled
-    bool   HLT_Photon250_NoHE_v(false);//not available in 2018
-    bool   HLT_Photon300_NoHE_v(false);
-    bool   HLT_Photon500_v(false);//not available in 2018
-    bool   HLT_Photon600_v(false);//not available in 2018
-    //JetHT
-    bool   HLT_DiPFJetAve40_v(false);
-    bool   HLT_DiPFJetAve60_v(false);
-    bool   HLT_DiPFJetAve80_v(false);
-    bool   HLT_DiPFJetAve200_v(false);
-    bool   HLT_DiPFJetAve500_v(false);
-    bool   HLT_PFJet40_v(false);
-    bool   HLT_PFJet60_v(false);
-    bool   HLT_PFJet80_v(false);
-    bool   HLT_PFJet140_v(false);
-    bool   HLT_PFJet200_v(false);
-    bool   HLT_PFJet260_v(false);
-    bool   HLT_PFJet320_v(false);
-    bool   HLT_PFJet400_v(false);
-    bool   HLT_PFJet450_v(false);
-    bool   HLT_PFJet500_v(false);//unprescaled
-    bool   HLT_PFJet550_v(false);//unprescaled
-    bool   HLT_AK8PFJet40_v(false);
-    bool   HLT_AK8PFJet60_v(false);
-    bool   HLT_AK8PFJet80_v(false);
-    bool   HLT_AK8PFJet200_v(false);
-    bool   HLT_AK8PFJet500_v(false);//unprescaled
-    bool   HLT_AK8PFJet550_v(false);//unprescaled  
+    bool   HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v(false);
+    bool   HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v(false);
 
     bool   Flag2_globalSuperTightHalo2016Filter;
     bool   Flag2_goodVertices;
@@ -586,8 +457,6 @@ int main(int argc, char **argv) {
     bool   Flag2_ecalBadCalibFilter;
     bool   Flag2_eeBadScFilter;
     bool   Flag2_BadPFMuonFilter;
-    bool   HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v(false);
-    bool   HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v(false);
     float  HT;
     float  MinJetMetDPhi_ntuple;
     //Long64_t nCHSJets;
@@ -639,70 +508,11 @@ int main(int argc, char **argv) {
     TBranch        *b_EventWeight;
     TBranch        *b_PUWeight;
     TBranch        *b_isMC;
-    TBranch        *b_isVBF;
     TBranch        *b_MeanNumInteractions;
     TBranch        *b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v;
     TBranch        *b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v;
-
-    //Mu CR
-    TBranch        *b_HLT_IsoMu24_v;
-    TBranch        *b_HLT_IsoMu27_v;
-    TBranch        *b_HLT_IsoMu24_eta2p1_v;//partially prescaled in 2018
-    //Ele CR
-    TBranch        *b_HLT_Ele32_WPTight_Gsf_v;
-    TBranch        *b_HLT_Ele32_eta2p1_WPLoose_Gsf_v;//not available in 2018
-    TBranch        *b_HLT_Ele35_WPTight_Gsf_v;
-    //E-MU CR
-    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v;//not available in 2018
-    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v;//not available in 2018
-    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v;
-    TBranch        *b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v;
-    TBranch        *b_HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v;//not available in 2018
-    TBranch        *b_HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v;//not available in 2018
-    TBranch        *b_HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v;//not available in 2018
-    TBranch        *b_HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v;//not available in 2018
-    TBranch        *b_HLT_Mu27_Ele37_CaloIdL_MW_v;
-    TBranch        *b_HLT_Mu37_Ele27_CaloIdL_MW_v;
-    //Photon CR
-    TBranch        *b_HLT_Photon22_v;//not available in 2018
-    TBranch        *b_HLT_Photon30_v;//not available in 2018
-    TBranch        *b_HLT_Photon33_v;
-    TBranch        *b_HLT_Photon36_v;//not available in 2018
-    TBranch        *b_HLT_Photon50_v;
-    TBranch        *b_HLT_Photon75_v;
-    TBranch        *b_HLT_Photon90_v;
-    TBranch        *b_HLT_Photon120_v;
-    TBranch        *b_HLT_Photon125_v;//not available in 2018
-    TBranch        *b_HLT_Photon150_v;
-    TBranch        *b_HLT_Photon175_v;
-    TBranch        *b_HLT_Photon200_v;//unprescaled
-    TBranch        *b_HLT_Photon250_NoHE_v;//not available in 2018
-    TBranch        *b_HLT_Photon300_NoHE_v;
-    TBranch        *b_HLT_Photon500_v;//not available in 2018
-    TBranch        *b_HLT_Photon600_v;//not available in 2018
-    //JetHT
-    TBranch        *b_HLT_DiPFJetAve40_v;
-    TBranch        *b_HLT_DiPFJetAve60_v;
-    TBranch        *b_HLT_DiPFJetAve80_v;
-    TBranch        *b_HLT_DiPFJetAve200_v;
-    TBranch        *b_HLT_DiPFJetAve500_v;
-    TBranch        *b_HLT_PFJet40_v;
-    TBranch        *b_HLT_PFJet60_v;
-    TBranch        *b_HLT_PFJet80_v;
-    TBranch        *b_HLT_PFJet140_v;
-    TBranch        *b_HLT_PFJet200_v;
-    TBranch        *b_HLT_PFJet260_v;
-    TBranch        *b_HLT_PFJet320_v;
-    TBranch        *b_HLT_PFJet400_v;
-    TBranch        *b_HLT_PFJet450_v;
-    TBranch        *b_HLT_PFJet500_v;//unprescaled
-    TBranch        *b_HLT_PFJet550_v;//unprescaled
-    TBranch        *b_HLT_AK8PFJet40_v;
-    TBranch        *b_HLT_AK8PFJet60_v;
-    TBranch        *b_HLT_AK8PFJet80_v;
-    TBranch        *b_HLT_AK8PFJet200_v;
-    TBranch        *b_HLT_AK8PFJet500_v;//unprescaled
-    TBranch        *b_HLT_AK8PFJet550_v;//unprescaled  
+    TBranch        *b_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v;
+    TBranch        *b_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v;
 
 
     TBranch        *b_Flag2_globalSuperTightHalo2016Filter;
@@ -713,8 +523,6 @@ int main(int argc, char **argv) {
     TBranch        *b_Flag2_ecalBadCalibFilter;
     TBranch        *b_Flag2_eeBadScFilter;
     TBranch        *b_Flag2_BadPFMuonFilter;
-    TBranch        *b_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v;
-    TBranch        *b_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v;
     TBranch        *b_HT;
     TBranch        *b_MinJetMetDPhi;
     //TBranch        *b_nCHSJets;
@@ -752,73 +560,12 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("EventWeight",       &EventWeight,       &b_EventWeight);
     inputTree->SetBranchAddress("PUWeight",          &PUWeight,          &b_PUWeight);
     inputTree->SetBranchAddress("isMC",              &isMC,              &b_isMC);
-    inputTree->SetBranchAddress("isVBF",             &isVBF,             &b_isVBF);
     inputTree->SetBranchAddress("MeanNumInteractions",  &MeanNumInteractions,  &b_MeanNumInteractions);
     inputTree->SetBranchAddress("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v, &b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v);
     inputTree->SetBranchAddress("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v, &b_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v);
+    inputTree->SetBranchAddress("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, &b_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v);
+    inputTree->SetBranchAddress("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, &b_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v);
 
-    inputTree->SetBranchAddress("HLT_IsoMu24_v", &HLT_IsoMu24_v, &b_HLT_IsoMu24_v);
-    inputTree->SetBranchAddress("HLT_IsoMu27_v", &HLT_IsoMu27_v, &b_HLT_IsoMu27_v);
-    inputTree->SetBranchAddress("HLT_IsoMu24_eta2p1_v", &HLT_IsoMu24_eta2p1_v, &b_HLT_IsoMu24_eta2p1_v);
-    inputTree->SetBranchAddress("HLT_Ele32_WPTight_Gsf_v", &HLT_Ele32_WPTight_Gsf_v, &b_HLT_Ele32_WPTight_Gsf_v);
-    inputTree->SetBranchAddress("HLT_Ele32_eta2p1_WPLoose_Gsf_v", &HLT_Ele32_eta2p1_WPLoose_Gsf_v, &b_HLT_Ele32_eta2p1_WPLoose_Gsf_v);
-    inputTree->SetBranchAddress("HLT_Ele35_WPTight_Gsf_v", &HLT_Ele35_WPTight_Gsf_v , &b_HLT_Ele35_WPTight_Gsf_v);
-    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v", &HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v, &b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v);
-    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v", &HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v, &b_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v);
-    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v);
-    inputTree->SetBranchAddress("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v", &HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v, &b_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v);
-    inputTree->SetBranchAddress("HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v", &HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v);
-    inputTree->SetBranchAddress("HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v", &HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v);
-    inputTree->SetBranchAddress("HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v", &HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v);
-    inputTree->SetBranchAddress("HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v", &HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v, &b_HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v);
-    inputTree->SetBranchAddress("HLT_Mu27_Ele37_CaloIdL_MW_v", &HLT_Mu27_Ele37_CaloIdL_MW_v, &b_HLT_Mu27_Ele37_CaloIdL_MW_v);
-    inputTree->SetBranchAddress("HLT_Mu37_Ele27_CaloIdL_MW_v", &HLT_Mu37_Ele27_CaloIdL_MW_v, &b_HLT_Mu37_Ele27_CaloIdL_MW_v);
-    //prescaled triggers
-    if(isData or isSignal)
-      {
-	std::cout << " prescaled triggers? " << std::endl;
-	inputTree->SetBranchAddress("HLT_Photon22_v", &HLT_Photon22_v, &b_HLT_Photon22_v);
-	inputTree->SetBranchAddress("HLT_Photon30_v", &HLT_Photon30_v, &b_HLT_Photon30_v);
-	inputTree->SetBranchAddress("HLT_Photon33_v", &HLT_Photon33_v, &b_HLT_Photon33_v);
-	inputTree->SetBranchAddress("HLT_Photon36_v", &HLT_Photon36_v, &b_HLT_Photon36_v);
-	inputTree->SetBranchAddress("HLT_Photon50_v", &HLT_Photon50_v, &b_HLT_Photon50_v);
-	inputTree->SetBranchAddress("HLT_Photon75_v", &HLT_Photon75_v, &b_HLT_Photon75_v);
-	inputTree->SetBranchAddress("HLT_Photon90_v", &HLT_Photon90_v, &b_HLT_Photon90_v);
-	inputTree->SetBranchAddress("HLT_Photon120_v", &HLT_Photon120_v, &b_HLT_Photon120_v);
-	inputTree->SetBranchAddress("HLT_Photon125_v", &HLT_Photon125_v, &b_HLT_Photon125_v);
-	inputTree->SetBranchAddress("HLT_Photon150_v", &HLT_Photon150_v, &b_HLT_Photon150_v);
-	inputTree->SetBranchAddress("HLT_Photon175_v", &HLT_Photon175_v, &b_HLT_Photon175_v);//unprescaled??
-      }
-    inputTree->SetBranchAddress("HLT_Photon200_v", &HLT_Photon200_v, &b_HLT_Photon200_v);
-    inputTree->SetBranchAddress("HLT_Photon250_NoHE_v", &HLT_Photon250_NoHE_v, &b_HLT_Photon250_NoHE_v);
-    inputTree->SetBranchAddress("HLT_Photon300_NoHE_v", &HLT_Photon300_NoHE_v, &b_HLT_Photon300_NoHE_v);
-    inputTree->SetBranchAddress("HLT_Photon500_v", &HLT_Photon500_v, &b_HLT_Photon500_v);
-    inputTree->SetBranchAddress("HLT_Photon600_v", &HLT_Photon600_v, &b_HLT_Photon600_v);
-    if(isData or isSignal)
-      {
-	inputTree->SetBranchAddress("HLT_DiPFJetAve40_v", &HLT_DiPFJetAve40_v, &b_HLT_DiPFJetAve40_v);
-	inputTree->SetBranchAddress("HLT_DiPFJetAve60_v", &HLT_DiPFJetAve60_v, &b_HLT_DiPFJetAve60_v);
-	inputTree->SetBranchAddress("HLT_DiPFJetAve80_v", &HLT_DiPFJetAve80_v, &b_HLT_DiPFJetAve80_v);
-	inputTree->SetBranchAddress("HLT_DiPFJetAve200_v", &HLT_DiPFJetAve200_v, &b_HLT_DiPFJetAve200_v);
-	inputTree->SetBranchAddress("HLT_DiPFJetAve500_v", &HLT_DiPFJetAve500_v, &b_HLT_DiPFJetAve500_v);
-	inputTree->SetBranchAddress("HLT_PFJet40_v", &HLT_PFJet40_v, &b_HLT_PFJet40_v);
-	inputTree->SetBranchAddress("HLT_PFJet60_v", &HLT_PFJet60_v, &b_HLT_PFJet60_v);
-	inputTree->SetBranchAddress("HLT_PFJet80_v", &HLT_PFJet80_v, &b_HLT_PFJet80_v);
-	inputTree->SetBranchAddress("HLT_PFJet140_v", &HLT_PFJet140_v, &b_HLT_PFJet140_v);
-	inputTree->SetBranchAddress("HLT_PFJet200_v", &HLT_PFJet200_v, &b_HLT_PFJet200_v);
-	inputTree->SetBranchAddress("HLT_PFJet260_v", &HLT_PFJet260_v, &b_HLT_PFJet260_v);
-	inputTree->SetBranchAddress("HLT_PFJet320_v", &HLT_PFJet320_v, &b_HLT_PFJet320_v);
-	inputTree->SetBranchAddress("HLT_PFJet400_v", &HLT_PFJet400_v, &b_HLT_PFJet400_v);
-	inputTree->SetBranchAddress("HLT_PFJet450_v", &HLT_PFJet450_v, &b_HLT_PFJet450_v);
-	inputTree->SetBranchAddress("HLT_AK8PFJet40_v", &HLT_AK8PFJet40_v, &b_HLT_AK8PFJet40_v);
-	inputTree->SetBranchAddress("HLT_AK8PFJet60_v", &HLT_AK8PFJet60_v, &b_HLT_AK8PFJet60_v);
-	inputTree->SetBranchAddress("HLT_AK8PFJet80_v", &HLT_AK8PFJet80_v, &b_HLT_AK8PFJet80_v);
-	inputTree->SetBranchAddress("HLT_AK8PFJet200_v", &HLT_AK8PFJet200_v, &b_HLT_AK8PFJet200_v);
-      }
-    inputTree->SetBranchAddress("HLT_PFJet500_v", &HLT_PFJet500_v, &b_HLT_PFJet500_v);
-    inputTree->SetBranchAddress("HLT_PFJet550_v", &HLT_PFJet550_v, &b_HLT_PFJet550_v);
-    inputTree->SetBranchAddress("HLT_AK8PFJet500_v", &HLT_AK8PFJet500_v, &b_HLT_AK8PFJet500_v);
-    inputTree->SetBranchAddress("HLT_AK8PFJet550_v", &HLT_AK8PFJet550_v, &b_HLT_AK8PFJet550_v);
 
     inputTree->SetBranchAddress("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, &b_Flag2_globalSuperTightHalo2016Filter);
     inputTree->SetBranchAddress("Flag2_goodVertices", &Flag2_goodVertices, &b_Flag2_goodVertices);
@@ -828,8 +575,7 @@ int main(int argc, char **argv) {
     inputTree->SetBranchAddress("Flag2_ecalBadCalibFilter", &Flag2_ecalBadCalibFilter, &b_Flag2_ecalBadCalibFilter);
     inputTree->SetBranchAddress("Flag2_eeBadScFilter", &Flag2_eeBadScFilter, &b_Flag2_eeBadScFilter);
     inputTree->SetBranchAddress("Flag2_BadPFMuonFilter", &Flag2_BadPFMuonFilter, &b_Flag2_BadPFMuonFilter);
-    inputTree->SetBranchAddress("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, &b_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v);
-    inputTree->SetBranchAddress("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, &b_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v);
+
     inputTree->SetBranchAddress("HT",                &HT,                &b_HT);
     inputTree->SetBranchAddress("MinJetMetDPhi",     &MinJetMetDPhi_ntuple,     &b_MinJetMetDPhi);
     inputTree->SetBranchAddress("nPV",          &nPV,          &b_nPV);
@@ -911,19 +657,6 @@ int main(int argc, char **argv) {
     //Flags for SR/CR
     bool isPreselected(false);
     bool isSR(false);
-    bool isMR(false);
-    bool isMRPho(false);
-    bool isZtoMM(false);
-    bool isZtoEE(false);
-    bool isTtoEM(false);
-    bool isWtoEN(false);
-    bool isWtoMN(false);
-    bool isEN(false);
-    bool isMN(false);
-    bool isPho(false);
-    bool isJetHT(false);
-    bool isJetMET(false);
-    bool isDiJetMET(false);
 
     bool isCosmic(false);
     bool isDT_fit(false);
@@ -939,8 +672,10 @@ int main(int argc, char **argv) {
     //PUWeightHistDown->GetYaxis()->SetTitle("PU data/PU mc");
 
     std::vector<TauType>    skimmedTaus;
+
     std::vector<JetType>    skimmedJetsFullEta;
     std::vector<JetType>    skimmedJets;
+    std::vector<JetType>    skimmedJetsNegative;
     std::vector<JetType>    skimmedJetsMatch;
     std::vector<JetType>    skimmedJetsAcceptanceMatch;
 
@@ -977,63 +712,27 @@ int main(int argc, char **argv) {
     std::vector<float> DT_fit_zz;
     std::vector<float> DT_fit_res;
     //Beam Halo
-    float min_dPhi_jets(9999.);
-    float min_dEta_jets(9999.);
-    float min_dR_jets(9999.);
-    float min_dPhi_jets_0p7(9999.);
-    float min_dEta_jets_0p7(9999.);
-    float min_dR_jets_0p7(9999.);
-    float min_dPhi_jets_0p9(9999.);
-    float min_dEta_jets_0p9(9999.);
-    float min_dR_jets_0p9(9999.);
-    float min_dPhi_jets_0p9_no_tags(9999.);
-    float min_dEta_jets_0p9_no_tags(9999.);
-    float min_dR_jets_0p9_no_tags(9999.);
+    //float min_dPhi_jets(9999.);
+    //float min_dPhi_jets_0p7(9999.);
+    //float min_dPhi_jets_0p9(9999.);
+    //float min_dPhi_jets_0p9_no_tags(9999.);
     float min_dPhi_jets_0p996(9999.);
-    float min_dEta_jets_0p996(9999.);
-    float min_dR_jets_0p996(9999.);
 
-    float min_dPhi_jets_eta_1p0(9999.);
-    float min_dEta_jets_eta_1p0(9999.);
-    float min_dR_jets_eta_1p0(9999.);
-    float min_dPhi_jets_eta_1p0_0p7(9999.);
-    float min_dEta_jets_eta_1p0_0p7(9999.);
-    float min_dR_jets_eta_1p0_0p7(9999.);
-    float min_dPhi_jets_eta_1p0_0p9(9999.);
-    float min_dEta_jets_eta_1p0_0p9(9999.);
-    float min_dR_jets_eta_1p0_0p9(9999.);
-    float min_dPhi_jets_eta_1p0_0p9_no_tags(9999.);
-    float min_dEta_jets_eta_1p0_0p9_no_tags(9999.);
-    float min_dR_jets_eta_1p0_0p9_no_tags(9999.);
+    //float min_dPhi_jets_eta_1p0(9999.);
+    //float min_dPhi_jets_eta_1p0_0p7(9999.);
+    //float min_dPhi_jets_eta_1p0_0p9(9999.);
+    //float min_dPhi_jets_eta_1p0_0p9_no_tags(9999.);
     float min_dPhi_jets_eta_1p0_0p996(9999.);
-    float min_dEta_jets_eta_1p0_0p996(9999.);
-    float min_dR_jets_eta_1p0_0p996(9999.);
 
 
     float PUReWeight(1.);
     float PUReWeightUp(1.);
     float PUReWeightDown(1.);
     float TriggerWeight(1.);
-    float MinLeadingJetMetDPhi(-1.);
-    float MinSubLeadingJetMetDPhi(-1.);
-    float MinSubSubLeadingJetMetDPhi(-1.);
     float MinJetMetDPhi(10.);
-    float MinJetMetDPhiStar(10.);
-    float MinJetMetDPhiBarrel(10.);
-    float MinJetMetDPhiBarrelStar(10.);
 
     float dPhi(-9.);
     float MT(-1.);
-    float Z_mass(-1.);
-    float Z_pt(-1.);
-    float Z_phi(-1.);
-    float Z_eta(-1.);
-    float Z_lep0_pt(-1.);
-    float Z_lep0_phi(-9.);
-    float Z_lep0_eta(-9.);
-    float Z_lep1_pt(-1.);
-    float Z_lep1_phi(-9.);
-    float Z_lep1_eta(-9.);
 
     //Gen level studies
     float dR_LLPs(-9.);
@@ -1079,12 +778,6 @@ int main(int argc, char **argv) {
 
 
     int nLeptons(0);
-    std::vector<int> LepPdgId;
-    std::vector<int> LepCharge;
-    std::vector<float> LepPt;
-    std::vector<float> LepEta;
-    std::vector<float> LepPhi;
-    std::vector<float> LepMass;
 
     int nTaus(0);
     int nTausPreVeto(0);
@@ -1097,23 +790,14 @@ int main(int argc, char **argv) {
     int nTausPassing(0);
 
     int nCHSJets;
+    int nCHSJetsNegative;
     int nCHSJetsFullEta;
     int nCHSJetsMatch;
     int nCHSJetsAcceptanceMatch;
-    int nCHSJets_in_HEM(0);
-
-    int nCHSJets_in_HEM_pt_20_all_eta(0);
-    int nCHSJets_in_HEM_pt_30_all_eta(0);
-
-    int nCHSJets_in_HEM_pt_20_eta_2p4(0);
-    int nCHSJets_in_HEM_pt_30_eta_2p4(0);
-    int nCHSJets_in_HEM_eta_2p5(0);
-    int nPhotons_in_HEM(0);
-    int nElectrons_in_HEM(0);
-    bool RunNumber_in_HEM(false);
+    //HEM thing can be discarded, as we are not looking at data
 
     int nTagJets_0p996(0);
-    int nTagJets_0p996_unsmeared(0);
+    //int nTagJets_0p996_unsmeared(0);
 
 
     //TBD
@@ -1168,28 +852,15 @@ int main(int argc, char **argv) {
     outputTree->Branch("isCosmicVetoWithTags", &isCosmicVetoWithTags, "isCosmicVetoWithTags/O");
     outputTree->Branch("isPreselected",     &isPreselected,     "isPreselected/O");
     outputTree->Branch("isSR",              &isSR,              "isSR/O");
-    outputTree->Branch("isMR",              &isMR,              "isMR/O");
-    outputTree->Branch("isMRPho",           &isMRPho,           "isMRPho/O");
-    outputTree->Branch("isZtoMM",           &isZtoMM,           "isZtoMM/O");
-    outputTree->Branch("isZtoEE",           &isZtoEE,           "isZtoEE/O");
-    outputTree->Branch("isWtoMN",           &isWtoMN,           "isWtoMN/O");
-    outputTree->Branch("isWtoEN",           &isWtoEN,           "isWtoEN/O");
-    outputTree->Branch("isMN",           &isMN,           "isMN/O");
-    outputTree->Branch("isEN",           &isEN,           "isEN/O");
-    outputTree->Branch("isTtoEM",           &isTtoEM,           "isTtoEM/O");
-    outputTree->Branch("isPho",             &isPho,             "isPho/O");
-    outputTree->Branch("isJetHT",           &isJetHT,           "isJetHT/O");
-    outputTree->Branch("isJetMET",           &isJetMET,           "isJetMET/O");
-    outputTree->Branch("isDiJetMET",           &isDiJetMET,           "isDiJetMET/O");
-    outputTree->Branch("isVBF",             &isVBF,             "isVBF/O");
     outputTree->Branch("MeanNumInteractions",             &MeanNumInteractions,             "MeanNumInteractions/I");
+
+    //MET triggers
     outputTree->Branch("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v", &HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v/O");
     outputTree->Branch("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v", &HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight_v/O");
     outputTree->Branch("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v", &HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v/O");
 
-
-
+    //MET filters
     outputTree->Branch("Flag2_globalSuperTightHalo2016Filter", &Flag2_globalSuperTightHalo2016Filter, "Flag2_globalSuperTightHalo2016Filter/O");
     outputTree->Branch("Flag2_goodVertices", &Flag2_goodVertices, "Flag2_goodVertices/O");
     outputTree->Branch("Flag2_EcalDeadCellTriggerPrimitiveFilter", &Flag2_EcalDeadCellTriggerPrimitiveFilter, "Flag2_EcalDeadCellTriggerPrimitiveFilter/O");
@@ -1199,45 +870,9 @@ int main(int argc, char **argv) {
     outputTree->Branch("Flag2_eeBadScFilter", &Flag2_eeBadScFilter, "Flag2_eeBadScFilter/O");
     outputTree->Branch("Flag2_BadPFMuonFilter", &Flag2_BadPFMuonFilter, "Flag2_BadPFMuonFilter/O");
 
-    if(isData or isSignal)
-      {
-	outputTree->Branch("HLT_DiPFJetAve40_v", &HLT_DiPFJetAve40_v, "HLT_DiPFJetAve40_v/O");
-	outputTree->Branch("HLT_DiPFJetAve60_v", &HLT_DiPFJetAve60_v, "HLT_DiPFJetAve60_v/O");
-	outputTree->Branch("HLT_DiPFJetAve80_v", &HLT_DiPFJetAve80_v, "HLT_DiPFJetAve80_v/O");
-	outputTree->Branch("HLT_DiPFJetAve200_v", &HLT_DiPFJetAve200_v, "HLT_DiPFJetAve200_v/O");
-	outputTree->Branch("HLT_DiPFJetAve500_v", &HLT_DiPFJetAve500_v, "HLT_DiPFJetAve500_v/O");
-	outputTree->Branch("HLT_PFJet40_v", &HLT_PFJet40_v, "HLT_PFJet40_v/O");
-	outputTree->Branch("HLT_PFJet60_v", &HLT_PFJet60_v, "HLT_PFJet60_v/O");
-	outputTree->Branch("HLT_PFJet80_v", &HLT_PFJet80_v, "HLT_PFJet80_v/O");
-	outputTree->Branch("HLT_PFJet140_v", &HLT_PFJet140_v, "HLT_PFJet140_v/O");
-	outputTree->Branch("HLT_PFJet200_v", &HLT_PFJet200_v, "HLT_PFJet200_v/O");
-	outputTree->Branch("HLT_PFJet260_v", &HLT_PFJet260_v, "HLT_PFJet260_v/O");
-	outputTree->Branch("HLT_PFJet320_v", &HLT_PFJet320_v, "HLT_PFJet320_v/O");
-	outputTree->Branch("HLT_PFJet400_v", &HLT_PFJet400_v, "HLT_PFJet400_v/O");
-	outputTree->Branch("HLT_PFJet450_v", &HLT_PFJet450_v, "HLT_PFJet450_v/O");
-	outputTree->Branch("HLT_AK8PFJet40_v", &HLT_AK8PFJet40_v, "HLT_AK8PFJet40_v/O");
-	outputTree->Branch("HLT_AK8PFJet60_v", &HLT_AK8PFJet60_v, "HLT_AK8PFJet60_v/O");
-	outputTree->Branch("HLT_AK8PFJet80_v", &HLT_AK8PFJet80_v, "HLT_AK8PFJet80_v/O");
-	outputTree->Branch("HLT_AK8PFJet200_v", &HLT_AK8PFJet200_v, "HLT_AK8PFJet200_v/O");
-      }
-    outputTree->Branch("HLT_PFJet500_v", &HLT_PFJet500_v, "HLT_PFJet500_v/O");
-    outputTree->Branch("HLT_PFJet550_v", &HLT_PFJet550_v, "HLT_PFJet550_v/O");
-    outputTree->Branch("HLT_AK8PFJet500_v", &HLT_AK8PFJet500_v, "HLT_AK8PFJet500_v/O");
-    outputTree->Branch("HLT_AK8PFJet550_v", &HLT_AK8PFJet550_v, "HLT_AK8PFJet550_v/O");
-
     outputTree->Branch("HT",                &HT,                "HT/F");
     outputTree->Branch("MT",                &MT,                "MT/F");
     outputTree->Branch("dPhi",              &dPhi,              "dPhi/F");
-    outputTree->Branch("Z_mass",            &Z_mass,            "Z_mass/F");
-    outputTree->Branch("Z_pt",              &Z_pt,              "Z_pt/F");
-    outputTree->Branch("Z_phi",             &Z_phi,             "Z_phi/F");
-    outputTree->Branch("Z_eta",             &Z_eta,             "Z_eta/F");
-    outputTree->Branch("Z_lep0_pt",         &Z_lep0_pt,         "Z_lep0_pt/F");
-    outputTree->Branch("Z_lep0_phi",        &Z_lep0_phi,        "Z_lep0_phi/F");
-    outputTree->Branch("Z_lep0_eta",        &Z_lep0_eta,        "Z_lep0_eta/F");
-    outputTree->Branch("Z_lep1_pt",         &Z_lep1_pt,         "Z_lep1_pt/F");
-    outputTree->Branch("Z_lep1_phi",        &Z_lep1_phi,        "Z_lep1_phi/F");
-    outputTree->Branch("Z_lep1_eta",        &Z_lep1_eta,        "Z_lep1_eta/F");
 
     outputTree->Branch("dR_LLPs", &dR_LLPs, "dR_LLPs/F");
     outputTree->Branch("dR_Higgs", &dR_Higgs, "dR_Higgs/F");
@@ -1281,38 +916,16 @@ int main(int argc, char **argv) {
     outputTree->Branch("dPhi_Gravitino_1_Higgs_1", &dPhi_Gravitino_1_Higgs_1, "dPhi_Gravitino_1_Higgs_1/F");
     outputTree->Branch("perc_met_held_by_gravitinos", &perc_met_held_by_gravitinos, "perc_met_held_by_gravitinos/F");
 
-
     outputTree->Branch("nLeptons", &nLeptons, "nLeptons/I");
-    outputTree->Branch("LepPdgId", &LepPdgId);
-    outputTree->Branch("LepCharge", &LepCharge);
-    outputTree->Branch("LepPt", &LepPt);
-    outputTree->Branch("LepEta", &LepEta);
-    outputTree->Branch("LepPhi", &LepPhi);
-    outputTree->Branch("LepMass", &LepMass);
 
     outputTree->Branch("MinJetMetDPhi_ntuple",     &MinJetMetDPhi_ntuple,     "MinJetMetDPhi_ntuple/F");
     outputTree->Branch("MinJetMetDPhi",  &MinJetMetDPhi,  "MinJetMetDPhi/F");
-    outputTree->Branch("MinJetMetDPhiBarrel",  &MinJetMetDPhiBarrel,  "MinJetMetDPhiBarrel/F");
-    outputTree->Branch("MinJetMetDPhiStar",  &MinJetMetDPhiStar,  "MinJetMetDPhiStar/F");
-    outputTree->Branch("MinJetMetDPhiBarrelStar",  &MinJetMetDPhiBarrelStar,  "MinJetMetDPhiBarrelStar/F");
-    outputTree->Branch("MinLeadingJetMetDPhi", &MinLeadingJetMetDPhi, "MinLeadingJetMetDPhi/F");
-    outputTree->Branch("MinSubLeadingJetMetDPhi", &MinSubLeadingJetMetDPhi, "MinSubLeadingJetMetDPhi/F");
-    outputTree->Branch("MinSubSubLeadingJetMetDPhi", &MinSubSubLeadingJetMetDPhi, "MinSubSubLeadingJetMetDPhi/F");
     outputTree->Branch("nPV",          &nPV,          "nPV/I");
     outputTree->Branch("nCHSJets",          &nCHSJets,          "nCHSJets/I");
+    outputTree->Branch("nCHSJetsNegative",          &nCHSJetsNegative,          "nCHSJetsNegative/I");
     outputTree->Branch("nCHSJetsFullEta",          &nCHSJetsFullEta,          "nCHSJetsFullEta/I");
     outputTree->Branch("nCHSJetsMatch",          &nCHSJetsMatch,          "nCHSJetsMatch/I");
     outputTree->Branch("nCHSJetsAcceptanceMatch",          &nCHSJetsAcceptanceMatch,          "nCHSJetsAcceptanceMatch/I");
-
-    outputTree->Branch("nCHSJets_in_HEM" , &nCHSJets_in_HEM, "nCHSJets_in_HEM/I");
-    outputTree->Branch("nCHSJets_in_HEM_pt_20_all_eta" , &nCHSJets_in_HEM_pt_20_all_eta, "nCHSJets_in_HEM_pt_20_all_eta/I");
-    outputTree->Branch("nCHSJets_in_HEM_pt_30_all_eta" , &nCHSJets_in_HEM_pt_30_all_eta, "nCHSJets_in_HEM_pt_30_all_eta/I");
-    outputTree->Branch("nCHSJets_in_HEM_eta_2p5" , &nCHSJets_in_HEM_eta_2p5, "nCHSJets_in_HEM_eta_2p5/I");
-    outputTree->Branch("nCHSJets_in_HEM_pt_20_eta_2p4" , &nCHSJets_in_HEM_pt_20_eta_2p4, "nCHSJets_in_HEM_pt_20_eta_2p4/I");
-    outputTree->Branch("nCHSJets_in_HEM_pt_30_eta_2p4" , &nCHSJets_in_HEM_pt_30_eta_2p4, "nCHSJets_in_HEM_pt_30_eta_2p4/I");
-    outputTree->Branch("nPhotons_in_HEM" , &nPhotons_in_HEM, "nPhotons_in_HEM/I");
-    outputTree->Branch("nElectrons_in_HEM" , &nElectrons_in_HEM, "nElectrons_in_HEM/I");
-    outputTree->Branch("RunNumber_in_HEM" , &RunNumber_in_HEM, "RunNumber_in_HEM/O");
 
     outputTree->Branch("nElectrons",        &nElectrons,        "nElectrons/I");
     outputTree->Branch("nMuons",            &nMuons,            "nMuons/I");
@@ -1345,43 +958,21 @@ int main(int argc, char **argv) {
     outputTree->Branch("c_xz", &c_xz, "c_xz/F");
     outputTree->Branch("m_yz", &m_yz, "m_yz/F");
     outputTree->Branch("c_yz", &c_yz, "c_yz/F");
-    outputTree->Branch("min_dR_jets", &min_dR_jets, "min_dR_jets/F");
-    outputTree->Branch("min_dPhi_jets", &min_dPhi_jets, "min_dPhi_jets/F");
-    outputTree->Branch("min_dEta_jets", &min_dEta_jets, "min_dEta_jets/F");
-    outputTree->Branch("min_dR_jets_0p7", &min_dR_jets_0p7, "min_dR_jets_0p7/F");
-    outputTree->Branch("min_dPhi_jets_0p7", &min_dPhi_jets_0p7, "min_dPhi_jets_0p7/F");
-    outputTree->Branch("min_dEta_jets_0p7", &min_dEta_jets_0p7, "min_dEta_jets_0p7/F");
-    outputTree->Branch("min_dR_jets_0p9", &min_dR_jets_0p9, "min_dR_jets_0p9/F");
-    outputTree->Branch("min_dPhi_jets_0p9", &min_dPhi_jets_0p9, "min_dPhi_jets_0p9/F");
-    outputTree->Branch("min_dEta_jets_0p9", &min_dEta_jets_0p9, "min_dEta_jets_0p9/F");
-    outputTree->Branch("min_dR_jets_0p9_no_tags", &min_dR_jets_0p9_no_tags, "min_dR_jets_0p9_no_tags/F");
-    outputTree->Branch("min_dPhi_jets_0p9_no_tags", &min_dPhi_jets_0p9_no_tags, "min_dPhi_jets_0p9_no_tags/F");
-    outputTree->Branch("min_dEta_jets_0p9_no_tags", &min_dEta_jets_0p9_no_tags, "min_dEta_jets_0p9_no_tags/F");
-    outputTree->Branch("min_dR_jets_0p996", &min_dR_jets_0p996, "min_dR_jets_0p996/F");
+    //outputTree->Branch("min_dPhi_jets", &min_dPhi_jets, "min_dPhi_jets/F");
+    //outputTree->Branch("min_dPhi_jets_0p7", &min_dPhi_jets_0p7, "min_dPhi_jets_0p7/F");
+    //outputTree->Branch("min_dPhi_jets_0p9", &min_dPhi_jets_0p9, "min_dPhi_jets_0p9/F");
+    //outputTree->Branch("min_dPhi_jets_0p9_no_tags", &min_dPhi_jets_0p9_no_tags, "min_dPhi_jets_0p9_no_tags/F");
     outputTree->Branch("min_dPhi_jets_0p996", &min_dPhi_jets_0p996, "min_dPhi_jets_0p996/F");
-    outputTree->Branch("min_dEta_jets_0p996", &min_dEta_jets_0p996, "min_dEta_jets_0p996/F");
 
-    outputTree->Branch("min_dR_jets_eta_1p0", &min_dR_jets_eta_1p0, "min_dR_jets_eta_1p0/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0", &min_dPhi_jets_eta_1p0, "min_dPhi_jets_eta_1p0/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0", &min_dEta_jets_eta_1p0, "min_dEta_jets_eta_1p0/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p7", &min_dR_jets_eta_1p0_0p7, "min_dR_jets_eta_1p0_0p7/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p7", &min_dPhi_jets_eta_1p0_0p7, "min_dPhi_jets_eta_1p0_0p7/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p7", &min_dEta_jets_eta_1p0_0p7, "min_dEta_jets_eta_1p0_0p7/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p9", &min_dR_jets_eta_1p0_0p9, "min_dR_jets_eta_1p0_0p9/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p9", &min_dPhi_jets_eta_1p0_0p9, "min_dPhi_jets_eta_1p0_0p9/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p9", &min_dEta_jets_eta_1p0_0p9, "min_dEta_jets_eta_1p0_0p9/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p9_no_tags", &min_dR_jets_eta_1p0_0p9_no_tags, "min_dR_jets_eta_1p0_0p9_no_tags/F");
-    outputTree->Branch("min_dPhi_jets_eta_1p0_0p9_no_tags", &min_dPhi_jets_eta_1p0_0p9_no_tags, "min_dPhi_jets_eta_1p0_0p9_no_tags/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p9_no_tags", &min_dEta_jets_eta_1p0_0p9_no_tags, "min_dEta_jets_eta_1p0_0p9_no_tags/F");
-    outputTree->Branch("min_dR_jets_eta_1p0_0p996", &min_dR_jets_eta_1p0_0p996, "min_dR_jets_eta_1p0_0p996/F");
+    //outputTree->Branch("min_dPhi_jets_eta_1p0", &min_dPhi_jets_eta_1p0, "min_dPhi_jets_eta_1p0/F");
+    //outputTree->Branch("min_dPhi_jets_eta_1p0_0p7", &min_dPhi_jets_eta_1p0_0p7, "min_dPhi_jets_eta_1p0_0p7/F");
+    //outputTree->Branch("min_dPhi_jets_eta_1p0_0p9", &min_dPhi_jets_eta_1p0_0p9, "min_dPhi_jets_eta_1p0_0p9/F");
+    //outputTree->Branch("min_dPhi_jets_eta_1p0_0p9_no_tags", &min_dPhi_jets_eta_1p0_0p9_no_tags, "min_dPhi_jets_eta_1p0_0p9_no_tags/F");
     outputTree->Branch("min_dPhi_jets_eta_1p0_0p996", &min_dPhi_jets_eta_1p0_0p996, "min_dPhi_jets_eta_1p0_0p996/F");
-    outputTree->Branch("min_dEta_jets_eta_1p0_0p996", &min_dEta_jets_eta_1p0_0p996, "min_dEta_jets_eta_1p0_0p996/F");
-
 
     outputTree->Branch("nPFCandidates",     &nPFCandidates,     "nPFCandidates/I");
     outputTree->Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
     outputTree->Branch("nLLPInCalo", &nLLPInCalo, "nLLPInCalo/I");
-
 
     outputTree->Branch("m_chi", &m_chi, "m_chi/I");
     outputTree->Branch("ctau", &ctau, "ctau/I");
@@ -1392,6 +983,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("JetsFullEta", &skimmedJetsFullEta);
     outputTree->Branch("Jets", &skimmedJets);
+    outputTree->Branch("JetsNegative", &skimmedJetsNegative);
     outputTree->Branch("JetsMatch", &skimmedJetsMatch);
     outputTree->Branch("JetsAcceptanceMatch", &skimmedJetsAcceptanceMatch);
     outputTree->Branch("JetsNum", &JetsNum);
@@ -1415,8 +1007,7 @@ int main(int argc, char **argv) {
     outputTree->Branch("CSCSegments", &CSCSegments);
 
     outputTree->Branch("nTagJets_0p996",     &nTagJets_0p996,      "nTagJets_0p996/I");
-    outputTree->Branch("nTagJets_0p996_unsmeared",     &nTagJets_0p996_unsmeared,      "nTagJets_0p996_unsmeared/I");
-
+    //outputTree->Branch("nTagJets_0p996_unsmeared",     &nTagJets_0p996_unsmeared,      "nTagJets_0p996_unsmeared/I");
 
     //TBD
     outputTree->Branch("nLLP_b_acc", &nLLP_b_acc, "nLLP_b_acc/I");
@@ -1472,10 +1063,11 @@ int main(int argc, char **argv) {
     tensorflow::Tensor inputTensorAK4(tensorflow::DT_FLOAT, {1, int(featuresAK4.size()) });
     float outputValueAK4;
 
-    tensorflow::GraphDef* graphDefUnsmearedAK4 = tensorflow::loadGraphDef(graphPathAK4);
-    tensorflow::Session* sessionUnsmearedAK4 = tensorflow::createSession(graphDefUnsmearedAK4, nThreads);
-    tensorflow::Tensor inputTensorUnsmearedAK4(tensorflow::DT_FLOAT, {1, int(featuresAK4.size()) });
-    float outputValueUnsmearedAK4;
+    //Unsmeared
+    //tensorflow::GraphDef* graphDefUnsmearedAK4 = tensorflow::loadGraphDef(graphPathAK4);
+    //tensorflow::Session* sessionUnsmearedAK4 = tensorflow::createSession(graphDefUnsmearedAK4, nThreads);
+    //tensorflow::Tensor inputTensorUnsmearedAK4(tensorflow::DT_FLOAT, {1, int(featuresAK4.size()) });
+    //float outputValueUnsmearedAK4;
 
 
 
@@ -1493,23 +1085,8 @@ int main(int argc, char **argv) {
         nCHSJetsFullEta = 0;
         nCHSJetsMatch = 0;
         nCHSJetsAcceptanceMatch = 0;
-	nCHSJets_in_HEM = 0;
-	nCHSJets_in_HEM_pt_20_all_eta = 0;
-	nCHSJets_in_HEM_pt_30_all_eta = 0;
-	nCHSJets_in_HEM_pt_20_eta_2p4 = 0;
-	nCHSJets_in_HEM_pt_30_eta_2p4 = 0;
-	nCHSJets_in_HEM_eta_2p5 = 0;
-	nPhotons_in_HEM = 0;
-	nElectrons_in_HEM = 0;
-	RunNumber_in_HEM = false;
 
-	MinLeadingJetMetDPhi = -1.;
-	MinSubLeadingJetMetDPhi = -1.;
-	MinSubSubLeadingJetMetDPhi = -1.;
 	MinJetMetDPhi = 10.;
-	MinJetMetDPhiBarrel = 10.;
-	MinJetMetDPhiStar = 10.;
-	MinJetMetDPhiBarrelStar = 10.;
 	//Initialize veto objects counter
 	nTausPreVeto = 0;
 	nTaus = 0;
@@ -1582,42 +1159,21 @@ int main(int argc, char **argv) {
 	m_yz = -9999.;
 	c_yz = -9999.;
 
-	min_dR_jets = 9999.;
-	min_dPhi_jets = 9999.;
-	min_dEta_jets = 9999.;
-	min_dR_jets_0p7 = 9999.;
-	min_dPhi_jets_0p7 = 9999.;
-	min_dEta_jets_0p7 = 9999.;
-	min_dR_jets_0p9 = 9999.;
-	min_dPhi_jets_0p9 = 9999.;
-	min_dEta_jets_0p9 = 9999.;
-	min_dR_jets_0p9_no_tags = 9999.;
-	min_dPhi_jets_0p9_no_tags = 9999.;
-	min_dEta_jets_0p9_no_tags = 9999.;
-	min_dR_jets_0p996 = 9999.;
+	//min_dPhi_jets = 9999.;
+	//min_dPhi_jets_0p7 = 9999.;
+	//min_dPhi_jets_0p9 = 9999.;
+	//min_dPhi_jets_0p9_no_tags = 9999.;
 	min_dPhi_jets_0p996 = 9999.;
-	min_dEta_jets_0p996 = 9999.;
 
-	min_dR_jets_eta_1p0 = 9999.;
-	min_dPhi_jets_eta_1p0 = 9999.;
-	min_dEta_jets_eta_1p0 = 9999.;
-	min_dR_jets_eta_1p0_0p7 = 9999.;
-	min_dPhi_jets_eta_1p0_0p7 = 9999.;
-	min_dEta_jets_eta_1p0_0p7 = 9999.;
-	min_dR_jets_eta_1p0_0p9 = 9999.;
-	min_dPhi_jets_eta_1p0_0p9 = 9999.;
-	min_dEta_jets_eta_1p0_0p9 = 9999.;
-	min_dR_jets_eta_1p0_0p9_no_tags = 9999.;
-	min_dPhi_jets_eta_1p0_0p9_no_tags = 9999.;
-	min_dEta_jets_eta_1p0_0p9_no_tags = 9999.;
-	min_dR_jets_eta_1p0_0p996 = 9999.;
+	//min_dPhi_jets_eta_1p0 = 9999.;
+	//min_dPhi_jets_eta_1p0_0p7 = 9999.;
+	//min_dPhi_jets_eta_1p0_0p9 = 9999.;
+	//min_dPhi_jets_eta_1p0_0p9_no_tags = 9999.;
 	min_dPhi_jets_eta_1p0_0p996 = 9999.;
-	min_dEta_jets_eta_1p0_0p996 = 9999.;
-
 
 
 	nTagJets_0p996 = 0;
-	nTagJets_0p996_unsmeared = 0;
+	//nTagJets_0p996_unsmeared = 0;
 
 	//TBD
 	nLLPInCalo_b_acc = 0;
@@ -1659,6 +1215,7 @@ int main(int argc, char **argv) {
 	skimmedTaus.clear();
         skimmedJetsFullEta.clear();
         skimmedJets.clear();
+        skimmedJetsNegative.clear();
         skimmedJetsMatch.clear();
         skimmedJetsAcceptanceMatch.clear();
         JetsNum.clear();
@@ -1675,13 +1232,6 @@ int main(int argc, char **argv) {
 	DT_fit_res.clear();
 
 
-	LepPdgId.clear();
-	LepCharge.clear();
-	LepPt.clear();
-	LepEta.clear();
-	LepPhi.clear();
-	LepMass.clear();
-
         //if (i % 1000 == 0) {
         //    std::cout << "evaluating entry " << i << std::endl;
         //}
@@ -1691,26 +1241,10 @@ int main(int argc, char **argv) {
 	if(isMC) TagNumber=EventNumber;
 	else TagNumber=RunNumber;
 
-	if(RunNumber>=319077)
-	  {
-	    RunNumber_in_HEM = true;
-	  }
 
-	//if (not ( (RunNumber==276775 and LumiNumber==437 and EventNumber==686255481) or (RunNumber==276870 and LumiNumber==246 and EventNumber==33815501) or (RunNumber==297050 and LumiNumber==96 and EventNumber==122060825) or (RunNumber==299061 and LumiNumber==43 and EventNumber==17473623) or (RunNumber==300636 and LumiNumber==1570 and EventNumber==1745799131 ) or (RunNumber==301959 and LumiNumber==656 and EventNumber==739086198) or (RunNumber==303948 and LumiNumber==55 and EventNumber==12029612) or (RunNumber==304506 and LumiNumber==115 and EventNumber==197159168) or (RunNumber==305365 and LumiNumber==556 and EventNumber==908806478) or (RunNumber==305862 and LumiNumber==437 and EventNumber==706695236) or (RunNumber==315705 and LumiNumber==693 and EventNumber==434537655) or (RunNumber==322492 and LumiNumber==1266 and EventNumber==2209685676) or (RunNumber==323470 and LumiNumber==104 and EventNumber==161827808 ) or (RunNumber==324841 and LumiNumber==1341 and EventNumber==2446831291) )) continue;
-	//if(strcmp(argv[3], "y")==1 || strcmp(argv[3], "yes")==1)
-	//{
-	//if (EventNumber % 2 == 0)
-	//{
-	//std::cout << "Skip even EventNumber! " << std::endl;
-	//continue;
-	//}
-	//}
-
-
-
-        std::cout << "======== " << std::endl;
-        std::cout << "Event " << i << std::endl;
-	std::cout << "======== " << std::endl;
+        //std::cout << "======== " << std::endl;
+        //std::cout << "Event " << i << std::endl;
+	//std::cout << "======== " << std::endl;
 
 	//Consider PU weight
 
@@ -1796,35 +1330,9 @@ int main(int argc, char **argv) {
 	  }
 
 	if(doSR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
-	if(doMR and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
-	if(doMRPho and not(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v or HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v or HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v) ) continue;
-	if(doZtoMM and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
-	if(doZtoEE and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v or HLT_Ele32_eta2p1_WPLoose_Gsf_v) ) continue;
-	if(doWtoMN and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
-	if(doWtoEN and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v or HLT_Ele32_eta2p1_WPLoose_Gsf_v) ) continue;
-	if(doMN and not(HLT_IsoMu24_v or HLT_IsoMu27_v) ) continue;
-	if(doEN and not(HLT_Ele32_WPTight_Gsf_v or HLT_Ele35_WPTight_Gsf_v or HLT_Ele32_eta2p1_WPLoose_Gsf_v) ) continue;
-	if(doTtoEM and not(HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v or HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v or HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v or HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v or HLT_Mu33_Ele33_CaloIdL_GsfTrkIdVL_v or HLT_Mu37_Ele27_CaloIdL_GsfTrkIdVL_v or HLT_Mu27_Ele37_CaloIdL_GsfTrkIdVL_v or HLT_Mu27_Ele37_CaloIdL_MW_v or HLT_Mu37_Ele27_CaloIdL_MW_v) ) continue;
-	if(doPho and not(HLT_Photon22_v or HLT_Photon30_v or HLT_Photon33_v or HLT_Photon36_v or HLT_Photon50_v or HLT_Photon75_v or HLT_Photon90_v or HLT_Photon120_v or HLT_Photon125_v or HLT_Photon150_v or HLT_Photon200_v or HLT_Photon175_v or HLT_Photon250_NoHE_v or HLT_Photon300_NoHE_v or HLT_Photon500_v or HLT_Photon600_v) ) continue;
-	if(doJetHT and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v) ) continue;
-	if(doJetMET and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v or HLT_DiPFJetAve40_v or HLT_DiPFJetAve60_v or HLT_DiPFJetAve80_v or HLT_DiPFJetAve200_v or HLT_DiPFJetAve500_v) ) continue;
-	if(doDiJetMET and not(HLT_PFJet40_v or HLT_PFJet60_v or HLT_PFJet80_v or HLT_PFJet140_v or HLT_PFJet200_v or HLT_PFJet260_v or HLT_PFJet320_v or HLT_PFJet400_v or HLT_PFJet450_v or HLT_PFJet500_v or HLT_PFJet550_v) ) continue;
 
 	//Selection on MET
         if(doSR and MEt->pt<200) continue;
-        if(doMR and MEt->pt<200) continue;
-        if(doMRPho and MEt->pt<200) continue;
-	if(doZtoMM and MEt->pt>=30) continue;
-	if(doZtoEE and MEt->pt>=30) continue;
-	if(doWtoMN and MEt->pt<40) continue;
-	if(doWtoEN and MEt->pt<40) continue;
-	if(doMN and MEt->pt<200) continue;
-	if(doEN and MEt->pt<200) continue;
-	if(doTtoEM and MEt->pt<30) continue;
-	if(doPho and MEt->pt>=30) continue;
-	if(doJetHT and MEt->pt>=30) continue;
-	if(doJetMET and MEt->pt<100) continue;//first attempt, try met 100
-	if(doDiJetMET and MEt->pt<60) continue;//first attempt, try met 60
 
 	//Loop on veto objects
 	//JJ
@@ -1835,15 +1343,9 @@ int main(int argc, char **argv) {
 	std::vector<Particle> TausStruct;
 	//Muons
 	float mu_iso = 0.4;
-	//if(Muons->size()>1) std::cout << "Muons size: " << Muons->size() << std::endl;
 	for (unsigned int m=0; m<Muons->size(); m++)
 	  {
 
-	    //WtoMN and ZToMM CR
-	    if( (doZtoMM or doWtoMN or doMN) and (Muons->at(m).pt<30 or !Muons->at(m).isTight or Muons->at(m).pfIso04>=0.15) ) continue;
-	    if( (doTtoEM) and (Muons->at(m).pt<30) ) continue;
-	    
-	    //JJ:
 	    //remove overlaps
 	    ////////////////////////
 	    bool overlap = false;
@@ -1862,31 +1364,12 @@ int main(int argc, char **argv) {
 	    MuonsStruct.push_back(tmpMuon);
 	    nMuonsPassing++;
 	  }
-	//if(Muons->size()>0) std::cout << "Muons size final: " << Muons->size() << std::endl;
-	//nMuons = Muons->size();
-	
-	//WtoMN
-	if(doWtoMN and MuonsStruct.size()!=1) continue;
-	if(doMN and MuonsStruct.size()!=1) continue;
-	//ZtoMM
-	if(doZtoMM and MuonsStruct.size()!=2) continue;
-
-
 
 	//Electrons
 	float ele_iso = 0.4;
 	//if(Electrons->size()>0) std::cout << "Electrons size: " << Electrons->size() << std::endl;
 	for (unsigned int e=0; e<Electrons->size(); e++)
 	  {
-
-	    if(Electrons->at(e).eta>-3. and Electrons->at(e).eta<-1.3 and Electrons->at(e).phi>-1.57 and Electrons->at(e).phi<-0.87)
-	      {
-		nElectrons_in_HEM++;
-	      }
-
-	    //WtoEN and ZToEE CR
-	    if( (doZtoEE or doWtoEN or doEN) and (Electrons->at(e).pt<37 or !Electrons->at(e).isTight) ) continue;
-	    if( (doTtoEM) and (Electrons->at(e).pt<30 or !Electrons->at(e).isLoose) ) continue;
 
 	    //remove overlaps
 	    bool overlap = false;
@@ -1906,18 +1389,6 @@ int main(int argc, char **argv) {
 
 	  }
 
-	//WtoEN
-	if(doWtoEN and ElectronsStruct.size()!=1) continue;
-	//ZtoEE
-	if(doZtoEE and ElectronsStruct.size()!=2) continue;
-	if(doEN and ElectronsStruct.size()!=1) continue;
-
-
-	//TtoEN
-	if(doTtoEM and not(ElectronsStruct.size()==1 and MuonsStruct.size()==1) ) continue;
-
-	//nElectronsPassing = Electrons->size();
-	//if(nElectronsPassing!=nElectrons) std::cout << "DIFFERENT! : " << nElectrons  << nElectronsPassing <<  std::endl;
 
 	//Taus
 	nTausPreVeto = int(Taus->size());
@@ -1966,10 +1437,6 @@ int main(int argc, char **argv) {
 	for (unsigned int p=0; p<Photons->size(); p++)
           {
 	    
-	    if(Photons->at(p).eta>-3. and Photons->at(p).eta<-1.3 and Photons->at(p).phi>-1.57 and Photons->at(p).phi<-0.87)
-	      {
-		nPhotons_in_HEM++;
-	      }
 
 	    //remove overlaps
 	    bool overlap = false;
@@ -2002,9 +1469,6 @@ int main(int argc, char **argv) {
 	    nPhotonsPassing++;
 	  }
 
-	//Pho CR
-	if( doPho and PhotonsStruct.size() != 1 ) continue;
-	if( doMRPho and PhotonsStruct.size() != 1 ) continue;
 
 	//Transverse mass met + Leptons (e and mu)
 	TLorentzVector lepp4;
@@ -2014,56 +1478,12 @@ int main(int argc, char **argv) {
 	  }
 	dPhi = reco::deltaPhi(MEt->phi, lepp4.Phi());
 	MT = sqrt(2*(MEt->pt)*lepp4.Pt()*(1-cos(dPhi)));
-	//if(doWtoEN and MT>=100) continue;
-	//if(doWtoMN and MT>=100) continue;
 	nLeptons = LeptonsStruct.size();
-	if(doMR and LeptonsStruct.size()!=1) continue;
-	if(doMR and MT>=100) continue;
-
-	//Z reconstruction
-	TLorentzVector Z;
-	if(doZtoMM)
-	  {
-	    if(MuonsStruct.at(0).charge==MuonsStruct.at(1).charge) continue;//we want opposite sign
-	    Z = MuonsStruct.at(0).vec + MuonsStruct.at(1).vec;
-	    if( fabs(Z.M() - Z_MASS)>30. ) continue;
-	    Z_mass = Z.M();
-	    Z_pt = Z.Pt();
-	    Z_phi = Z.Phi();
-	    Z_eta = Z.Eta();
-	    Z_lep0_pt = MuonsStruct.at(0).vec.Pt();
-	    Z_lep0_phi = MuonsStruct.at(0).vec.Phi();
-	    Z_lep0_eta = MuonsStruct.at(0).vec.Eta();
-	    Z_lep1_pt = MuonsStruct.at(1).vec.Pt();
-	    Z_lep1_phi = MuonsStruct.at(1).vec.Phi();
-	    Z_lep1_eta = MuonsStruct.at(1).vec.Eta();
-	  }
-
-	if(doZtoEE)
-	  {
-	    if(ElectronsStruct.at(0).charge==ElectronsStruct.at(1).charge) continue;//we want opposite sign
-	    Z = ElectronsStruct.at(0).vec + ElectronsStruct.at(1).vec;
-	    if( fabs(Z.M() - Z_MASS)>30. ) continue;
-	    Z_mass = Z.M();
-	    Z_pt = Z.Pt();
-	    Z_phi = Z.Phi();
-	    Z_eta = Z.Eta();
-	    Z_lep0_pt = ElectronsStruct.at(0).vec.Pt();
-	    Z_lep0_phi = ElectronsStruct.at(0).vec.Phi();
-	    Z_lep0_eta = ElectronsStruct.at(0).vec.Eta();
-	    Z_lep1_pt = ElectronsStruct.at(1).vec.Pt();
-	    Z_lep1_phi = ElectronsStruct.at(1).vec.Phi();
-	    Z_lep1_eta = ElectronsStruct.at(1).vec.Eta();
-	  }
-
-
-
 
         //if(nTaus>0) continue;
         //if(nPhotons>0) continue;
         //if(nMuons>0) continue;
         //if(nElectrons>0) continue;
-        ////if(HT<100) continue;
 
         if(isVerbose) std::cout << "======================================== " << std::endl;
         if(isVerbose) std::cout << "EventNumber " << EventNumber << "\tLumiNumber " << LumiNumber << std::endl;
@@ -2075,43 +1495,13 @@ int main(int argc, char **argv) {
 	for (unsigned int j=0; j<Jets->size(); j++)
 	  {
 
-	    //HEM: reject events with jets in problematic region
-	    if(Jets->at(j).eta>-3. and Jets->at(j).eta<-1.3 and Jets->at(j).phi>-1.57 and Jets->at(j).phi<-0.87)
-	      {
-		nCHSJets_in_HEM++;
-		
-		if(Jets->at(j).pt>20) nCHSJets_in_HEM_pt_20_all_eta++;
-		if(Jets->at(j).pt>30) nCHSJets_in_HEM_pt_30_all_eta++;
-
-		if(Jets->at(j).pt>20 and fabs(Jets->at(j).eta)<2.4)
-		  {
-		    nCHSJets_in_HEM_pt_20_eta_2p4++;
-		    if(Jets->at(j).pt>30)
-		      {
-			nCHSJets_in_HEM_pt_30_eta_2p4++;
-		      }
-		  }
-
-	      }
-	    if(Jets->at(j).eta>-3. and Jets->at(j).eta<-1.3 and Jets->at(j).phi>-1.57 and Jets->at(j).phi<-0.87 and fabs(Jets->at(j).eta)<2.5)
-	      {
-		nCHSJets_in_HEM_eta_2p5++;
-	      }
-
-
 	    //Correct acceptance for MinJetMetDPhi:
 	    //Jet pt>30, Jet eta<2.4
 	    if(fabs(Jets->at(j).eta)<2.4 and Jets->at(j).pt>30)
 	      {
 		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhi) MinJetMetDPhi = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
-		TLorentzVector jet0;
-		jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
-		TLorentzVector met;
-		met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
-		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiStar) MinJetMetDPhiStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
 	      }
 	    
-
 
 	    //Time smearing!
 	    //We need:
@@ -2121,7 +1511,7 @@ int main(int argc, char **argv) {
 
 	    //Don't remove jets with eta>1 now, it messes up with the cosmic veto!
 	    if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1.48 and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
-	    //if( Jets->at(j).pt>30 and fabs(Jets->at(j).eta)<1. and Jets->at(j).timeRecHitsEB>-100. and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8)//cleaned jets!
+
 	      {
 
 		//Ignore jets overlapped to leptons, photons and taus
@@ -2157,14 +1547,6 @@ int main(int argc, char **argv) {
 		//Redone at the end!!!
 		//if(Jets->at(j).timeRecHitsEB>-1) nCHSJetsAcceptanceCalo++;
 
-		    
-		if(fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi)) < MinJetMetDPhiBarrel and Jets->at(j).timeRecHitsEB>-1) MinJetMetDPhiBarrel = fabs(reco::deltaPhi(Jets->at(j).phi, MEt->phi));
-		TLorentzVector jet0;
-		jet0.SetPtEtaPhiM(Jets->at(j).pt, 0, Jets->at(j).phi, 0 );
-		TLorentzVector met;
-		met.SetPtEtaPhiM(MEt->pt, 0, MEt->phi, 0 );
-		if(fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi())) < MinJetMetDPhiBarrelStar and Jets->at(j).timeRecHitsEB>-1) MinJetMetDPhiBarrelStar = fabs(reco::deltaPhi(Jets->at(j).phi, (jet0+met).Phi() ));
-		//}
 
 		//First: compute the eFracRecHitsEB as energyRecHitsEB/energy
 		//std::cout<< "Jet n. " << j << " eFracRecHitsEB: " << Jets->at(j).eFracRecHitsEB  << std::endl;
@@ -2174,16 +1556,16 @@ int main(int argc, char **argv) {
 		Jets->at(j).timeRMSRecHitsEB = (Jets->at(j).nRecHitsEB>0) ? Jets->at(j).timeRMSRecHitsEB/sqrt(Jets->at(j).nRecHitsEB) : -1.;
 
 		//Time smearing here
-		float pre_time = Jets->at(j).timeRecHitsEB;
-		float smearer = smearCB->GetRandom();
-		//Keep also the original time if needed
-		Jets->at(j).timeRecHitsHB = pre_time;
-		Jets->at(j).timeRecHitsEB = pre_time + smearer;
+		// ** commented as suboptimal **
+		//float pre_time = Jets->at(j).timeRecHitsEB;
+		//float smearer = smearCB->GetRandom();
+		////Keep also the original time if needed
+		//Jets->at(j).timeRecHitsHB = pre_time;
+		//Jets->at(j).timeRecHitsEB = pre_time + smearer;
 
-		//std::cout<< "Jet n. " << j << " pt: " << Jets->at(j).pt << " ; sigprob: " << Jets->at(j).sigprob  << std::endl;
 		//here build the inputVector for each jet
 		std::vector<float> inputValues(featuresAK4.size());
-		std::vector<float> inputValuesUnsmeared(featuresAK4.size());
+		//std::vector<float> inputValuesUnsmeared(featuresAK4.size());
 
 		//tagger_AK4_v3
 		inputValues.at(0) = Jets->at(j).nTrackConstituents;
@@ -2213,6 +1595,7 @@ int main(int argc, char **argv) {
 		inputValues.at(20) = Jets->at(j).minDeltaRAllTracks;
 		inputValues.at(21) = Jets->at(j).minDeltaRPVTracks;
 
+		/*
 		inputValuesUnsmeared.at(0) = Jets->at(j).nTrackConstituents;
 		inputValuesUnsmeared.at(1) = Jets->at(j).nSelectedTracks;
 		inputValuesUnsmeared.at(2) = Jets->at(j).timeRecHitsHB;
@@ -2235,6 +1618,7 @@ int main(int argc, char **argv) {
 		inputValuesUnsmeared.at(19) = Jets->at(j).gammaMaxET;
 		inputValuesUnsmeared.at(20) = Jets->at(j).minDeltaRAllTracks;
 		inputValuesUnsmeared.at(21) = Jets->at(j).minDeltaRPVTracks;
+		*/
 
 		float* d = inputTensorAK4.flat<float>().data();
 		for (float v : inputValues) {
@@ -2256,6 +1640,7 @@ int main(int argc, char **argv) {
 
 
 		//Unsmeared
+		/*
 		float* u = inputTensorUnsmearedAK4.flat<float>().data();
 		for (float s : inputValuesUnsmeared) {
 		  *u = s;
@@ -2271,27 +1656,38 @@ int main(int argc, char **argv) {
 		// fix it manually
 		if(Jets->at(j).pt<0) outputValueUnsmearedAK4 = -1;
 		Jets->at(j).pfXWP1000 = outputValueUnsmearedAK4;
+		*/
 
-		//
-		// Cut based- definition:
-		//"timeRecHitsEB" : {"min" : 0.09, "max" : 999.e+10},
-		//"gammaMaxET" : {"min" : -100.-10., "max" : 0.16},
-		//"minDeltaRPVTracks" : {"min" : 0.06, "max" : 999.+10.},
-		//"cHadEFrac" : {"min" : -1., "max" : 0.06},
-		//
+
+		//28.11.22: unsmeared time
 		if(outputValueAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsEB>-1 and abs(Jets->at(j).eta)<1.) nTagJets_0p996++;
 
 		//Unsmeared: time is timeRecHitsHB
-		if(outputValueUnsmearedAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsHB>-1 and abs(Jets->at(j).eta)<1.) nTagJets_0p996_unsmeared++;
+		//if(outputValueUnsmearedAK4>0.996 and Jets->at(j).muEFrac<0.6 and Jets->at(j).eleEFrac<0.6 and Jets->at(j).photonEFrac<0.8 and Jets->at(j).timeRecHitsHB>-1 and abs(Jets->at(j).eta)<1.) nTagJets_0p996_unsmeared++;
 
 
+		//do not cut on time rec hits eb now since the smearing is not completely random
+		if( abs(Jets->at(j).eta) < 1.)
+		  {
+		    //reject phi pathological regions
+		    if( Jets->at(j).phi>minphi or Jets->at(j).phi<maxphi )
+		      {
+			skimmedJetsNegative.push_back(Jets->at(j));
+		      }
+		  }
+
+
+		//apply time cut, affects acceptance
+		//old approach: do the time cut before the time smearing, suboptimal but consistent
 		if(Jets->at(j).timeRecHitsEB>-1.)
 		  {
 		    //store jets passing acceptance and with inference
+		    //check if we use only >-1 jets for cosmic and beam halo veto! --> yes!
+		    //validJetIndex: no angular cuts, >-1 ns cut, same size as skimmedJetsFullEta
 		    skimmedJetsFullEta.push_back(Jets->at(j));
 		    validJetIndex.push_back(j);
 		    
-		    //store full acceptance including eta
+		    //apply all angular acceptance cuts
 		    if( abs(Jets->at(j).eta) < 1.)
 		      {
 			//reject phi pathological regions
@@ -2309,8 +1705,15 @@ int main(int argc, char **argv) {
 
 	  }//jet loop
 	
+
+	//Three jets collections:
+	//skimmedJets: unsmeared time, cut at -1 ns, all angular cuts
+	//skimmedJetsNegative: unsmeared time, all angular cuts
+	//skimmedJetsFullEta: unsmeared time, cut at -1 ns, no angular cuts --> used for cosmic and BH veto
+
         nCHSJetsFullEta = skimmedJetsFullEta.size();
         nCHSJets = skimmedJets.size();
+        nCHSJetsNegative = skimmedJetsNegative.size();
 
 	if(isVerbose) std::cout << "n. tagged jets " << nTagJets_0p996 << std::endl;
         if(isVerbose) std::cout << "======================================== " << std::endl;
@@ -2338,12 +1741,12 @@ int main(int argc, char **argv) {
 	if(isLLP0_b_acc) nLLP_b_acc++;
 	if(isLLP1_b_acc) nLLP_b_acc++;
 
-	std::cout << "isLLP0_b_acc " << isLLP0_b_acc << std::endl;
-	std::cout << "isLLP0 in calo " << GenLLPs->at(0).isLLPInCaloAcceptance << std::endl;
-	std::cout << "isLLP1_b_acc " << isLLP1_b_acc << std::endl;
-	std::cout << "isLLP1 in calo " << GenLLPs->at(1).isLLPInCaloAcceptance << std::endl;
-	std::cout << "nTagJets_0p996 " << nTagJets_0p996 << std::endl;
-	std::cout << "---" << std::endl;
+	if(isVerbose) std::cout << "isLLP0_b_acc " << isLLP0_b_acc << std::endl;
+	if(isVerbose) std::cout << "isLLP0 in calo " << GenLLPs->at(0).isLLPInCaloAcceptance << std::endl;
+	if(isVerbose) std::cout << "isLLP1_b_acc " << isLLP1_b_acc << std::endl;
+	if(isVerbose) std::cout << "isLLP1 in calo " << GenLLPs->at(1).isLLPInCaloAcceptance << std::endl;
+	if(isVerbose) std::cout << "nTagJets_0p996 " << nTagJets_0p996 << std::endl;
+	if(isVerbose) std::cout << "---" << std::endl;
 	//std::cout << "nLLPInCalo " << nLLPInCalo << std::endl;
 	//std::cout << "nLLP_b_acc " << nLLP_b_acc << std::endl;
 	//std::cout << "nLLPInCalo_b_acc " << nLLPInCalo_b_acc << std::endl;
@@ -2351,7 +1754,7 @@ int main(int argc, char **argv) {
 
 	for (unsigned int j=0; j<skimmedJets.size(); j++)
 	  {
-	    std::cout << "jet["<<j<<"] gen match " << skimmedJets.at(j).isGenMatchedCaloCorr << ", LLP radius " << skimmedJets.at(j).radiusLLP << ", DNN " << skimmedJets.at(j).sigprob << std::endl;
+	    if(isVerbose) std::cout << "jet["<<j<<"] gen match " << skimmedJets.at(j).isGenMatchedCaloCorr << ", LLP radius " << skimmedJets.at(j).radiusLLP << ", DNN " << skimmedJets.at(j).sigprob << std::endl;
 
 	    //Here: stuff matched but without asking LLP in calo acceptance
 	    if(skimmedJets.at(j).isGenMatchedCaloCorr)
@@ -2425,21 +1828,21 @@ int main(int argc, char **argv) {
 
 
 	//determine boost-resolved at gen level
-	std::cout << "gen higgs 0: dR dau " << GenHiggs->at(0).dRdaughters << std::endl;
+	if(isVerbose) std::cout << "gen higgs 0: dR dau " << GenHiggs->at(0).dRdaughters << std::endl;
 	//std::cout << "nJets_to_LLP0 " << nJets_to_LLP0 << std::endl;
-	std::cout << "nTagJets_to_LLP0 " << nTagJets_to_LLP0 << std::endl;
-	std::cout << "nTagJets_to_LLP0_b_acc " << nTagJets_to_LLP0_b_acc << std::endl;
-	std::cout << "nTagJets_to_LLP0InCalo_b_acc " << nTagJets_to_LLP0InCalo_b_acc << std::endl;
+	if(isVerbose) std::cout << "nTagJets_to_LLP0 " << nTagJets_to_LLP0 << std::endl;
+	if(isVerbose) std::cout << "nTagJets_to_LLP0_b_acc " << nTagJets_to_LLP0_b_acc << std::endl;
+	if(isVerbose) std::cout << "nTagJets_to_LLP0InCalo_b_acc " << nTagJets_to_LLP0InCalo_b_acc << std::endl;
 	//std::cout << "nJets_to_LLP0InCalo " << nJets_to_LLP0InCalo << std::endl;
 	//std::cout << "nTagJets_to_LLP0InCalo " << nTagJets_to_LLP0InCalo << std::endl;
 
-	std::cout<< "" << std::endl;
+	if(isVerbose) std::cout<< "" << std::endl;
 
-	std::cout << "gen higgs 1: dR dau " << GenHiggs->at(1).dRdaughters << std::endl;
+	if(isVerbose) std::cout << "gen higgs 1: dR dau " << GenHiggs->at(1).dRdaughters << std::endl;
 	//std::cout << "nJets_to_LLP1 " << nJets_to_LLP1 << std::endl;
-	std::cout << "nTagJets_to_LLP1 " << nTagJets_to_LLP1 << std::endl;
-	std::cout << "nTagJets_to_LLP1_b_acc " << nTagJets_to_LLP1_b_acc << std::endl;
-	std::cout << "nTagJets_to_LLP1InCalo_b_acc " << nTagJets_to_LLP1InCalo_b_acc << std::endl;
+	if(isVerbose) std::cout << "nTagJets_to_LLP1 " << nTagJets_to_LLP1 << std::endl;
+	if(isVerbose) std::cout << "nTagJets_to_LLP1_b_acc " << nTagJets_to_LLP1_b_acc << std::endl;
+	if(isVerbose) std::cout << "nTagJets_to_LLP1InCalo_b_acc " << nTagJets_to_LLP1InCalo_b_acc << std::endl;
 	//std::cout << "nJets_to_LLP1InCalo " << nJets_to_LLP1InCalo << std::endl;
 	//std::cout << "nTagJets_to_LLP1InCalo " << nTagJets_to_LLP1InCalo << std::endl;
 
@@ -2458,18 +1861,7 @@ int main(int argc, char **argv) {
 	for (unsigned int j=0; j<validJetIndex.size(); j++)
 	  {
 	    //Defined at each jet
-	    std::vector<float> EBx_j;
-	    std::vector<float> EBy_j;
-	    std::vector<float> EBz_j;
-	    std::vector<float> EBr_j;
-	    std::vector<float> EBeta_j;
-	    std::vector<float> EBphi_j;
-	    std::vector<float> EB_Dphi_j;
-	    std::vector<float> EBenergy_j;
-	    float csc_energy(0.);
-	    float csc_energy_0p1(0.);
-	    float csc_energy_0p04(0.);
-	    //float check_ecal_energy(0.);
+
 	    for(unsigned int p=0; p<EcalRecHitsAK4->size(); p++)
 	      {
 		//j corresponds to the skimmed jet, validJetIndex.at(j) corresponds to the original jets
@@ -2484,74 +1876,8 @@ int main(int argc, char **argv) {
 		    if (reco::deltaR(Jets->at( int(validJetIndex.at(j)) ).eta, Jets->at( int(validJetIndex.at(j)) ).phi, EcalRecHitsAK4->at(p).eta, EcalRecHitsAK4->at(p).phi) < 0.4)
 		      {
 
-			//std::cout << "~~~~~~~" << endl;
-			//std::cout<<"Jet n. : " << j << " has nRecHits: " << Jets->at( int(validJetIndex.at(j)) ).nRecHitsEB << endl;
-			//std::cout<<"ECAL hit n. : " << p << endl;
-
 			skimmedEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p));
 			if(abs(Jets->at( int(validJetIndex.at(j)) ).eta)<1) skimmedAcceptanceEcalRecHitsAK4.push_back(EcalRecHitsAK4->at(p));
-			EBx_j.push_back(EcalRecHitsAK4->at(p).x);
-			EBy_j.push_back(EcalRecHitsAK4->at(p).y);
-			EBz_j.push_back(EcalRecHitsAK4->at(p).z);
-			EBr_j.push_back(sqrt( pow(EcalRecHitsAK4->at(p).x,2) + pow(EcalRecHitsAK4->at(p).y,2)));
-			EBeta_j.push_back(EcalRecHitsAK4->at(p).eta);
-			EBphi_j.push_back(EcalRecHitsAK4->at(p).phi);
-			EB_Dphi_j.push_back( abs(reco::deltaPhi(EcalRecHitsAK4->at(p).phi,Jets->at( int(validJetIndex.at(j)) ).phi)) );
-			EBenergy_j.push_back(EcalRecHitsAK4->at(p).energy);
-
-			//check_ecal_energy += EcalRecHitsAK4->at(p).energy;
-
-			bool count_as_csc_en(false);
-			bool count_as_csc_en_0p1(false);
-			bool count_as_csc_en_0p04(false);
-			//For Beam Halo: look at CSC and DT
-			for(unsigned int csc=0; csc<CSCSegments->size(); csc++)
-			  {
-			    if( abs(reco::deltaPhi(CSCSegments->at(csc).phi,EcalRecHitsAK4->at(p).phi))<0.4  ) 
-			      {
-				//std::cout << "CSC[" << csc << "]: phi " << CSCSegments->at(csc).phi << std::endl;
-				//std::cout<< "      : phi " << CSCSegments->at(csc).phi << std::endl;
-				//std::cout<< "      : Dphi CSC-ECAL " << reco::deltaPhi(CSCSegments->at(csc).phi,EcalRecHitsAK4->at(p).phi) << std::endl;
-				//std::cout<< "      : DR CSC-ECAL " << reco::deltaR(CSCSegments->at(csc).eta,CSCSegments->at(csc).phi,EcalRecHitsAK4->at(p).eta,EcalRecHitsAK4->at(p).phi) << std::endl;
-				//csc_energy+=EcalRecHitsAK4->at(p).energy;
-				count_as_csc_en = true;
-				if( abs(reco::deltaPhi(CSCSegments->at(csc).phi,EcalRecHitsAK4->at(p).phi))<0.1  )
-				  {
-				    count_as_csc_en_0p1 = true;
-
-				    if( abs(reco::deltaPhi(CSCSegments->at(csc).phi,EcalRecHitsAK4->at(p).phi))<0.04  )
-				      {
-					count_as_csc_en_0p04 = true;
-
-				      }
-
-				  } 
-				
-			      }
-			  }
-
-			if(count_as_csc_en) 
-			  {
-			    //cout << "Has at least 1 CSC associated hence count: " << endl;
-			    //cout << "Corresp. ecal energy: " << EcalRecHitsAK4->at(p).energy <<endl;
-			    csc_energy+=EcalRecHitsAK4->at(p).energy;
-			  }
-
-			if(count_as_csc_en_0p1) 
-			  {
-			    csc_energy_0p1+=EcalRecHitsAK4->at(p).energy;
-			  }
-
-			if(count_as_csc_en_0p04) 
-			  {
-			    csc_energy_0p04+=EcalRecHitsAK4->at(p).energy;
-			  }
-
-			//if(!count_as_csc_en) 
-			//{
-			//  cout << "Has no CSC associated hence NOT count: " << endl;
-			//  cout << "Corresp. ecal energy: " << EcalRecHitsAK4->at(p).energy <<endl;
-			//}
 
 			if(Jets->at(int(validJetIndex.at(j))).sigprob > 0.996)
 			  {
@@ -2579,81 +1905,15 @@ int main(int argc, char **argv) {
 	    //second loop on jets to calculate delta phi/R
 	    for (unsigned int k=j+1; k<skimmedJetsFullEta.size() && k!=j; k++)
 	      {
-		//std::cout << "Doing general pair: (" << j <<" , "<<k<<")"<<std::endl;
-
-		min_dPhi_jets = std::min(fabs(min_dPhi_jets),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-		min_dEta_jets = std::min(fabs(min_dEta_jets),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-		min_dR_jets = std::min(min_dR_jets,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-
-		if( abs(skimmedJetsFullEta.at(j).eta)<1.0 and abs(skimmedJetsFullEta.at(k).eta)<1.0)
-		  {
-		    min_dPhi_jets_eta_1p0 = std::min(fabs(min_dPhi_jets_eta_1p0),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-		    min_dEta_jets_eta_1p0 = std::min(fabs(min_dEta_jets_eta_1p0),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-		    min_dR_jets_eta_1p0 = std::min(min_dR_jets_eta_1p0,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-		  }
-
-		//0p7
-		if(skimmedJetsFullEta.at(j).sigprob>0.7 and skimmedJetsFullEta.at(k).sigprob>0.7)
-		  {
-		    min_dPhi_jets_0p7 = std::min(fabs(min_dPhi_jets_0p7),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-		    min_dEta_jets_0p7 = std::min(fabs(min_dEta_jets_0p7),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-		    min_dR_jets_0p7 = std::min(min_dR_jets_0p7,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-
-		    if( abs(skimmedJetsFullEta.at(j).eta)<1.0 and abs(skimmedJetsFullEta.at(k).eta)<1.0)
-		      {
-			min_dPhi_jets_eta_1p0_0p7 = std::min(fabs(min_dPhi_jets_eta_1p0_0p7),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-			min_dEta_jets_eta_1p0_0p7 = std::min(fabs(min_dEta_jets_eta_1p0_0p7),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-			min_dR_jets_eta_1p0_0p7 = std::min(min_dR_jets_eta_1p0_0p7,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-		      }
-		  }
-
-		//0p9
-		if(skimmedJetsFullEta.at(j).sigprob>0.9 and skimmedJetsFullEta.at(k).sigprob>0.9)
-		  {
-		    min_dPhi_jets_0p9 = std::min(fabs(min_dPhi_jets_0p9),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-		    min_dEta_jets_0p9 = std::min(fabs(min_dEta_jets_0p9),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-		    min_dR_jets_0p9 = std::min(min_dR_jets_0p9,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-		    //And both not tagged
-		    if(skimmedJetsFullEta.at(j).sigprob<=0.996 and skimmedJetsFullEta.at(k).sigprob<=0.996)
-		      {
-			min_dPhi_jets_0p9_no_tags = std::min(fabs(min_dPhi_jets_0p9_no_tags),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-			min_dEta_jets_0p9_no_tags = std::min(fabs(min_dEta_jets_0p9_no_tags),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-			min_dR_jets_0p9_no_tags = std::min(min_dR_jets_0p9_no_tags,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-
-		      }
-
-		    if( abs(skimmedJetsFullEta.at(j).eta)<1.0 and abs(skimmedJetsFullEta.at(k).eta)<1.0)
-		      {
-			min_dPhi_jets_eta_1p0_0p9 = std::min(fabs(min_dPhi_jets_eta_1p0_0p9),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-			min_dEta_jets_eta_1p0_0p9 = std::min(fabs(min_dEta_jets_eta_1p0_0p9),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-			min_dR_jets_eta_1p0_0p9 = std::min(min_dR_jets_eta_1p0_0p9,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-
-			//And both not tagged
-			if(skimmedJetsFullEta.at(j).sigprob<=0.996 and skimmedJetsFullEta.at(k).sigprob<=0.996)
-			  {
-			    min_dPhi_jets_eta_1p0_0p9_no_tags = std::min(fabs(min_dPhi_jets_eta_1p0_0p9_no_tags),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-			    min_dEta_jets_eta_1p0_0p9_no_tags = std::min(fabs(min_dEta_jets_eta_1p0_0p9_no_tags),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-			    min_dR_jets_eta_1p0_0p9_no_tags = std::min(min_dR_jets_eta_1p0_0p9_no_tags,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-
-			  }
-		      }
-		  }
 		//0p996
 		if(skimmedJetsFullEta.at(j).sigprob>0.996 and skimmedJetsFullEta.at(k).sigprob>0.996)
 		  {
-		    //std::cout << "Doing min_dPhi_jets_0p996 with jet pair: (" << j <<" , "<<k<<")"<<std::endl;
-		    //std::cout << "prev min_dPhi_jets_0p996 " << min_dPhi_jets_0p996 << std::endl;
-		    //std::cout << "their distance: "<< fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi))  << std::endl;
 		    min_dPhi_jets_0p996 = std::min(fabs(min_dPhi_jets_0p996),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-		    min_dEta_jets_0p996 = std::min(fabs(min_dEta_jets_0p996),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-		    min_dR_jets_0p996 = std::min(min_dR_jets_0p996,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
-		    //std::cout << "post min_dPhi_jets_0p996 " << min_dPhi_jets_0p996 << std::endl;
 
 		    if( abs(skimmedJetsFullEta.at(j).eta)<1.0 and abs(skimmedJetsFullEta.at(k).eta)<1.0)
 		      {
 			min_dPhi_jets_eta_1p0_0p996 = std::min(fabs(min_dPhi_jets_eta_1p0_0p996),fabs(reco::deltaPhi(skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).phi)));
-			min_dEta_jets_eta_1p0_0p996 = std::min(fabs(min_dEta_jets_eta_1p0_0p996),fabs(skimmedJetsFullEta.at(j).eta - skimmedJetsFullEta.at(k).eta));
-			min_dR_jets_eta_1p0_0p996 = std::min(min_dR_jets_eta_1p0_0p996,reco::deltaR(skimmedJetsFullEta.at(j).eta,skimmedJetsFullEta.at(j).phi,skimmedJetsFullEta.at(k).eta,skimmedJetsFullEta.at(k).phi));
+
 		      }
 		  }
 
@@ -2723,7 +1983,6 @@ int main(int argc, char **argv) {
 
 
 
-
 	//Cosmic veto:
 	//DBSCAN on DTSegments
 	for(unsigned int d=0; d<DTSegments->size(); d++)
@@ -2744,24 +2003,6 @@ int main(int argc, char **argv) {
 	    p.clusterID = UNCLASSIFIED;
 	    points.push_back(p);
 
-	    /*
-	    if(DTSegments->at(d).time > -9999.)
-	    {
-	        Point p;
-		p.x = DTSegments->at(d).x/100.;
-		p.y = DTSegments->at(d).y/100.;
-		p.z = DTSegments->at(d).z/100.;
-		p.eta = DTSegments->at(d).eta;
-		p.phi = DTSegments->at(d).phi;
-		p.time = DTSegments->at(d).time;
-		p.wheel = DTSegments->at(d).wheel;
-		p.sector = DTSegments->at(d).sector;
-		p.station = DTSegments->at(d).station;
-		p.nRecHits = DTSegments->at(d).nRecHits;
-		p.clusterID = UNCLASSIFIED;
-		points_valid_time.push_back(p);
-	    }
-	    */
 	  }
 
 	DBSCAN ds(MINIMUM_POINTS, EPSILON, points);
@@ -2788,13 +2029,9 @@ int main(int argc, char **argv) {
 	    else n_clusters = max+1;// - 1*int( bool(n_noise_) );
 	  }
 	//Fit of the cosmic trajectory if present
-	//choose the right pair of cosmic clouds
+	//Choose the right pair of cosmic clouds
 	if(n_clusters>=2 and nCosmicMuonsOneLeg>0 and nCosmicMuons>1)
 	  {
-	    //This is clearly an overshooting
-	    //Simplify!! TODO
-	    //It's not possible to mask arrays or so
-	    //can probably create a vector of vectors to keep the size dynamic
 	    std::vector<std::vector<float>> vec_xx(n_clusters,std::vector<float>());
 	    std::vector<std::vector<float>> vec_yy(n_clusters,std::vector<float>());
 	    std::vector<std::vector<float>> vec_zz(n_clusters,std::vector<float>());
@@ -2863,15 +2100,6 @@ int main(int argc, char **argv) {
 		    stations_k2.resize(std::distance(stations_k2.begin(), std::unique(stations_k2.begin(), stations_k2.end())  ));
 		    int n_k2_s = stations_k2.size();
 
-		    //Opposite emispheres condition plus comsic tracks
-		    //cout << "Pair: " << k1 << " " << k2 << endl;
-		    //cout << "TagNumber  x1, x2, opp,   y1, y2, opp,    z1, z2, opp " << k1 << " " << k2 << endl;
-		    //printf("%llu & %5.2lf & %5.2lf & %d & %5.2lf & %5.2lf & %d & %5.2lf & %5.2lf & %d \\\\ \n",
-		    //TagNumber,
-		    // avg(vec_xx.at(k1)),avg(vec_xx.at(k2)),(avg(vec_xx.at(k1))*avg(vec_xx.at(k2))<0),
-		    // avg(vec_yy.at(k1)),avg(vec_yy.at(k2)),(avg(vec_yy.at(k1))*avg(vec_yy.at(k2))<0),
-		    // avg(vec_zz.at(k1)),avg(vec_zz.at(k2)),(avg(vec_zz.at(k1))*avg(vec_zz.at(k2))<0)
-		    // );
 
 		    if(  (mean_k1_x*mean_k2_x<0 or mean_k1_y*mean_k2_y<0 or mean_k1_z*mean_k2_z<0)  )
 		      {
@@ -2940,13 +2168,6 @@ int main(int argc, char **argv) {
 		if(abs(avg(vec_yy.at(ch_k2)))<0.2) smallness2=true;
 		smallness = (smallness1 || smallness2);
 
-		//printf("%llu & %5.2lf & %5.2lf & %d & %5.2lf & %5.2lf & %d & %5.2lf & %5.2lf & %d \\\\ \n",
-		//       TagNumber,
-		//       avg(vec_xx.at(ch_k1)),avg(vec_xx.at(ch_k2)),(avg(vec_xx.at(ch_k1))*avg(vec_xx.at(ch_k2))<0),
-		//       avg(vec_yy.at(ch_k1)),avg(vec_yy.at(ch_k2)),(avg(vec_yy.at(ch_k1))*avg(vec_yy.at(ch_k2))<0),
-		//       avg(vec_zz.at(ch_k1)),avg(vec_zz.at(ch_k2)),(avg(vec_zz.at(ch_k1))*avg(vec_zz.at(ch_k2))<0)
-		//       );
-		
 		if(printFit) std::cout << TagNumber << " & " << avg(vec_xx.at(ch_k1)) << " & " << avg(vec_xx.at(ch_k2)) << " & " << (avg(vec_xx.at(ch_k1))*avg(vec_xx.at(ch_k2))<0)  << " & " << avg(vec_yy.at(ch_k1)) << " & " << avg(vec_yy.at(ch_k2)) << " & " << (avg(vec_yy.at(ch_k1))*avg(vec_yy.at(ch_k2))<0)  << " & " << smallness << "\\\\ " << std::endl;
 
 		if(printFit) std::cout << TagNumber << " & " << mean_time_ch_k1 << " & " << mean_time_ch_k2 << " & " << (mean_time_ch_k1*mean_time_ch_k2<0) << " & " << std_time_ch_k1 << " & " << std_time_ch_k2 << " & " << n_s_ch_k1 << " & " << n_s_ch_k2 << "\\\\ " << std::endl;
@@ -3037,24 +2258,6 @@ int main(int argc, char **argv) {
 	if(doSR and nTausPassing!=0) continue;
 	if(doSR and nPhotonsPassing!=0) continue;
 
-	//MinLeadingJetMetDPhi minimal requirement
-	if(doJetMET and MinLeadingJetMetDPhi<0) continue;
-
-	//Exactly 2 jets
-	if(doDiJetMET and nCHSJets!=2) continue;
-
-	//Fill lepton vector
-	for ( auto &tmp : LeptonsStruct )
-	  {
-	    LepPdgId.push_back(tmp.pdgId);
-	    LepCharge.push_back(tmp.charge);
-	    LepPt.push_back(tmp.vec.Pt());
-	    LepEta.push_back(tmp.vec.Eta());
-	    LepPhi.push_back(tmp.vec.Phi());
-	    LepMass.push_back(tmp.vec.M());
-	  }
-
-	//Prepare boolean flags
 
 	//Here select bin 1/2 LISA
 	//if(doSR and nTagJets_0p996<1) continue;
@@ -3078,23 +2281,7 @@ int main(int argc, char **argv) {
 	//reject beam halo-like jets
 	if (n_jets_tagged_close_phi_low_multi>0) isPreselected = false;
 
-
-	//At this point, doSR and doZtoMM should be all fulfilled, cross check
 	if(doSR) isSR = true;
-	if(doMR) isMR = true;
-	if(doMRPho) isMRPho = true;
-	if(doZtoMM) isZtoMM = true;
-	if(doZtoEE) isZtoEE = true;
-	if(doTtoEM) isTtoEM = true;
-	if(doWtoEN) isWtoEN = true;
-	if(doWtoMN) isWtoMN = true;
-	if(doEN) isEN = true;
-	if(doMN) isMN = true;
-	if(doPho) isPho = true;
-	if(doJetHT) isJetHT = true;
-	if(doJetMET) isJetMET = true;
-	if(doDiJetMET) isDiJetMET = true;
-
 
 	//Observed worse agreement, skip this --> redo
 	n_pass->Fill(0.);
@@ -3103,26 +2290,6 @@ int main(int argc, char **argv) {
 	if(skipTrain==true and EventNumber % 2 == 0) continue;
 	outputTree->Fill();
 
-        //std::cout << "======================================== " << std::endl;
-	//for(unsigned int j=0;j<skimmedJetsFullEta.size();j++)
-	//{
-	//std::cout << "Jet ["<<j<<"] eta: " << skimmedJetsFullEta.at(j).eta << " ; phi: " << skimmedJetsFullEta.at(j).phi<< " ; DNN: " << skimmedJetsFullEta.at(j).sigprob << std::endl;
-	//}
-	//std::cout << "min_jets_dPhi: " << min_dPhi_jets << std::endl;
-	//std::cout << "min_jets_dPhi_0p996: " << min_dPhi_jets_0p996 << std::endl;
-	//std::cout << "min_jets_dEta_0p996: " << min_dEta_jets_0p996 << std::endl;
-
-	//
-	//if(skipTrain==true)
-	//  {
-	//    if(EventNumber % 2 != 0) outputTree->Fill();
-	//    else continue;
-	//  }
-	//if(skipTrain==false)
-	//  {
-	//    outputTree->Fill();
-	//  }
-	//
 
     }
 
@@ -3134,12 +2301,6 @@ int main(int argc, char **argv) {
     n_odd->Write();
     n_even->Write();
     b_skipTrain->Write();
-
-    //PUWeightHist->Write();
-    //pileup_mc_copy->Write();
-    //pileup_data_copy->Write();
-    //pileup_data_up_copy->Write();
-    //pileup_data_down_copy->Write();
 
     outputFile->Write();
     outputFile->Close();

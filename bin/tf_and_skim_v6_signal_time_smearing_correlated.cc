@@ -2571,7 +2571,7 @@ int main(int argc, char **argv) {
 	//gRandom = new TRandom3();
 	//gRandom->SetSeed(1234);
 	//std::cout << "gRandom: " << gRandom << std::endl;
-	global_smearer = smearCB->GetRandom(myRandom);
+	global_smearer = smearCB->GetRandom();//myRandom
 
 	std::cout << "Global smearer: " << global_smearer << std::endl;
 

@@ -149,6 +149,12 @@
     <use name="PhysicsTools/TensorFlow" />
 </bin>
 
+<bin name="tf_and_skim_v7_signal_time_smearing_correlated" file="tf_and_skim_v7_signal_time_smearing_correlated.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
 <bin name="tf_and_skim_v6_cosmics" file="tf_and_skim_v6_cosmics.cc">
     <use name="root" />
     <use name="rootcore" />
@@ -168,6 +174,12 @@
 </bin>
 
 <bin name="tf_and_skim_v6_syst_unc" file="tf_and_skim_v6_syst_unc.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="tf_and_skim_v6_PDF_QCD_syst_unc" file="tf_and_skim_v6_PDF_QCD_syst_unc.cc">
     <use name="root" />
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />
@@ -234,6 +246,18 @@
 </bin>
 
 <bin name="tf_and_skim_v7_reinterpretation" file="tf_and_skim_v7_reinterpretation.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="post_processing_v7_reinterpretation" file="post_processing_v7_reinterpretation.cc">
+    <use name="root" />
+    <use name="rootcore" />
+    <use name="PhysicsTools/TensorFlow" />
+</bin>
+
+<bin name="post_processing_v7_reinterpretation_v2" file="post_processing_v7_reinterpretation_v2.cc">
     <use name="root" />
     <use name="rootcore" />
     <use name="PhysicsTools/TensorFlow" />

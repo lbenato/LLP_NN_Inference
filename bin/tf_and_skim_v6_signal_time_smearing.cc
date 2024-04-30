@@ -797,7 +797,7 @@ int main(int argc, char **argv) {
     int    nPFCandidatesTrack;
     int    nLLPInCalo;
     int    m_chi;
-    int    ctau;
+    float    ctau;
     bool   is_central;
     std::vector<TauType>         *Taus = 0;
     std::vector<PhotonType>      *Photons = 0;
@@ -1210,6 +1210,7 @@ int main(int argc, char **argv) {
 
     std::vector<TauType>    skimmedTaus;
     std::vector<JetType>    skimmedJets;
+    std::vector<JetType>    skimmedTaggedJets;
     std::vector<JetType>    skimmedJetsNegative;
     std::vector<JetCaloType> skimmedJetsCalo;
     std::vector<FatJetType> skimmedFatJets;
@@ -1687,13 +1688,14 @@ int main(int argc, char **argv) {
     outputTree->Branch("nPFCandidatesTrack", &nPFCandidatesTrack, "nPFCandidatesTrack/I");
     outputTree->Branch("nLLPInCalo", &nLLPInCalo, "nLLPInCalo/I");
     outputTree->Branch("m_chi", &m_chi, "m_chi/I");
-    outputTree->Branch("ctau", &ctau, "ctau/I");
+    outputTree->Branch("ctau", &ctau, "ctau/F");
     outputTree->Branch("is_central", &is_central, "is_central/O");
     outputTree->Branch("Muons", &Muons);
     outputTree->Branch("Electrons", &Electrons);
     outputTree->Branch("Photons", &Photons);
     outputTree->Branch("Taus", &skimmedTaus);
     outputTree->Branch("Jets", &skimmedJets);
+    outputTree->Branch("TaggedJets", &skimmedTaggedJets);
     outputTree->Branch("JetsNegative", &skimmedJetsNegative);
     outputTree->Branch("JetsCaloAdd", &skimmedJetsCalo);
     outputTree->Branch("FatJets", &skimmedFatJets);
@@ -2093,6 +2095,7 @@ int main(int argc, char **argv) {
 	//very dangerous with continue statement!
 	skimmedTaus.clear();
         skimmedJets.clear();
+        skimmedTaggedJets.clear();
         skimmedJetsNegative.clear();
         skimmedJetsCalo.clear();
         skimmedFatJets.clear();
@@ -2812,6 +2815,10 @@ int main(int argc, char **argv) {
 		  {
 		    //store jets passing acceptance and with inference
 		    skimmedJets.push_back(Jets->at(j));
+		    if(Jets->at(j).sigprob>0.996)
+		      {
+			skimmedTaggedJets.push_back(Jets->at(j));
+		      }
 		    JetCaloType JetCalo;
 		    FillJetCaloType( JetCalo, Jets->at(j), isMC );
 		    skimmedJetsCalo.push_back(JetCalo);
