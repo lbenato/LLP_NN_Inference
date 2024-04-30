@@ -6,6 +6,8 @@ ERA = "2016"
 DIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared/"#Gen
 DIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_Gen_time_smeared_no_cuts_debug/"#Gen
 DIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared_uncorrelated/"#Gen
+DIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_no_cuts_syst_unc_central_values/"
+DIR = "/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_PDF_QCD_syst_unc/"
 
 def rename(era,inpdir):
     DATADIR = inpdir % (era)
@@ -31,7 +33,7 @@ def rename(era,inpdir):
     print "\n"
 
 eras = ["2016","2017","2018"]
-eras = ["2017"]
+#eras = ["2017"]
 for e in eras:
     rename(e,DIR)
 

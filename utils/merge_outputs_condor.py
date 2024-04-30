@@ -274,7 +274,7 @@ print(LUMI, " fb -1")
 print("*****************************************************************************")
 
 
-list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","SingleMuon","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","WJetsToLNuIncl","JetJet","splitSUSY","gluinoGMSB","EGamma","TTbarGenMET","MuonEG","MET","HighMET","JetHT","SingleElectron","SinglePhoton","SUSY_HH","SUSY_HZ","SUSY_ZZ","Cosmics","CosmicsMC"]
+list_of_samples = ["SM_Higgs","VV","WJetsToQQ","WJetsToLNu","WJetsToLNu_Pt","DYJetsToQQ","DYJetsToNuNu","DYJetsToLL","ST","TTbar","QCD","signal_VBF","signal_ggH","all","data_obs","SingleMuon","ZJetsToNuNu","DYJets","WJets","signal_ZH","ZJetsToNuNuRed","SUSY","TTbarSemiLep","TTbarNu","ggHeavyHiggs","WJetsToLNu_HT","WJetsToLNuIncl","JetJet","splitSUSY","gluinoGMSB","EGamma","TTbarGenMET","MuonEG","MET","HighMET","JetHT","SingleElectron","SinglePhoton","SUSY_HH","SUSY_HZ","SUSY_ZZ","Cosmics","CosmicsMC","HeavyHiggsToLLP","HeavyHiggsToLLPTo4b_mH_400","zPrime","Stealth"]
 print("Possible subgroups of samples:")
 for a in list_of_samples:
     print(a)
@@ -343,6 +343,22 @@ for b, k in enumerate(requests.keys()):
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="gluinoGMSB":
         if "gluinoGMSB" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="HeavyHiggsToLLP":
+        if "HeavyHiggsToLLP" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="Stealth":
+        if "Stealth" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="HeavyHiggsToLLPTo4b_mH_400":
+        if "HeavyHiggsToLLPTo4b_mH_400" in k:
+            print k
+            selected_requests[k] = requests[k]
+    elif options.groupofsamples=="zPrime":
+        if "zPrime" in k:
             print k
             selected_requests[k] = requests[k]
     elif options.groupofsamples=="all":
@@ -434,6 +450,16 @@ def weight(name):
             xs = 1.
         elif('splitSUSY') in name:
             xs = 1.
+        elif('HeavyHiggsToLLP') in name:
+            xs = 1.
+        elif('Stealth') in name:
+            xs = 1.
+        elif('zPrime') in name:
+            xs = 1.
+            print "\n"
+            print "HERE!!"
+            print "Remember MAtthew's corrections!!!"
+            print "\n"
         else:
             xs = sample[name]['xsec'] * sample[name]['kfactor']#to correct MET phase-space
         weight = LUMI * xs / nevents

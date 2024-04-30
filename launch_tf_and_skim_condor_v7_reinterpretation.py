@@ -14,13 +14,14 @@ run_condor = True
 # # # # # #
 # Run era #
 # # # # # #
-RUN_ERA = 2018#6#7#8
+RUN_ERA = 2016#6#7#8
 
 doRegion = "doGen"
 resubm_label = ""
 #resubm_label = "_resubmission_0"
 
 ##
+'''
 if resubm_label=="_resubmission_0" or resubm_label=="":
     if RUN_ERA == 2018:
         INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_HEM/")% str(RUN_ERA)
@@ -35,7 +36,9 @@ if resubm_label=="_resubmission_0" or resubm_label=="":
         #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_JERUp/")% str(RUN_ERA)
 else:
     INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v5_calo_AOD_%s_07October2021"+resubm_label+"/")% str(RUN_ERA)
+'''
 
+INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v7_calo_AOD_%s_reinterpretation_25November2022"+resubm_label+"/")% str(RUN_ERA)
 
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_time_smearing_no_cuts/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_chris_hill/")%(RUN_ERA)
@@ -103,19 +106,19 @@ sign = [
         #'SUSY_mh400_pl1000', 'SUSY_mh300_pl1000', 'SUSY_mh250_pl1000', 'SUSY_mh200_pl1000', 'SUSY_mh175_pl1000', 'SUSY_mh150_pl1000', 'SUSY_mh127_pl1000',
 
         #'SUSY_central',
-        'SUSY_mh127_ctau500', 'SUSY_mh127_ctau3000',
-        'SUSY_mh150_ctau500', 'SUSY_mh150_ctau3000',
-        'SUSY_mh175_ctau500', 'SUSY_mh175_ctau3000',
-        'SUSY_mh200_ctau500', 'SUSY_mh200_ctau3000',
-        'SUSY_mh250_ctau500', 'SUSY_mh250_ctau3000',
-        'SUSY_mh300_ctau500', 'SUSY_mh300_ctau3000',
-        'SUSY_mh400_ctau500', 'SUSY_mh400_ctau3000',
-        'SUSY_mh600_ctau500', 'SUSY_mh600_ctau3000',
-        'SUSY_mh800_ctau500', 'SUSY_mh800_ctau3000',
-        'SUSY_mh1000_ctau500','SUSY_mh1000_ctau3000',
-        'SUSY_mh1250_ctau500','SUSY_mh1250_ctau3000',
-        'SUSY_mh1500_ctau500','SUSY_mh1500_ctau3000',
-        'SUSY_mh1800_ctau500','SUSY_mh1800_ctau3000',
+        'SUSY_mh127_ctau500_ZZ', 'SUSY_mh127_ctau3000_ZZ',
+        'SUSY_mh150_ctau500_ZZ', 'SUSY_mh150_ctau3000_ZZ',
+        'SUSY_mh175_ctau500_ZZ', 'SUSY_mh175_ctau3000_ZZ',
+        'SUSY_mh200_ctau500_ZZ', 'SUSY_mh200_ctau3000_ZZ',
+        'SUSY_mh250_ctau500_ZZ', 'SUSY_mh250_ctau3000_ZZ',
+        'SUSY_mh300_ctau500_ZZ', 'SUSY_mh300_ctau3000_ZZ',
+        'SUSY_mh400_ctau500_ZZ', 'SUSY_mh400_ctau3000_ZZ',
+        'SUSY_mh600_ctau500_ZZ', 'SUSY_mh600_ctau3000_ZZ',
+        'SUSY_mh800_ctau500_ZZ', 'SUSY_mh800_ctau3000_ZZ',
+        'SUSY_mh1000_ctau500_ZZ','SUSY_mh1000_ctau3000_ZZ',
+        'SUSY_mh1250_ctau500_ZZ','SUSY_mh1250_ctau3000_ZZ',
+        'SUSY_mh1500_ctau500_ZZ','SUSY_mh1500_ctau3000_ZZ',
+        'SUSY_mh1800_ctau500_ZZ','SUSY_mh1800_ctau3000_ZZ',
 
         #'SUSY_mh400_prompt', 'SUSY_mh300_prompt', 'SUSY_mh200_prompt',
         #'splitSUSY_M2400_100_ctau0p1','splitSUSY_M2400_100_ctau1p0','splitSUSY_M2400_100_ctau10p0','splitSUSY_M2400_100_ctau100p0','splitSUSY_M2400_100_ctau1000p0','splitSUSY_M2400_100_ctau10000p0','splitSUSY_M2400_100_ctau100000p0',
@@ -136,7 +139,7 @@ sign = [
 	#'ggH_MH2000_MS600_ctau500','ggH_MH2000_MS600_ctau1000','ggH_MH2000_MS600_ctau2000','ggH_MH2000_MS600_ctau5000','ggH_MH2000_MS600_ctau10000',
         ]
 
-#sign = ['SUSY_mh1800_ctau500',]
+#sign = ['SUSY_mh1800_ctau500_HH',]
 
 sample_list = sign
 
@@ -163,7 +166,7 @@ if run_condor:
     NCPUS   = 1
     MEMORY  = 512#4000#5000#2000 too small?#10000#tried 10 GB for a job killed by condor automatically
     RUNTIME = 3600#3600*12#86400
-    root_files_per_job = 1#100
+    root_files_per_job = 30#100
     
     sample_to_loop = dicty.keys()
     #print sample_to_loop
@@ -420,11 +423,11 @@ if run_condor:
                
                 ##submit condor
                 #os.system('python /afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/condor_skim_v5/'+s+'/skim_macro_'+str(j_num)+'.py'  +' \n')            
-                #os.system('condor_submit ' + 'submit_skim_'+str(j_num)+'.submit' + ' \n')            
-                os.system('sh job_skim_'+str(j_num)+'.sh \n')
+                os.system('condor_submit ' + 'submit_skim_'+str(j_num)+'.submit' + ' \n')            
+                #os.system('sh job_skim_'+str(j_num)+'.sh \n')
 
-                print "Only 1 root file per job!!!"
-                exit()
+                #print "Only 1 root file per job!!!"
+                #exit()
 
                 #if j_num<9:
                 #    print "job n. ", j_num, " non lo faccio"

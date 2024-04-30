@@ -14,9 +14,9 @@ run_condor = True
 # # # # # #
 # Run era #
 # # # # # #
-RUN_ERA = 2016#6#7#8
+RUN_ERA = 2017#6#7#8
 
-doRegion = "doGen"#"doSR"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
+doRegion = "doSR"#"doGen"#"doSR"#"doSR"#"doTtoEM"#"doZtoEE"#MN/EN
 resubm_label = ""
 #resubm_label = "_resubmission_4"
 
@@ -31,11 +31,15 @@ if resubm_label=="_resubmission_0" or resubm_label=="":
         INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021/")% str(RUN_ERA)
         #JERUp
         #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_JERUp/")% str(RUN_ERA)
+        #Stealth SHH:
+        #INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_fix_SHH/")% str(RUN_ERA)
+
 else:
     INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v5_calo_AOD_%s_07October2021"+resubm_label+"/")% str(RUN_ERA)
 
 
 OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR/")%(RUN_ERA)
+OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared_compare_SUSY_HH/")%(RUN_ERA)
 OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_smeared_no_cuts_debug/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_no_cosmicOneLeg/")%(RUN_ERA)
@@ -47,7 +51,8 @@ OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_time_sme
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_syst_unc_JERUp/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_syst_unc_central_values/")%(RUN_ERA)
-OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_no_cuts_syst_unc_central_values/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_no_cuts_syst_unc_central_values/")%(RUN_ERA)
+#OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_PDF_QCD_syst_unc/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_bin_1_2/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_Gen_HZ/")%(RUN_ERA)
 #OUTPUTDIR = ("/nfs/dust/cms/group/cms-llp/v6_calo_AOD/v6_calo_AOD_%s_SR_xcheck_slimmedJets/")%(RUN_ERA)
@@ -64,6 +69,7 @@ if RUN_ERA==2018:
     from NNInferenceCMSSW.LLP_NN_Inference.crab_requests_lists_calo_AOD_2018 import *
     pu_tag = "Fall18_2018_calo"
     tune = "TuneCP5"
+    print samples.keys()
 
 elif RUN_ERA==2017:
     from NNInferenceCMSSW.LLP_NN_Inference.samplesAOD2017 import sample, samples
@@ -176,6 +182,63 @@ sign = [
 
 #sign = ['SUSY_mh400_ctau500','SUSY_mh400_ctau3000',]
 
+
+sign+= [
+        'SUSY_mh127_ctau500', 'SUSY_mh127_ctau3000',
+        'SUSY_mh150_ctau500', 'SUSY_mh150_ctau3000',
+        'SUSY_mh175_ctau500', 'SUSY_mh175_ctau3000',
+        'SUSY_mh200_ctau500', 'SUSY_mh200_ctau3000',
+        'SUSY_mh250_ctau500', 'SUSY_mh250_ctau3000',
+        'SUSY_mh300_ctau500', 'SUSY_mh300_ctau3000',
+        'SUSY_mh400_ctau500', 'SUSY_mh400_ctau3000',
+        'SUSY_mh600_ctau500', 'SUSY_mh600_ctau3000',
+        'SUSY_mh800_ctau500', 'SUSY_mh800_ctau3000',
+        'SUSY_mh1000_ctau500','SUSY_mh1000_ctau3000',
+        'SUSY_mh1250_ctau500','SUSY_mh1250_ctau3000',
+        'SUSY_mh1500_ctau500','SUSY_mh1500_ctau3000',
+        'SUSY_mh1800_ctau500','SUSY_mh1800_ctau3000',
+]
+
+sign = [
+    'zPrimeTo4b_mZ3000_mX1450_ct0p1', 'zPrimeTo4b_mZ3000_mX1450_ct1', 'zPrimeTo4b_mZ3000_mX1450_ct10', 'zPrimeTo4b_mZ3000_mX1450_ct100', 'zPrimeTo4b_mZ3000_mX1450_ct1000', 'zPrimeTo4b_mZ3000_mX1450_ct10000', 'zPrimeTo4b_mZ3000_mX300_ct0p1', 'zPrimeTo4b_mZ3000_mX300_ct1', 'zPrimeTo4b_mZ3000_mX300_ct10', 'zPrimeTo4b_mZ3000_mX300_ct100', 'zPrimeTo4b_mZ3000_mX300_ct1000', 'zPrimeTo4b_mZ3000_mX300_ct10000', 'zPrimeTo4b_mZ4500_mX2200_ct0p1', 'zPrimeTo4b_mZ4500_mX2200_ct1', 'zPrimeTo4b_mZ4500_mX2200_ct10', 'zPrimeTo4b_mZ4500_mX2200_ct100', 'zPrimeTo4b_mZ4500_mX2200_ct1000', 'zPrimeTo4b_mZ4500_mX2200_ct10000', 'zPrimeTo4b_mZ4500_mX450_ct0p1', 'zPrimeTo4b_mZ4500_mX450_ct1', 'zPrimeTo4b_mZ4500_mX450_ct10', 'zPrimeTo4b_mZ4500_mX450_ct100', 'zPrimeTo4b_mZ4500_mX450_ct1000', 'zPrimeTo4b_mZ4500_mX450_ct10000',
+    'zPrimeTo2b2nu_mZ3000_mX1450_ct0p1', 'zPrimeTo2b2nu_mZ3000_mX1450_ct1', 'zPrimeTo2b2nu_mZ3000_mX1450_ct10', 'zPrimeTo2b2nu_mZ3000_mX1450_ct100', 'zPrimeTo2b2nu_mZ3000_mX1450_ct1000', 'zPrimeTo2b2nu_mZ3000_mX1450_ct10000', 'zPrimeTo2b2nu_mZ3000_mX300_ct0p1', 'zPrimeTo2b2nu_mZ3000_mX300_ct1', 'zPrimeTo2b2nu_mZ3000_mX300_ct10', 'zPrimeTo2b2nu_mZ3000_mX300_ct100', 'zPrimeTo2b2nu_mZ3000_mX300_ct1000', 'zPrimeTo2b2nu_mZ3000_mX300_ct10000', 'zPrimeTo2b2nu_mZ4500_mX2200_ct0p1', 'zPrimeTo2b2nu_mZ4500_mX2200_ct1', 'zPrimeTo2b2nu_mZ4500_mX2200_ct10', 'zPrimeTo2b2nu_mZ4500_mX2200_ct100', 'zPrimeTo2b2nu_mZ4500_mX2200_ct1000', 'zPrimeTo2b2nu_mZ4500_mX2200_ct10000', 'zPrimeTo2b2nu_mZ4500_mX450_ct0p1', 'zPrimeTo2b2nu_mZ4500_mX450_ct1', 'zPrimeTo2b2nu_mZ4500_mX450_ct10', 'zPrimeTo2b2nu_mZ4500_mX450_ct100', 'zPrimeTo2b2nu_mZ4500_mX450_ct1000', 'zPrimeTo2b2nu_mZ4500_mX450_ct10000'
+]
+
+
+sign = [
+    'HeavyHiggsToLLPTo4b_mH400_mX150_ct0p1', 'HeavyHiggsToLLPTo4b_mH400_mX150_ct1', 'HeavyHiggsToLLPTo4b_mH400_mX150_ct10', 'HeavyHiggsToLLPTo4b_mH400_mX150_ct100', 'HeavyHiggsToLLPTo4b_mH400_mX150_ct1000', 'HeavyHiggsToLLPTo4b_mH400_mX150_ct10000', 'HeavyHiggsToLLPTo4b_mH400_mX40_ct0p1', 'HeavyHiggsToLLPTo4b_mH400_mX40_ct1', 'HeavyHiggsToLLPTo4b_mH400_mX40_ct10', 'HeavyHiggsToLLPTo4b_mH400_mX40_ct100', 'HeavyHiggsToLLPTo4b_mH400_mX40_ct1000', 'HeavyHiggsToLLPTo4b_mH400_mX40_ct10000', 
+
+    #'HeavyHiggsToLLPTo2b2nu_mH400_mX150_ct0p1', 'HeavyHiggsToLLPTo2b2nu_mH400_mX150_ct1', 'HeavyHiggsToLLPTo2b2nu_mH400_mX150_ct10', 'HeavyHiggsToLLPTo2b2nu_mH400_mX150_ct100', 'HeavyHiggsToLLPTo2b2nu_mH400_mX150_ct1000', 'HeavyHiggsToLLPTo2b2nu_mH400_mX150_ct10000', 'HeavyHiggsToLLPTo2b2nu_mH400_mX40_ct0p1', 'HeavyHiggsToLLPTo2b2nu_mH400_mX40_ct1', 'HeavyHiggsToLLPTo2b2nu_mH400_mX40_ct10', 'HeavyHiggsToLLPTo2b2nu_mH400_mX40_ct100', 'HeavyHiggsToLLPTo2b2nu_mH400_mX40_ct1000', 'HeavyHiggsToLLPTo2b2nu_mH400_mX40_ct10000', 
+
+    #'HeavyHiggsToLLPTo4b_mH800_mX350_ct0p1', 'HeavyHiggsToLLPTo4b_mH800_mX350_ct1', 'HeavyHiggsToLLPTo4b_mH800_mX350_ct10', 'HeavyHiggsToLLPTo4b_mH800_mX350_ct100', 'HeavyHiggsToLLPTo4b_mH800_mX350_ct1000', 'HeavyHiggsToLLPTo4b_mH800_mX350_ct10000', 'HeavyHiggsToLLPTo4b_mH800_mX80_ct0p1', 'HeavyHiggsToLLPTo4b_mH800_mX80_ct1', 'HeavyHiggsToLLPTo4b_mH800_mX80_ct10', 'HeavyHiggsToLLPTo4b_mH800_mX80_ct100', 'HeavyHiggsToLLPTo4b_mH800_mX80_ct1000', 'HeavyHiggsToLLPTo4b_mH800_mX80_ct10000', 
+
+    #'HeavyHiggsToLLPTo2b2nu_mH800_mX350_ct0p1', 'HeavyHiggsToLLPTo2b2nu_mH800_mX350_ct1', 'HeavyHiggsToLLPTo2b2nu_mH800_mX350_ct10', 'HeavyHiggsToLLPTo2b2nu_mH800_mX350_ct100', 'HeavyHiggsToLLPTo2b2nu_mH800_mX350_ct1000', 'HeavyHiggsToLLPTo2b2nu_mH800_mX350_ct10000', 'HeavyHiggsToLLPTo2b2nu_mH800_mX80_ct0p1', 'HeavyHiggsToLLPTo2b2nu_mH800_mX80_ct1', 'HeavyHiggsToLLPTo2b2nu_mH800_mX80_ct10', 'HeavyHiggsToLLPTo2b2nu_mH800_mX80_ct100', 'HeavyHiggsToLLPTo2b2nu_mH800_mX80_ct1000', 'HeavyHiggsToLLPTo2b2nu_mH800_mX80_ct10000', 
+]
+
+#sign = ['StealthSHH_2t6j_mstop1100_ms875_ctau1000_SHH',]
+
+#sign = ['StealthSHH_2t6j_mstop300_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop300_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop300_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop300_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop300_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop300_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop500_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop500_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop500_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop500_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop500_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop500_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop500_ms275_ctau0p01_SHH', 'StealthSHH_2t6j_mstop500_ms275_ctau0p1_SHH', 'StealthSHH_2t6j_mstop500_ms275_ctau1_SHH', 'StealthSHH_2t6j_mstop500_ms275_ctau10_SHH', 'StealthSHH_2t6j_mstop500_ms275_ctau100_SHH', 'StealthSHH_2t6j_mstop500_ms275_ctau1000_SHH', 'StealthSHH_2t6j_mstop700_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop700_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop700_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop700_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop700_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop700_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop700_ms475_ctau0p01_SHH', 'StealthSHH_2t6j_mstop700_ms475_ctau0p1_SHH', 'StealthSHH_2t6j_mstop700_ms475_ctau1_SHH', 'StealthSHH_2t6j_mstop700_ms475_ctau10_SHH', 'StealthSHH_2t6j_mstop700_ms475_ctau100_SHH', 'StealthSHH_2t6j_mstop700_ms475_ctau1000_SHH', 'StealthSHH_2t6j_mstop900_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop900_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop900_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop900_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop900_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop900_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop900_ms675_ctau0p01_SHH', 'StealthSHH_2t6j_mstop900_ms675_ctau0p1_SHH', 'StealthSHH_2t6j_mstop900_ms675_ctau1_SHH', 'StealthSHH_2t6j_mstop900_ms675_ctau10_SHH', 'StealthSHH_2t6j_mstop900_ms675_ctau100_SHH', 'StealthSHH_2t6j_mstop900_ms675_ctau1000_SHH', 'StealthSHH_2t6j_mstop1100_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop1100_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop1100_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop1100_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop1100_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop1100_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop1100_ms875_ctau0p01_SHH', 'StealthSHH_2t6j_mstop1100_ms875_ctau0p1_SHH', 'StealthSHH_2t6j_mstop1100_ms875_ctau1_SHH', 'StealthSHH_2t6j_mstop1100_ms875_ctau10_SHH', 'StealthSHH_2t6j_mstop1100_ms875_ctau100_SHH', 'StealthSHH_2t6j_mstop1100_ms875_ctau1000_SHH', 'StealthSHH_2t6j_mstop1300_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop1300_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop1300_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop1300_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop1300_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop1300_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop1300_ms1075_ctau0p01_SHH', 'StealthSHH_2t6j_mstop1300_ms1075_ctau0p1_SHH', 'StealthSHH_2t6j_mstop1300_ms1075_ctau1_SHH', 'StealthSHH_2t6j_mstop1300_ms1075_ctau10_SHH', 'StealthSHH_2t6j_mstop1300_ms1075_ctau100_SHH', 'StealthSHH_2t6j_mstop1300_ms1075_ctau1000_SHH', 'StealthSHH_2t6j_mstop1500_ms100_ctau0p01_SHH', 'StealthSHH_2t6j_mstop1500_ms100_ctau0p1_SHH', 'StealthSHH_2t6j_mstop1500_ms100_ctau1_SHH', 'StealthSHH_2t6j_mstop1500_ms100_ctau10_SHH', 'StealthSHH_2t6j_mstop1500_ms100_ctau100_SHH', 'StealthSHH_2t6j_mstop1500_ms100_ctau1000_SHH', 'StealthSHH_2t6j_mstop1500_ms1275_ctau0p01_SHH', 'StealthSHH_2t6j_mstop1500_ms1275_ctau0p1_SHH', 'StealthSHH_2t6j_mstop1500_ms1275_ctau1_SHH', 'StealthSHH_2t6j_mstop1500_ms1275_ctau10_SHH', 'StealthSHH_2t6j_mstop1500_ms1275_ctau100_SHH', 'StealthSHH_2t6j_mstop1500_ms1275_ctau1000_SHH']
+
+#sign = ['StealthSYY_2t6j_mstop300_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop300_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop300_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop300_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop300_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop300_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop500_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop500_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop500_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop500_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop500_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop500_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop500_ms275_ctau0p01_SYY', 'StealthSYY_2t6j_mstop500_ms275_ctau0p1_SYY', 'StealthSYY_2t6j_mstop500_ms275_ctau1_SYY', 'StealthSYY_2t6j_mstop500_ms275_ctau10_SYY', 'StealthSYY_2t6j_mstop500_ms275_ctau100_SYY', 'StealthSYY_2t6j_mstop500_ms275_ctau1000_SYY', 'StealthSYY_2t6j_mstop700_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop700_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop700_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop700_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop700_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop700_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop700_ms475_ctau0p01_SYY', 'StealthSYY_2t6j_mstop700_ms475_ctau0p1_SYY', 'StealthSYY_2t6j_mstop700_ms475_ctau1_SYY', 'StealthSYY_2t6j_mstop700_ms475_ctau10_SYY', 'StealthSYY_2t6j_mstop700_ms475_ctau100_SYY', 'StealthSYY_2t6j_mstop700_ms475_ctau1000_SYY', 'StealthSYY_2t6j_mstop900_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop900_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop900_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop900_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop900_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop900_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop900_ms675_ctau0p01_SYY', 'StealthSYY_2t6j_mstop900_ms675_ctau0p1_SYY', 'StealthSYY_2t6j_mstop900_ms675_ctau1_SYY', 'StealthSYY_2t6j_mstop900_ms675_ctau10_SYY', 'StealthSYY_2t6j_mstop900_ms675_ctau100_SYY', 'StealthSYY_2t6j_mstop900_ms675_ctau1000_SYY', 'StealthSYY_2t6j_mstop1100_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop1100_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop1100_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop1100_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop1100_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop1100_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop1100_ms875_ctau0p01_SYY', 'StealthSYY_2t6j_mstop1100_ms875_ctau0p1_SYY', 'StealthSYY_2t6j_mstop1100_ms875_ctau1_SYY', 'StealthSYY_2t6j_mstop1100_ms875_ctau10_SYY', 'StealthSYY_2t6j_mstop1100_ms875_ctau100_SYY', 'StealthSYY_2t6j_mstop1100_ms875_ctau1000_SYY', 'StealthSYY_2t6j_mstop1300_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop1300_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop1300_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop1300_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop1300_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop1300_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop1300_ms1075_ctau0p01_SYY', 'StealthSYY_2t6j_mstop1300_ms1075_ctau0p1_SYY', 'StealthSYY_2t6j_mstop1300_ms1075_ctau1_SYY', 'StealthSYY_2t6j_mstop1300_ms1075_ctau10_SYY', 'StealthSYY_2t6j_mstop1300_ms1075_ctau100_SYY', 'StealthSYY_2t6j_mstop1300_ms1075_ctau1000_SYY', 'StealthSYY_2t6j_mstop1500_ms100_ctau0p01_SYY', 'StealthSYY_2t6j_mstop1500_ms100_ctau0p1_SYY', 'StealthSYY_2t6j_mstop1500_ms100_ctau1_SYY', 'StealthSYY_2t6j_mstop1500_ms100_ctau10_SYY', 'StealthSYY_2t6j_mstop1500_ms100_ctau100_SYY', 'StealthSYY_2t6j_mstop1500_ms100_ctau1000_SYY', 'StealthSYY_2t6j_mstop1500_ms1275_ctau0p01_SYY', 'StealthSYY_2t6j_mstop1500_ms1275_ctau0p1_SYY', 'StealthSYY_2t6j_mstop1500_ms1275_ctau1_SYY', 'StealthSYY_2t6j_mstop1500_ms1275_ctau10_SYY', 'StealthSYY_2t6j_mstop1500_ms1275_ctau100_SYY', 'StealthSYY_2t6j_mstop1500_ms1275_ctau1000_SYY']
+
+sign = ['StealthSYY_2t6j_mstop500_ms100_ctau0p01_SYY',]
+
+
+#Stealth SHH:
+if RUN_ERA==2017 and "StealthSHH" in sign[0]:
+    INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_fix_SHH/")% str(RUN_ERA)
+if RUN_ERA==2018 and "StealthSHH" in sign[0]:
+    print "ebbene?"
+    INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_fix_SHH/")% str(RUN_ERA)
+if RUN_ERA==2018 and "StealthSYY" in sign[0]:
+    INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_fix_SYY/")% str(RUN_ERA)
+if RUN_ERA==2016 and "StealthSHH" in sign[0]:
+    INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_fix_SHH/")% str(RUN_ERA)
+if RUN_ERA==2016 and "StealthSYY" in sign[0]:
+    INPUTDIR = ("/pnfs/desy.de/cms/tier2/store/user/lbenato/v6_calo_AOD_%s_07October2021_fix_SYY/")% str(RUN_ERA)
+
+print INPUTDIR
+
 sample_list = sign#data#sign#data#sign#data#data#sign#data#sign#data#sign+data#data#sign#data#sign#data#sign#data#sign#back#sign#data#sign#data#back#sign#data#back#sign#data#sign#back#data#back#sign#sign#data#back#sign#data#back#data#data+back
 
 dicty = {}
@@ -188,6 +251,10 @@ for s in sample_list:
         s1 = requests[ss][1:].split('/')[0]
         if 'splitSUSY_M2400_100' in ss:
             s1 = "CRAB_UserFiles"
+        if 'HeavyHiggsToLLP' in ss:
+            s1 = "CRAB_UserFiles"
+        if 'zPrime' in ss:
+            s1 = "CRAB_UserFiles"
         print s1
         dicty[ss] = s1+'/crab_'+ss+'/'
         if s=="DYJetsToLL" and RUN_ERA==2018:
@@ -199,9 +266,9 @@ for s in sample_list:
 if run_condor:
     print "Run condor!"
     NCPUS   = 1
-    MEMORY  = 512#4000#5000#2000 too small?#10000#tried 10 GB for a job killed by condor automatically
-    RUNTIME = 3600#*12#86400
-    root_files_per_job = 100#40#20#40#
+    MEMORY  = 512*2#4000#5000#2000 too small?#10000#tried 10 GB for a job killed by condor automatically
+    RUNTIME = 3600*20#*12#86400
+    root_files_per_job = 100#Stealth!#100#40#20#40#
     
     sample_to_loop = dicty.keys()
     #print sample_to_loop
@@ -304,6 +371,14 @@ if run_condor:
             isSignal = True
             isData = False
             mc_PU_file+=('PileupReweight_ZJetsToNuNu_HT-100ToInf_13TeV-madgraph_%s.root')%(pu_tag)
+        if ('HeavyHiggsToLLP' in s):
+            isSignal = True
+            isData = False
+            mc_PU_file+=('PileupReweight_ZJetsToNuNu_HT-100ToInf_13TeV-madgraph_%s.root')%(pu_tag)
+        if ('Stealth' in s):
+            isSignal = True
+            isData = False
+            mc_PU_file+=('PileupReweight_ZJetsToNuNu_HT-100ToInf_13TeV-madgraph_%s.root')%(pu_tag)
         if ('GluGluH2_H2ToSSTobbbb' in s):
             isSignal = True
             isData = False
@@ -382,8 +457,14 @@ if run_condor:
 
             cond_name = "skim_"+str(RUN_ERA)+"_v6_smear"+doRegion#+"_positive0p7"#"_syst_unc_JERUp"##+"Gen"#+"_nophoton"#+"_BeamHalo"##+"_bin_1_2"#+"_test"#
             cond_name = "skim_"+str(RUN_ERA)+"_v6_syst_unc"+doRegion
-            #COND_DIR = '/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/condor_'+cond_name+resubm_label
-            COND_DIR = '/nfs/dust/cms/user/lbenato/condor_'+cond_name+resubm_label
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_PDF_QCD_syst_unc"#+doRegion
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_heavy_higgs"#+doRegion
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_compare_SUSY_HH"#+doRegion
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_zPrime"#+doRegion
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_HeavyHiggs"#+doRegion
+            cond_name = "skim_"+str(RUN_ERA)+"_v6_stealth"#+doRegion
+            COND_DIR = '/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenceCMSSW/LLP_NN_Inference/condor_'+cond_name+resubm_label
+            #COND_DIR = '/nfs/dust/cms/user/lbenato/condor_'+cond_name+resubm_label
             if not(os.path.exists(COND_DIR)):
                 os.mkdir(COND_DIR)
 
@@ -433,8 +514,8 @@ if run_condor:
                         #HEM
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
-                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
-                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
+                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_signal_time_smearing ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' ' + data_smearing_file + ' ' + signal_smearing_file + ' ' + signal_CB_string + ' \n')
                         '''
                         #We are not ready for this
                         if isSignal:
@@ -452,8 +533,13 @@ if run_condor:
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_positive_jets_0p7 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_positive_jets_0p7 ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
 
-                        fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
-                        fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
+
+
+                        #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_PDF_QCD_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
+                        #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_PDF_QCD_syst_unc ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
 
                         #fout.write('echo ../bin/slc7_amd64_gcc820/tf_and_skim_v6_no_photonEFrac_cut ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' '  + doRegion + ' \n')
                         #fout.write('../bin/slc7_amd64_gcc820/tf_and_skim_v6_no_photonEFrac_cut ' + INPS+root_files[b] + '  ' + OUT+root_files[b] + skip_string  + ' ' + str(isSignal) + ' ' + str(isData)  + ' ' + mc_PU_file+ ' ' + mc_trigger_file + ' ' + mc_trigger_string + ' ' + doRegion + ' \n')
@@ -493,6 +579,7 @@ if run_condor:
                 #    print "job n. ", j_num, " DA FARE"
                 #    os.system('sh job_skim_'+str(j_num)+'.sh \n')
                 j_num +=1
+                #exit()
 
             os.chdir('../../')
 
