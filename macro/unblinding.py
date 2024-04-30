@@ -20,6 +20,7 @@ from NNInferenceCMSSW.LLP_NN_Inference.drawUtils import *
 
 
 ERA = "all"#"2016"#
+#ERA = "2018"
 TAG = ""#
 #TAG = "GH"
 
@@ -74,8 +75,8 @@ OUT_ele = "/afs/desy.de/user/l/lbenato/LLP_inference/CMSSW_11_1_3/src/NNInferenc
 
 OUT = "plots/v6_calo_AOD_"+ERA+"_unblinding_ARC/"
 
-PRELIMINARY = True
-OUT_paper = "fig/Preliminary/" if PRELIMINARY else "fig/"
+PRELIMINARY = False
+OUT_paper = "fig/Preliminary/" if PRELIMINARY else "fig_updated/"
 
 dnn_threshold = 0.996
 
@@ -514,6 +515,697 @@ def count_data(label):
         f.close()
         print "Info: dictionary written in file "+dump_name
 
+
+
+def count_data_JHEP(label):
+
+    #Open background prediction files, performed per era
+    main_pred_reg    = "SR"                                                                                      
+    main_pred_sample = "HighMET"
+    extr_region      = "WtoLN"
+    dataset_label = ""
+
+    PREDDIR = YIELDDIR_BASE+main_pred_reg+"/"
+    pred_file_name = PREDDIR+"BkgPredResults_"+ERA+"_"+main_pred_reg+"_"+main_pred_sample
+    pred_file_name+="_eta_1p0"
+    if ERA!="2016":
+        pred_file_name+="_phi_cut"
+    else:
+        dataset_label += "_"+TAG[0]+"-"+TAG[1]
+    pred_file_name+= "_vs_eta"
+
+    #tag_label: part of the yaml file name, but also part of the dictionary keys
+    tag_label = ""
+    if ERA=="2016":
+        tag_label+=dataset_label###"_"+TAG[0]+"-"+TAG[1]
+    tag_label += "_MinDPhi_0p5"
+    pred_file_name+= tag_label
+
+    #Mistag
+    with open(pred_file_name+".yaml","r") as f:
+        #print "Info: opening dictionary in file "+pred_file_name+".yaml"
+        results = yaml.load(f, Loader=yaml.Loader)
+        #print results
+        f.close()
+        #print "  --  --  --  --  --"
+
+    #Mistag uncertainties
+    #with open(UNCDIR+"signal_bkg_datacard_unc"+dataset_label+".yaml","r") as f:
+    with open(UNCDIR+"signal_bkg_unc"+dataset_label+".yaml","r") as f:
+        uncertainties = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        #print uncertainties
+        #print "  --  --  --  --  --"
+
+    #Cosmics
+    cosmic_file_name = PREDDIR+"BkgPredResults_"+ERA+"_SR_cosmic"+dataset_label+".yaml"
+    with open(cosmic_file_name,"r") as f:
+        #print "Info: opening dictionary in file "+cosmic_file_name
+        cosmic = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        #print cosmic
+        #print "  --  --  --  --  --"
+
+    #Beam halo
+    bh_file_name = PREDDIR+"BkgPredResults_"+ERA+"_SR_beam_halo"+dataset_label+".yaml"
+    with open(bh_file_name,"r") as f:
+        #print "Info: opening dictionary in file "+bh_file_name
+        bh = yaml.load(f, Loader=yaml.Loader)
+        f.close()
+        #print bh
+        #print "  --  --  --  --  --"
+
+
+    y2_mistag  = results[extr_region+tag_label][main_pred_sample]['pred_2_from_1']
+    y2_cosmic = cosmic["bkg_cosmic"]
+    y2_bh = bh["bkg_bh"]
+
+    y2_unc_mistag  = uncertainties['bkg_tot']/100.
+    y2_unc_cosmic = cosmic["unc_cosmic"]/100.
+    y2_unc_bh = bh["unc_bh"]/100.
+
+    y1_mistag  = results[extr_region+tag_label][main_pred_sample]['pred_1']
+    y1_unc_mistag = uncertainties['bkg_tot_bin1']/100.
+
+    print "SF files: ",OUT_pho+"data_MC_SF"+dataset_label+"_1bin.root"
+    sf_pho_file = TFile(OUT_pho+"data_MC_SF"+dataset_label+"_1bin.root","READ")
+    sf_pho_file.cd()
+    sf_pho_1ns = sf_pho_file.Get("ratio_1ns")
+    sf_pho_2ns = sf_pho_file.Get("ratio_2ns")
+    sf_pho_1ns.SetDirectory(0)
+    sf_pho_2ns.SetDirectory(0)
+    sf_pho_file.Close()
+
+    sf_ele_file = TFile(OUT_ele+"data_MC_SF"+dataset_label+"_1bin.root","READ")
+    sf_ele_file.cd()
+    sf_ele_1ns = sf_ele_file.Get("ratio_1ns")
+    sf_ele_2ns = sf_ele_file.Get("ratio_2ns")
+    sf_ele_1ns.SetDirectory(0)
+    sf_ele_2ns.SetDirectory(0)
+    sf_ele_file.Close()
+
+    sf_pho = sf_pho_1ns.GetBinContent(1) if ( abs(1-sf_pho_1ns.GetBinContent(1))>abs(1-sf_pho_2ns.GetBinContent(1)) ) else sf_pho_2ns.GetBinContent(1)
+    sf_unc_pho = sf_pho_1ns.GetBinError(1) if ( abs(1-sf_pho_1ns.GetBinContent(1))>abs(1-sf_pho_2ns.GetBinContent(1)) ) else sf_pho_2ns.GetBinError(1)
+
+    sf_ele = sf_ele_1ns.GetBinContent(1) if ( abs(1-sf_ele_1ns.GetBinContent(1))>abs(1-sf_ele_2ns.GetBinContent(1)) ) else sf_ele_2ns.GetBinContent(1)
+    sf_unc_ele = sf_ele_1ns.GetBinError(1) if ( abs(1-sf_ele_1ns.GetBinContent(1))>abs(1-sf_ele_2ns.GetBinContent(1)) ) else sf_ele_2ns.GetBinError(1)
+
+    chunk_size = 100000
+    ev_count = defaultdict(dict)
+
+    #tree_weight_dict = defaultdict(dict)
+    tree_weight_dict = get_tree_weights_BR_scan(sign,100,LUMI/1000.)
+
+    '''
+    for b in sign:
+        for i, ss in enumerate(samples[b]['files']):
+            t_w = 0.
+            if ('Run201') in ss:
+                t_w = 1.
+            else:
+                if not os.path.isfile(MAIN_S+ss+'.root'):
+                    print("!!!File ", MAIN_S+ss+'.root', " does not exist! Continuing")
+                    continue
+                print "opening ", MAIN_S+ss+'.root'
+                filename = TFile(MAIN_S+ss+'.root', "READ")
+                if filename.GetListOfKeys().Contains("n_pass"):
+                    b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
+                    n_pass      = filename.Get("n_pass").GetBinContent(1)
+                    n_odd       = filename.Get("n_odd").GetBinContent(1)
+                    filename.Close()
+                    if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in ss:
+                        nevents = sample[ss]['nevents']
+                        xs = 1.
+                    else:
+                        nevents = filename.Get("c_nEvents").GetBinContent(1)
+                        xs = sample[ss]['xsec'] * sample[ss]['kfactor']
+                    t_w = LUMI * xs / nevents
+                    if(b_skipTrain>0):
+                        if(n_odd>0):
+                            t_w *= float(n_pass/n_odd)
+
+            tree_weight_dict[ss] = t_w
+
+    '''
+
+    #calculate first signal yield
+    for d in sign:
+        list_of_variables = ["isSR","Jets.eta","Jets.pt","Jets.phi","Jets.sigprob","Jets.nRecHitsEB","dt_ecal_dist","MinJetMetDPhi","min_dPhi_jets_eta_1p0_"+str(dnn_threshold).replace(".","p"),"EventWeight","PUReWeight","TriggerWeight"]
+        print "\n"
+        list_files = samples[d]["files"]
+
+        pre = np.array([])
+        bin0 = np.array([])
+        bin1 = np.array([])
+        bin2 = np.array([])
+        
+        for i, l in enumerate(list_files):
+
+            print "Reading ", l
+            gen = uproot.iterate(MAIN_S+l+".root","tree",list_of_variables,entrysteps=chunk_size)
+            n_it = 0
+
+            #print gen
+            for arrays in gen:
+                ################################################################
+                print "Ev n. ", chunk_size*(1+n_it)
+
+                #SR mask
+                cut_mask = arrays["isSR"]>0
+
+                #MinDPhi
+                cut_mask = np.logical_and( cut_mask, arrays["MinJetMetDPhi"]>0.5)
+
+                #cosmic veto
+                cosmic_mask = arrays["dt_ecal_dist"]>0.5
+                cut_mask = np.logical_and(cut_mask,cosmic_mask)
+
+                #cut jets kinematics
+                mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
+                cut_jets = mask_eta
+
+                if ERA=="2017":
+                    MINPHI = 3.5
+                    MAXPHI = 2.7
+                    mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                    cut_jets = np.logical_and(mask_eta,mask_phi)
+
+                if ERA=="2018":
+                    MINPHI = 0.9
+                    MAXPHI = 0.4
+                    mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                    cut_jets = np.logical_and(mask_eta,mask_phi)
+                    #cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM_pt_30_all_eta"]==0)))
+
+
+                if ERA=="2016":
+                    cut_jets = mask_eta
+
+                cut_mask = np.logical_and(cut_mask,(cut_jets.any()==True))
+
+                #beam halo
+                mask_dphi = arrays["min_dPhi_jets_eta_1p0_"+str(dnn_threshold).replace(".","p")]<0.05
+                mask_low_multi_tag = np.logical_and(arrays["Jets.sigprob"]>0.996 , arrays["Jets.nRecHitsEB"]<=10)
+                mask_low_multi_tag = np.logical_and(mask_dphi,mask_low_multi_tag)
+                bh_mask = np.logical_not(mask_low_multi_tag.any()==True)
+
+                cut_mask = np.logical_and(cut_mask,bh_mask)
+                cut_jets = np.logical_and(cut_jets,cut_mask)
+
+
+                eventweight = arrays["EventWeight"][cut_mask]
+                pureweight = arrays["PUReWeight"][cut_mask]
+                triggerweight = arrays["TriggerWeight"][cut_mask]
+
+
+                scale = 1.
+                if "ctau500" in l:
+                    scale = 3.8154#2.776
+                if "ctau3000" in l:
+                    scale = 11.405#8.548
+
+                weight = np.multiply(eventweight,np.multiply(pureweight,triggerweight))*tree_weight_dict[l]*scale
+
+                sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]
+                pt      = arrays["Jets.pt"][cut_jets][cut_mask]
+
+                tag_mask = (sigprob > dnn_threshold)
+                bin0_m = (sigprob[tag_mask].counts == 0)
+                bin1_m = (sigprob[tag_mask].counts == 1)
+                bin2_m = (sigprob[tag_mask].counts > 1)
+
+                #Corrections for tagged jets
+                sigprob_bin1 = sigprob[bin1_m]
+                sigprob_bin2 = sigprob[bin2_m]
+
+                pt_bin1 = pt[bin1_m]
+                pt_bin2 = pt[bin2_m]
+
+                pt_tag_bin1 = pt_bin1[sigprob_bin1>dnn_threshold]
+                pt_tag_bin2 = pt_bin2[sigprob_bin2>dnn_threshold]
+
+                pt_ele_mask_bin1 = (pt_tag_bin1 > 70)
+                pt_pho_mask_bin1 = (pt_tag_bin1 <= 70)
+
+                pt_ele_mask_bin2 = (pt_tag_bin2 > 70)
+                pt_pho_mask_bin2 = (pt_tag_bin2 <= 70)
+
+                dnnweight_bin1 = (sf_ele*pt_ele_mask_bin1+sf_pho*pt_pho_mask_bin1).prod()
+                dnnweight_bin2 = (sf_ele*pt_ele_mask_bin2+sf_pho*pt_pho_mask_bin2).prod()
+
+                #print dnnweight_bin1
+                #print dnnweight_bin2
+                pre = np.concatenate( (pre, np.multiply(cut_mask[cut_mask],weight)  ) )
+                bin0 = np.concatenate( (bin0, np.multiply(bin0_m,weight)  ) ) 
+                #bin1 = np.concatenate( (bin1, np.multiply(bin1_m,weight)  ) ) 
+                #bin2 = np.concatenate( (bin2, np.multiply(bin2_m,weight)  ) ) 
+                bin1 = np.concatenate( (bin1, np.multiply(bin1_m[bin1_m], np.multiply(weight[bin1_m],dnnweight_bin1)  )  ) ) 
+                bin2 = np.concatenate( (bin2, np.multiply(bin2_m[bin2_m], np.multiply(weight[bin2_m],dnnweight_bin2)  )  ) ) 
+
+                n_it+=1
+                #if n_it>0:
+                #    break
+
+        ev_count[d]['pre'] = pre.sum()
+        ev_count[d]['bin0'] = bin0.sum()
+        ev_count[d]['bin1'] = bin1.sum()
+        ev_count[d]['bin2'] = bin2.sum()
+
+        print "events passing in signal ", d
+        #print "presel : ", pre.sum()
+        print "bin 0 : ", bin0.sum()
+        print "bin 1 : ", bin1.sum()
+        print "bin 2 : ", bin2.sum()
+
+    for d in data:
+        list_of_variables = ["isSR","Jets.eta","Jets.phi","Jets.sigprob","Jets.nRecHitsEB","dt_ecal*_dist","MinJetMetDPhi","min_dPhi_jets_eta_1p0_"+str(dnn_threshold).replace(".","p"),"RunNumber","LumiNumber","EventNumber"]#["*"]
+        if ERA=="2018":
+            list_of_variables += ["nCHSJets_in_HEM*"]
+        print "\n"
+        list_files = samples[d]["files"]
+
+        pre = np.array([])
+        bin0 = np.array([])
+        bin1 = np.array([])
+        bin2 = np.array([])
+        RunNumber = np.array([])
+        LumiNumber = np.array([])
+        EventNumber = np.array([])
+        RunNumber_bin1 = np.array([])
+        LumiNumber_bin1 = np.array([])
+        EventNumber_bin1 = np.array([])
+        
+        for i, l in enumerate(list_files):
+
+            tmp_lumi = lumi["HighMET"][(l.split("-")[0]).split("HighMETRun"+ERA)[1]] 
+
+            pre_tmp = np.array([])
+            bin0_tmp = np.array([])
+            bin1_tmp = np.array([])
+            bin2_tmp = np.array([])
+
+            print "Reading ", l
+            gen = uproot.iterate(MAIN+l+".root","tree",list_of_variables,entrysteps=chunk_size)
+            n_it = 0
+
+            #print gen
+            for arrays in gen:
+                ################################################################
+                print "Ev n. ", chunk_size*(1+n_it)
+
+                #SR mask
+                cut_mask = arrays["isSR"]>0
+
+                #MinDPhi
+                cut_mask = np.logical_and( cut_mask, arrays["MinJetMetDPhi"]>0.5)
+
+                #cosmic veto
+                cosmic_mask = arrays["dt_ecal_dist"]>0.5
+                cut_mask = np.logical_and(cut_mask,cosmic_mask)
+
+                if dnn_threshold<0.996:
+                    cosmic_mask = arrays["dt_ecal_no_tag_dist"]>0.5
+                    cut_mask = np.logical_and(cut_mask,cosmic_mask)
+
+                #cut jets kinematics
+                mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
+                cut_jets = mask_eta
+
+                if ERA=="2017":
+                    MINPHI = 3.5
+                    MAXPHI = 2.7
+                    mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                    cut_jets = np.logical_and(mask_eta,mask_phi)
+
+                if ERA=="2018":
+                    MINPHI = 0.9
+                    MAXPHI = 0.4
+                    mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                    cut_jets = np.logical_and(mask_eta,mask_phi)
+                    cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM_pt_30_all_eta"]==0)))
+
+
+                if ERA=="2016":
+                    cut_jets = mask_eta
+
+                cut_mask = np.logical_and(cut_mask,(cut_jets.any()==True))
+
+                #beam halo
+                mask_dphi = arrays["min_dPhi_jets_eta_1p0_"+str(dnn_threshold).replace(".","p")]<0.05
+                mask_low_multi_tag = np.logical_and(arrays["Jets.sigprob"]>0.996 , arrays["Jets.nRecHitsEB"]<=10)
+                mask_low_multi_tag = np.logical_and(mask_dphi,mask_low_multi_tag)
+                bh_mask = np.logical_not(mask_low_multi_tag.any()==True)
+
+                cut_mask = np.logical_and(cut_mask,bh_mask)
+                cut_jets = np.logical_and(cut_jets,cut_mask)
+
+
+                sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]
+                tag_mask = (sigprob > dnn_threshold)
+                bin0_m = (sigprob[tag_mask].counts == 0)
+                bin1_m = (sigprob[tag_mask].counts == 1)
+                bin2_m = (sigprob[tag_mask].counts > 1)
+                
+                pre = np.concatenate( (pre, np.multiply(cut_mask,1.)  ) )
+                bin0 = np.concatenate( (bin0, np.multiply(bin0_m,1.)  ) ) 
+                bin1 = np.concatenate( (bin1, np.multiply(bin1_m,1.)  ) ) 
+                bin2 = np.concatenate( (bin2, np.multiply(bin2_m,1.)  ) ) 
+
+                pre_tmp = np.concatenate( (pre_tmp, np.multiply(cut_mask,1.)  ) )
+                bin0_tmp = np.concatenate( (bin0_tmp, np.multiply(bin0_m,1.)  ) ) 
+                bin1_tmp = np.concatenate( (bin1_tmp, np.multiply(bin1_m,1.)  ) ) 
+                bin2_tmp = np.concatenate( (bin2_tmp, np.multiply(bin2_m,1.)  ) ) 
+
+
+                RunNumber = np.concatenate( (RunNumber, arrays["RunNumber"][cut_mask][bin2_m] ) )
+                LumiNumber = np.concatenate( (LumiNumber, arrays["LumiNumber"][cut_mask][bin2_m] ) )
+                EventNumber = np.concatenate( (EventNumber, arrays["EventNumber"][cut_mask][bin2_m] ) )
+
+                RunNumber_bin1 = np.concatenate( (RunNumber_bin1, arrays["RunNumber"][cut_mask][bin1_m] ) )
+                LumiNumber_bin1 = np.concatenate( (LumiNumber_bin1, arrays["LumiNumber"][cut_mask][bin1_m] ) )
+                EventNumber_bin1 = np.concatenate( (EventNumber_bin1, arrays["EventNumber"][cut_mask][bin1_m] ) )
+
+                n_it+=1
+                #if n_it>0:
+                #    break
+
+            ev_count[l]['pre'] = pre_tmp.sum()
+            ev_count[l]['bin0'] = bin0_tmp.sum()
+            ev_count[l]['bin1'] = bin1_tmp.sum()
+            ev_count[l]['bin2'] = bin2_tmp.sum()
+
+            ev_count[l]['bin1_pred'] = y1_mistag*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred'] = (y2_mistag + y2_cosmic + y2_bh)*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_mistag'] = (y2_mistag)*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_cosmic'] = (y2_cosmic)*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_bh'] = (y2_bh)*tmp_lumi/LUMI
+
+            ev_count[l]['bin1_pred_unc'] = y1_unc_mistag*y1_mistag*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_unc'] = math.sqrt(  (y2_mistag*y2_unc_mistag)**2 + (y2_cosmic*y2_unc_cosmic)**2 + (y2_bh*y2_unc_bh)**2  )*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_unc_mistag'] = y2_mistag*y2_unc_mistag*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_unc_cosmic'] = y2_cosmic*y2_unc_cosmic*tmp_lumi/LUMI
+            ev_count[l]['bin2_pred_unc_bh'] = y2_bh*y2_unc_bh*tmp_lumi/LUMI
+
+            #Here: loop over each run era
+            '''
+            print "Stop at Run A"
+            print "bin 0 : ", bin0_tmp.sum()
+            print "bin 1 : ", bin1_tmp.sum()
+            print "bin 2 : ", bin2_tmp.sum()
+
+            print "Events in bin 2"
+            for a in range(RunNumber.shape[0]):
+                np.set_printoptions(suppress=True)
+                print int(RunNumber[a]),":",int(LumiNumber[a]),":",int(EventNumber[a])
+
+            print "Events in bin 1"
+            for a in range(RunNumber_bin1.shape[0]):
+                np.set_printoptions(suppress=True)
+                print int(RunNumber_bin1[a]),":",int(LumiNumber_bin1[a]),":",int(EventNumber_bin1[a])
+            break
+            '''
+        #exit()
+
+        ev_count[d]['pre'] = pre.sum()
+        ev_count[d]['bin0'] = bin0.sum()
+        ev_count[d]['bin1'] = bin1.sum()
+        ev_count[d]['bin2'] = bin2.sum()
+        ev_count[d]['bin1_pred'] = y1_mistag
+        ev_count[d]['bin2_pred'] = y2_mistag + y2_cosmic + y2_bh
+
+        ev_count[d]['bin2_pred_mistag'] = (y2_mistag)
+        ev_count[d]['bin2_pred_cosmic'] = (y2_cosmic)
+        ev_count[d]['bin2_pred_bh'] = (y2_bh)
+
+        ev_count[d]['bin1_pred_unc'] = y1_unc_mistag*y1_mistag
+        ev_count[d]['bin2_pred_unc'] = math.sqrt(  (y2_mistag*y2_unc_mistag)**2 + (y2_cosmic*y2_unc_cosmic)**2 + (y2_bh*y2_unc_bh)**2  )
+
+        ev_count[d]['bin2_pred_unc_mistag'] = y2_mistag*y2_unc_mistag
+        ev_count[d]['bin2_pred_unc_cosmic'] = y2_cosmic*y2_unc_cosmic
+        ev_count[d]['bin2_pred_unc_bh'] = y2_bh*y2_unc_bh
+
+
+        print "events passing in ", d
+        #print "presel : ", pre.sum()
+        print "bin 0 : ", bin0.sum()
+        print "bin 1 : ", bin1.sum()
+        print "bin 2 : ", bin2.sum()
+
+    print ev_count
+    
+    dump_name = OUT+"Dict_unblinding_JHEP"+label
+    if TAG!="":
+        dump_name+="_"+TAG[0]+"-"+TAG[1]
+    dump_name+=".yaml"
+
+    with open(dump_name,"w") as f:
+        yaml.dump(ev_count, f)
+        f.close()
+        print "Info: dictionary written in file "+dump_name
+    
+
+
+def count_signal_debug(label):
+
+    #Open background prediction files, performed per era
+    main_pred_reg    = "SR"                                                                                      
+    main_pred_sample = "HighMET"
+    extr_region      = "WtoLN"
+    dataset_label = ""
+
+    PREDDIR = YIELDDIR_BASE+main_pred_reg+"/"
+    pred_file_name = PREDDIR+"BkgPredResults_"+ERA+"_"+main_pred_reg+"_"+main_pred_sample
+    pred_file_name+="_eta_1p0"
+    if ERA!="2016":
+        pred_file_name+="_phi_cut"
+    else:
+        dataset_label += "_"+TAG[0]+"-"+TAG[1]
+    pred_file_name+= "_vs_eta"
+
+    #tag_label: part of the yaml file name, but also part of the dictionary keys
+    tag_label = ""
+    if ERA=="2016":
+        tag_label+=dataset_label###"_"+TAG[0]+"-"+TAG[1]
+    tag_label += "_MinDPhi_0p5"
+    pred_file_name+= tag_label
+
+    print "SF files: ",OUT_pho+"data_MC_SF"+dataset_label+"_1bin.root"
+    sf_pho_file = TFile(OUT_pho+"data_MC_SF"+dataset_label+"_1bin.root","READ")
+    sf_pho_file.cd()
+    sf_pho_1ns = sf_pho_file.Get("ratio_1ns")
+    sf_pho_2ns = sf_pho_file.Get("ratio_2ns")
+    sf_pho_1ns.SetDirectory(0)
+    sf_pho_2ns.SetDirectory(0)
+    sf_pho_file.Close()
+
+    sf_ele_file = TFile(OUT_ele+"data_MC_SF"+dataset_label+"_1bin.root","READ")
+    sf_ele_file.cd()
+    sf_ele_1ns = sf_ele_file.Get("ratio_1ns")
+    sf_ele_2ns = sf_ele_file.Get("ratio_2ns")
+    sf_ele_1ns.SetDirectory(0)
+    sf_ele_2ns.SetDirectory(0)
+    sf_ele_file.Close()
+
+    sf_pho = sf_pho_1ns.GetBinContent(1) if ( abs(1-sf_pho_1ns.GetBinContent(1))>abs(1-sf_pho_2ns.GetBinContent(1)) ) else sf_pho_2ns.GetBinContent(1)
+    sf_unc_pho = sf_pho_1ns.GetBinError(1) if ( abs(1-sf_pho_1ns.GetBinContent(1))>abs(1-sf_pho_2ns.GetBinContent(1)) ) else sf_pho_2ns.GetBinError(1)
+
+    sf_ele = sf_ele_1ns.GetBinContent(1) if ( abs(1-sf_ele_1ns.GetBinContent(1))>abs(1-sf_ele_2ns.GetBinContent(1)) ) else sf_ele_2ns.GetBinContent(1)
+    sf_unc_ele = sf_ele_1ns.GetBinError(1) if ( abs(1-sf_ele_1ns.GetBinContent(1))>abs(1-sf_ele_2ns.GetBinContent(1)) ) else sf_ele_2ns.GetBinError(1)
+
+    chunk_size = 100000
+    ev_count = defaultdict(dict)
+
+    tree_weight_dict = get_tree_weights_BR_scan(sign,100,LUMI/1000.)
+
+    '''
+    for b in sign:
+        for i, ss in enumerate(samples[b]['files']):
+            t_w = 0.
+            if ('Run201') in ss:
+                t_w = 1.
+            else:
+                if not os.path.isfile(MAIN_S+ss+'.root'):
+                    print("!!!File ", MAIN_S+ss+'.root', " does not exist! Continuing")
+                    continue
+                print "opening ", MAIN_S+ss+'.root'
+                filename = TFile(MAIN_S+ss+'.root', "READ")
+                if filename.GetListOfKeys().Contains("n_pass"):
+                    b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
+                    n_pass      = filename.Get("n_pass").GetBinContent(1)
+                    n_odd       = filename.Get("n_odd").GetBinContent(1)
+                    filename.Close()
+                    if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in ss:
+                        nevents = sample[ss]['nevents']
+                        xs = 1.
+                    else:
+                        nevents = filename.Get("c_nEvents").GetBinContent(1)
+                        xs = sample[ss]['xsec'] * sample[ss]['kfactor']
+
+                    print "LUMI ", LUMI
+                    print "xs ", xs
+                    print "nevents ", nevents
+
+                    t_w = LUMI * xs / nevents
+                    if(b_skipTrain>0):
+                        if(n_odd>0):
+                            t_w *= float(n_pass/n_odd)
+
+            tree_weight_dict[ss] = t_w
+
+    '''
+
+    print "\n"
+    print "weight dictionary:"
+    for ky in tree_weight_dict.keys():
+        print ky, tree_weight_dict[ky]
+    print "\n"
+
+    #calculate first signal yield
+    for d in sign:
+        list_of_variables = ["isSR","Jets.eta","Jets.pt","Jets.phi","Jets.sigprob","Jets.nRecHitsEB","dt_ecal_dist","MinJetMetDPhi","min_dPhi_jets_eta_1p0_"+str(dnn_threshold).replace(".","p"),"EventWeight","PUReWeight","TriggerWeight"]
+        print "\n"
+        list_files = samples[d]["files"]
+
+        pre = np.array([])
+        bin0 = np.array([])
+        bin1 = np.array([])
+        bin2 = np.array([])
+        
+        for i, l in enumerate(list_files):
+
+            print "Reading ", l
+            gen = uproot.iterate(MAIN_S+l+".root","tree",list_of_variables,entrysteps=chunk_size)
+            n_it = 0
+
+            #print gen
+            for arrays in gen:
+                ################################################################
+                print "Ev n. ", chunk_size*(1+n_it)
+
+                #SR mask
+                cut_mask = arrays["isSR"]>0
+
+                #MinDPhi
+                cut_mask = np.logical_and( cut_mask, arrays["MinJetMetDPhi"]>0.5)
+
+                #cosmic veto
+                cosmic_mask = arrays["dt_ecal_dist"]>0.5
+                cut_mask = np.logical_and(cut_mask,cosmic_mask)
+
+                #cut jets kinematics
+                mask_eta = np.logical_and(arrays["Jets.eta"]>-1. , arrays["Jets.eta"]<1.)
+                cut_jets = mask_eta
+
+                if ERA=="2017":
+                    MINPHI = 3.5
+                    MAXPHI = 2.7
+                    mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                    cut_jets = np.logical_and(mask_eta,mask_phi)
+
+                if ERA=="2018":
+                    MINPHI = 0.9
+                    MAXPHI = 0.4
+                    mask_phi = np.logical_or(arrays["Jets.phi"]>MINPHI , arrays["Jets.phi"]<MAXPHI)
+                    cut_jets = np.logical_and(mask_eta,mask_phi)
+                    #cut_mask = np.logical_and( cut_mask, np.logical_or( arrays["RunNumber"]<319077, np.logical_and( arrays["RunNumber"]>=319077, arrays["nCHSJets_in_HEM_pt_30_all_eta"]==0)))
+
+
+                if ERA=="2016":
+                    cut_jets = mask_eta
+
+                cut_mask = np.logical_and(cut_mask,(cut_jets.any()==True))
+
+                #beam halo
+                mask_dphi = arrays["min_dPhi_jets_eta_1p0_"+str(dnn_threshold).replace(".","p")]<0.05
+                mask_low_multi_tag = np.logical_and(arrays["Jets.sigprob"]>0.996 , arrays["Jets.nRecHitsEB"]<=10)
+                mask_low_multi_tag = np.logical_and(mask_dphi,mask_low_multi_tag)
+                bh_mask = np.logical_not(mask_low_multi_tag.any()==True)
+
+                cut_mask = np.logical_and(cut_mask,bh_mask)
+                cut_jets = np.logical_and(cut_jets,cut_mask)
+
+
+                eventweight = arrays["EventWeight"][cut_mask]
+                pureweight = arrays["PUReWeight"][cut_mask]
+                triggerweight = arrays["TriggerWeight"][cut_mask]
+
+                scale = 1.
+                if "ctau500" in l:
+                    scale = 2.75
+                if "ctau3000" in l:
+                    scale = 8.48
+
+                weight = np.multiply(eventweight,np.multiply(pureweight,triggerweight))*tree_weight_dict[l]*scale
+
+                sigprob = arrays["Jets.sigprob"][cut_jets][cut_mask]
+                pt      = arrays["Jets.pt"][cut_jets][cut_mask]
+
+                tag_mask = (sigprob > dnn_threshold)
+                bin0_m = (sigprob[tag_mask].counts == 0)
+                bin1_m = (sigprob[tag_mask].counts == 1)
+                bin2_m = (sigprob[tag_mask].counts > 1)
+
+                #Corrections for tagged jets
+                sigprob_bin1 = sigprob[bin1_m]
+                sigprob_bin2 = sigprob[bin2_m]
+
+                pt_bin1 = pt[bin1_m]
+                pt_bin2 = pt[bin2_m]
+
+                pt_tag_bin1 = pt_bin1[sigprob_bin1>dnn_threshold]
+                pt_tag_bin2 = pt_bin2[sigprob_bin2>dnn_threshold]
+
+                pt_ele_mask_bin1 = (pt_tag_bin1 > 70)
+                pt_pho_mask_bin1 = (pt_tag_bin1 <= 70)
+
+                pt_ele_mask_bin2 = (pt_tag_bin2 > 70)
+                pt_pho_mask_bin2 = (pt_tag_bin2 <= 70)
+
+                dnnweight_bin1 = (sf_ele*pt_ele_mask_bin1+sf_pho*pt_pho_mask_bin1).prod()
+                dnnweight_bin2 = (sf_ele*pt_ele_mask_bin2+sf_pho*pt_pho_mask_bin2).prod()
+
+                #print dnnweight_bin1
+                #print dnnweight_bin2
+                pre = np.concatenate( (pre, np.multiply(cut_mask[cut_mask],weight)  ) )
+                bin0 = np.concatenate( (bin0, np.multiply(bin0_m,weight)  ) ) 
+                #bin1 = np.concatenate( (bin1, np.multiply(bin1_m,weight)  ) ) 
+                #bin2 = np.concatenate( (bin2, np.multiply(bin2_m,weight)  ) ) 
+                bin1 = np.concatenate( (bin1, np.multiply(bin1_m[bin1_m], np.multiply(weight[bin1_m],dnnweight_bin1)  )  ) ) 
+                bin2 = np.concatenate( (bin2, np.multiply(bin2_m[bin2_m], np.multiply(weight[bin2_m],dnnweight_bin2)  )  ) ) 
+
+                n_it+=1
+                #if n_it>0:
+                #    break
+
+        ev_count[d]['pre'] = pre.sum()
+        ev_count[d]['bin0'] = bin0.sum()
+        ev_count[d]['bin1'] = bin1.sum()
+        ev_count[d]['bin2'] = bin2.sum()
+        ev_count[d]['bin2_entries'] = bin2.astype(bool).sum()
+
+        print "events passing in signal ", d
+        #print "presel : ", pre.sum()
+        print "bin 0 : ", bin0.sum()
+        print "bin 1 : ", bin1.sum()
+        print "bin 2 : ", bin2.sum()
+        print "bin 2 entries: ", bin2.astype(bool).sum()
+
+
+    #print ev_count
+    '''
+    dump_name = OUT+"Dict_unblinding"+label
+    if TAG!="":
+        dump_name+="_"+TAG[0]+"-"+TAG[1]
+    dump_name+=".yaml"
+
+    with open(dump_name,"w") as f:
+        yaml.dump(ev_count, f)
+        f.close()
+        print "Info: dictionary written in file "+dump_name
+    '''
+
+
+
 def plot_data(label=""):
 
     dump_name = OUT+"Dict_unblinding"+label
@@ -525,8 +1217,9 @@ def plot_data(label=""):
         ev_count = yaml.load(f, Loader=yaml.Loader)
         f.close()
 
-
-    min_val = 0.001
+    #CWR: change min-max val
+    #min_val = 0.001
+    min_val = 0.1
     #can also read signal from yaml datacards and scale it accordingly!
 
     for k in ev_count.keys():
@@ -593,6 +1286,9 @@ def plot_data(label=""):
 
             gs.Fill(bins[i],ys[i])
             gs3m.Fill(bins[i],ys3m[i])
+            
+            gStyle.SetPadTickX(1)
+            gStyle.SetPadTickY(1)
 
             can = TCanvas("can","can",900,800)
             can.cd()
@@ -624,10 +1320,13 @@ def plot_data(label=""):
             go.SetMarkerStyle(20)
             go.SetMarkerSize(1.3)
 
-            leg.AddEntry(gp,"prediction","PF")
-            leg.AddEntry(go,"data obs.","PL")
-            leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau_{0} = 0.5 m","L")
-            leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau_{0} = 3 m","L")
+            leg.AddEntry(gp,"Prediction","PF")
+            leg.AddEntry(go,"Data obs.","PE")
+            #CWR: remove _{0} to be consistent with text
+            #leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau_{0} = 0.5 m","L")
+            #leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau_{0} = 3 m","L")
+            leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau = 0.5 m","L")
+            leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau = 3 m","L")
 
             fake.Draw("")
             gs.Draw("HISTO,sames")
@@ -638,20 +1337,23 @@ def plot_data(label=""):
             fake.GetXaxis().SetBinLabel(2,"1 tag")
             fake.GetXaxis().SetBinLabel(3,"#geq 2 tags")
             #fake.GetYaxis().SetRangeUser(min_val,5.e7)
+            #CWR: change min-max
+            #fake.SetMinimum(min_val)
+            #fake.SetMaximum(5.e7)
             fake.SetMinimum(min_val)
-            fake.SetMaximum(5.e7)
+            fake.SetMaximum(1.e7)
             fake.GetXaxis().SetLimits(-0.5,2.5)
             fake.GetYaxis().SetTitle("Number of events")
             fake.GetYaxis().SetTitleSize(0.04)
             fake.GetXaxis().SetTitleOffset(1.2)
             fake.GetXaxis().SetLabelSize(0.06)
-            fake.GetXaxis().SetTitle("Number of TDJ tagged jets")
+            fake.GetXaxis().SetTitle("Number of TD-tagged jets")
             fake.GetXaxis().SetTitleSize(0.04)
             #drawCMS_simple(LUMI, "Preliminary", ERA="", onTop=True)
             if PRELIMINARY:
-                drawCMS_simple(tmp_lumi, "Preliminary", ERA="", onTop=True)
+                drawCMS_simple(tmp_lumi, "Preliminary", ERA="", onTop=True,top_marg_cms=0.96,top_marg_lumi=0.965)
             else:
-                drawCMS_simple(tmp_lumi, "", ERA="", onTop=True)
+                drawCMS_simple(tmp_lumi, "", ERA="", onTop=True,top_marg_cms=0.96,top_marg_lumi=0.965)
             leg.Draw()
             can.Print(OUT+"nTDJ_"+k+".pdf")
             can.Print(OUT+"nTDJ_"+k+".png")
@@ -740,6 +1442,8 @@ def plot_data_all(label=""):
                 unc_pred_bh[2] += ev_count[e][k]['bin2_pred_unc_bh']**2
 
             if k in sign:
+
+                #JHEP: reduce it by a factor 10
                 tot_sign[k][0] += ev_count[e][k]['bin0']
                 tot_sign[k][1] += ev_count[e][k]['bin1']
                 tot_sign[k][2] += ev_count[e][k]['bin2']
@@ -760,7 +1464,9 @@ def plot_data_all(label=""):
     unc_pred[1] = tot_pred[1]*uncertainties['bkg_tot_bin1']/100.
     unc_pred[2] = math.sqrt(unc_pred_mistag[2]**2 + unc_pred_cosmic[2]**2 + unc_pred_bh[2]**2)
 
-    min_val = 0.001
+    #CWR: change min-max val
+    #min_val = 0.001
+    min_val = 0.1
     #can also read signal from yaml datacards and scale it accordingly!
 
 
@@ -777,13 +1483,27 @@ def plot_data_all(label=""):
     yp = np.array([0., tot_pred[1], tot_pred[2]])
     ep = np.array([0., unc_pred[1], unc_pred[2]])
 
-    yo = np.array([tot_data[0], tot_data[1], tot_data[2] if tot_data[2]>0 else min_val])
-    eo = np.array([unc_data[0], unc_data[1], unc_data[2] if tot_data[2]>0 else 1.8])
+    #Original: all together
+    #Used for hepdata to avoid errors
+    yo_all = np.array([tot_data[0], tot_data[1], tot_data[2] if tot_data[2]>0 else min_val])
+    eo_all = np.array([unc_data[0], unc_data[1], unc_data[2] if tot_data[2]>0 else 1.8])
 
-    ys = np.array([ tot_sign['SUSY_mh400_ctau500_HH'][0], tot_sign['SUSY_mh400_ctau500_HH'][1], tot_sign['SUSY_mh400_ctau500_HH'][2] ])*0.01
+    #FR: different style for bin 2
+    yo = np.array([tot_data[0], tot_data[1]])
+    eo = np.array([unc_data[0], unc_data[1]])
+
+    yo_b2 = np.array([tot_data[2] if tot_data[2]>0 else min_val])
+    eo_b2 = np.array([unc_data[2] if tot_data[2]>0 else 1.8])
+
+    print "bin 2 signals: "
+    print tot_sign['SUSY_mh400_ctau500_HH'][2]
+    print tot_sign['SUSY_mh400_ctau3000_HH'][2]
+    
+    #print "WARNING an unknown factor here!!!"
+    ys = np.array([ tot_sign['SUSY_mh400_ctau500_HH'][0], tot_sign['SUSY_mh400_ctau500_HH'][1], tot_sign['SUSY_mh400_ctau500_HH'][2] ])#*0.01
     es = np.sqrt(ys)
 
-    ys3m = np.array([ tot_sign['SUSY_mh400_ctau3000_HH'][0], tot_sign['SUSY_mh400_ctau3000_HH'][1], tot_sign['SUSY_mh400_ctau3000_HH'][2] ])*0.01
+    ys3m = np.array([ tot_sign['SUSY_mh400_ctau3000_HH'][0], tot_sign['SUSY_mh400_ctau3000_HH'][1], tot_sign['SUSY_mh400_ctau3000_HH'][2] ])#*0.01
     es3m = np.sqrt(ys)
 
 
@@ -792,6 +1512,8 @@ def plot_data_all(label=""):
 
     gp = TGraphAsymmErrors()
     go = TGraphAsymmErrors()
+    go_b2 = TGraphAsymmErrors()
+    go_all = TGraphAsymmErrors()
     gs = TH1F("","",3,-0.5,2.5)
     gs.Sumw2()
     gs3m = TH1F("","",3,-0.5,2.5)
@@ -804,6 +1526,19 @@ def plot_data_all(label=""):
         gp.SetPointEYhigh(i, 0.5*ep[i])
         gp.SetPointEYlow(i, 0.5*ep[i])
 
+        go_all.SetPointX(i,bins[i])
+        go_all.SetPointY(i,yo_all[i])
+        go_all.SetPointEXhigh(i, 0.5)
+        go_all.SetPointEXlow(i, 0.5)
+        go_all.SetPointEYhigh(i, eo_all[i])
+        go_all.SetPointEYlow(i, eo_all[i])
+
+
+        gs.Fill(bins[i],ys[i])
+        gs3m.Fill(bins[i],ys3m[i])
+
+    #FR
+    for i in range(yp.shape[0] - 1):
         go.SetPointX(i,bins[i])
         go.SetPointY(i,yo[i])
         go.SetPointEXhigh(i, 0.5)
@@ -811,8 +1546,13 @@ def plot_data_all(label=""):
         go.SetPointEYhigh(i, 0.5*eo[i])
         go.SetPointEYlow(i, 0.5*eo[i])
 
-        gs.Fill(bins[i],ys[i])
-        gs3m.Fill(bins[i],ys3m[i])
+    go_b2.SetPointX(0,bins[2])
+    go_b2.SetPointY(0,yo_b2[0])
+    go_b2.SetPointEYhigh(0, eo_b2[0])
+    go_b2.SetPointEYlow(0, eo_b2[0])
+
+    gStyle.SetPadTickX(1)
+    gStyle.SetPadTickY(1)
 
     can = TCanvas("can","can",900,800)
     can.cd()
@@ -821,7 +1561,7 @@ def plot_data_all(label=""):
     can.SetRightMargin(0.05)
     can.SetLeftMargin(0.13)
     can.SetBottomMargin(0.12)
-    leg = TLegend(0.45, 0.73, 0.9, 0.88)
+    leg = TLegend(0.45, 0.73-0.1, 0.9, 0.88-0.1)
     leg.SetTextSize(0.035)
     leg.SetBorderSize(0)
 
@@ -844,34 +1584,50 @@ def plot_data_all(label=""):
     go.SetMarkerStyle(20)
     go.SetMarkerSize(1.3)
 
-    leg.AddEntry(gp,"prediction","PF")
-    leg.AddEntry(go,"data obs.","PL")
-    leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau_{0} = 0.5 m","L")
-    leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau_{0} = 3 m","L")
+    go_b2.SetLineColor(1)
+    go_b2.SetLineWidth(2)
+    go_b2.SetMarkerColor(1)
+    #go_b2.SetMarkerStyle(20)
+    go_b2.SetMarkerSize(0)
+
+    leg.AddEntry(gp,"Prediction","PF")
+    leg.AddEntry(go,"Data obs.","PEL")#PL
+    #CWR: remove _{0} to be consistent with text
+    #leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau_{0} = 0.5 m","L")
+    #leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau_{0} = 3 m","L")
+    leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau = 0.5 m","L")
+    leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau = 3 m","L")
     
     fake.Draw("")
     gs.Draw("HISTO,sames")
     gs3m.Draw("HISTO,sames")
     gp.Draw("PE2,sames")
     go.Draw("PE,sames")
+    go_b2.Draw("E,sames")
+
     fake.GetXaxis().SetBinLabel(1,"0 tags")
     fake.GetXaxis().SetBinLabel(2,"1 tag")
     fake.GetXaxis().SetBinLabel(3,"#geq 2 tags")
     #fake.GetYaxis().SetRangeUser(min_val,5.e7)
+    #CWR: change min-max
+    #fake.SetMinimum(min_val)
+    #fake.SetMaximum(5.e7)
     fake.SetMinimum(min_val)
-    fake.SetMaximum(5.e7)
+    fake.SetMaximum(1.e7)
     fake.GetXaxis().SetLimits(-0.5,2.5)
     fake.GetYaxis().SetTitle("Number of events")
     fake.GetYaxis().SetTitleSize(0.04)
     fake.GetXaxis().SetTitleOffset(1.2)
     fake.GetXaxis().SetLabelSize(0.06)
-    fake.GetXaxis().SetTitle("Number of TDJ tagged jets")
+    fake.GetXaxis().SetTitle("Number of TD-tagged jets")
     fake.GetXaxis().SetTitleSize(0.04)
     #drawCMS_simple(LUMI, "Preliminary", ERA="", onTop=True)
     if PRELIMINARY:
-        drawCMS_simple(LUMI, "Preliminary", ERA="", onTop=True)
+        drawCMS_simple(LUMI, "Preliminary", ERA="", onTop=True,top_marg_cms=0.96,top_marg_lumi=0.965)
     else:
-        drawCMS_simple(LUMI, "", ERA="", onTop=True)
+        #drawCMS_simple(LUMI, "", ERA="", onTop=True,left_marg_CMS=0.225,top_marg_cms=0.96,top_marg_lumi=0.965)
+        #FR comments
+        drawCMS_simple(LUMI, "", ERA="", onTop=True,left_marg_CMS=1.-0.125,top_marg_cms=0.87,top_marg_lumi=0.965)
     leg.Draw()
     can.Print(OUT+"nTDJ.pdf")
     can.Print(OUT+"nTDJ.png")
@@ -879,7 +1635,21 @@ def plot_data_all(label=""):
     can.Print(OUT_paper+"nTDJ.pdf")
     can.Print(OUT_paper+"nTDJ.png")
 
+    can.Print(OUT_paper+"Figure_007.pdf")
+    can.Print(OUT_paper+"Figure_007.png")
+
     can.Close()
+
+    #Root file for hepdata
+    out_file = TFile(OUT_paper+"Figure_007.root","RECREATE")
+    out_file.cd()
+    gs.Write("signal0p5m")
+    gs3m.Write("signal3m")
+    gp.Write("predicted")
+    go_all.Write("observed")
+    print "Writing "+OUT_paper+"Figure_007.root"
+    out_file.Write()
+    out_file.Close()
 
 
 
@@ -985,7 +1755,9 @@ def plot_data_all_ratio_panel(label=""):
     unc_pred[1] = tot_pred[1]*uncertainties['bkg_tot_bin1']/100.
     unc_pred[2] = math.sqrt(unc_pred_mistag[2]**2 + unc_pred_cosmic[2]**2 + unc_pred_bh[2]**2)
 
-    min_val = 0.001
+    #CWR: change min-max val
+    #min_val = 0.001
+    min_val = 0.1
     #can also read signal from yaml datacards and scale it accordingly!
 
 
@@ -1081,6 +1853,8 @@ def plot_data_all_ratio_panel(label=""):
         print fake_den.GetBinContent(i), fake_den.GetBinError(i)
     '''
 
+    gStyle.SetPadTickX(1)
+    gStyle.SetPadTickY(1)
     can = TCanvas("can","can",900,800)
 
     can.Divide(1,2)
@@ -1124,10 +1898,13 @@ def plot_data_all_ratio_panel(label=""):
     go.SetMarkerStyle(20)
     go.SetMarkerSize(1.3)
 
-    leg.AddEntry(gp,"prediction","PF")
-    leg.AddEntry(go,"data obs.","PL")
-    leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau_{0} = 0.5 m","L")
-    leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau_{0} = 3 m","L")
+    leg.AddEntry(gp,"Prediction","PF")
+    leg.AddEntry(go,"Data obs.","PE")
+    #CWR: remove _{0} to be consistent with text
+    #leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau_{0} = 0.5 m","L")
+    #leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau_{0} = 3 m","L")
+    leg.AddEntry(gs,"m_{#chi} = 400 GeV, c#tau = 0.5 m","L")
+    leg.AddEntry(gs3m,"m_{#chi} = 400 GeV, c#tau = 3 m","L")
     
     fake.Draw("")
     gs.Draw("HISTO,sames")
@@ -1151,8 +1928,11 @@ def plot_data_all_ratio_panel(label=""):
     fake.GetXaxis().SetBinLabel(2,"1 tag")
     fake.GetXaxis().SetBinLabel(3,"#geq 2 tags")
     #fake.GetYaxis().SetRangeUser(min_val,5.e7)
+    #CWR: change min-max
+    #fake.SetMinimum(min_val)
+    #fake.SetMaximum(5.e7)
     fake.SetMinimum(min_val)
-    fake.SetMaximum(5.e7)
+    fake.SetMaximum(1.e7)
 
     fake.GetXaxis().SetLimits(-0.5,2.5)
     fake.GetYaxis().SetTitle("Number of events")
@@ -1163,8 +1943,8 @@ def plot_data_all_ratio_panel(label=""):
     fake.GetXaxis().SetLabelOffset(1.2)
 
 
-    fake.GetXaxis().SetLabelSize(0.06)
-    fake.GetXaxis().SetTitle("Number of TDJ tagged jets")
+    fake.GetXaxis().SetLabelSize(0.1)
+    fake.GetXaxis().SetTitle("Number of TD-tagged jets")
     fake.GetXaxis().SetTitleSize(0.04)
     #####drawCMS_simple(LUMI, "Preliminary", ERA="", onTop=True)
     if PRELIMINARY:
@@ -1223,9 +2003,81 @@ def plot_data_all_ratio_panel(label=""):
 
     can.Close()
 
+
+def get_tree_weights_BR_scan(sample_list,br_h,this_lumi):
+
+    def eq(H,Z):
+        return H**2 + 2*H*Z + Z**2
+
+    def retZ(H):
+        #x**2 + 2*H*x + (H**2 - 1.) = 0
+        return -H + 1
+
+    h = br_h/100. if br_h>1 else br_h
+    z = retZ(float(h))
+    w_hh = h*h
+    w_hz = 2*h*z
+    w_zz = z*z
+    print "\n"
+    print "------------------------"
+    print "BR: H(", h*100,"%), Z(", z*100,"%)"
+    print ("Decay composition: HH %.2f, HZ %.2f, ZZ %.2f" % (w_hh*100, w_hz*100, w_zz*100))
+    print "------------------------"
+
+    tree_w_dict = defaultdict(dict)
+    for i, pr in enumerate(sample_list):
+        pr = pr.replace("_HH","")
+        new_list = [pr+"_HH",pr+"_HZ",pr+"_ZZ"]
+        for s in new_list:
+            #print s
+            for l, ss in enumerate(samples[s]['files']):
+                #filename = TFile(MAIN_S+ss+'.root', "READ")
+                #Tree weight
+                if ("SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3") in ss:
+                    #print "SUSY central, consider sample dictionary for nevents!"
+                    nevents = sample[ss]['nevents']
+                #b_skipTrain = filename.Get("b_skipTrain").GetBinContent(1)
+                #n_pass      = filename.Get("n_pass").GetBinContent(1)
+                #n_odd       = filename.Get("n_odd").GetBinContent(1)
+                ##tree = filename.Get("tree")
+                ##print "tree entries: ", tree.GetEntries()
+                #filename.Close()
+                if('SMS-TChiHZ_ZToQQ_HToBB_LongLivedN2N3') in ss:
+                    #print "Scaling SUSY to 1. for absolute x-sec sensitivity"
+                    #print "But consider BR!"
+                    xs = 1.
+                    xs *= sample[ss]['BR']
+                print "LUMI ", this_lumi
+                print "xs ", xs
+                print "nevents ", nevents
+                t_w = this_lumi * xs / nevents
+                #if(b_skipTrain>0):
+                #    if(n_odd>0):
+                #        t_w *= float(n_pass/n_odd)
+                if "_HH" in s:
+                    t_w *= w_hh
+                if "_HZ" in s:
+                    t_w *= w_hz
+                if "_ZZ" in s:
+                    t_w *= w_zz
+                print("%s has tree weight %f")%(ss,t_w)
+                tree_w_dict[ss] = t_w
+
+    print "\n"
+    return tree_w_dict
+
 label = ""
 #label = "_wp_0p9"
+
+sign = ["SUSY_mh400_ctau500_HH","SUSY_mh400_ctau3000_HH"]
+##count_signal_debug("")
+#count_data_JHEP(label)
+label = "_JHEP"
+plot_data_all(label)
+exit()
+
+####Old way
 #count_data(label)
 #plot_data(label)
 plot_data_all(label)
-plot_data_all_ratio_panel(label)
+#plot_data_all_ratio_panel(label)

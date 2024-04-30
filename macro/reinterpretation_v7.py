@@ -8,7 +8,7 @@ from collections import defaultdict
 from ROOT import ROOT, gROOT, gStyle, gRandom, TSystemDirectory
 from ROOT import TFile, TChain, TTree, TCut, TH1F, TH2F, THStack, TGraph, THnF, TH1D, TGraphAsymmErrors, TH2D
 from ROOT import TStyle, TCanvas, TPad, gPad
-from ROOT import TLegend, TLatex, TText, TLine, TProfile
+from ROOT import TLegend, TLatex, TText, TLine, TProfile, TPaveText
 import uproot
 #import root_numpy
 import yaml
@@ -77,6 +77,8 @@ MAIN_OUT = "plots/v7_calo_AOD_reinterpretation_v2_no_pt_bins/"
 #MAIN_OUT = "plots/v7_calo_AOD_reinterpretation_v2_no_pt_bins_less_r_z_bins/"
 #MAIN_OUT_ALL = "plots/v7_calo_AOD_reinterpretation_v2_all_events/"
 MAIN_OUT_ALL = "plots/v7_calo_AOD_reinterpretation_v2_no_pt_bins_all_events/"
+
+HEPDATA_OUT = "/afs/desy.de/user/l/lbenato/HEPData/exo-21-014-hepdata/input/"
 
 if not os.path.isdir(MAIN_OUT): os.mkdir(MAIN_OUT)
 if not os.path.isdir(MAIN_OUT_ALL): os.mkdir(MAIN_OUT_ALL)
@@ -892,6 +894,10 @@ def create_maps(out_fold, sign, skip_even=False,R=0.4,eras=[]):
         genb1_eta = np.array([])
         genb2_eta = np.array([])
         genb3_eta = np.array([])
+        genb0_phi = np.array([])
+        genb1_phi = np.array([])
+        genb2_phi = np.array([])
+        genb3_phi = np.array([])
 
         for era in eras:
 
@@ -1639,6 +1645,10 @@ def use_maps_updated(out_fold, sign, skip_odd=False, cross_maps="", full_map_nam
         genb1_eta = np.array([])
         genb2_eta = np.array([])
         genb3_eta = np.array([])
+        genb0_phi = np.array([])
+        genb1_phi = np.array([])
+        genb2_phi = np.array([])
+        genb3_phi = np.array([])
 
         genLLP0_m = np.array([])
         genLLP1_m = np.array([])
@@ -1717,6 +1727,11 @@ def use_maps_updated(out_fold, sign, skip_odd=False, cross_maps="", full_map_nam
                     tmp_genb1_eta = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.eta"][skip_odd_mask] )))[1:2] )
                     tmp_genb2_eta = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.eta"][skip_odd_mask] )))[2:3] )
                     tmp_genb3_eta = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.eta"][skip_odd_mask] )))[3:] )
+ 
+                    tmp_genb0_phi = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.phi"][skip_odd_mask] )))[0:1] )
+                    tmp_genb1_phi = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.phi"][skip_odd_mask] )))[1:2] )
+                    tmp_genb2_phi = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.phi"][skip_odd_mask] )))[2:3] )
+                    tmp_genb3_phi = np.absolute( np.transpose(np.stack(( arrays["GenBquarks.phi"][skip_odd_mask] )))[3:] )
                     
 
                     tmp_nTagJets = arrays["nTagJets_0p996"][skip_odd_mask].flatten()
@@ -1767,6 +1782,11 @@ def use_maps_updated(out_fold, sign, skip_odd=False, cross_maps="", full_map_nam
                     genb2_eta = np.concatenate((genb2_eta,tmp_genb2_eta.flatten()))
                     genb3_eta = np.concatenate((genb3_eta,tmp_genb3_eta.flatten()))
 
+                    genb0_phi = np.concatenate((genb0_phi,tmp_genb0_phi.flatten()))
+                    genb1_phi = np.concatenate((genb1_phi,tmp_genb1_phi.flatten()))
+                    genb2_phi = np.concatenate((genb2_phi,tmp_genb2_phi.flatten()))
+                    genb3_phi = np.concatenate((genb3_phi,tmp_genb3_phi.flatten()))
+
                     genLLP0_m = np.concatenate((genLLP0_m,tmp_genLLP0_m.flatten()))
                     genLLP1_m = np.concatenate((genLLP1_m,tmp_genLLP1_m.flatten()))
 
@@ -1780,8 +1800,11 @@ def use_maps_updated(out_fold, sign, skip_odd=False, cross_maps="", full_map_nam
         LLP0_eta = genh0_eta.flatten()
         LLP0_pt1 = genb0_pt.flatten()
         LLP0_eta1 = genb0_eta.flatten()
+        LLP0_phi1 = genb0_phi.flatten()
         LLP0_pt2 = genb1_pt.flatten()
         LLP0_eta2 = genb1_eta.flatten()
+        LLP0_phi2 = genb1_phi.flatten()
+
 
         LLP1_m = genLLP1_m.flatten()#np.transpose(np.stack(( arrays["GenLLPs.mass"][skip_odd_mask] )))[1:2].flatten()
         LLP1_dR = genLLP1_dR.flatten()
@@ -1897,6 +1920,46 @@ def use_maps_updated(out_fold, sign, skip_odd=False, cross_maps="", full_map_nam
         nTagLLP0_r_qq_q2_presel = nTagJets_to_LLP0_q1[np.logical_and(preselected,LLP0_resolved_q1q2)]
         nTagLLP1_r_qq_q1_presel = nTagJets_to_LLP1_q2[np.logical_and(preselected,LLP1_resolved_q1q2)]
         nTagLLP1_r_qq_q2_presel = nTagJets_to_LLP1_q3[np.logical_and(preselected,LLP1_resolved_q1q2)]
+
+        ##printouts
+
+        print "m"
+        print LLP0_r[LLP0_merged]
+        print LLP0_z[LLP0_merged]
+        print LLP0_pt[LLP0_merged]
+        print LLP0_eta[LLP0_merged]
+        print LLP0_pt1[LLP0_merged]
+        print LLP0_eta1[LLP0_merged]
+        print LLP0_phi1[LLP0_merged]
+        print LLP0_pt2[LLP0_merged]
+        print LLP0_eta2[LLP0_merged]
+        print LLP0_phi2[LLP0_merged]
+
+        print "q1"
+        print LLP0_r[LLP0_resolved_q1]
+        print LLP0_z[LLP0_resolved_q1]
+        print LLP0_pt[LLP0_resolved_q1]
+        print LLP0_eta[LLP0_resolved_q1]
+        print LLP0_pt1[LLP0_resolved_q1]
+        print LLP0_eta1[LLP0_resolved_q1]
+        print LLP0_phi1[LLP0_resolved_q1]
+        print LLP0_pt2[LLP0_resolved_q1]
+        print LLP0_eta2[LLP0_resolved_q1]
+        print LLP0_phi2[LLP0_resolved_q1]
+
+        print "q1q2"
+        print LLP0_r[LLP0_resolved_q1q2]
+        print LLP0_z[LLP0_resolved_q1q2]
+        print LLP0_pt[LLP0_resolved_q1q2]
+        print LLP0_eta[LLP0_resolved_q1q2]
+        print LLP0_pt1[LLP0_resolved_q1q2]
+        print LLP0_eta1[LLP0_resolved_q1q2]
+        print LLP0_phi1[LLP0_resolved_q1q2]
+        print LLP0_pt2[LLP0_resolved_q1q2]
+        print LLP0_eta2[LLP0_resolved_q1q2]
+        print LLP0_phi2[LLP0_resolved_q1q2]
+
+        exit()
 
 
         #Merged pred.
@@ -2647,7 +2710,7 @@ def use_maps_updated(out_fold, sign, skip_odd=False, cross_maps="", full_map_nam
 
 
 
-def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
+def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold="",start_figure=0):
 
     tmp_bins_r_resolved=np.copy(pl_bins_r_resolved)
     tmp_bins_z_resolved=np.copy(pl_bins_z_resolved)
@@ -2675,6 +2738,14 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
     unc_r_q_presel = {}
     unc_r_qq_presel = {}
 
+    max_unc_m = 0
+    max_unc_r_q = 0
+    max_unc_r_qq = 0
+
+    max_unc_m_presel = 0
+    max_unc_r_q_presel = 0
+    max_unc_r_qq_presel = 0
+
     if add_unc and unc_fold!="":
         print("Adding in quadrature nonclosure uncertainty")
         masses =  np.load(unc_fold+"Prediction_nonclosure_unc_masses.npy")
@@ -2697,18 +2768,41 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         #print masses
         #print diff_m["_ctau500"]
         #print diff_m["_ctau3000"]
+        
 
         for i,m in enumerate(masses):
             unc_m[m]    = np.maximum(diff_m["_ctau500"][i],diff_m["_ctau3000"][i])
             unc_r_q[m]  = np.maximum(diff_r_q["_ctau500"][i],diff_r_q["_ctau3000"][i])
             unc_r_qq[m] = np.maximum(diff_r_qq["_ctau500"][i],diff_r_qq["_ctau3000"][i])
 
+            max_unc_m = max(max_unc_m,abs(unc_m[m]))
+            max_unc_r_q = max(max_unc_r_q,abs(unc_r_q[m]))
+            max_unc_r_qq = max(max_unc_r_qq,abs(unc_r_qq[m]))
+
             unc_m_presel[m]    = np.maximum(diff_m_presel["_ctau500"][i],diff_m_presel["_ctau3000"][i])
             unc_r_q_presel[m]  = np.maximum(diff_r_q_presel["_ctau500"][i],diff_r_q_presel["_ctau3000"][i])
             unc_r_qq_presel[m] = np.maximum(diff_r_qq_presel["_ctau500"][i],diff_r_qq_presel["_ctau3000"][i])
 
+            max_unc_m_presel = max(max_unc_m_presel,abs(unc_m_presel[m]))
+            max_unc_r_q_presel = max(max_unc_r_q_presel,abs(unc_r_q_presel[m]))
+            max_unc_r_qq_presel = max(max_unc_r_qq_presel,abs(unc_r_qq_presel[m]))
+
+    print("Unc m:")
+    print(unc_m)
+    print(max_unc_m)
+
+    print("Unc r_q:")
+    print(unc_r_q)
+    print(max_unc_r_q)
+
+    print("Unc r_qq:")
+    print(unc_r_qq)
+    print(max_unc_r_qq)
 
     print("Opening ",out_fold,"...")
+
+    #index for hepdata figures: increase by one unit at every mass and every topology
+    i_hep = start_figure
 
     for b in sign:
 
@@ -2937,16 +3031,25 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
 
 
         #Nonclosure uncertainty 
+        print(b)
         if add_unc and unc_fold!="":
             for i_r in range(m_den.shape[0]+1):
                 for i_z in range(m_den.shape[1]+1):
-                    #print("m bin: ", i_r, i_z)
-                    #print(h2_num_m.GetBinContent(i_r,i_z)," +- ", h2_num_m.GetBinError(i_r,i_z))
-                    #print(h2_num_m.GetBinContent(i_r,i_z)," +- ", math.sqrt(h2_num_m.GetBinError(i_r,i_z)**2 + (unc_m[ samples[b]['mass'] ]*h2_num_m.GetBinContent(i_r,i_z) )**2))
-                    h2_num_m.SetBinError(i_r, i_z,math.sqrt(h2_num_m.GetBinError(i_r,i_z)**2 + (unc_m[ samples[b]['mass'] ]*h2_num_m.GetBinContent(i_r,i_z) )**2))
-                    #print(h2_num_m_presel.GetBinContent(i_r,i_z)," +- ", h2_num_m_presel.GetBinError(i_r,i_z))
-                    #print(h2_num_m_presel.GetBinContent(i_r,i_z)," +- ", math.sqrt(h2_num_m_presel.GetBinError(i_r,i_z)**2 + (unc_m_presel[ samples[b]['mass'] ]*h2_num_m_presel.GetBinContent(i_r,i_z) )**2))
-                    h2_num_m_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_m_presel.GetBinError(i_r,i_z)**2 + (unc_m_presel[ samples[b]['mass'] ]*h2_num_m_presel.GetBinContent(i_r,i_z) )**2))
+                    print("m bin: ", i_r, i_z)
+                    print(h2_num_m.GetBinContent(i_r,i_z)," +- ", h2_num_m.GetBinError(i_r,i_z))
+                    print(h2_num_m.GetBinContent(i_r,i_z)," +- ", math.sqrt(h2_num_m.GetBinError(i_r,i_z)**2 + (max_unc_m*h2_num_m.GetBinContent(i_r,i_z) )**2))
+                    ##mass-dependent uncertainty:
+                    #h2_num_m.SetBinError(i_r, i_z,math.sqrt(h2_num_m.GetBinError(i_r,i_z)**2 + (unc_m[ samples[b]['mass'] ]*h2_num_m.GetBinContent(i_r,i_z) )**2))
+                    #mass-independent uncertainty:
+                    h2_num_m.SetBinError(i_r, i_z,math.sqrt(h2_num_m.GetBinError(i_r,i_z)**2 + (max_unc_m*h2_num_m.GetBinContent(i_r,i_z) )**2))
+
+
+                    ##print(h2_num_m_presel.GetBinContent(i_r,i_z)," +- ", h2_num_m_presel.GetBinError(i_r,i_z))
+                    ##print(h2_num_m_presel.GetBinContent(i_r,i_z)," +- ", math.sqrt(h2_num_m_presel.GetBinError(i_r,i_z)**2 + (unc_m_presel[ samples[b]['mass'] ]*h2_num_m_presel.GetBinContent(i_r,i_z) )**2))
+                    ##mass-dependent uncertainty:
+                    #h2_num_m_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_m_presel.GetBinError(i_r,i_z)**2 + (unc_m_presel[ samples[b]['mass'] ]*h2_num_m_presel.GetBinContent(i_r,i_z) )**2))
+                    #mass-independent uncertainty:
+                    h2_num_m_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_m_presel.GetBinError(i_r,i_z)**2 + (max_unc_m_presel*h2_num_m_presel.GetBinContent(i_r,i_z) )**2))
 
 
         #Plot
@@ -2975,7 +3078,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         h2_num_m.GetXaxis().SetTitleOffset(1.3)
         h2_num_m.GetYaxis().SetTitleSize(0.04)
         h2_num_m.GetYaxis().SetTitleOffset(1.2)
-        h2_num_m.GetZaxis().SetTitle("Signal Efficiency")
+        h2_num_m.GetZaxis().SetTitle("TD-tagged jet efficiency")
         h2_num_m.GetZaxis().SetTitleSize(0.04)
         h2_num_m.GetZaxis().SetTitleOffset(1.2)
         h2_num_m.SetMaximum(1.)
@@ -2984,11 +3087,53 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         can.RangeAxis(0.01,0.01,20,20)
         gStyle.SetPadTickX(1)
         gStyle.SetPadTickY(1)
+
+        '''
+        latex = TLatex()
+        latex.SetNDC()
+        latex.SetTextAlign(13)
+        latex.SetTextFont(62)#42, 52, 62, 72
+        latex.SetTextSize(0.04)
+        latex.DrawLatex(0.15, 0.8, "Merged")
+        latex.DrawLatex(0.15, 0.75, "m_{#chi} = "+str(samples[b]['mass'])+" GeV")
+        '''
+
+        pavetext = TPaveText(-1.85,2.5,-1.05,7.)
+        #pavetext.SetNDC()
+        pavetext.SetTextAlign(12)
+        pavetext.SetTextFont(62)#42, 52, 62, 72
+        pavetext.SetTextSize(0.04)
+        pavetext.AddText("Merged")
+        pavetext.AddText("m_{LLP} = "+str(samples[b]['mass'])+" GeV")
+        pavetext.Draw()
+
         can.Update()
         drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
         can.Print(out_fold+'Efficiency_map_m_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
         can.Print(out_fold+'Efficiency_map_m_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
+
+        if start_figure>0:
+            num_str = "00"+str(i_hep) if i_hep<10 else"0"+str(i_hep)
+            can.Print(HEPDATA_OUT+"Figure-aux_"+num_str+".pdf")
+
         can.Close()
+
+        out_file = TFile(out_fold+'Efficiency_map_m_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root","RECREATE")
+        out_file.cd()
+        h2_num_m.Write("h2")
+        print "Writing "+out_fold+'Efficiency_map_m_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root"
+        out_file.Write()
+        out_file.Close()
+
+        if start_figure>0:
+            out_file = TFile(HEPDATA_OUT+"Figure-aux_"+num_str+".root","RECREATE")
+            out_file.cd()
+            h2_num_m.Write("h2")
+            print "Writing "+HEPDATA_OUT+"Figure-aux_"+num_str+".root"
+            out_file.Write()
+            out_file.Close()
+            i_hep+=1
+
 
         can = TCanvas("can","can",1400,800)
         can.cd()
@@ -3014,7 +3159,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         h2_num_m_presel.GetXaxis().SetTitleOffset(1.3)
         h2_num_m_presel.GetYaxis().SetTitleSize(0.04)
         h2_num_m_presel.GetYaxis().SetTitleOffset(1.2)
-        h2_num_m_presel.GetZaxis().SetTitle("Signal Efficiency")
+        h2_num_m_presel.GetZaxis().SetTitle("TD-tagged jet efficiency")
         h2_num_m_presel.GetZaxis().SetTitleSize(0.04)
         h2_num_m_presel.GetZaxis().SetTitleOffset(1.2)
         h2_num_m_presel.SetMaximum(.5)
@@ -3023,11 +3168,20 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         can.RangeAxis(0.01,0.01,20,20)
         gStyle.SetPadTickX(1)
         gStyle.SetPadTickY(1)
+
+
         can.Update()
         drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-        can.Print(out_fold+'Efficiency_map_m_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
-        can.Print(out_fold+'Efficiency_map_m_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
+        #can.Print(out_fold+'Efficiency_map_m_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
+        #can.Print(out_fold+'Efficiency_map_m_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
         can.Close()
+
+        #out_file = TFile(out_fold+'Efficiency_map_m_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root","RECREATE")
+        #out_file.cd()
+        #h2_num_m_presel.Write("h2")
+        #print "Writing "+out_fold+'Efficiency_map_m_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root"
+        #out_file.Write()
+        #out_file.Close()
 
 
 
@@ -3059,7 +3213,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             h2_num_m_pt[i_pt].GetXaxis().SetTitleOffset(1.3)
             h2_num_m_pt[i_pt].GetYaxis().SetTitleSize(0.04)
             h2_num_m_pt[i_pt].GetYaxis().SetTitleOffset(1.2)
-            h2_num_m_pt[i_pt].GetZaxis().SetTitle("Signal Efficiency")
+            h2_num_m_pt[i_pt].GetZaxis().SetTitle("TD-tagged jet efficiency")
             h2_num_m_pt[i_pt].GetZaxis().SetTitleSize(0.04)
             h2_num_m_pt[i_pt].GetZaxis().SetTitleOffset(1.2)
             h2_num_m_pt[i_pt].SetMaximum(1.)
@@ -3070,8 +3224,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             gStyle.SetPadTickY(1)
             can.Update()
             drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-            can.Print(out_fold+'Efficiency_map_m_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
-            can.Print(out_fold+'Efficiency_map_m_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
+            #can.Print(out_fold+'Efficiency_map_m_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
+            #can.Print(out_fold+'Efficiency_map_m_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
             can.Close()
 
             can = TCanvas("can","can",1400,800)
@@ -3098,7 +3252,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             h2_num_m_presel_pt[i_pt].GetXaxis().SetTitleOffset(1.3)
             h2_num_m_presel_pt[i_pt].GetYaxis().SetTitleSize(0.04)
             h2_num_m_presel_pt[i_pt].GetYaxis().SetTitleOffset(1.2)
-            h2_num_m_presel_pt[i_pt].GetZaxis().SetTitle("Signal Efficiency")
+            h2_num_m_presel_pt[i_pt].GetZaxis().SetTitle("TD-tagged jet efficiency")
             h2_num_m_presel_pt[i_pt].GetZaxis().SetTitleSize(0.04)
             h2_num_m_presel_pt[i_pt].GetZaxis().SetTitleOffset(1.2)
             h2_num_m_presel_pt[i_pt].SetMaximum(.5)
@@ -3109,8 +3263,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             gStyle.SetPadTickY(1)
             can.Update()
             drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-            can.Print(out_fold+'Efficiency_map_m_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
-            can.Print(out_fold+'Efficiency_map_m_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
+            #can.Print(out_fold+'Efficiency_map_m_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
+            #can.Print(out_fold+'Efficiency_map_m_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
             can.Close()
 
 
@@ -3156,8 +3310,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         if add_unc and unc_fold!="":
             for i_r in range(r_den_q.shape[0]+1):
                 for i_z in range(r_den_q.shape[1]+1):
-                    h2_num_r_q.SetBinError(i_r, i_z,math.sqrt(h2_num_r_q.GetBinError(i_r,i_z)**2 + (unc_r_q[ samples[b]['mass'] ]*h2_num_r_q.GetBinContent(i_r,i_z) )**2))
-                    h2_num_r_q_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_r_q_presel.GetBinError(i_r,i_z)**2 + (unc_r_q_presel[ samples[b]['mass'] ]*h2_num_r_q_presel.GetBinContent(i_r,i_z) )**2))
+                    h2_num_r_q.SetBinError(i_r, i_z,math.sqrt(h2_num_r_q.GetBinError(i_r,i_z)**2 + (max_unc_r_q*h2_num_r_q.GetBinContent(i_r,i_z) )**2))
+                    h2_num_r_q_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_r_q_presel.GetBinError(i_r,i_z)**2 + (max_unc_r_q_presel*h2_num_r_q_presel.GetBinContent(i_r,i_z) )**2))
 
 
 
@@ -3187,7 +3341,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         h2_num_r_q.GetXaxis().SetTitleOffset(1.3)
         h2_num_r_q.GetYaxis().SetTitleSize(0.04)
         h2_num_r_q.GetYaxis().SetTitleOffset(1.2)
-        h2_num_r_q.GetZaxis().SetTitle("Signal Efficiency")
+        h2_num_r_q.GetZaxis().SetTitle("TD-tagged jet efficiency")
         h2_num_r_q.GetZaxis().SetTitleSize(0.04)
         h2_num_r_q.GetZaxis().SetTitleOffset(1.2)
         h2_num_r_q.SetMaximum(1.)
@@ -3196,11 +3350,43 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         can.RangeAxis(0.01,0.01,20,20)
         gStyle.SetPadTickX(1)
         gStyle.SetPadTickY(1)
+
+
+        pavetext = TPaveText(-1.85,2.5,-1.05,7.)
+        #pavetext.SetNDC()
+        pavetext.SetTextAlign(12)
+        pavetext.SetTextFont(62)#42, 52, 62, 72
+        pavetext.SetTextSize(0.04)
+        pavetext.AddText("Resolved 1q")
+        pavetext.AddText("m_{LLP} = "+str(samples[b]['mass'])+" GeV")
+        pavetext.Draw()
+
         can.Update()
         drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
         can.Print(out_fold+'Efficiency_map_r_q_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
         can.Print(out_fold+'Efficiency_map_r_q_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
+
+        if start_figure>0:
+            num_str = "00"+str(i_hep) if i_hep<10 else"0"+str(i_hep)
+            can.Print(HEPDATA_OUT+"Figure-aux_"+num_str+".pdf")
+
         can.Close()
+
+        out_file = TFile(out_fold+'Efficiency_map_r_q_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root","RECREATE")
+        out_file.cd()
+        h2_num_r_q.Write("h2")
+        print "Writing "+out_fold+'Efficiency_map_r_q_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root"
+        out_file.Write()
+        out_file.Close()
+
+        if start_figure>0:
+            out_file = TFile(HEPDATA_OUT+"Figure-aux_"+num_str+".root","RECREATE")
+            out_file.cd()
+            h2_num_m.Write("h2")
+            print "Writing "+HEPDATA_OUT+"Figure-aux_"+num_str+".root"
+            out_file.Write()
+            out_file.Close()
+            i_hep+=1
 
         can = TCanvas("can","can",1400,800)
         can.cd()
@@ -3226,7 +3412,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         h2_num_r_q_presel.GetXaxis().SetTitleOffset(1.3)
         h2_num_r_q_presel.GetYaxis().SetTitleSize(0.04)
         h2_num_r_q_presel.GetYaxis().SetTitleOffset(1.2)
-        h2_num_r_q_presel.GetZaxis().SetTitle("Signal Efficiency")
+        h2_num_r_q_presel.GetZaxis().SetTitle("TD-tagged jet efficiency")
         h2_num_r_q_presel.GetZaxis().SetTitleSize(0.04)
         h2_num_r_q_presel.GetZaxis().SetTitleOffset(1.2)
         h2_num_r_q_presel.SetMaximum(.5)
@@ -3237,9 +3423,16 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         gStyle.SetPadTickY(1)
         can.Update()
         drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-        can.Print(out_fold+'Efficiency_map_r_q_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
-        can.Print(out_fold+'Efficiency_map_r_q_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
+        #can.Print(out_fold+'Efficiency_map_r_q_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
+        #can.Print(out_fold+'Efficiency_map_r_q_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
         can.Close()
+
+        #out_file = TFile(out_fold+'Efficiency_map_r_q_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root","RECREATE")
+        #out_file.cd()
+        #h2_num_r_q_presel.Write("h2")
+        #print "Writing "+out_fold+'Efficiency_map_r_q_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root"
+        #out_file.Write()
+        #out_file.Close()
 
         #Plot each pt bin!
         for i_pt in range(r_den_q.shape[2]):
@@ -3269,7 +3462,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             h2_num_r_q_pt[i_pt].GetXaxis().SetTitleOffset(1.3)
             h2_num_r_q_pt[i_pt].GetYaxis().SetTitleSize(0.04)
             h2_num_r_q_pt[i_pt].GetYaxis().SetTitleOffset(1.2)
-            h2_num_r_q_pt[i_pt].GetZaxis().SetTitle("Signal Efficiency")
+            h2_num_r_q_pt[i_pt].GetZaxis().SetTitle("TD-tagged jet efficiency")
             h2_num_r_q_pt[i_pt].GetZaxis().SetTitleSize(0.04)
             h2_num_r_q_pt[i_pt].GetZaxis().SetTitleOffset(1.2)
             h2_num_r_q_pt[i_pt].SetMaximum(1.)
@@ -3280,8 +3473,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             gStyle.SetPadTickY(1)
             can.Update()
             drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-            can.Print(out_fold+'Efficiency_map_r_q_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
-            can.Print(out_fold+'Efficiency_map_r_q_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
+            #can.Print(out_fold+'Efficiency_map_r_q_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
+            #can.Print(out_fold+'Efficiency_map_r_q_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
             can.Close()
 
             can = TCanvas("can","can",1400,800)
@@ -3308,7 +3501,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             h2_num_r_q_presel_pt[i_pt].GetXaxis().SetTitleOffset(1.3)
             h2_num_r_q_presel_pt[i_pt].GetYaxis().SetTitleSize(0.04)
             h2_num_r_q_presel_pt[i_pt].GetYaxis().SetTitleOffset(1.2)
-            h2_num_r_q_presel_pt[i_pt].GetZaxis().SetTitle("Signal Efficiency")
+            h2_num_r_q_presel_pt[i_pt].GetZaxis().SetTitle("TD-tagged jet efficiency")
             h2_num_r_q_presel_pt[i_pt].GetZaxis().SetTitleSize(0.04)
             h2_num_r_q_presel_pt[i_pt].GetZaxis().SetTitleOffset(1.2)
             h2_num_r_q_presel_pt[i_pt].SetMaximum(.5)
@@ -3319,8 +3512,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             gStyle.SetPadTickY(1)
             can.Update()
             drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-            can.Print(out_fold+'Efficiency_map_r_q_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
-            can.Print(out_fold+'Efficiency_map_r_q_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
+            #can.Print(out_fold+'Efficiency_map_r_q_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
+            #can.Print(out_fold+'Efficiency_map_r_q_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
             can.Close()
 
 
@@ -3365,8 +3558,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         if add_unc and unc_fold!="":
             for i_r in range(r_den_qq.shape[0]+1):
                 for i_z in range(r_den_qq.shape[1]+1):
-                    h2_num_r_qq.SetBinError(i_r, i_z,math.sqrt(h2_num_r_qq.GetBinError(i_r,i_z)**2 + (unc_r_qq[ samples[b]['mass'] ]*h2_num_r_qq.GetBinContent(i_r,i_z) )**2))
-                    h2_num_r_qq_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_r_qq_presel.GetBinError(i_r,i_z)**2 + (unc_r_qq_presel[ samples[b]['mass'] ]*h2_num_r_qq_presel.GetBinContent(i_r,i_z) )**2))
+                    h2_num_r_qq.SetBinError(i_r, i_z,math.sqrt(h2_num_r_qq.GetBinError(i_r,i_z)**2 + (max_unc_r_qq*h2_num_r_qq.GetBinContent(i_r,i_z) )**2))
+                    h2_num_r_qq_presel.SetBinError(i_r, i_z,math.sqrt(h2_num_r_qq_presel.GetBinError(i_r,i_z)**2 + (max_unc_r_qq_presel*h2_num_r_qq_presel.GetBinContent(i_r,i_z) )**2))
 
         #Plot
         can = TCanvas("can","can",1400,800)
@@ -3394,7 +3587,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         h2_num_r_qq.GetXaxis().SetTitleOffset(1.3)
         h2_num_r_qq.GetYaxis().SetTitleSize(0.04)
         h2_num_r_qq.GetYaxis().SetTitleOffset(1.2)
-        h2_num_r_qq.GetZaxis().SetTitle("Signal Efficiency")
+        h2_num_r_qq.GetZaxis().SetTitle("TD-tagged jet efficiency")
         h2_num_r_qq.GetZaxis().SetTitleSize(0.04)
         h2_num_r_qq.GetZaxis().SetTitleOffset(1.2)
         h2_num_r_qq.SetMaximum(1.)
@@ -3403,11 +3596,42 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         can.RangeAxis(0.01,0.01,20,20)
         gStyle.SetPadTickX(1)
         gStyle.SetPadTickY(1)
+
+        pavetext = TPaveText(-1.85,2.5,-1.05,7.)
+        #pavetext.SetNDC()
+        pavetext.SetTextAlign(12)
+        pavetext.SetTextFont(62)#42, 52, 62, 72
+        pavetext.SetTextSize(0.04)
+        pavetext.AddText("Resolved 2q")
+        pavetext.AddText("m_{LLP} = "+str(samples[b]['mass'])+" GeV")
+        pavetext.Draw()
+
         can.Update()
         drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
         can.Print(out_fold+'Efficiency_map_r_qq_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
         can.Print(out_fold+'Efficiency_map_r_qq_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
+
+        if start_figure>0:
+            num_str = "00"+str(i_hep) if i_hep<10 else"0"+str(i_hep)
+            can.Print(HEPDATA_OUT+"Figure-aux_"+num_str+".pdf")
+
         can.Close()
+
+        out_file = TFile(out_fold+'Efficiency_map_r_qq_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root","RECREATE")
+        out_file.cd()
+        h2_num_r_qq.Write("h2")
+        print "Writing "+out_fold+'Efficiency_map_r_qq_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root"
+        out_file.Write()
+        out_file.Close()
+
+        if start_figure>0:
+            out_file = TFile(HEPDATA_OUT+"Figure-aux_"+num_str+".root","RECREATE")
+            out_file.cd()
+            h2_num_m.Write("h2")
+            print "Writing "+HEPDATA_OUT+"Figure-aux_"+num_str+".root"
+            out_file.Write()
+            out_file.Close()
+            i_hep+=1
 
         can = TCanvas("can","can",1400,800)
         can.cd()
@@ -3433,7 +3657,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         h2_num_r_qq_presel.GetXaxis().SetTitleOffset(1.3)
         h2_num_r_qq_presel.GetYaxis().SetTitleSize(0.04)
         h2_num_r_qq_presel.GetYaxis().SetTitleOffset(1.2)
-        h2_num_r_qq_presel.GetZaxis().SetTitle("Signal Efficiency")
+        h2_num_r_qq_presel.GetZaxis().SetTitle("TD-tagged jet efficiency")
         h2_num_r_qq_presel.GetZaxis().SetTitleSize(0.04)
         h2_num_r_qq_presel.GetZaxis().SetTitleOffset(1.2)
         h2_num_r_qq_presel.SetMaximum(.5)
@@ -3444,9 +3668,16 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
         gStyle.SetPadTickY(1)
         can.Update()
         drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-        can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
-        can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
+        #can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.png')
+        #can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+'.pdf')
         can.Close()
+
+        #out_file = TFile(out_fold+'Efficiency_map_r_qq_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root","RECREATE")
+        #out_file.cd()
+        #h2_num_r_qq_presel.Write("h2")
+        #print "Writing "+out_fold+'Efficiency_map_r_qq_presel_pt_inclusive_'+b+"_"+str(R).replace(".","p")+".root"
+        #out_file.Write()
+        #out_file.Close()
 
 
         #Plot each pt bin!
@@ -3477,7 +3708,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             h2_num_r_qq_pt[i_pt].GetXaxis().SetTitleOffset(1.3)
             h2_num_r_qq_pt[i_pt].GetYaxis().SetTitleSize(0.04)
             h2_num_r_qq_pt[i_pt].GetYaxis().SetTitleOffset(1.2)
-            h2_num_r_qq_pt[i_pt].GetZaxis().SetTitle("Signal Efficiency")
+            h2_num_r_qq_pt[i_pt].GetZaxis().SetTitle("TD-tagged jet efficiency")
             h2_num_r_qq_pt[i_pt].GetZaxis().SetTitleSize(0.04)
             h2_num_r_qq_pt[i_pt].GetZaxis().SetTitleOffset(1.2)
             h2_num_r_qq_pt[i_pt].SetMaximum(1.)
@@ -3488,8 +3719,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             gStyle.SetPadTickY(1)
             can.Update()
             drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-            can.Print(out_fold+'Efficiency_map_r_qq_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
-            can.Print(out_fold+'Efficiency_map_r_qq_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
+            #can.Print(out_fold+'Efficiency_map_r_qq_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
+            #can.Print(out_fold+'Efficiency_map_r_qq_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
             can.Close()
 
             can = TCanvas("can","can",1400,800)
@@ -3516,7 +3747,7 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             h2_num_r_qq_presel_pt[i_pt].GetXaxis().SetTitleOffset(1.3)
             h2_num_r_qq_presel_pt[i_pt].GetYaxis().SetTitleSize(0.04)
             h2_num_r_qq_presel_pt[i_pt].GetYaxis().SetTitleOffset(1.2)
-            h2_num_r_qq_presel_pt[i_pt].GetZaxis().SetTitle("Signal Efficiency")
+            h2_num_r_qq_presel_pt[i_pt].GetZaxis().SetTitle("TD-tagged jet efficiency")
             h2_num_r_qq_presel_pt[i_pt].GetZaxis().SetTitleSize(0.04)
             h2_num_r_qq_presel_pt[i_pt].GetZaxis().SetTitleOffset(1.2)
             h2_num_r_qq_presel_pt[i_pt].SetMaximum(.5)
@@ -3527,8 +3758,8 @@ def plot_maps(out_fold, sign, R=0.8,add_unc=False,unc_fold=""):
             gStyle.SetPadTickY(1)
             can.Update()
             drawCMS_simple(-1, "Simulation Supplementary", onTop=True,left_marg_CMS=0.2,custom_spacing=0.4,draw_s_only=True,top_marg_cms=0.96,top_marg_lumi=0.96)
-            can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
-            can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
+            #can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.png')
+            #can.Print(out_fold+'Efficiency_map_r_qq_presel_pt_bin_'+str(i_pt)+'_'+b+"_"+str(R).replace(".","p")+'.pdf')
             can.Close()
 
 
@@ -3710,16 +3941,18 @@ def plot_maps_vs_mass(out_fold, sign, full_map_name="",R=0.4,label="",store_unc=
     pointstyles = ['o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s','o','s',]
     facecolors= ['blue','none','crimson','none','green','none','darkorange','none','gray','none','magenta','none','chocolate','none','yellow','none','black','none','olive','none']
 
+    plt.rcParams.update({"font.size": 20})  
+
     fig, ax = plt.subplots(figsize=(10, 10))
-    plt.plot(masses, diff_m, color='black', lw=0, marker='o',label='diff merged')
+    plt.plot(masses, diff_m, color='black', lw=0, marker='o',label='diff pred-true merged')
     plt.plot(masses, true_unc_m, color='black', lw=3, linestyle='-',label='stat. unc.')
     plt.plot(masses, true_unc_m_n, color='black', lw=3, linestyle='-')
 
-    plt.plot(masses, diff_r_q, color='red', lw=0, marker='o',label='diff resolved 1q')
+    plt.plot(masses, diff_r_q, color='red', lw=0, marker='o',label='diff pred-true resolved 1q')
     plt.plot(masses, true_unc_r_q, color='red', lw=3, linestyle='-',label='stat. unc.')
     plt.plot(masses, true_unc_r_q_n, color='red', lw=3, linestyle='-')
 
-    plt.plot(masses, diff_r_qq, color='green', lw=0, marker='o',label='diff resolved 2q')
+    plt.plot(masses, diff_r_qq, color='green', lw=0, marker='o',label='diff pred-true resolved 2q')
     plt.plot(masses, true_unc_r_qq, color='green', lw=3, linestyle='-',label='stat. unc.')
     plt.plot(masses, true_unc_r_qq_n, color='green', lw=3, linestyle='-')
 
@@ -3733,10 +3966,10 @@ def plot_maps_vs_mass(out_fold, sign, full_map_name="",R=0.4,label="",store_unc=
         plt.ylim([-6., 6.])
     #plt.xscale("log")
     plt.ylabel("Closure (%)")
-    plt.xlabel("LLP mass")
+    plt.xlabel("LLP mass (GeV)")
     plt.legend(loc="upper right", title="")
     plt.grid(True)
-    plt.title('dR='+str(R))
+    plt.title('R = '+str(R))
     #hep.cms.label("Supplementary",data=False, year=int(ERA))
     fig.savefig(out_fold+"Prediction_closure_"+str(R).replace(".","p")+label+".pdf")
     fig.savefig(out_fold+"Prediction_closure_"+str(R).replace(".","p")+label+".png")
@@ -3745,6 +3978,7 @@ def plot_maps_vs_mass(out_fold, sign, full_map_name="",R=0.4,label="",store_unc=
 
 
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     plt.plot(masses, diff_m_presel, color='black', lw=0, marker='o',label='diff merged')
     plt.plot(masses, true_unc_m_presel, color='black', lw=3, linestyle='-',label='stat. unc.')
     plt.plot(masses, true_unc_m_presel_n, color='black', lw=3, linestyle='-')
@@ -3767,7 +4001,7 @@ def plot_maps_vs_mass(out_fold, sign, full_map_name="",R=0.4,label="",store_unc=
         plt.ylim([-6., 6.])
     #plt.xscale("log")
     plt.ylabel("Closure (%)")
-    plt.xlabel("LLP mass")
+    plt.xlabel("LLP mass (GeV)")
     plt.legend(loc="upper right", title="")
     plt.grid(True)
     plt.title('dR='+str(R))
@@ -3998,6 +4232,7 @@ def plot_maps_vs_ctau(out_fold, sign, full_map_name="",R=0.4):
     facecolors= ['blue','none','crimson','none','green','none','darkorange','none','gray','none','magenta','none','chocolate','none','yellow','none','black','none','olive','none']
 
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     dummy_x = np.array([])
     dummy_y = np.array([])
 
@@ -4039,6 +4274,7 @@ def plot_maps_vs_ctau(out_fold, sign, full_map_name="",R=0.4):
 
     #m presel
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     dummy_x = np.array([])
     dummy_y = np.array([])
 
@@ -4072,6 +4308,7 @@ def plot_maps_vs_ctau(out_fold, sign, full_map_name="",R=0.4):
 
     #q
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     dummy_x = np.array([])
     dummy_y = np.array([])
 
@@ -4105,6 +4342,7 @@ def plot_maps_vs_ctau(out_fold, sign, full_map_name="",R=0.4):
 
     #q presel
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     dummy_x = np.array([])
     dummy_y = np.array([])
 
@@ -4136,6 +4374,7 @@ def plot_maps_vs_ctau(out_fold, sign, full_map_name="",R=0.4):
     
     #qq
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     dummy_x = np.array([])
     dummy_y = np.array([])
 
@@ -4170,6 +4409,7 @@ def plot_maps_vs_ctau(out_fold, sign, full_map_name="",R=0.4):
 
     #qq presel
     fig, ax = plt.subplots(figsize=(10, 10))
+    plt.rcParams.update({"font.size": 20})  
     dummy_x = np.array([])
     dummy_y = np.array([])
 
@@ -4215,23 +4455,23 @@ def predict_resolved():
 
 r_list = [0.4,0.6,0.8,1.0,1.2]
 #r_list = [0.4,1.0,1.2]
-r_list = [0.6,0.8]
-r_list = [1.2]
+#r_list = [0.6,0.8]
+r_list = [0.8]
 #r_list = [0.4,0.8,1.0,1.2]
 for r in r_list:
 
     #mix all eras together
     #also maps with all events!
     #create_maps(MAIN_OUT_ALL,sign,skip_even=False,R=r,eras=["2016","2017","2018"])
-    #plot_maps(MAIN_OUT_ALL,["SUSY_mh127_","SUSY_mh200_","SUSY_mh400_","SUSY_mh1000_","SUSY_mh1800_"],R=r)
-    #plot_maps(MAIN_OUT_ALL,sign,R=r)
+    #plot_maps(MAIN_OUT_ALL,["SUSY_mh1800_"],R=r)
+    plot_maps(MAIN_OUT_ALL,sign,R=r,start_figure = 6)
 
     ###
     #Only odd/even events:
     #create_maps(MAIN_OUT,sign,skip_even=True,R=r,eras=["2016","2017","2018"])
     ###create_maps_prev(sign,skip_even=True,R=r)
-    use_maps_updated(MAIN_OUT,sign,skip_odd=True,cross_maps="",R=r,eras=["2016","2017","2018"])
-    plot_maps_vs_mass(MAIN_OUT,sign,R=r)
+    #use_maps_updated(MAIN_OUT,["SUSY_mh400_"],skip_odd=True,cross_maps="",R=r,eras=["2016","2017","2018"])
+    #plot_maps_vs_mass(MAIN_OUT,sign,R=r)
 
     #Remove mass too?
     #create_maps(MAIN_OUT,["SUSY_",],skip_even=True,R=r,eras=["2016","2017","2018"])
@@ -4249,11 +4489,12 @@ for r in r_list:
     #    use_maps_updated(MAIN_OUT,[s],skip_odd=True,cross_maps="",full_map_name=new_s,R=r,eras=["2016","2017","2018"])
     ##plot_maps_vs_ctau(MAIN_OUT,tmp_sign_ctau,R=r)
     #plot_maps_vs_mass(MAIN_OUT,sign,R=r,label="")
-    #plot_maps_vs_mass(MAIN_OUT,sign_500,R=r,label="_ctau500",store_unc=True)
-    #plot_maps_vs_mass(MAIN_OUT,sign_3000,R=r,label="_ctau3000",store_unc=True)
+    #if r==0.8:
+    #    plot_maps_vs_mass(MAIN_OUT,sign_500,R=r,label="_ctau500",store_unc=True)
+    #    plot_maps_vs_mass(MAIN_OUT,sign_3000,R=r,label="_ctau3000",store_unc=True)
 
-    #test run
-    #plot_maps(MAIN_OUT_ALL,["SUSY_mh127_",],R=r,add_unc=True,unc_fold=MAIN_OUT)
+    #maps with nonclosure uncertainties:
+    #plot_maps(MAIN_OUT_ALL,sign,R=r,add_unc=True,unc_fold=MAIN_OUT)
 
     ###plot maps with only even/odd events as a cross-check
     #plot_maps(MAIN_OUT,["SUSY_mh127_","SUSY_mh200_","SUSY_mh400_","SUSY_mh1000_","SUSY_mh1800_"],R=r)

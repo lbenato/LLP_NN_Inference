@@ -137,6 +137,7 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     my_back_var = {}
     shift_b = {}
     shift_d = {}
+
     for v in var_to_model:
         jv = "JetsNegative[0]."+v
         jv_s = "JetsNegative[0]."+v
@@ -195,6 +196,45 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     data_file.Close()
 
     model = keras.models.load_model('nn_inference/tagger_AK4_v3/model.h5')
+
+    #JHEP comments: show DNN inputs
+    dnn_input_list= [
+        "nTrackConstituents", 
+        "nSelectedTracks",
+        "timeShift1",
+        "eFracRecHitsEB",
+        "nRecHitsEB",
+        "sig1EB",
+        "sig2EB",
+        "ptDEB",
+        "cHadEFrac",
+        "nHadEFrac",
+        "eleEFrac",
+        "photonEFrac",
+        "ptAllTracks",
+        "ptAllPVTracks",
+        "alphaMax",
+        "betaMax",
+        "gammaMax",
+        "gammaMaxEM",
+        "gammaMaxHadronic",
+        "gammaMaxET",
+        "minDeltaRAllTracks",
+        "minDeltaRPVTracks",
+    ]
+
+    b_h_inputs = {}
+    d_h_inputs = {}
+    for inp in dnn_input_list:
+        vr = "Jets."+inp
+        if inp=="timeShift1":
+            vr = "Jets.timeRecHitsEB"
+        b_h_inputs[inp] = TH1F("b_h_"+inp,"",variable[vr]["nbins"],variable[vr]["min"],variable[vr]["max"])
+        b_h_inputs[inp].Sumw2()
+
+        d_h_inputs[inp] = TH1F("d_h_"+inp,"",variable[vr]["nbins"],variable[vr]["min"],variable[vr]["max"])
+        d_h_inputs[inp].Sumw2()
+
 
 
     print "Cut: ", cut
@@ -591,7 +631,9 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     b_h_sigprob_shift1 = TH1F("b_h_sigprob_shift1",";"+variable[var]['title'],500,0,1)
     b_h_sigprob_shift1.Sumw2()
 
-    b_h_sigprob_shift1_zoom = TH1F("b_h_sigprob_shift1_zoom",";"+variable[var]['title'],30,0.9,1)
+    #FR comment: include a bin with 0.996 --> 50 bins
+    #b_h_sigprob_shift1_zoom = TH1F("b_h_sigprob_shift1_zoom",";"+variable[var]['title'],30,0.9,1)
+    b_h_sigprob_shift1_zoom = TH1F("b_h_sigprob_shift1_zoom",";"+variable[var]['title'],50,0.9,1)
     b_h_sigprob_shift1_zoom.Sumw2()
 
     b_h_sigprob_shift2 = TH1F("b_h_sigprob_shift2",";"+variable[var]['title'],50,0,1)
@@ -682,7 +724,9 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     d_h_sigprob_shift1 = TH1F("d_h_sigprob_shift1",";"+variable[var]['title'],500,0,1)
     d_h_sigprob_shift1.Sumw2()
 
-    d_h_sigprob_shift1_zoom = TH1F("d_h_sigprob_shift1_zoom",";"+variable[var]['title'],30,0.9,1)
+    #FR comment: include a bin with 0.996 --> 50 bins
+    #d_h_sigprob_shift1_zoom = TH1F("d_h_sigprob_shift1_zoom",";"+variable[var]['title'],30,0.9,1)
+    d_h_sigprob_shift1_zoom = TH1F("d_h_sigprob_shift1_zoom",";"+variable[var]['title'],50,0.9,1)
     d_h_sigprob_shift1_zoom.Sumw2()
 
     d_h_sigprob_shift2 = TH1F("d_h_sigprob_shift2",";"+variable[var]['title'],50,0,1)
@@ -728,6 +772,8 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     den_d_h_shift1_1bin.Sumw2()
     den_d_h_shift2_1bin = TH1F("den_d_h_shift2_1bin","",len(less_bins_eta)-1,less_bins_eta)
     den_d_h_shift2_1bin.Sumw2()
+
+
 
     #Signal
     s_h_sigprob = {}
@@ -1375,6 +1421,8 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     root_numpy.fill_hist(b_h_shift6, b_timeShift6[m_b_time_shift6], b_EventWeight[m_b_time_shift6])
 
 
+
+
     root_numpy.fill_hist(den_b_h_pre, b_eta[m_b_time_pre],  b_EventWeight[m_b_time_pre])
     #root_numpy.fill_hist(den_b_h_pre_0p9, b_eta[m_b_time_pre],  b_EventWeight[m_b_time_pre])
     root_numpy.fill_hist(num_b_h_pre, b_eta[ np.logical_and(m_b_probs_pre,m_b_time_pre) ],  b_EventWeight[np.logical_and(m_b_probs_pre,m_b_time_pre)])
@@ -1861,6 +1909,13 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     root_numpy.fill_hist(den_d_h_shift2_pt, d_pt[m_d_time_shift2], d_EventWeight[m_d_time_shift2])
     root_numpy.fill_hist(num_d_h_shift2_pt, d_pt[np.logical_and(m_d_probs_shift2,m_d_time_shift2)],d_EventWeight[np.logical_and(m_d_probs_shift2,m_d_time_shift2)])
 
+
+    #JHEP histograms
+    inp_it = 0
+    for inp in dnn_input_list:
+        root_numpy.fill_hist(b_h_inputs[inp], b_dat_list_shift1[ inp_it ] [m_b_time_shift1], b_EventWeight[m_b_time_shift1])
+        root_numpy.fill_hist(d_h_inputs[inp], d_dat_list_shift1[ inp_it ] [m_d_time_shift1], d_EventWeight[m_d_time_shift1])
+        inp_it += 1
 
     #Store per era:
     #Store in root file: den_b_h_shift1,num_b_h_shift1
@@ -2447,8 +2502,78 @@ def calc_sf(var,cut,label="",scale=True, do_smear=False):
     d_h_sigprob_shift1_zoom.Write("d")
     can.Write()
     outfile.Close()
+    print "Written ", OUT+"DataAndBkg_sigprob_zoom"+label+".root"
 
     can.Close()
+
+
+
+    #JHEP histograms
+    inp_it = 0
+    for inp in dnn_input_list:
+        #can = TCanvas("can","can",900,800)
+        #can.cd()
+        #can.SetLogy()
+        #can.SetRightMargin(0.05)
+        #can.SetLeftMargin(0.12)
+        #can.SetBottomMargin(0.1)
+
+        vr = "Jets."+inp
+        if inp=="timeShift1":
+            vr = "Jets.timeRecHitsEB"
+
+        b_h_inputs[inp].Scale(1./b_h_inputs[inp].Integral())
+        d_h_inputs[inp].Scale(1./d_h_inputs[inp].Integral())
+
+
+        b_h_inputs[inp].SetLineColor(860)
+        d_h_inputs[inp].SetLineColor(1)
+        d_h_inputs[inp].SetMarkerColor(1)
+        d_h_inputs[inp].SetMarkerStyle(20)
+        b_h_inputs[inp].SetFillColorAlpha(860,0.3)
+        b_h_inputs[inp].SetLineWidth(2)
+        d_h_inputs[inp].SetLineWidth(2)
+        b_h_inputs[inp].GetXaxis().SetTitle(variable[vr]["title"])
+        b_h_inputs[inp].GetYaxis().SetTitle("Events / bin")
+        b_h_inputs[inp].GetXaxis().SetTitleSize(0.04)
+        b_h_inputs[inp].GetYaxis().SetTitleSize(0.04)
+        
+        b_h_inputs_unc = b_h_inputs[inp].Clone("BkgUnc")
+        #b_h_inputs_unc.Reset("MICES")
+        #b_h_inputs_unc.SetMarkerStyle(0)
+        b_h_inputs_unc.SetFillStyle(3001)
+        b_h_inputs_unc.SetFillColor(860)
+        
+        '''
+        b_h_inputs[inp].Draw("HIST,sames")
+        b_h_inputs_unc.Draw("E2,sames")
+        d_h_inputs[inp].Draw("PE,sames")
+        drawCMS_simple(LUMI, "", ERA=ERA, onTop=True)
+        leg = TLegend(0.45, 0.7, 0.65, 0.85)
+        leg.SetTextSize(0.035)
+        leg.AddEntry(b_h_inputs[inp],"simulated background","F")
+        leg.AddEntry(d_h_inputs[inp],"data","PL")
+        leg.SetBorderSize(0)
+        leg.Draw()
+        can.Print("fig/TDJ_DataAndBkg_sigprob_zoom.pdf")
+        can.Print("fig/TDJ_DataAndBkg_sigprob_zoom.png")
+        '''
+
+        outfile = TFile(OUT+"DataAndBkg_"+inp+label+".root","RECREATE")
+        outfile.cd()
+        b_h_inputs[inp].Write("b")
+        b_h_inputs_unc.Write("b_unc")
+        d_h_inputs[inp].Write("d")
+        #can.Write()
+        outfile.Close()
+        print "Written ", OUT+"DataAndBkg_"+inp+label+".root"
+
+        #can.Close()
+        del b_h_inputs_unc
+
+        inp_it += 1
+
+
 
     exit()
 

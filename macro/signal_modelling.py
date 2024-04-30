@@ -21,7 +21,7 @@ from tensorflow import keras
 #import awkward1 as ak
 #import matplotlib.pyplot as plt
 
-ERA = "2017"
+ERA = "2016"
 
 CHAN = "SUSY"
 LUMI = -1
@@ -1770,7 +1770,11 @@ def draw_mean_sigma(reference_label,label_list = [],extra_label="",sigma_smear_i
     ref_corr_sigma_val = math.sqrt( abs( ref_data.GetParameter(2)**2 - ref_back.GetParameter(2)**2 ) )
     ref_in_file.Close()
 
-
+    print "ref_corr_mean_val"
+    print ref_corr_mean_val
+    print "ref_corr_sigma_val"
+    print ref_corr_sigma_val
+    exit()
 
     bins = variable["JetsNegative.pt"]['bins']
 
@@ -2119,7 +2123,7 @@ def draw_supplementary(var,label = "",alternative_smear_function=False,label_in_
     setBotPad(can.GetPad(2), 3.8,forcetop=1.)
 
     can.cd(1)
-    can.GetPad(1).SetGrid(1)
+    #can.GetPad(1).SetGrid(1)
     #can.SetGrid()
     can.SetRightMargin(0.05)
     data.GetXaxis().SetTitle(variable[var]['title'])
@@ -2154,16 +2158,17 @@ def draw_supplementary(var,label = "",alternative_smear_function=False,label_in_
         smeared_alt.Draw("HISTO,sames")
 
     leg = TLegend(0.58, 0.7-0.05, 0.93, 0.9)
+    leg.SetBorderSize(0)
     if label_in_legend!="":
         leg.SetHeader(label_in_legend)
-    leg.AddEntry(back,"simulation","F")
-    leg.AddEntry(data,"data","PL")
-    leg.AddEntry(smeared,"simulation smeared","L")
+    leg.AddEntry(back,"Simulation","F")
+    leg.AddEntry(data,"Data","PL")
+    leg.AddEntry(smeared,"Simulation smeared","L")
     if alternative_smear_function:
         leg.AddEntry(smeared_alt,"p_{T} independent smearing","L")
     leg.SetTextSize(0.04)
     leg.Draw()
-    drawCMS_simple(LUMI, "Supplementary", ERA=ERA if alternative_smear_function else "", onTop=True,custom_spacing=0.3)
+    drawCMS_simple(LUMI, "Supplementary", ERA=ERA if alternative_smear_function else "", onTop=True,custom_spacing=0.3,top_marg_lumi = 0.975)
     #drawAnalysis("LL"+CHAN)
     #drawRegion(SEL)
     latex = TLatex()
@@ -2178,10 +2183,10 @@ def draw_supplementary(var,label = "",alternative_smear_function=False,label_in_
 
 
     can.cd(2)
-    can.GetPad(2).SetGrid(1)
+    #can.GetPad(2).SetGrid(1)
     #Here can 2
     setBotStyle(ratio,r=1.4)#1.2 and 4 
-    ratio.GetYaxis().SetTitle("Data / Bkg")
+    ratio.GetYaxis().SetTitle("Data / sim.")#Bkg")
     ratio.GetXaxis().SetTitle("Jet time (ns)")
     ratio.GetYaxis().SetTitleOffset(+0.35)
     ratio.GetXaxis().SetTitleOffset(+1.1)
@@ -2199,6 +2204,13 @@ def draw_supplementary(var,label = "",alternative_smear_function=False,label_in_
     ratio.Draw("PE")
     ratio.SetMinimum(0)
     ratio.SetMaximum(4)
+
+    line = TLine(-5., 1., 5., 1.)
+    line.SetLineStyle(2)
+    line.SetLineWidth(2)
+    line.SetLineColor(1)
+    line.Draw("sames")
+    ratio.Draw("PE,sames")
 
     ratio_smeared.SetMinimum(0)
     ratio_smeared.SetMaximum(4)
@@ -2234,7 +2246,25 @@ def draw_supplementary(var,label = "",alternative_smear_function=False,label_in_
 
     can.Print(OUTSTRING+label+'_supplementary.png')
     can.Print(OUTSTRING+label+'_supplementary.pdf')
+
+    can.Print('fig/Supplementary/JetTime_supplementary.png')
+    can.Print('fig/Supplementary/JetTime_supplementary.pdf')
+
+    can.Print('fig/Supplementary/Figure-aux_001.pdf')
     can.Close()
+
+    out_file = TFile("fig/Supplementary/Figure-aux_001.root","RECREATE")
+    out_file.cd()
+    back.Write("back")
+    back_unc.Write("back_unc")
+    data.Write("data")
+    smeared.Write("smeared")
+    ratio.Write("ratio")
+    ratio_smeared.Write("ratio_smeared")
+    print "Writing fig/Supplementary/Figure-aux_001.root"
+    out_file.Write()
+    out_file.Close()
+
 
 
 def draw_syst_unc(added):
@@ -2348,9 +2378,12 @@ if SEL=="TtoEM":
     additional_lab += "_supplementary"
 
     #time_fit(var="JetsNegative.timeRecHitsEB",cut = "MEt.pt>200 && isTtoEM && JetsNegative.CSV>0.8 && fabs(Jets.eta)<1 && MinJetMetDPhi>0.5",label=lab+additional_lab,scale=True,do_smear=True)#True#"_B-F"
-    draw_supplementary(var="JetsNegative.timeRecHitsEB",label = additional_lab,alternative_smear_function=False,label_in_legend="")
 
-    exit()
+    #not the purpose!
+    #HERE
+    #draw_supplementary(var="JetsNegative.timeRecHitsEB",label = additional_lab,alternative_smear_function=False,label_in_legend="")
+
+    #exit()
 
 
     #Livia's studies
